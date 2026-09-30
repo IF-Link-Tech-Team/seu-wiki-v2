@@ -20,10 +20,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   const tag = url.searchParams.get("tag")?.trim() || null;
   const q = url.searchParams.get("q")?.trim().slice(0, 200) || null;
   const tab = url.searchParams.get("tab") === "relevance" ? "relevance" : null;
+  const typeParam = url.searchParams.get("type");
+  const type = (["feed", "survival", "experience"] as const).find((t) => t === typeParam) ?? null;
   // Legacy deep-paging parameters (deep, anchorAt) still open a normal page.
   const page = Math.min(Math.max(Number.parseInt(url.searchParams.get("page") ?? "1", 10) || 1, 1), 50);
   const data = await loadOr404<PoolResponse>(
-    `/api/site/pool${queryString({ channel: channel === "all" ? null : channel, category, tag, q, tab, page: page > 1 ? page : null })}`,
+    `/api/site/pool${queryString({ channel: channel === "all" ? null : channel, category, tag, q, tab, type, page: page > 1 ? page : null })}`,
     { signal: request.signal, busyRedirect: "/all/search-busy" },
   );
   return { data };
@@ -70,6 +72,13 @@ export default function AllPage() {
     else sp.delete("tab");
     return `/all?${sp}`;
   };
+  const typeHref = (type: string) => {
+    const sp = new URLSearchParams(params);
+    sp.delete("page");
+    if (type === "all") sp.delete("type");
+    else sp.set("type", type);
+    return `/all?${sp}`;
+  };
   const title = f.q ? `搜索“${f.q}”` : f.tag ? `#${f.tag}` : null;
   const updated = new Date(data.freshness).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Shanghai" });
 
@@ -113,6 +122,38 @@ export default function AllPage() {
             找到 <span className="num">{data.total >= 2000 ? "2000+" : data.total}</span> 条 · 更新于 <span className="num">{updated}</span>
           </span>
         </div>
+      )}
+
+      {f.q && (
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {([["all", "全部"], ["feed", "动态"], ["survival", "手册"], ["experience", "经验"]] as const).map(([key, label]) => (
+            <Link key={key} to={typeHref(key)} className={f.type === key ? "chip border-accent/50 bg-accent-soft text-accent" : "chip hover:text-accent"}>
+              {label}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* 手册/经验命中：按相关度排在动态列表前面，手册结果落到最匹配的章节锚点。 */}
+      {data.docs.length > 0 && (
+        <ul className="mb-4 space-y-2">
+          {data.docs.map((d) => (
+            <li key={d.slug}>
+              <Link
+                to={`/${d.slug}${d.anchor ? `#${d.anchor.id}` : ""}`}
+                className="block rounded-panel bg-surface p-3.5 ring-1 ring-line transition-colors hover:ring-line-strong"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="chip border-accent/50 bg-transparent text-accent">{d.kind === "survival" ? "手册" : "经验"}</span>
+                  <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-ink">{d.title}</span>
+                  {d.occurredAt && <span className="num text-[12px] text-ink-4">{d.occurredAt}</span>}
+                </div>
+                {d.description && <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-ink-3">{d.description}</p>}
+                {d.anchor && <p className="mt-1 text-[12px] text-ink-4">定位到：§ {d.anchor.text}</p>}
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
 
       <div className={`transition-opacity duration-200 ${busy ? "opacity-50" : ""}`}>

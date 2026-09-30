@@ -6,6 +6,7 @@ import {
   categoryCondition, channelCondition, ITEM_COLUMNS, ITEM_FROM, listedCondition, tagCondition, toFeedItemSummary, topicCondition,
   type ItemRow,
 } from "./items.ts";
+import { searchDocs } from "./search.ts";
 
 export const POOL_PAGE_SIZE = 40;
 export const POOL_MAX_PAGES = 50;
@@ -105,6 +106,8 @@ async function poolCount(key: string | null, query: () => Promise<Array<{ n: num
 export interface PoolQuery extends TimelineFilters {
   q?: string | null;
   tab?: "time" | "relevance";
+  /** 统一搜索的内容类型：feed 只看动态，survival/experience 只看长文，all 两者都搜。 */
+  type?: "all" | "feed" | "survival" | "experience";
   page?: number;
   topicTags?: string[] | null;
   now?: Date;
@@ -115,12 +118,18 @@ export async function loadPool(query: PoolQuery): Promise<PoolResponse> {
   const page = Math.min(Math.max(query.page ?? 1, 1), POOL_MAX_PAGES);
   const q = query.q?.trim() || null;
   const tab = q && query.tab === "relevance" ? "relevance" : "time";
+  const type = query.type ?? "all";
   const terms = q ? searchTerms(q) : [];
   const filters = sql`${channelCondition(query.channel)} ${categoryCondition(query.category)} ${tagCondition(query.tag)} ${topicCondition(query.topicTags)}`;
   const offset = (page - 1) * POOL_PAGE_SIZE;
   const cap = POOL_MAX_PAGES * POOL_PAGE_SIZE;
   // A fixed clock (tests, replays) never shares cached totals.
   const filterKey = query.now ? null : JSON.stringify([query.channel, query.category, query.tag, query.topicTags ?? null]);
+
+  // 统一搜索的手册/经验半边：有检索词且不是只看动态时按相关度查 docs（不按时间埋没长文）。
+  const docs = q && type !== "feed" ? await searchDocs(q, type === "all" ? null : type) : [];
+  // 只看长文时不碰动态那一半。
+  const docsOnly = q !== null && (type === "survival" || type === "experience");
 
   // Searches go through pool_search (eligible items only): trigram indexes for longer terms, a small
   // table to scan for one- and two-character ones.
@@ -188,16 +197,19 @@ export async function loadPool(query: PoolQuery): Promise<PoolResponse> {
     return { rows, total: Number(n) };
   };
 
-  const { rows, total } = q ? await withSearchCapacity(run) : await run(sql);
+  const { rows, total } = docsOnly ? { rows: [] as ItemRow[], total: 0 } : q ? await withSearchCapacity(run) : await run(sql);
   const today = beijingDate(now);
-  const meta = one(await sql<{ today_count: number; updated_at: Date | null }[]>`
+  const meta = docsOnly
+    ? { today_count: 0, updated_at: null as Date | null }
+    : one(await sql<{ today_count: number; updated_at: Date | null }[]>`
     SELECT (SELECT count(*) FROM publications p
       WHERE ${listedCondition(now)} AND p.eligible AND p.timeline_at >= ${beijingMidnight(today)} ${filters}) AS today_count,
       (SELECT max(p.updated_at) FROM publications p WHERE p.eligible) AS updated_at`);
 
   return {
-    filters: { channel: query.channel, category: query.category, tag: query.tag, topic: query.topic ?? null, q, tab },
+    filters: { channel: query.channel, category: query.category, tag: query.tag, topic: query.topic ?? null, q, tab, type: query.type ?? "all" },
     items: rows.map(toFeedItemSummary),
+    docs,
     page,
     pageCount: Math.min(POOL_MAX_PAGES, Math.max(1, Math.ceil(total / POOL_PAGE_SIZE))),
     total,

@@ -9,6 +9,8 @@ import { registerOg } from "./routes/og.ts";
 import { registerAdminAuth } from "./routes/admin-auth.ts";
 import { registerAdmin } from "./routes/admin.ts";
 import { registerIngest } from "./routes/ingest.ts";
+import { registerOrg } from "./routes/org.ts";
+import { registerMember } from "./routes/member.ts";
 import { registerV1, registerV1Fallbacks } from "./routes/v1.ts";
 import { registerMedia } from "./routes/media.ts";
 import { registerFeeds } from "./routes/feeds.ts";
@@ -70,6 +72,8 @@ export async function buildApp(): Promise<FastifyInstance> {
   registerAdmin(app);
 
   registerIngest(app);
+  registerOrg(app);
+  registerMember(app);
   registerV1(app);
   registerMedia(app);
 

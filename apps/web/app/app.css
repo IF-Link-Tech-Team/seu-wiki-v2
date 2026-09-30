@@ -10,15 +10,16 @@
 
 @theme {
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+  --font-serif: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
-  /* Brand (VI), fixed across themes. */
-  --color-brand-teal: #176b75;
-  --color-brand-cyan-0: #5deef0;
-  --color-brand-cyan-20: #2ce2e8;
-  --color-brand-cyan-54: #12ccd8;
-  --color-brand-cyan-82: #08abc2;
-  --color-brand-cyan-100: #078ea9;
+  /* Brand (VI), fixed across themes. 东大绿系。 */
+  --color-brand-teal: #0e5a46;
+  --color-brand-cyan-0: #5fe8c8;
+  --color-brand-cyan-20: #34d6ab;
+  --color-brand-cyan-54: #17bd90;
+  --color-brand-cyan-82: #0e9c76;
+  --color-brand-cyan-100: #0b7d5f;
 
   /* Semantic colours. */
   --color-bg: var(--bg);
@@ -90,33 +91,33 @@
   --page-max-wide: max(1200px, calc(270dvh - 236px));
   --page-max-reading: max(1100px, calc(200dvh - 236px));
   color-scheme: light;
-  --bg: #faf9f6;
-  --bg-sunk: #f3f3ef;
-  --bg-muted: #e9ede9;
+  --bg: #fafaf8;
+  --bg-sunk: #f2f4f0;
+  --bg-muted: #e9ede7;
   --surface: #ffffff;
   --surface-2: #fdfdfb;
   --raised: #ffffff;
   --sidebar: #fdfdfb;
-  --daybar: #f0f2ee;
-  --field: #eef1ed;
-  --ink: #202a30;
-  --ink-2: #303c42;
-  --ink-3: #59656b;
-  --ink-4: #657176;
-  --line: #dfe4e1;
-  --line-strong: #d1d9d5;
-  --line-soft: #e9ede9;
-  --accent: #176b75;
-  --accent-ink: #145f68;
-  --accent-soft: rgba(23, 107, 117, 0.08);
-  --accent-softer: rgba(23, 107, 117, 0.05);
+  --daybar: #eff2ec;
+  --field: #eef1ec;
+  --ink: #1a1d1b;
+  --ink-2: #2c332f;
+  --ink-3: #5a615d;
+  --ink-4: #6f7670;
+  --line: #e4e7e4;
+  --line-strong: #d3d9d2;
+  --line-soft: #e9ede8;
+  --accent: #0e5a46;
+  --accent-ink: #0a4636;
+  --accent-soft: rgba(14, 90, 70, 0.08);
+  --accent-softer: rgba(14, 90, 70, 0.05);
   --accent-contrast: #ffffff;
-  --note: #526f72;
+  --note: #4f6b5e;
   --hot: #b3402a;
   --hot-soft: rgba(179, 64, 42, 0.08);
-  --amber: #b8873a;
-  --amber-ink: #7c5a24;
-  --amber-soft: rgba(184, 135, 58, 0.1);
+  --amber: #b8912f;
+  --amber-ink: #7c5f1e;
+  --amber-soft: rgba(184, 145, 47, 0.1);
   --ok: #2f7d5c;
   --ok-soft: rgba(47, 125, 92, 0.1);
   --ok-ink: #2a6e51;
@@ -131,14 +132,14 @@
   --rank-2: #a3642f;
   --rank-3: #96702e;
   --rank-rest: #6b7684;
-  --shadow-card: 0 1px 2px rgba(32, 42, 48, 0.025);
-  --shadow-card-hover: 0 3px 12px rgba(32, 42, 48, 0.055);
-  --shadow-soft: 0 4px 12px rgba(28, 39, 51, 0.06);
-  --shadow-thumb: 0 1px 2px rgba(28, 39, 51, 0.1), 0 1px 1px rgba(28, 39, 51, 0.04);
-  --shadow-pop: 0 12px 32px rgba(28, 39, 51, 0.12);
-  --prose-ink: #26323a;
-  --code-bg: #f6f7f4;
-  --selection: rgba(23, 107, 117, 0.16);
+  --shadow-card: none;
+  --shadow-card-hover: none;
+  --shadow-soft: 0 4px 12px rgba(26, 29, 27, 0.06);
+  --shadow-thumb: 0 1px 2px rgba(26, 29, 27, 0.1), 0 1px 1px rgba(26, 29, 27, 0.04);
+  --shadow-pop: 0 12px 32px rgba(26, 29, 27, 0.12);
+  --prose-ink: #2c332f;
+  --code-bg: #f5f6f3;
+  --selection: rgba(14, 90, 70, 0.16);
 }
 
 [data-theme="dark"] {
@@ -159,10 +160,10 @@
   --line: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.12);
   --line-soft: rgba(255, 255, 255, 0.06);
-  --accent: #12ccd8;
-  --accent-ink: #2ce2e8;
-  --accent-soft: rgba(18, 204, 216, 0.12);
-  --accent-softer: rgba(18, 204, 216, 0.06);
+  --accent: #34d6ab;
+  --accent-ink: #5fe8c8;
+  --accent-soft: rgba(52, 214, 171, 0.12);
+  --accent-softer: rgba(52, 214, 171, 0.06);
   --accent-contrast: #000000;
   --note: #8fb8a8;
   --hot: #d86a52;
@@ -310,11 +311,9 @@
   }
 }
 @utility card-hover {
-  transition: box-shadow 200ms var(--ease-out-quart), border-color 200ms, transform 200ms var(--ease-out-quart);
+  transition: border-color 200ms;
   &:hover {
-    box-shadow: var(--shadow-card-hover);
     border-color: var(--line-strong);
-    transform: translateY(-1px);
   }
 }
 
@@ -420,6 +419,17 @@
 }
 .prose h2 { font-size: 1.26em; margin-top: 2.2em; }
 .prose h3 { font-size: 1.1em; margin-top: 1.8em; }
+/* 知识长文（手册/经验）里由 :::note 提示块转换来的静态 aside。 */
+.prose aside.doc-note, aside.doc-note {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-softer);
+  border-radius: var(--radius-control);
+  padding: 0.7rem 1rem;
+}
+aside.doc-note .doc-note-title { margin: 0 0 0.3em; font-weight: 600; color: var(--accent); font-size: 0.9em; }
+aside.doc-note > * + * { margin-top: 0.6em; }
+aside.doc-note-caution { border-left-color: var(--amber); }
+aside.doc-note-danger { border-left-color: var(--hot); }
 .prose h4, .prose h5 { font-size: 1em; margin-top: 1.5em; }
 .prose :is(h2, h3, h4, h5) + * { margin-top: 0.7em; }
 .prose a {

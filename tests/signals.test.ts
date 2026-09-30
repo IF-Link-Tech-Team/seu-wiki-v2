@@ -28,7 +28,7 @@ const provider = await stub((_hit, req) => {
     const axis = 2 + (parseInt(T.slice(-4), 36) % 1000);
     return { data: body.input.map((text, index) => ({ index, embedding: Array.from({ length: 1024 }, (_v, i) => (i === (text.includes(TOPIC) ? axis : text.includes(ALONE) ? axis + 1 : 1) ? 1 : 0)) })) };
   }
-  const answer = { query: "收购", decisions: [{ id: "C1", relation: "SAME_OCCURRENCE", confidence: 0.95, note: "" }] };
+  const answer = { query: "发布通知", decisions: [{ id: "C1", relation: "SAME_OCCURRENCE", confidence: 0.95, note: "" }] };
   return { id: "stub", choices: [{ message: { content: JSON.stringify(answer) } }], usage: { prompt_tokens: 10, completion_tokens: 10, total_tokens: 20 } };
 });
 for (const name of ["DASHSCOPE_BASE_URL", "DEEPSEEK_BASE_URL"]) process.env[name] = `${provider.url}/v1`;
@@ -46,7 +46,7 @@ async function report(suffix: string, opts: { title: string; backfill?: string; 
     publishedAt: opts.publishedAt ?? new Date(), backfill: opts.backfill ?? null,
   });
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected, output)
-            VALUES (${articleId}, 1, 'rule', 'pass', 'ai-models', ${opts.title}, '摘要', 80, false, ${sql.json({ fact: { title: opts.title } })})`;
+            VALUES (${articleId}, 1, 'rule', 'pass', 'academic', ${opts.title}, '摘要', 80, false, ${sql.json({ fact: { title: opts.title } })})`;
   await publishArticle(articleId);
   return articleId;
 }
@@ -64,7 +64,7 @@ after(async () => {
 });
 
 test("a discussion post that came before any report is grouped again when a report founds its fact", async () => {
-  const { articleId: postId } = await upsertMaterial({ sourceId: SIGNAL, url: `https://example.com/sig-${T}-post`, title: `AMD to acquire ${TOPIC}`, via: "fetch", publishedAt: new Date() });
+  const { articleId: postId } = await upsertMaterial({ sourceId: SIGNAL, url: `https://example.com/sig-${T}-post`, title: `${TOPIC} 选课安排要改了`, via: "fetch", publishedAt: new Date() });
   await queueProcessing(postId);
   const queued = await job(postId);
   assert.deepEqual([queued?.name, queued?.priority, queued?.data.signalOnly], ["events.group", -1, true], "straight to grouping, behind reports");
@@ -74,7 +74,7 @@ test("a discussion post that came before any report is grouped again when a repo
   const [decided] = await sql<{ verdict: string }[]>`SELECT verdict FROM grouping_decisions WHERE article_id = ${postId}`;
   assert.equal(decided?.verdict, "signal-unmatched", "a post that found nothing is recorded as such");
 
-  const reportId = await report("first", { title: `AMD 收购 ${TOPIC}` });
+  const reportId = await report("first", { title: `教务处调整 ${TOPIC} 选课安排` });
   const founded = await groupArticle(reportId);
   assert.equal(founded.verdict, "new-story");
   assert.equal(founded.rematched, 1);
@@ -101,23 +101,23 @@ test("history waits behind live work and founds no event; a new source's post fr
 });
 
 test("a discussion post that quotes a post not yet collected joins its story when the original arrives", async () => {
-  // Dan Shipper's "SONNET 5.5 IS OUT!" quoted Anthropic's post a minute before it was collected; the
+  // A student's "改选开始了!" quoted the 教务处 post a minute before it was collected; the
   // original then joined the fact a report had already founded (same-fact: no new fact, no rematch).
   const tweetId = `9${Date.now()}`;
   const { articleId: postId } = await upsertMaterial({
-    sourceId: SIGNAL, url: `https://x.com/danshipper/status/1${Date.now()}`, title: `SONNET IS OUT! ${ALONE}`, via: "fetch", publishedAt: new Date(),
-    xPost: { tweetId: `1${Date.now()}`, authorName: "Dan", handle: "danshipper", text: "SONNET IS OUT!", quoted: { authorName: "Anthropic", handle: "AnthropicAI", text: "Introducing", url: `https://x.com/AnthropicAI/status/${tweetId}` } },
+    sourceId: SIGNAL, url: `https://x.com/seu_student/status/1${Date.now()}`, title: `改选开始了！${ALONE}`, via: "fetch", publishedAt: new Date(),
+    xPost: { tweetId: `1${Date.now()}`, authorName: "同学甲", handle: "seu_student", text: "改选开始了！", quoted: { authorName: "教务处", handle: "seu_jwc", text: "改选通知", url: `https://x.com/seu_jwc/status/${tweetId}` } },
   });
   assert.deepEqual(await settleNonEditorial(postId), { group: true });
   assert.equal((await groupArticle(postId, { signalOnly: true })).verdict, "signal-unmatched");
 
-  const first = await groupArticle(await report("quoted-first", { title: `Anthropic 发布 ${TOPIC} Sonnet` }));
+  const first = await groupArticle(await report("quoted-first", { title: `教务处发布 ${TOPIC} 改选通知` }));
   const { articleId: originalId } = await upsertMaterial({
-    sourceId: EDITORIAL, url: `https://x.com/AnthropicAI/status/${tweetId}`, title: `Introducing ${TOPIC} Sonnet`, bodyText: "Introducing.", bodyStatus: "ok",
-    via: "fetch", publishedAt: new Date(), xPost: { tweetId, authorName: "Anthropic", handle: "AnthropicAI", text: `Introducing ${TOPIC} Sonnet` },
+    sourceId: EDITORIAL, url: `https://x.com/seu_jwc/status/${tweetId}`, title: `教务处 ${TOPIC} 改选通知`, bodyText: "改选通知。", bodyStatus: "ok",
+    via: "fetch", publishedAt: new Date(), xPost: { tweetId, authorName: "教务处", handle: "seu_jwc", text: `教务处 ${TOPIC} 改选通知` },
   });
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected, output)
-            VALUES (${originalId}, 1, 'rule', 'pass', 'ai-models', ${`Anthropic 发布 ${TOPIC} Sonnet`}, '摘要', 80, false, ${sql.json({ fact: { title: "Sonnet" } })})`;
+            VALUES (${originalId}, 1, 'rule', 'pass', 'academic', ${`教务处发布 ${TOPIC} 改选通知`}, '摘要', 80, false, ${sql.json({ fact: { title: "改选" } })})`;
   const joined = await groupArticle(originalId);
   assert.equal(joined.verdict, "same-fact");
   assert.equal(joined.storyId, first.storyId);

@@ -117,7 +117,7 @@ node scripts/init-env.ts --llm-key <你的模型 API Key>
 docker compose up -d --build
 ```
 
-打开 <http://localhost:3000>。后台在 `/admin`，管理员密码在 `.env` 的 `ADMIN_PASSWORD` 里。一两分钟后开始有内容，第一次导入的资料大约半小时处理完。
+打开 <http://localhost:3000>。后台在 `/admin`，用 IF.Link 统一账户登录（需要社区管理员角色，配置见 `.env.example` 的 LOGTO_*/ACCOUNTS_*）；本地改前端可设 DEV_ADMIN_BYPASS=true 跳过登录（仅非生产）。一两分钟后开始有内容，第一次导入的资料大约半小时处理完。
 
 机器上没有 Node、服务器在中国大陆、要配域名和 HTTPS，见 [部署](docs/deploy.md)。
 

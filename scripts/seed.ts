@@ -9,6 +9,7 @@ import { REPO_ROOT } from "@aihot/backend/config";
 import { closeDb, sql } from "@aihot/backend/db";
 import { importModelDirectory } from "@aihot/backend/leaderboard/directory";
 import { seedTopics } from "@aihot/backend/publication/topics";
+import { seedTaxonomyTerms } from "@aihot/backend/taxonomy/terms";
 import { assertSupportedConfig } from "@aihot/backend/sources/config-keys";
 
 interface SeedSource {
@@ -28,6 +29,7 @@ interface SeedSource {
 }
 
 console.log(`topics: ${await seedTopics()}`);
+console.log(`taxonomy terms: ${await seedTaxonomyTerms()} seeded`);
 if (process.argv.includes("--topics-only")) {
   await closeDb();
   process.exit(0);

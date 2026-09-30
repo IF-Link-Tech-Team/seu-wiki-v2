@@ -16,7 +16,7 @@ import { publishArticle } from "@aihot/backend/publication/publish";
 
 const T = tag();
 const SOURCE = `test-events-${T}`;
-const FACT_TITLE = `测试事件${T}发布新模型`;
+const FACT_TITLE = `测试事件${T}发布选课通知`;
 
 // The model calls the first candidate the same occurrence (and, asked about a pair, agrees), but
 // only once the test lets it answer; the same stub serves the judge and the review model.
@@ -36,8 +36,8 @@ const provider = await stub(async (_hit, req) => {
   const pair = user.includes("报道 A");
   const ids = answerAll ? [...user.matchAll(/【候选 (C\d+)】/g)].map((m) => m[1]!) : ["C1"];
   const answer = pair
-    ? { a: "发布", b: "发布", relation: pairRelation ?? relation, difference: "", confidence: 0.95 }
-    : { query: "发布新模型", decisions: ids.map((id) => ({ id, relation, confidence: 0.95, note: "" })) };
+    ? { a: "发布通知", b: "发布通知", relation: pairRelation ?? relation, difference: "", confidence: 0.95 }
+    : { query: "发布选课通知", decisions: ids.map((id) => ({ id, relation, confidence: 0.95, note: "" })) };
   return { id: "stub", choices: [{ message: { content: JSON.stringify(answer) } }], usage: { prompt_tokens: 10, completion_tokens: 10, total_tokens: 20 } };
 });
 process.env.DEEPSEEK_BASE_URL = `${provider.url}/v1`;
@@ -51,10 +51,10 @@ const randomText = () => Array.from({ length: 16 }, () => String.fromCharCode(65
 
 async function report(suffix: string, title = FACT_TITLE, summary = "摘要", publishedAt = new Date()) {
   const { articleId } = await upsertMaterial({
-    sourceId: SOURCE, url: `https://example.com/events-${T}-${suffix}`, title: `Model launch ${T} ${suffix}`, bodyText: "A new model.", bodyStatus: "ok", via: "fetch", publishedAt,
+    sourceId: SOURCE, url: `https://example.com/events-${T}-${suffix}`, title: `Course notice ${T} ${suffix}`, bodyText: "A new notice.", bodyStatus: "ok", via: "fetch", publishedAt,
   });
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected, output)
-            VALUES (${articleId}, 1, 'rule', 'pass', 'ai-models', ${title}, ${summary}, 80, false, ${sql.json({ fact: { title, subject: "测试", action: "发布", object: "模型" } })})`;
+            VALUES (${articleId}, 1, 'rule', 'pass', 'academic', ${title}, ${summary}, 80, false, ${sql.json({ fact: { title, subject: "教务处", action: "发布", object: "选课通知" } })})`;
   await publishArticle(articleId);
   return articleId;
 }

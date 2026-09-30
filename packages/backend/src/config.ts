@@ -55,11 +55,15 @@ export const config = {
   environmentName: str("AIHOT_ENVIRONMENT", isProduction ? "production" : "development"),
   // Model calls are live unless explicitly disabled (tests, replays).
   modelCallsEnabled: bool("MODEL_CALLS_ENABLED", true),
-  devAdmin: env.DEV_AUTH_ROLE === "admin" ? { displayName: env.DEV_AUTH_DISPLAY_NAME || "Dev Admin" } : null,
-  /** The admin password (at least 12 characters). Feishu sign-in below is optional. */
-  adminPassword: env.ADMIN_PASSWORD || null,
-  adminUnionIds: (env.ADMIN_FEISHU_UNION_IDS || "").split(",").map((v) => v.trim()).filter(Boolean),
-  adminEmails: (env.ADMIN_EMAILS || "").split(",").map((v) => v.trim().toLowerCase()).filter(Boolean),
+  /**
+   * 开发降级：DEV_ADMIN_BYPASS=true 且非生产时，免登录进后台（本地改前端用）。生产环境忽略并
+   * 拒绝启动（assertProductionSecrets）。做成 getter 是因为它在每次读时看当前环境变量。
+   */
+  get devAdmin(): { displayName: string } | null {
+    return env.DEV_ADMIN_BYPASS === "true" || env.DEV_ADMIN_BYPASS === "1"
+      ? { displayName: env.DEV_ADMIN_BYPASS_NAME || "Dev Admin" }
+      : null;
+  },
 };
 
 export type CredentialGroup = "models" | "collectors" | "integrations" | "auth";
@@ -96,7 +100,7 @@ export function assertProductionSecrets(names: Array<[CredentialGroup, string]>)
     const value = credential(group, name);
     if (!value || PLACEHOLDER.test(value) || value.length < 8) problems.push(name);
   }
-  for (const key of Object.keys(env)) if (key.startsWith("DEV_AUTH_")) problems.push(`${key} (dev login bypass)`);
+  for (const key of Object.keys(env)) if (key.startsWith("DEV_AUTH_") || key.startsWith("DEV_ADMIN_BYPASS")) problems.push(`${key} (dev login bypass)`);
   if (config.allowPrivateNetworkFetch) problems.push("ALLOW_PRIVATE_NETWORK_FETCH");
   if (problems.length > 0) throw new Error(`Refusing to start in production: ${problems.join(", ")}`);
 }

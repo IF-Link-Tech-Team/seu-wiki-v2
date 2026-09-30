@@ -144,21 +144,21 @@ test("config entries a source kind does not implement are named, not ignored", (
 });
 
 test("a listing that links other articles in its teasers takes only the links that begin a line", () => {
-  // Axios Technology through Jina: each headline stands on its own line; its teaser links older stories inline.
+  // A news listing through Jina: each headline stands on its own line; its teaser links older stories inline.
   const md = [
-    "### [Amodei critics target Trump with hit piece before White House dinner](https://example.org/2026/09/27/amodei)",
-    "[![Image 3: Scoop](https://example.org/a.jpg)](https://example.org/2026/09/27/dinner)",
-    "[Scoop: Anthropic's Dario Amodei to have White House dinner](https://example.org/2026/09/27/dinner)",
-    "[How Ed Sheeran's U.S. tour went off the rails in 3 weeks](https://example.org/2026/09/25/sheeran)[![Image 12: Ed Sheeran](https://example.org/b.jpg)](https://example.org/2026/09/25/sheeran)",
-    "Ed Sheeran's two Gillette Stadium shows were canceled Friday, capping a [chaotic three weeks](https://example.org/2026/09/15/sheeran-loop).",
-    "**Why it matters:** AI is energy-hungry. [Political divides](https://example.org/2026/09/24/climate-politics) can slow progress.",
-    "[Go deeper (3 min. read)](https://example.org/2026/09/25/sheeran)",
+    "### [秋季学期选课安排发布，改选本周末截止](https://example.org/2026/09/27/xuanke)",
+    "[![Image 3: 海报](https://example.org/a.jpg)](https://example.org/2026/09/27/jiangzuo)",
+    "[知名学者周六做客九龙湖校区开讲](https://example.org/2026/09/27/jiangzuo)",
+    "[校运会本周五开幕，附赛程安排](https://example.org/2026/09/25/yundonghui)[![Image 12: 校运会](https://example.org/b.jpg)](https://example.org/2026/09/25/yundonghui)",
+    "校运会周五开幕，各学院代表队已完成[开幕式抽签分组的确认](https://example.org/2026/09/15/chouqian)。",
+    "**为什么重要：** 选课错过截止时间无法补选，[教务处发布的相关说明](https://example.org/2026/09/24/shuoming)可以参考。",
+    "[延伸阅读（3 分钟）](https://example.org/2026/09/25/yundonghui)",
   ].join("\n\n");
   const config = { url: "https://r.jina.ai/https://example.org/technology", allowUrlPrefixes: ["https://example.org/2"], linksStartLine: true };
   assert.deepEqual(fromMarkdown(md, "https://example.org", source(config)).map((c) => c.title), [
-    "Amodei critics target Trump with hit piece before White House dinner",
-    "Scoop: Anthropic's Dario Amodei to have White House dinner",
-    "How Ed Sheeran's U.S. tour went off the rails in 3 weeks",
+    "秋季学期选课安排发布，改选本周末截止",
+    "知名学者周六做客九龙湖校区开讲",
+    "校运会本周五开幕，附赛程安排",
   ]);
   assert.equal(fromMarkdown(md, "https://example.org", source({ ...config, linksStartLine: undefined })).length, 5, "without the option prose links count");
 });

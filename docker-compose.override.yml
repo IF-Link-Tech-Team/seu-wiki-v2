@@ -1,0 +1,16 @@
+# 本地开发覆盖（compose 自动加载，无需指定）。生产服务器不要拷这个文件：
+# 它把数据库端口暴露到宿主机，只是为了本地跑测试和用 psql 调试。
+# api/worker 标为 development：本机在校园网时 .env 里的 ALLOW_PRIVATE_NETWORK_FETCH=1 才能生效
+# （东大站点解析到 10.x 内网地址），production 模式会按安全设计拒绝该开关并拒启。
+name: aihot
+
+services:
+  db:
+    ports:
+      - "${DB_PORT:-5432}:5432"
+  api:
+    environment:
+      NODE_ENV: development
+  worker:
+    environment:
+      NODE_ENV: development

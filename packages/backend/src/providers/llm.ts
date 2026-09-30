@@ -37,6 +37,13 @@ export const MODELS: Record<string, ModelSpec> = {
     get jsonMode() { return process.env.LLM_JSON_MODE !== "false"; },
     get vision() { return process.env.LLM_VISION === "true"; },
   },
+  // MiniMax M2.5：思考型，输出 <think> 块（extractJson 会剥离）。score/structure 这类重 JSON 任务
+  // 用 M3.1-Flash 会在 rubric 上反复思考烧光 max_tokens（content 为空），M2.5 已验证能稳定出活。
+  "minimax-m25": {
+    key: "minimax-m25", service: "llm", model: "MiniMax-M2.5",
+    baseUrlEnv: "LLM_BASE_URL", apiKeyEnv: "LLM_API_KEY",
+    jsonMode: true,
+  },
   // Named presets (the models AIHOT itself runs on); each needs its own key.
   // GLM 5.3 Flash always reasons; the lowest effort keeps short structured tasks fast.
   "glm-5.3-flash": {
@@ -112,7 +119,9 @@ export interface ChatJsonResult<T> {
 export class ModelOutputError extends Error {}
 
 function extractJson(text: string): unknown {
-  let t = text.trim();
+  // Reasoning models that can't switch thinking off (e.g. MiniMax M2.5) put a <think> block before the
+  // answer; it may itself contain braces, so strip it before looking for the JSON object.
+  let t = text.trim().replace(/^<think>[\s\S]*?(<\/think>|$)/i, "").trim();
   const fence = /^```(?:json)?\s*([\s\S]*?)\s*```$/i.exec(t);
   if (fence) t = fence[1]!;
   const start = t.indexOf("{");
@@ -160,7 +169,11 @@ export async function chatJson<S extends z.ZodType>(opts: ChatJsonOptions<S>): P
   if (!baseUrl || !apiKey || !spec.model) throw new Error(`Model ${opts.model} is not configured (${spec.baseUrlEnv}, ${spec.apiKeyEnv}${spec.key === "default" ? ", LLM_MODEL" : ""})`);
 
   const temperature = opts.temperature ?? 0.2;
-  const maxTokens = Math.max(opts.maxTokens ?? 1500, 512) + (spec.key.endsWith("-think") ? 4000 : 0);
+  // MiniMax M2.5/M3.1 强制思考（thinking 不能关）：思考量也吃 max_tokens，预算要加足思考余量，
+  // 否则长提示词下思考烧完配额、content 为空（"No JSON object in model output"）。
+  // 初期故意给宽（32768，实测 API 接受），先跑起来再按用量统计收紧。
+  const alwaysReasons = /^MiniMax-M[23]/i.test(spec.model);
+  const maxTokens = Math.max(opts.maxTokens ?? 1500, 512) + (spec.key.endsWith("-think") || alwaysReasons ? 32768 : 0);
   const userText = typeof opts.user === "string" ? opts.user : JSON.stringify(opts.user);
   const body: Record<string, unknown> = {
     model: spec.model,

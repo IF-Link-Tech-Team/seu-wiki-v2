@@ -26,6 +26,7 @@ export const links: Route.LinksFunction = () => [
 
 interface SiteMeta {
   changelogVersion: string | null;
+  memberAuth?: boolean;
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -67,7 +68,7 @@ export function meta({ error }: Route.MetaArgs) {
 }
 
 /** Sidebar, main column and phone tab bar around a page (or an error). */
-function SiteShell({ changelogVersion, children }: { changelogVersion: string | null; children: ReactNode }) {
+function SiteShell({ changelogVersion, memberAuth = false, children }: { changelogVersion: string | null; memberAuth?: boolean; children: ReactNode }) {
   const navigation = useNavigation();
   return (
     <div className="flex min-h-dvh">
@@ -75,7 +76,7 @@ function SiteShell({ changelogVersion, children }: { changelogVersion: string | 
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:rounded-control focus:bg-surface focus:px-3 focus:py-2">
         跳到正文
       </a>
-      <Sidebar changelogVersion={changelogVersion} />
+      <Sidebar changelogVersion={changelogVersion} memberAuth={memberAuth} />
       {/* Mobile shell (≤ 960px): one centred column, the tab bar below. Desktop: the page fills the main area
           up to the list width (--page-max-wide), centred beyond it. */}
       <main id="main" className="min-w-0 flex-1 pb-[calc(72px+env(safe-area-inset-bottom))] lg:px-7 lg:pb-[72px] lg:pt-6">
@@ -91,10 +92,10 @@ export default function App() {
   const meta = useLoaderData<typeof loader>();
   useHydratedFlag();
   const { pathname } = useLocation();
-  // The admin has its own chrome.
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) return <Outlet />;
+  // The admin and the org portal have their own chrome.
+  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/org" || pathname.startsWith("/org/")) return <Outlet />;
   return (
-    <SiteShell changelogVersion={meta.changelogVersion}>
+    <SiteShell changelogVersion={meta.changelogVersion} memberAuth={meta.memberAuth}>
       <Outlet />
     </SiteShell>
   );
@@ -126,7 +127,7 @@ export function ErrorBoundary() {
       </div>
     </div>
   );
-  // Admin errors stay inside the admin's own chrome.
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) return body;
+  // Admin errors stay inside the admin's own chrome; the org portal likewise.
+  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/org" || pathname.startsWith("/org/")) return body;
   return <SiteShell changelogVersion={site?.changelogVersion ?? null}>{body}</SiteShell>;
 }

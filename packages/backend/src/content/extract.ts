@@ -30,11 +30,19 @@ export function readable(html: string, url: string): ExtractedBody | null {
   } catch {
     // no head
   }
-  const article = new Readability(document as unknown as ConstructorParameters<typeof Readability>[0], { charThreshold: MIN_BODY_CHARS, keepClasses: false }).parse();
+  // WebPlus 站群（东大各机关与学院官网）的正文固定在 .wp_articlecontent；Readability 在其表格布局上
+  // 经常返回 null，所以先走这个直连路径。
+  const wp = document.querySelector(".wp_articlecontent");
+  const contentHtml = wp ? wp.innerHTML : null;
+  const article = contentHtml
+    ? { content: contentHtml }
+    : new Readability(document as unknown as ConstructorParameters<typeof Readability>[0], { charThreshold: MIN_BODY_CHARS, keepClasses: false }).parse();
   if (!article?.content) return null;
   const clean = trimTrailingChrome(sanitizeBody(article.content, url));
   const text = stripTags(clean);
-  if (text.length < MIN_BODY_CHARS) return null;
+  // WebPlus 正文容器位置可信，短通知（如"部分课程停开，清单见附件"）也收下，不按通用阈值丢弃。
+  const minChars = wp ? 20 : MIN_BODY_CHARS;
+  if (text.length < minChars) return null;
   const images: ExtractedBody["images"] = [];
   for (const m of clean.matchAll(/<img\b[^>]*\bsrc="([^"]+)"[^>]*>/gi)) {
     const w = /\bwidth="(\d+)"/.exec(m[0]);

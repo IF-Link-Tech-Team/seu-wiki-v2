@@ -5,12 +5,15 @@
 //   2. score: two independent scores against the source tier's threshold (industry/selection.ts) decide 精选;
 //   3. writing: the Chinese title, summary and reason by the content understanding for selected and
 //      near-selected items, by the cheaper title/summary prompts for the rest;
-//   4. structure (no reader-facing text): category, tags, subject companies and the fact frame the
-//      topics and the event grouping need; it runs beside the scoring.
+//   4. structure (no reader-facing text): category, tags, subject entities, the fact frame and the
+//      campus audience (identities/colleges/grades/deadline/valueTier/completeness, enum-filtered)
+//      the topics, the event grouping and the 为你 ranking need; it runs beside the scoring.
 // Material with only a title or a feed summary has its article page fetched before it is judged.
 import { z } from "zod";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
+import type { CampusAudience } from "@aihot/contracts/site";
 import { CATEGORIES } from "@aihot/industry/taxonomy";
+import { COLLEGES } from "@aihot/industry/colleges";
 import { SELECTION } from "@aihot/industry/selection";
 import { sql } from "../db.ts";
 import { chatJson, MODELS, type ContentPart } from "../providers/llm.ts";
@@ -25,7 +28,8 @@ import {
   needsShortTweetTranslation, parseTranslateOutput, PREFILTER_SYSTEM, prefilterUser, translateInputOf, UNDERSTAND_SYSTEM, understandUser,
   type IdentityGuard,
 } from "./writing.ts";
-import { CATEGORY_BY_ITEM_TYPE, CATEGORY_GUIDE, CATEGORY_TAGS, ENTITIES, ENTITY_TAGS, ITEM_TYPES, normalizeTags, TOPIC_TAGS } from "./vocabulary.ts";
+import { CATEGORY_BY_ITEM_TYPE, CATEGORY_GUIDE, CATEGORY_TAGS, ENTITIES, ENTITY_TAGS, ITEM_TYPES, normalizeTags, warmTagVocabulary } from "./vocabulary.ts";
+import { getTaxonomyTerms, recordCandidate } from "../taxonomy/terms.ts";
 import { promptText, promptVersion } from "./prompts.ts";
 
 export { buildMaterial, loadAnalyzeInput, type AnalyzeInputArticle };
@@ -120,11 +124,69 @@ const FactSchema = z
   .nullable()
   .catch(null);
 
+// 校园受众（structure 第五步；形状见 contracts 的 CampusAudience）：模型按提示词从原文证据提取，
+// 这里只做枚举过滤，非法值丢弃对应字段，不让整条结构失败。
+const CampusRawSchema = z
+  .object({
+    identities: z.array(z.string()).max(6).catch([]),
+    colleges: z.array(z.string()).max(8).catch([]),
+    grades: z.array(z.string()).max(8).catch([]),
+    deadline: z.string().max(30).nullish().catch(null),
+    valueTier: z.string().max(20).nullish().catch(null),
+    completeness: z.string().max(30).nullish().catch(null),
+  })
+  .nullish()
+  .catch(null);
+
+const CAMPUS_IDENTITIES = new Set(["本科生", "硕士生", "博士生", "教师"]);
+const CAMPUS_VALUE_TIERS = new Set(["action", "opportunity", "news"]);
+const CAMPUS_COMPLETENESS = new Set(["full", "attachment-missing", "unconfirmed"]);
+
+/** 学院别名 → 全称（industry/taxonomy.ts 的 ENTITIES 里属于学院的条目）。 */
+const COLLEGE_CANONICAL = new Map<string, string>();
+for (const e of Object.values(ENTITIES)) {
+  if (!(COLLEGES as readonly string[]).includes(e.name)) continue;
+  COLLEGE_CANONICAL.set(e.name, e.name);
+  for (const alias of e.aliases) COLLEGE_CANONICAL.set(alias, e.name);
+}
+
+const VALID_DAY = /^\d{4}-\d{2}-\d{2}$/;
+const isValidDay = (s: string) => VALID_DAY.test(s) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
+
+/** 正文短且页面带附件链接：模型的 completeness 缺省时按规则补 attachment-missing。 */
+const SHORT_BODY_CHARS = 500;
+
+/**
+ * 模型给的 campus 收敛到受控枚举：identities 只留四个合法值，colleges 只留认识的学院（别名归一
+ * 为全称）或「全校」，grades 只留入学年份/年级写法，deadline 必须是合法的 YYYY-MM-DD，valueTier
+ * 和 completeness 走白名单。一个字段全被滤掉就省略它；整段没剩下东西就返回 null。
+ */
+export function normalizeCampus(raw: z.infer<typeof CampusRawSchema>, a?: AnalyzeInputArticle): CampusAudience | null {
+  const out: CampusAudience = {};
+  if (raw) {
+    const identities = [...new Set(raw.identities.map((s) => s.trim()).filter((s) => CAMPUS_IDENTITIES.has(s)))];
+    if (identities.length) out.identities = identities;
+    const colleges = [...new Set(raw.colleges.map((s) => s.trim()).map((s) => (s === "全校" ? s : COLLEGE_CANONICAL.get(s))).filter((s): s is string => !!s))];
+    if (colleges.length) out.colleges = colleges.includes("全校") ? ["全校"] : colleges;
+    const grades = [...new Set(raw.grades.map((s) => s.trim()).filter((s) => /^\d{4}$/.test(s) || /^大[一二三四五六]$/.test(s)))];
+    if (grades.length) out.grades = grades;
+    if (raw.deadline && isValidDay(raw.deadline.trim())) out.deadline = raw.deadline.trim();
+    if (raw.valueTier && CAMPUS_VALUE_TIERS.has(raw.valueTier)) out.valueTier = raw.valueTier as CampusAudience["valueTier"];
+    if (raw.completeness && CAMPUS_COMPLETENESS.has(raw.completeness)) out.completeness = raw.completeness;
+  }
+  // 规则兜底：模型没说，而正文短且原文页带附件链接（名单/表格都在附件里）。
+  if (!out.completeness && a?.hasAttachment && (a.bodyText ?? a.excerpt ?? "").trim().length < SHORT_BODY_CHARS) out.completeness = "attachment-missing";
+  return Object.keys(out).length ? out : null;
+}
+
 const StructureSchema = z.object({
   category: z.enum(CATEGORY_KEYS).nullable().catch(null),
   tags: z.array(z.string()).max(12).catch([]),
   subjects: z.array(z.string()).max(6).catch([]),
   fact: FactSchema,
+  campus: CampusRawSchema,
+  /** 主题词表覆盖不了时模型提议的新词（进候选池，不进 tags）。 */
+  suggestedTopic: z.string().max(30).nullish().catch(null),
 });
 
 const UnderstandSchema = z.object({
@@ -140,15 +202,26 @@ const SummarizeSchema = z.object({ titleZh: z.string(), summaryZh: z.string(), b
 
 const ZH_COUNT = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
 
-/** The structure step's prompt (it writes nothing a reader sees), filled from the pack's vocabulary. */
-const STRUCTURE_SYSTEM = promptText("structure", {
-  categoryCount: ZH_COUNT[CATEGORIES.length] ?? String(CATEGORIES.length),
-  categoryGuide: CATEGORY_GUIDE,
-  categoryTags: CATEGORY_TAGS.join("、"),
-  topicTags: TOPIC_TAGS.join("、"),
-  entityTags: ENTITY_TAGS.join("、"),
-  entities: Object.entries(ENTITIES).map(([id, e]) => `${id}（${e.aliases.slice(0, 3).join("/")}）`).join("，"),
-});
+/** The structure step's prompt (it writes nothing a reader sees), filled from the pack's vocabulary.
+ *  主题词表每次调用前从运行时词表（taxonomy_terms）读，同时温热 normalizeTags 用的缓存。 */
+async function structureSystem(): Promise<string> {
+  const tax = await getTaxonomyTerms();
+  warmTagVocabulary(tax);
+  return promptText("structure", {
+    categoryCount: ZH_COUNT[CATEGORIES.length] ?? String(CATEGORIES.length),
+    categoryGuide: CATEGORY_GUIDE,
+    categoryTags: CATEGORY_TAGS.join("、"),
+    topicTags: tax.active.join("、"),
+    entityTags: ENTITY_TAGS.join("、"),
+    entities: Object.entries(ENTITIES).map(([id, e]) => `${id}（${e.aliases.slice(0, 3).join("/")}）`).join("，"),
+    collegeNames: COLLEGES.join("、"),
+    collegeAliases: Object.values(ENTITIES)
+      .map((e) => ({ name: e.name, short: e.aliases.filter((a) => a !== e.name) }))
+      .filter((e) => (COLLEGES as readonly string[]).includes(e.name) && e.short.length)
+      .map((e) => `${e.name} 在原文里也可能写作 ${e.short.join("、")}`)
+      .join("；"),
+  });
+}
 
 export interface AnalysisRun {
   prefilter: { label: "PASS" | "BLOCK" | "UNKNOWN"; reason: string; model: string; receiptId: number; reused: boolean };
@@ -171,7 +244,7 @@ export interface AnalysisRun {
     receiptIds: number[];
     reused: boolean;
   } | null;
-  structure: { model: string; category: string | null; tags: string[]; subjects: string[]; fact: z.infer<typeof FactSchema>; receiptId: number; reused: boolean } | null;
+  structure: { model: string; category: string | null; tags: string[]; subjects: string[]; fact: z.infer<typeof FactSchema>; campus: CampusAudience | null; receiptId: number; reused: boolean } | null;
 }
 
 const isContentFilter = (error: unknown) => error instanceof ProviderRejectedError && !error.retryable && /contentFilter|"1301"/.test(error.message);
@@ -242,13 +315,14 @@ async function runScores(a: AnalyzeInputArticle, threshold: number, opts: StepOp
 
 async function runStructure(a: AnalyzeInputArticle, opts: StepOpts): Promise<NonNullable<AnalysisRun["structure"]>> {
   const model = await modelFor("structure");
+  const system = await structureSystem();
   checkAnalysisRunning();
   const res = await chatJson({
     model,
     purpose: "structure_article",
     subject: subjectOf(a),
     promptVersion: PROMPT_VERSIONS.structure,
-    system: STRUCTURE_SYSTEM,
+    system,
     user: buildMaterial(a),
     schema: StructureSchema,
     temperature: 0.2,
@@ -256,7 +330,9 @@ async function runStructure(a: AnalyzeInputArticle, opts: StepOpts): Promise<Non
     attemptTag: tagged(opts.attemptTag, "structure"),
   });
   const subjects = [...new Set(res.data.subjects.map((s) => s.trim().toLowerCase()).filter((s) => s in ENTITIES))];
-  return { model: res.model, category: res.data.category, tags: normalizeTags(res.data.tags), subjects, fact: res.data.fact, receiptId: res.receiptId, reused: res.reused };
+  // 词表覆盖不了的主题：模型提议进候选池（同名计数，≥3 进审核队列），不进 tags。
+  if (res.data.suggestedTopic) await recordCandidate(res.data.suggestedTopic, "model", `/items/${a.id}`);
+  return { model: res.model, category: res.data.category, tags: normalizeTags(res.data.tags), subjects, fact: res.data.fact, campus: normalizeCampus(res.data.campus, a), receiptId: res.receiptId, reused: res.reused };
 }
 
 /** The content understanding; null when the model's content filter declines the material. */
@@ -399,6 +475,7 @@ export function normalizeAnalysis(run: AnalysisRun) {
     summaryZh,
     reasonZh: run.writing?.reasonZh ?? null,
     fact: run.structure?.fact ?? null,
+    campus: run.structure?.campus ?? null,
   };
 }
 
@@ -433,16 +510,17 @@ export async function analyzeArticle(articleId: string, opts: StepOpts = {}): Pr
     ...(w ? { writer: w.kind, writerModel: w.model, itemType: w.itemType ?? null, authorRole: w.authorRole ?? null } : {}),
     ...(w?.identityGuard?.outcome === "fallback" ? { identityGuard: w.identityGuard } : {}),
     fact: out.fact,
+    campus: out.campus,
   };
   const committed = await sql.begin(async (tx) => {
     const [current] = await tx<{ revision: number }[]>`SELECT revision FROM articles WHERE id = ${articleId} FOR UPDATE`;
     const stale = !current || current.revision !== input.revision;
     const [row] = await tx<{ id: number }[]>`
       INSERT INTO analyses (article_id, input_revision, origin, model, prompt_version, receipt_ids, relevance, category, tags,
-        subjects, title_zh, summary_zh, reason_zh, score, selected, output)
+        subjects, title_zh, summary_zh, reason_zh, score, selected, output, campus)
       VALUES (${articleId}, ${input.revision}, 'model', ${w?.model ?? run.prefilter.model}, ${ANALYZE_PROMPT_VERSION}, ${receiptIds},
         ${out.relevance}, ${out.category}, ${out.tags}, ${out.subjects}, ${out.titleZh}, ${out.summaryZh}, ${out.reasonZh},
-        ${out.score}, ${out.selected}, ${tx.json(detail as never)})
+        ${out.score}, ${out.selected}, ${tx.json(detail as never)}, ${out.campus ? tx.json(out.campus as never) : null})
       RETURNING id`;
     for (const id of receiptIds) await completeReceipt(tx, id);
     if (!stale) {

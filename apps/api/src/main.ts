@@ -1,5 +1,6 @@
 import { assertProductionSecrets, config } from "@aihot/backend/config";
 import { closeDb } from "@aihot/backend/db";
+import { memberAuthConfig } from "@aihot/backend/member/config";
 import { startHeartbeat } from "@aihot/backend/operations/heartbeat";
 import { startWorkerWatchdog } from "@aihot/backend/operations/watch";
 import { buildApp } from "./app.ts";
@@ -8,9 +9,11 @@ assertProductionSecrets([
   ["auth", "SESSION_SECRET"],
   ["auth", "IMG_PROXY_SIGN_SECRET"],
 ]);
-// Somebody must be able to sign in to the admin.
-if (config.environmentName === "production" && !(config.adminPassword && config.adminPassword.length >= 12) && !process.env.FEISHU_LOGIN_APP_ID) {
-  throw new Error("Refusing to start in production: set ADMIN_PASSWORD (at least 12 characters) or configure Feishu sign-in");
+// 后台登录已切换到 IF.Link 统一账户（决策 13.7）。生产环境没配置就拒绝给后台放行是不可能的——
+// 未配置时 /admin 不可用但站点其余功能必须正常（匿名浏览是主路径），所以这里只告警；
+// 生产 + DEV_ADMIN_BYPASS 才拒绝启动（assertProductionSecrets）。
+if (config.environmentName === "production" && !memberAuthConfig()) {
+  console.error("WARNING: IF.Link member auth (LOGTO_*/ACCOUNTS_*) is not configured; /admin sign-in is unavailable. The rest of the site works.");
 }
 
 const app = await buildApp();

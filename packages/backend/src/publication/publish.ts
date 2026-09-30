@@ -40,6 +40,8 @@ interface AnalysisRow {
   reason_zh: string | null;
   score: number | null;
   selected: boolean | null;
+  /** 受众与校园语义（「为你」排序用；形状见 contracts 的 CampusAudience）。 */
+  campus: Record<string, unknown> | null;
 }
 
 interface OverrideRow {
@@ -156,7 +158,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
     SELECT id, name, kind, tier, participation_mode, first_party, site_fulltext, syndicate_fulltext FROM sources WHERE id = ${article.source_id}`;
   if (!source) return null;
   const [analysis] = await tx<AnalysisRow[]>`
-    SELECT id, relevance, category, tags, subjects, title_zh, summary_zh, reason_zh, score, selected
+    SELECT id, relevance, category, tags, subjects, title_zh, summary_zh, reason_zh, score, selected, campus
     FROM analyses WHERE article_id = ${articleId} ORDER BY input_revision DESC, id DESC LIMIT 1`;
   const [override] = await tx<OverrideRow[]>`SELECT fields, visibility FROM editorial_overrides WHERE article_id = ${articleId}`;
   const [membership] = await tx<{ fact_id: number; story_id: number | null }[]>`
@@ -277,6 +279,11 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
         EXCLUDED.selected_ready_at, EXCLUDED.visible_after, EXCLUDED.body_mode, EXCLUDED.syndicate,
         EXCLUDED.indexable, EXCLUDED.story_id, EXCLUDED.fact_id, EXCLUDED.search_text,
         EXCLUDED.sort_at)`;
+
+  // campus 只参与「为你」排序，不属于共享负载：单独跟随最新分析，不进 changed/revision，也不触发同步账本。
+  const campus = analysis?.campus ? sql.json(analysis.campus as never) : null;
+  await tx`UPDATE publications SET campus = ${campus} WHERE article_id = ${articleId}
+           AND campus IS DISTINCT FROM ${campus}`;
 
   // The pool search row follows eligibility; its body part only covers full text the site may show.
   if (eligible) {

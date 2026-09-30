@@ -18,6 +18,7 @@ export const QUEUES = {
 
   notifySelected: "notify.selected",
   republishSource: "publication.republish-source",
+  taxonomyBackfill: "taxonomy.backfill",
 
   prepareMedia: "media.prepare",
 } as const;
@@ -36,6 +37,7 @@ export const QUEUE_OPTIONS: Record<string, QueueOptions> = {
   [QUEUES.mpCheck]: { policy: "short", retryLimit: 3, retryDelay: 60, retryBackoff: true, expireInSeconds: 600 },
   [QUEUES.notifySelected]: { policy: "short", retryLimit: 0, expireInSeconds: 300 },
   [QUEUES.republishSource]: { policy: "short", retryLimit: 2, retryDelay: 60, expireInSeconds: 3600 },
+  [QUEUES.taxonomyBackfill]: { policy: "short", retryLimit: 2, retryDelay: 120, retryBackoff: true, expireInSeconds: 3600 },
 
   [QUEUES.prepareMedia]: { policy: "short", retryLimit: 1, retryDelay: 120, expireInSeconds: 600 },
 };

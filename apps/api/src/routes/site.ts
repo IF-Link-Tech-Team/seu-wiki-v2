@@ -7,6 +7,9 @@ import { InvalidCursorError } from "@aihot/backend/lib/cursor";
 import { exportMarkdown, loadItemDetail, siteItemDetail } from "@aihot/backend/publication/detail";
 import { loadPool, SearchBusyError } from "@aihot/backend/publication/pool";
 import { loadTimeline } from "@aihot/backend/publication/timeline";
+import { loadForYou, parseForYouProfile } from "@aihot/backend/publication/foryou";
+import { loadDoc, loadExperienceIndex, loadSurvivalIndex, resolveDocRedirect } from "@aihot/backend/publication/docs";
+import { getTaxonomyTerms } from "@aihot/backend/taxonomy/terms";
 import { loadStoryFollowups } from "@aihot/backend/publication/followups";
 import { loadDevelopments, loadGroupReports } from "@aihot/backend/publication/groups";
 import { loadTopicTags } from "@aihot/backend/publication/topics";
@@ -100,13 +103,49 @@ export function registerSite(app: FastifyInstance) {
     return sendJsonWithEtag(req, reply, body, { etagPrefix: "tl", cacheControl: cc, etagOf: { ...data, hot } });
   }));
 
+  // 「为你」：画像是查询参数，响应因人而异，永不进共享缓存。
+  app.get("/api/site/for-you", siteHandler(async (req, reply) => {
+    const q = looseQuery(req);
+    const category = q.category ?? null;
+    if (category !== null && !isCategoryKey(category)) throw new BadRequest("invalid category");
+    const limit = Math.min(Math.max(Number(q.limit) || 20, 1), 40);
+    const data = await loadForYou({ profile: parseForYouProfile(q), category: category as CategoryKey | null, cursor: q.cursor || null, limit });
+    reply.header("Cache-Control", "private, no-store");
+    return reply.send(data);
+  }));
+
+  app.get("/api/site/docs/survival", siteHandler(async (req, reply) => {
+    return sendJsonWithEtag(req, reply, await loadSurvivalIndex(), { etagPrefix: "docs-survival", cacheControl: "public, max-age=300, s-maxage=300" });
+  }));
+
+  app.get("/api/site/docs/experience", siteHandler(async (req, reply) => {
+    const q = looseQuery(req);
+    const list = (v: string | undefined) => (v ?? "").split(",").map((s) => s.trim().slice(0, 60)).filter(Boolean).slice(0, 10);
+    const data = await loadExperienceIndex({ category: list(q.category), grade: list(q.grade), college: list(q.college) });
+    return sendJsonWithEtag(req, reply, data, { etagPrefix: "docs-experience", cacheControl: "public, max-age=300, s-maxage=300" });
+  }));
+
+  app.get("/api/site/doc-redirect", siteHandler(async (req, reply) => {
+    const target = await resolveDocRedirect(String(looseQuery(req).path ?? ""));
+    if (!target) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "no redirect for this path" });
+    return sendJsonWithEtag(req, reply, { target }, { etagPrefix: "doc-redirect", cacheControl: "public, max-age=3600, s-maxage=3600" });
+  }));
+
+  app.get("/api/site/docs/*", siteHandler(async (req, reply) => {
+    const slug = String((req.params as Record<string, string>)["*"] ?? "").replace(/\/+$/, "").slice(0, 300);
+    const doc = slug ? await loadDoc(slug) : null;
+    if (!doc) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "doc not found", cacheControl: "public, max-age=60" });
+    return sendJsonWithEtag(req, reply, doc, { etagPrefix: "doc", cacheControl: "public, max-age=300, s-maxage=300" });
+  }));
+
   app.get("/api/site/pool", siteHandler(async (req, reply) => {
     const q = looseQuery(req);
     const filters = await parseFilters(q);
     const page = Math.min(Math.max(Number(q.page) || 1, 1), 50);
     const search = q.q?.trim() ? q.q.trim().slice(0, 200) : null;
     const tab = q.tab === "relevance" ? "relevance" : "time";
-    const data = await loadPool({ ...filters, q: search, tab, page });
+    const type = (["feed", "survival", "experience"] as const).find((t) => t === q.type) ?? "all";
+    const data = await loadPool({ ...filters, q: search, tab, type, page });
     const { generatedAt: _, ...content } = data;
     return sendJsonWithEtag(req, reply, data, { etagPrefix: "pool", cacheControl: "public, max-age=60, s-maxage=60", etagOf: content });
   }));
@@ -176,6 +215,12 @@ export function registerSite(app: FastifyInstance) {
 
   app.get("/api/site/topics", siteHandler(async (req, reply) => {
     return sendJsonWithEtag(req, reply, { topics: await listTopicSummaries() }, { etagPrefix: "topics", cacheControl: "public, max-age=300, s-maxage=300" });
+  }));
+
+  // 运行时兴趣词表（active 词；/for-you 的兴趣 chip 从这里读）。
+  app.get("/api/site/taxonomy", siteHandler(async (req, reply) => {
+    const tax = await getTaxonomyTerms();
+    return sendJsonWithEtag(req, reply, { topics: tax.active }, { etagPrefix: "taxonomy", cacheControl: "public, max-age=60, s-maxage=60" });
   }));
 
   app.get("/api/site/topics/:slug", siteHandler(async (req, reply) => {

@@ -118,15 +118,117 @@ export interface TimelineResponse {
   generatedAt: string;
 }
 
+export type SearchTypeFilter = "all" | "feed" | "survival" | "experience";
+
 export interface PoolResponse {
-  filters: TimelineFilters & { q: string | null; tab: "time" | "relevance" };
+  filters: TimelineFilters & { q: string | null; tab: "time" | "relevance"; type: SearchTypeFilter };
   items: FeedItemSummary[];
+  /** 手册/经验的命中（有检索词且 type 不是 feed 时），按相关度排，带章节锚点。 */
+  docs: DocSearchHit[];
   page: number;
   pageCount: number;
   total: number;
   todayCount: number;
   freshness: string;
   generatedAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// 为你：画像与个性化信息流（只加权和标注，不剔除）
+// ---------------------------------------------------------------------------
+
+/** 条目的受众与校园语义（publications.campus / analyses.campus 的形状），全部可空。 */
+export interface CampusAudience {
+  /** 面向的学历身份，如 ["本科生", "硕士生"]。 */
+  identities?: string[];
+  /** 面向的学院全称；空数组或含「全校」是中性，不算命中任何学院。 */
+  colleges?: string[];
+  /** 面向的年级，如 ["大一", "大三"]。 */
+  grades?: string[];
+  /** 报名/办理截止（ISO 日期）；还在期限内时时效不衰减。 */
+  deadline?: string | null;
+  valueTier?: "action" | "opportunity" | "news";
+  completeness?: string;
+}
+
+/** 读者画像（查询参数或 seuwiki_profile cookie）。未填的维度中性，不加不减。 */
+export interface ForYouProfile {
+  college?: string | null;
+  /** 本科 | 硕士 | 博士。 */
+  degree?: string | null;
+  grade?: string | null;
+  interests?: string[];
+  orgs?: string[];
+}
+
+export interface ForYouItem extends FeedItemSummary {
+  /** 命中的画像维度（如 ["信息科学与工程学院", "本科生"]）；空数组 = 未命中，正常排序。 */
+  matchReasons: string[];
+  /** 排序分 = 基础分 × 时效系数 + 匹配加成（封顶 40）。 */
+  rankScore: number;
+}
+
+export interface ForYouResponse {
+  profile: ForYouProfile;
+  items: ForYouItem[];
+  nextCursor: string | null;
+  generatedAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// 知识内容（手册 / 经验；Git 真源导入的派生数据）
+// ---------------------------------------------------------------------------
+
+export interface DocHeading {
+  id: string;
+  text: string;
+  depth: number;
+}
+
+export interface DocSummary {
+  slug: string;
+  kind: "survival" | "experience";
+  title: string;
+  description: string | null;
+  author: string | null;
+  /** 经历/原文时间（原文写法，如 "2021-08"），不是导入时间。 */
+  occurredAt: string | null;
+  category: string | null;
+  grade: string | null;
+  college: string | null;
+  part: string | null;
+  position: number;
+}
+
+export interface DocDetail extends DocSummary {
+  html: string;
+  headings: DocHeading[];
+  sourceUrl: string | null;
+  prev: DocSummary | null;
+  next: DocSummary | null;
+  version: number;
+  updatedAt: string;
+}
+
+export interface SurvivalPartView {
+  key: string;
+  label: string;
+  groups: Array<{ key: string; items: DocSummary[] }>;
+}
+
+export interface ExperienceIndex {
+  filters: Array<{ key: "category" | "grade" | "college"; label: string; values: string[] }>;
+  items: DocSummary[];
+}
+
+/** 统一搜索里一条手册/经验结果：带类型标记与最匹配章节的锚点。 */
+export interface DocSearchHit {
+  slug: string;
+  kind: "survival" | "experience";
+  title: string;
+  description: string | null;
+  occurredAt: string | null;
+  anchor: { id: string; text: string } | null;
 }
 
 export interface OutlineEntry {

@@ -13,6 +13,10 @@ import { listMonitorEvents, listMonitorPosts, relinkPost, resolveMonitorPost, re
 import { releaseReceipt, requeueFailedArticles, resolveDelivery, runsOverview } from "@aihot/backend/admin/runs";
 import { listBudgets, listTargets, replaceContactQr, setTargetEnabled, updateBudget } from "@aihot/backend/admin/settings";
 import { createSource, fetchNow, listSources, previewSource, sourceDetail, updateSource } from "@aihot/backend/admin/sources";
+import {
+  addOrgMember, approveOrgPost, createOrganization, listOrganizations, listOrgMembers, listOrgPosts, rejectOrgPost, resolveOrgPostChange, setOrgVerified,
+} from "@aihot/backend/admin/orgs";
+import { addTerm, aliasTerm, approveTerm, listTaxonomy, rejectTerm, TERM_GRANULARITY_GUIDE } from "@aihot/backend/taxonomy/terms";
 import { sql } from "@aihot/backend/db";
 import { loadContact } from "@aihot/backend/site/contact";
 import { sendProblem } from "../http/respond.ts";
@@ -67,6 +71,37 @@ export function registerAdmin(app: FastifyInstance) {
     const b = body<{ from: number; into: number; reason: string }>(req);
     return mergeStories(Number(b.from), Number(b.into), b.reason, actorOf(admin));
   }));
+
+  // 组织入驻与投稿审核
+  app.get("/api/admin/orgs", adminHandler(async () => ({ items: await listOrganizations() })));
+  app.post("/api/admin/orgs", adminHandler(async (req, _reply, admin) => createOrganization(body(req), actorOf(admin))));
+  app.get("/api/admin/orgs/:id/members", adminHandler(async (req) => ({ items: await listOrgMembers(Number(param(req, "id"))) })));
+  app.post("/api/admin/orgs/:id/members", adminHandler(async (req, _reply, admin) => addOrgMember(Number(param(req, "id")), body(req), actorOf(admin))));
+  app.post("/api/admin/orgs/:id/verify", adminHandler(async (req, _reply, admin) => {
+    const b = body<{ verified: boolean }>(req);
+    return setOrgVerified(Number(param(req, "id")), !!b.verified, actorOf(admin));
+  }));
+
+  app.get("/api/admin/org-posts", adminHandler(async (req) => ({ items: await listOrgPosts({ status: q(req).status }) })));
+  app.post("/api/admin/org-posts/:id/approve", adminHandler(async (req, _reply, admin) => approveOrgPost(Number(param(req, "id")), actorOf(admin))));
+  app.post("/api/admin/org-posts/:id/reject", adminHandler(async (req, _reply, admin) => {
+    const b = body<{ reason: string }>(req);
+    return rejectOrgPost(Number(param(req, "id")), String(b.reason ?? ""), actorOf(admin));
+  }));
+  app.post("/api/admin/org-posts/:id/change", adminHandler(async (req, _reply, admin) => {
+    const b = body<{ approve: boolean; note?: string }>(req);
+    return resolveOrgPostChange(Number(param(req, "id")), !!b.approve, String(b.note ?? ""), actorOf(admin));
+  }));
+
+  // 词表（运行时兴趣词表：候选审核、批准、别名、手动加）
+  app.get("/api/admin/taxonomy", adminHandler(async () => ({ ...(await listTaxonomy()), guide: TERM_GRANULARITY_GUIDE })));
+  app.post("/api/admin/taxonomy", adminHandler(async (req, _reply, admin) => {
+    const b = body<{ name: string; grp: string }>(req);
+    return addTerm(b.name, String(b.grp ?? ""), actorOf(admin));
+  }));
+  app.post("/api/admin/taxonomy/:id/approve", adminHandler(async (req, _reply, admin) => approveTerm(Number(param(req, "id")), String(body(req).grp ?? ""), actorOf(admin))));
+  app.post("/api/admin/taxonomy/:id/alias", adminHandler(async (req, _reply, admin) => aliasTerm(Number(param(req, "id")), String(body(req).target ?? ""), actorOf(admin))));
+  app.post("/api/admin/taxonomy/:id/reject", adminHandler(async (req, _reply, admin) => rejectTerm(Number(param(req, "id")), actorOf(admin))));
 
   // Feedback
   app.get("/api/admin/feedback", adminHandler(async (req) => listFeedback({ status: q(req).status, q: q(req).q, page: page(req) })));
@@ -141,6 +176,7 @@ export function registerAdmin(app: FastifyInstance) {
       SELECT (SELECT count(*)::int FROM feedback WHERE status = 'new') AS feedback,
              (SELECT count(*)::int FROM sources WHERE enabled AND health = 'failing') AS sources,
              (SELECT count(*)::int FROM receipts WHERE status = 'unknown') + (SELECT count(*)::int FROM deliveries WHERE status = 'unknown') AS runs,
+             (SELECT count(*)::int FROM org_posts WHERE status = 'pending' OR pending_change IS NOT NULL) AS "orgPosts",
              (SELECT count(*)::int FROM monitor_posts WHERE (recognition->>'needsReview')::boolean IS TRUE AND (recognition->>'reviewed')::boolean IS NOT TRUE AND processed_at > now() - interval '7 days')
                + (SELECT count(*)::int FROM monitor_posts WHERE processed_at IS NULL AND collected_at < now() - interval '20 minutes') AS monitor`;
     return c;

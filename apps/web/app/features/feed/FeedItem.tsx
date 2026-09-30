@@ -19,9 +19,11 @@ export interface FeedItemProps {
   onOpen?: (id: string) => void;
   /** Show category and tags under the text (全部动态, topics, search). */
   showTags?: boolean;
+  /** 「为你」命中的画像维度，显示为理由 chip。 */
+  matchReasons?: string[];
 }
 
-export const FeedItem = memo(function FeedItem({ item, group, filters, read = false, onOpen, showTags = false }: FeedItemProps) {
+export const FeedItem = memo(function FeedItem({ item, group, filters, read = false, onOpen, showTags = false, matchReasons }: FeedItemProps) {
   const isX = item.channel === "x" && !!item.x;
   const open = () => onOpen?.(item.id);
   const showSources = !!group && (group.additionalSourceCount > 0 || (group.developmentCount <= 1 && group.reportCount > 1));
@@ -69,6 +71,17 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
 
       {isX && item.x!.media.length > 0 && <MediaThumbs media={item.x!.media} className="mt-2.5" />}
       {isX && item.x!.quoted?.text && <QuotedLine quoted={item.x!.quoted} />}
+
+      {matchReasons && matchReasons.length > 0 && (
+        <div className="relative z-10 mt-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-[12px] text-ink-4">为你放前面：</span>
+          {matchReasons.map((r) => (
+            <span key={r} className="chip border-accent/50 bg-transparent text-accent">
+              {r}
+            </span>
+          ))}
+        </div>
+      )}
 
       {(tags.length > 0 || (showTags && item.category)) && (
         <div className="relative z-10 mt-2 hidden flex-wrap gap-x-2.5 gap-y-1 text-[12px] text-ink-4 lg:flex">

@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { REPO_ROOT } from "../config.ts";
+import { memberAuthConfig } from "../member/config.ts";
 
 export interface ChangelogRelease {
   date: string;
@@ -24,5 +25,5 @@ export function loadChangelog() {
 }
 
 export function siteMeta() {
-  return { changelogVersion: loadChangelog().latestVersion };
+  return { changelogVersion: loadChangelog().latestVersion, memberAuth: memberAuthConfig() !== null };
 }

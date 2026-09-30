@@ -5,6 +5,7 @@ import { Wordmark } from "../Logo";
 import { useChangelogSeen } from "../../lib/local-state";
 import { SIDEBAR, tabIsActive, type NavItem } from "./nav";
 import { ThemeSwitch } from "./ThemeSwitch";
+import { AccountEntry } from "../../features/member/AccountEntry";
 
 /** True while the changelog has an entry newer than the one this reader last opened. */
 export function useChangelogDot(latestVersion: string | null): boolean {
@@ -38,7 +39,7 @@ function SideLink({ item, dot }: { item: NavItem; dot: boolean }) {
   );
 }
 
-export function Sidebar({ changelogVersion }: { changelogVersion: string | null }) {
+export function Sidebar({ changelogVersion, memberAuth = false }: { changelogVersion: string | null; memberAuth?: boolean }) {
   const dot = useChangelogDot(changelogVersion);
   return (
     <aside className="sticky top-0 hidden h-dvh w-[180px] shrink-0 flex-col border-r border-line bg-sidebar px-3 pb-3.5 pt-6 lg:flex">
@@ -58,6 +59,7 @@ export function Sidebar({ changelogVersion }: { changelogVersion: string | null 
         ))}
       </nav>
       <div className="mt-2 space-y-2.5 px-1 pt-1">
+        <AccountEntry enabled={memberAuth} />
         <ThemeSwitch className="mx-1" />
         {SITE.icp && (
           <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" className="block px-2 text-[10px] text-ink-4 hover:text-ink-3">
