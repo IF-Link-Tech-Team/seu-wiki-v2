@@ -1,0 +1,1146 @@
+{
+ "$schema": "信源目录：候选信源底册（来自 seuwiki-pipeline 三报告清单 S001-S203 + 全景目录 L1），后台「信源目录」页勾选入库。加新候选直接编辑此文件。",
+ "version": 1,
+ "entries": [
+  {
+   "catalogId": "S001",
+   "name": "东南大学主站",
+   "kind": "web_list",
+   "url": "https://www.seu.edu.cn",
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "校级新闻、机构设置、重大事项总入口"
+  },
+  {
+   "catalogId": "S002",
+   "name": "东南大学“院系设置”",
+   "kind": "web_list",
+   "url": "https://www.seu.edu.cn/yxsz/list.psp",
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "学院官网索引；A 的学院核查基准"
+  },
+  {
+   "catalogId": "S003",
+   "name": "东南大学本科招生网",
+   "kind": "web_list",
+   "url": "https://zsb.seu.edu.cn",
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "录取查询、招生政策、计划、公示"
+  },
+  {
+   "catalogId": "S015",
+   "name": "东南大学",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "学校形象、新闻、重大活动、科研与预约入校"
+  },
+  {
+   "catalogId": "S016",
+   "name": "东大发布",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "时效性新闻与热点回应；C 也作主号互动栏目名"
+  },
+  {
+   "catalogId": "S017",
+   "name": "东南学工家",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": "seu_sasc",
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "学工、资助、心理、掌上学工、一站式社区"
+  },
+  {
+   "catalogId": "S018",
+   "name": "东南大学研究生",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "研究生招生培养、就业、校务与活动"
+  },
+  {
+   "catalogId": "S019",
+   "name": "东南大学研究生会",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": false,
+   "note": "B 与 S018 视作同一，C 则分列"
+  },
+  {
+   "catalogId": "S020",
+   "name": "东南大学学生会",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": false,
+   "note": "活动、权益、图库、失物招领"
+  },
+  {
+   "catalogId": "S021",
+   "name": "东南大学就业指导中心",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "双选会、宣讲、选调、国际组织实习"
+  },
+  {
+   "catalogId": "S022",
+   "name": "东南大学本科招生",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "招生简章、分数、开放日、新生信息源合辑"
+  },
+  {
+   "catalogId": "S023",
+   "name": "东南大学研招",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "研究生招生信息"
+  },
+  {
+   "catalogId": "S024",
+   "name": "东大信息化",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "校园网、报修、VPN、正版软件、云盘及数字服务"
+  },
+  {
+   "catalogId": "S025",
+   "name": "东大财务",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "一卡通、缴费、票据、报销进度"
+  },
+  {
+   "catalogId": "S026",
+   "name": "东大印象总务",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "菜谱、接驳车、维修、场馆副馆等后勤信息"
+  },
+  {
+   "catalogId": "S027",
+   "name": "东南大学图书馆 / 东大图书馆",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "馆藏、借阅、空间预约、电子资源"
+  },
+  {
+   "catalogId": "S028",
+   "name": "东南大学医院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "门诊、疫苗、医保、体检"
+  },
+  {
+   "catalogId": "S029",
+   "name": "东南大学平安校园",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "访客、车辆、门禁、安全预警"
+  },
+  {
+   "catalogId": "S030",
+   "name": "东南大学教务处",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "选课、考试、学籍规定"
+  },
+  {
+   "catalogId": "S031",
+   "name": "风雅颂东南",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": true,
+   "note": "公共艺术与高雅艺术活动"
+  },
+  {
+   "catalogId": "S032",
+   "name": "东南大学公共治理研究会 / 东南大学基层就业",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": false,
+   "note": "报告称前者迁至后者，提供基层就业/选调信息"
+  },
+  {
+   "catalogId": "S033",
+   "name": "社彩东南",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "机关与职能部门",
+   "official": false,
+   "note": "校团委学生社团管理部官方枢纽、星级评定与招新"
+  },
+  {
+   "catalogId": "S041",
+   "name": "东南大学官方微信矩阵页",
+   "kind": "web_list",
+   "url": "https://www.seu.edu.cn/wx1/list.htm",
+   "wxid": null,
+   "category": "校级媒体与权益服务",
+   "official": true,
+   "note": "官方微信入口汇总页"
+  },
+  {
+   "catalogId": "S042",
+   "name": "东大开放参观 / 预约入校",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校级媒体与权益服务",
+   "official": true,
+   "note": "访客入校预约；报告称为授权入口"
+  },
+  {
+   "catalogId": "S043",
+   "name": "东南大学广播台 / seu广播台",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": "seubradio",
+   "category": "校级媒体与权益服务",
+   "official": false,
+   "note": "节目、点歌、直播、校园新闻"
+  },
+  {
+   "catalogId": "S046",
+   "name": "东大图库",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校级媒体与权益服务",
+   "official": false,
+   "note": "校园图片下载与互动"
+  },
+  {
+   "catalogId": "S048",
+   "name": "东南大学学生会线上失物招领",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校级媒体与权益服务",
+   "official": false,
+   "note": "拾物登记、寻物查询"
+  },
+  {
+   "catalogId": "S050",
+   "name": "建筑学院官网",
+   "kind": "web_list",
+   "url": "https://arch.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院通知、作品与学术思想"
+  },
+  {
+   "catalogId": "S051",
+   "name": "中大院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "报告确认其并非标准学院名"
+  },
+  {
+   "catalogId": "S052",
+   "name": "机械工程学院官网",
+   "kind": "web_list",
+   "url": "https://me.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院与实验室信息"
+  },
+  {
+   "catalogId": "S053",
+   "name": "东南大学机械工程学院 / MESEU",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": "meseu_news",
+   "category": "学院与书院",
+   "official": true,
+   "note": "SRTP、竞赛、学习指南"
+  },
+  {
+   "catalogId": "S054",
+   "name": "能源与环境学院官网",
+   "kind": "web_list",
+   "url": "https://power.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S056",
+   "name": "土木工程学院官网",
+   "kind": "web_list",
+   "url": "https://civil.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S058",
+   "name": "交通学院官网",
+   "kind": "web_list",
+   "url": "https://tc.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S060",
+   "name": "材料科学与工程学院官网",
+   "kind": "web_list",
+   "url": "https://smse.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "公告、师资、人才培养"
+  },
+  {
+   "catalogId": "S061",
+   "name": "东南大学材料学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": "smsseeu",
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院科研与培养资讯"
+  },
+  {
+   "catalogId": "S062",
+   "name": "东南材料团委",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "团学活动与新生指南"
+  },
+  {
+   "catalogId": "S063",
+   "name": "化学化工学院官网",
+   "kind": "web_list",
+   "url": "https://chem.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S064",
+   "name": "东南大学化学化工学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "推免夏令营等"
+  },
+  {
+   "catalogId": "S066",
+   "name": "电气工程学院官网",
+   "kind": "web_list",
+   "url": "https://ee.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S068",
+   "name": "计算机科学与工程学院官网",
+   "kind": "web_list",
+   "url": "https://cs.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "与软件、人工智能实体化运行"
+  },
+  {
+   "catalogId": "S069",
+   "name": "东南大学计算机科学与工程学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "招生就业、科研、讲座"
+  },
+  {
+   "catalogId": "S070",
+   "name": "软件学院官方信息源",
+   "kind": "web_list",
+   "url": "https://cose.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "A 点名学院，但未给独立网站或公众号"
+  },
+  {
+   "catalogId": "S071",
+   "name": "人工智能学院官方信息源",
+   "kind": "web_list",
+   "url": "https://ai.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "A 点名学院，但未给独立网站或公众号"
+  },
+  {
+   "catalogId": "S072",
+   "name": "信息科学与工程学院官网",
+   "kind": "web_list",
+   "url": "https://radio.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "报告提醒域名规则不同，但具体值缺失"
+  },
+  {
+   "catalogId": "S073",
+   "name": "东南大学信息科学与工程学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "高活跃学院号"
+  },
+  {
+   "catalogId": "S074",
+   "name": "电子科学与工程学院官网",
+   "kind": "web_list",
+   "url": "https://electronic.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S076",
+   "name": "自动化学院官网",
+   "kind": "web_list",
+   "url": "https://automation.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S078",
+   "name": "仪器科学与工程学院官网",
+   "kind": "web_list",
+   "url": "https://ins.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S079",
+   "name": "东南大学仪器科学与工程学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学术新闻、学生文化栏目"
+  },
+  {
+   "catalogId": "S080",
+   "name": "东大仪科",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "仪科研会招新文章发布者"
+  },
+  {
+   "catalogId": "S081",
+   "name": "仪科研会",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "仪器学院研究生服务"
+  },
+  {
+   "catalogId": "S082",
+   "name": "集成电路学院官网",
+   "kind": "web_list",
+   "url": "https://ic.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S083",
+   "name": "东南大学集成电路学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "芯片、半导体、人才引进"
+  },
+  {
+   "catalogId": "S084",
+   "name": "网络空间安全学院官网",
+   "kind": "web_list",
+   "url": "https://cyber.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S085",
+   "name": "东南大学网络空间安全学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "网安、数据安全与一站式社区"
+  },
+  {
+   "catalogId": "S086",
+   "name": "数学学院官网",
+   "kind": "web_list",
+   "url": "https://math.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S087",
+   "name": "东南大学数学学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "数模、拔尖培养、新生渠道指南"
+  },
+  {
+   "catalogId": "S088",
+   "name": "物理学院官网",
+   "kind": "web_list",
+   "url": "https://physics.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S089",
+   "name": "东南大学物理学院官方公众号",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "吴健雄班、实验中心、迎新信息"
+  },
+  {
+   "catalogId": "S090",
+   "name": "牛顿的四维口袋",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "物理相关迎新信息参考来源"
+  },
+  {
+   "catalogId": "S091",
+   "name": "统计与数据科学学院官方信息源",
+   "kind": "web_list",
+   "url": "https://stat.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "统计与数据科学交叉应用"
+  },
+  {
+   "catalogId": "S092",
+   "name": "经济管理学院官网",
+   "kind": "web_list",
+   "url": "https://em.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S093",
+   "name": "东南大学经济管理学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "MBA/EMBA、案例竞赛"
+  },
+  {
+   "catalogId": "S094",
+   "name": "SEU经管团学",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "访客系统办事指南来源"
+  },
+  {
+   "catalogId": "S095",
+   "name": "人文学院官网",
+   "kind": "web_list",
+   "url": "https://rwxy.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S097",
+   "name": "外国语学院官方信息源",
+   "kind": "web_list",
+   "url": "https://sfl.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "四六级与基础教学"
+  },
+  {
+   "catalogId": "S098",
+   "name": "马克思主义学院官方信息源",
+   "kind": "web_list",
+   "url": "https://marxism.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "思政教育动态"
+  },
+  {
+   "catalogId": "S099",
+   "name": "东南大学体育系",
+   "kind": "web_list",
+   "url": "https://tyx.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "早锻炼、场馆、赛事"
+  },
+  {
+   "catalogId": "S100",
+   "name": "东南大学艺术学院",
+   "kind": "web_list",
+   "url": "https://arts.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "艺术设计、展演与招生"
+  },
+  {
+   "catalogId": "S101",
+   "name": "法学院官方信息源",
+   "kind": "web_list",
+   "url": "https://law.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学术、实习、就业"
+  },
+  {
+   "catalogId": "S102",
+   "name": "医学院官网",
+   "kind": "web_list",
+   "url": "https://med.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院权威入口"
+  },
+  {
+   "catalogId": "S103",
+   "name": "东南大学医学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "临床见习、附属医院、书院空间通知"
+  },
+  {
+   "catalogId": "S104",
+   "name": "公共卫生学院官方信息源",
+   "kind": "web_list",
+   "url": "https://gw.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "公卫、流调、政策"
+  },
+  {
+   "catalogId": "S105",
+   "name": "生物科学与医学工程学院官方信息源",
+   "kind": "web_list",
+   "url": "https://bme.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "生物医学工程前沿"
+  },
+  {
+   "catalogId": "S106",
+   "name": "生命科学与技术学院官方信息源",
+   "kind": "web_list",
+   "url": "https://ils.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "合成生物学与生命健康"
+  },
+  {
+   "catalogId": "S107",
+   "name": "吴健雄学院官网",
+   "kind": "web_list",
+   "url": "https://wjx.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "拔尖创新培养"
+  },
+  {
+   "catalogId": "S108",
+   "name": "东南大学吴健雄学院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "学院动态、书院生活、空间预约"
+  },
+  {
+   "catalogId": "S109",
+   "name": "健雄书院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "与吴健雄学院联动"
+  },
+  {
+   "catalogId": "S110",
+   "name": "国家卓越工程师学院官方信息源",
+   "kind": "web_list",
+   "url": "https://gjzygcs.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "独立公众号报告称尚在建设或完善"
+  },
+  {
+   "catalogId": "S111",
+   "name": "未来技术学院官方信息源",
+   "kind": "web_list",
+   "url": "https://futuretech.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "独立公众号报告称尚在建设或完善"
+  },
+  {
+   "catalogId": "S112",
+   "name": "新生学院官网",
+   "kind": "web_list",
+   "url": "https://xsxy.seu.edu.cn",
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "新生通识与适应指导"
+  },
+  {
+   "catalogId": "S114",
+   "name": "李文正书院",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": false,
+   "note": "A 用作书院信息源示例"
+  },
+  {
+   "catalogId": "S115",
+   "name": "网络空间安全学院一站式学生社区",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学院与书院",
+   "official": true,
+   "note": "网安学院社区通知"
+  },
+  {
+   "catalogId": "S117",
+   "name": "东南大学无锡校区",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校区与社区空间",
+   "official": true,
+   "note": "无锡校区综合发布与一站式服务"
+  },
+  {
+   "catalogId": "S118",
+   "name": "东南大学无锡分校",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校区与社区空间",
+   "official": true,
+   "note": "无锡校区学科与生活信息"
+  },
+  {
+   "catalogId": "S119",
+   "name": "青声锡语话东南",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校区与社区空间",
+   "official": false,
+   "note": "无锡分校学生资讯与生活指南"
+  },
+  {
+   "catalogId": "S120",
+   "name": "东南大学无锡分校图书馆",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校区与社区空间",
+   "official": true,
+   "note": "独立空间预约与借阅"
+  },
+  {
+   "catalogId": "S121",
+   "name": "东大苏工",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校区与社区空间",
+   "official": true,
+   "note": "报告指向苏州研究院/联合研究生院相关招生、导师与校区进展"
+  },
+  {
+   "catalogId": "S129",
+   "name": "东南文苑",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "校区与社区空间",
+   "official": false,
+   "note": "秉文书院舞蹈房、录音室等预约"
+  },
+  {
+   "catalogId": "S145",
+   "name": "极坐标话剧团 / 极坐标话剧社",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "剧目、票务、招新"
+  },
+  {
+   "catalogId": "S146",
+   "name": "地理协会 / 东奔南走",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "Citywalk、地理探索、活动召集"
+  },
+  {
+   "catalogId": "S151",
+   "name": "玩转舞台工作室",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "灯光、音控、技术沙龙"
+  },
+  {
+   "catalogId": "S152",
+   "name": "INFINITY 电子音乐协会",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "电音节与巡演"
+  },
+  {
+   "catalogId": "S156",
+   "name": "机器人俱乐部 / RoboMaster / RoboClub",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "赛事、技术、招新"
+  },
+  {
+   "catalogId": "S160",
+   "name": "支教协会",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "支教招募、募集、实践故事"
+  },
+  {
+   "catalogId": "S162",
+   "name": "SEU Finder",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "摄影/“家乡”主题活动参考来源"
+  },
+  {
+   "catalogId": "S163",
+   "name": "青年东大说",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "学生组织与社团",
+   "official": false,
+   "note": "百团大战、联合招新、社团信息"
+  },
+  {
+   "catalogId": "S165",
+   "name": "小猴偷米",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "成绩/GPA、一卡通分析、新生指引、互动社区"
+  },
+  {
+   "catalogId": "S167",
+   "name": "东大集市 / 东南集市",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "二手、求助、跑腿、兼职、交友与热帖"
+  },
+  {
+   "catalogId": "S171",
+   "name": "东大热帖",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "每日精选内容"
+  },
+  {
+   "catalogId": "S174",
+   "name": "金陵情报站",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "社团、地图、美食等关键词攻略"
+  },
+  {
+   "catalogId": "S175",
+   "name": "东南日报",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "报告称为校报延伸阅读，但未证明官方归属"
+  },
+  {
+   "catalogId": "S177",
+   "name": "校园表白墙",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "表白、失物、二手、热点"
+  },
+  {
+   "catalogId": "S189",
+   "name": "东小南",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "B 作为社团汇总参考；C 指认背后为商业营销机构"
+  },
+  {
+   "catalogId": "S192",
+   "name": "甄选名校",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "学部改革参考来源"
+  },
+  {
+   "catalogId": "S193",
+   "name": "Esplanning",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "强基/院校介绍参考来源"
+  },
+  {
+   "catalogId": "S194",
+   "name": "车大白板",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "校园网站指南参考来源"
+  },
+  {
+   "catalogId": "S195",
+   "name": "东大小宝",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "新生网站、公众号、App、社团汇总"
+  },
+  {
+   "catalogId": "S196",
+   "name": "保研优学",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "推免报名汇总"
+  },
+  {
+   "catalogId": "S197",
+   "name": "济南新艺画室",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "院校介绍参考来源"
+  },
+  {
+   "catalogId": "S199",
+   "name": "惊蛰青年",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "“知乎治校”现象参考来源"
+  },
+  {
+   "catalogId": "S200",
+   "name": "玄蝎不冷",
+   "kind": "mp_account",
+   "url": null,
+   "wxid": null,
+   "category": "民间平台与外部来源",
+   "official": false,
+   "note": "多校校园体验文章"
+  },
+  {
+   "catalogId": "S203",
+   "name": "蒙纳士大学国际学院（苏州）官网",
+   "kind": "web_list",
+   "url": "https://smjgs.seu.edu.cn",
+   "wxid": null,
+   "category": "官方补录",
+   "official": true,
+   "note": "蒙纳士联合学院通知与院务"
+  }
+ ]
+}

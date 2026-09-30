@@ -13,6 +13,7 @@ import { listMonitorEvents, listMonitorPosts, relinkPost, resolveMonitorPost, re
 import { releaseReceipt, requeueFailedArticles, resolveDelivery, runsOverview } from "@aihot/backend/admin/runs";
 import { listBudgets, listTargets, replaceContactQr, setTargetEnabled, updateBudget } from "@aihot/backend/admin/settings";
 import { createSource, fetchNow, listSources, previewSource, sourceDetail, updateSource } from "@aihot/backend/admin/sources";
+import { sourceCatalog } from "@aihot/backend/admin/source-catalog";
 import {
   addOrgMember, approveOrgPost, createOrganization, listOrganizations, listOrgMembers, listOrgPosts, rejectOrgPost, resolveOrgPostChange, setOrgVerified,
 } from "@aihot/backend/admin/orgs";
@@ -38,6 +39,7 @@ function decodeImage(dataUrl: unknown): Buffer {
 
 export function registerAdmin(app: FastifyInstance) {
   // Sources (F18)
+  app.get("/api/admin/source-catalog", adminHandler(async () => sourceCatalog()));
   app.get("/api/admin/sources", adminHandler(async (req) => {
     const f = q(req);
     return listSources({ q: f.q, kind: f.kind, health: f.health, mode: f.mode, enabled: f.enabled as "true" | "false" | undefined, page: page(req) });
