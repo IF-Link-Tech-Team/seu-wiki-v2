@@ -10,7 +10,8 @@
       "wxid": null,
       "category": "机关与职能部门",
       "official": true,
-      "note": "校级新闻、机构设置、重大事项总入口"
+      "note": "校级新闻、机构设置、重大事项总入口",
+      "collectible": false
     },
     {
       "catalogId": "S002",
@@ -30,7 +31,8 @@
       "wxid": null,
       "category": "机关与职能部门",
       "official": true,
-      "note": "录取查询、招生政策、计划、公示"
+      "note": "录取查询、招生政策、计划、公示",
+      "collectible": false
     },
     {
       "catalogId": "S015",
@@ -280,7 +282,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院通知、作品与学术思想"
+      "note": "学院通知、作品与学术思想",
+      "collectible": false
     },
     {
       "catalogId": "S051",
@@ -300,7 +303,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院与实验室信息"
+      "note": "学院与实验室信息",
+      "collectible": false
     },
     {
       "catalogId": "S053",
@@ -320,7 +324,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S056",
@@ -330,7 +335,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S058",
@@ -340,7 +346,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S060",
@@ -350,7 +357,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "公告、师资、人才培养"
+      "note": "公告、师资、人才培养",
+      "collectible": false
     },
     {
       "catalogId": "S061",
@@ -380,7 +388,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "根域是壳页，真站在 /main.htm；推荐频道：学生公告 /34307、研究生招生 /yjszs（模板B，详见核验报告）"
+      "note": "根域是壳页，真站在 /main.htm；推荐频道：学生公告 /34307、研究生招生 /yjszs（模板B，详见核验报告）",
+      "collectible": false
     },
     {
       "catalogId": "S064",
@@ -400,7 +409,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S068",
@@ -410,7 +420,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "与软件、人工智能实体化运行"
+      "note": "与软件、人工智能实体化运行",
+      "collectible": false
     },
     {
       "catalogId": "S069",
@@ -430,7 +441,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "无独立站：与 cs.seu.edu.cn 同一套站（三院合署），勿单独建信源"
+      "note": "无独立站：与 cs.seu.edu.cn 同一套站（三院合署），勿单独建信源",
+      "collectible": false
     },
     {
       "catalogId": "S071",
@@ -440,7 +452,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "无独立站：与 cs.seu.edu.cn 同一套站（三院合署），勿单独建信源"
+      "note": "无独立站：与 cs.seu.edu.cn 同一套站（三院合署），勿单独建信源",
+      "collectible": false
     },
     {
       "catalogId": "S072",
@@ -450,7 +463,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "报告提醒域名规则不同，但具体值缺失"
+      "note": "报告提醒域名规则不同，但具体值缺失",
+      "collectible": false
     },
     {
       "catalogId": "S073",
@@ -470,7 +484,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "已采频道 /23231 已于 2026-01 停更，活频道是 /11484（模板B）"
+      "note": "已采频道 /23231 已于 2026-01 停更，活频道是 /11484（模板B）",
+      "collectible": false
     },
     {
       "catalogId": "S076",
@@ -480,7 +495,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S078",
@@ -490,7 +506,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S079",
@@ -530,7 +547,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S083",
@@ -550,7 +568,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S085",
@@ -570,7 +589,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S087",
@@ -590,7 +610,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S089",
@@ -620,7 +641,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "统计与数据科学交叉应用"
+      "note": "统计与数据科学交叉应用",
+      "collectible": false
     },
     {
       "catalogId": "S092",
@@ -630,7 +652,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S093",
@@ -660,7 +683,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S097",
@@ -670,7 +694,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "四六级与基础教学"
+      "note": "四六级与基础教学",
+      "collectible": false
     },
     {
       "catalogId": "S098",
@@ -680,7 +705,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "思政教育动态"
+      "note": "思政教育动态",
+      "collectible": false
     },
     {
       "catalogId": "S099",
@@ -690,7 +716,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "早锻炼、场馆、赛事"
+      "note": "早锻炼、场馆、赛事",
+      "collectible": false
     },
     {
       "catalogId": "S100",
@@ -700,7 +727,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "艺术设计、展演与招生"
+      "note": "艺术设计、展演与招生",
+      "collectible": false
     },
     {
       "catalogId": "S101",
@@ -710,7 +738,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学术、实习、就业"
+      "note": "学术、实习、就业",
+      "collectible": false
     },
     {
       "catalogId": "S102",
@@ -720,7 +749,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "学院权威入口"
+      "note": "学院权威入口",
+      "collectible": false
     },
     {
       "catalogId": "S103",
@@ -740,7 +770,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "域名正确但本机两轮均连接失败（代理 fake-ip），需换网络重测后再入池"
+      "note": "域名正确但本机两轮均连接失败（代理 fake-ip），需换网络重测后再入池",
+      "collectible": false
     },
     {
       "catalogId": "S105",
@@ -750,7 +781,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "生物医学工程前沿"
+      "note": "生物医学工程前沿",
+      "collectible": false
     },
     {
       "catalogId": "S106",
@@ -760,7 +792,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "合成生物学与生命健康"
+      "note": "合成生物学与生命健康",
+      "collectible": false
     },
     {
       "catalogId": "S107",
@@ -770,7 +803,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "拔尖创新培养"
+      "note": "拔尖创新培养",
+      "collectible": false
     },
     {
       "catalogId": "S108",
@@ -800,7 +834,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "已上线且活跃（非在建）；推荐：学院公告 /50331（模板H）"
+      "note": "已上线且活跃（非在建）；推荐：学院公告 /50331（模板H）",
+      "collectible": false
     },
     {
       "catalogId": "S111",
@@ -810,7 +845,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "已上线且活跃（非在建）；推荐：通知公告 /54974（模板E2，每页5条）"
+      "note": "已上线且活跃（非在建）；推荐：通知公告 /54974（模板E2，每页5条）",
+      "collectible": false
     },
     {
       "catalogId": "S112",
@@ -820,7 +856,8 @@
       "wxid": null,
       "category": "学院与书院",
       "official": true,
-      "note": "新生通识与适应指导"
+      "note": "新生通识与适应指导",
+      "collectible": false
     },
     {
       "catalogId": "S114",
@@ -1140,7 +1177,8 @@
       "wxid": null,
       "category": "官方补录",
       "official": true,
-      "note": "蒙纳士联合学院通知与院务"
+      "note": "蒙纳士联合学院通知与院务",
+      "collectible": false
     },
     {
       "catalogId": "S204",
@@ -1340,7 +1378,8 @@
       "wxid": null,
       "category": "机关与职能部门",
       "official": true,
-      "note": "模板B · 13/13 · 2025-12-17；办事指南型（奖助学金评审流程），低频但有用"
+      "note": "栏目正常，但服务器端抓取被拦（返回错误页），需专用请求头或换网络，暂勿启用",
+      "collectible": false
     },
     {
       "catalogId": "S224",
@@ -1350,7 +1389,8 @@
       "wxid": null,
       "category": "机关与职能部门",
       "official": true,
-      "note": "模板B · 5/5 · 2025-12-25；就业主站在 career.seu.edu.cn（SPA 待 json_list）"
+      "note": "同 S223",
+      "collectible": false
     },
     {
       "catalogId": "S225",
@@ -1360,7 +1400,8 @@
       "wxid": null,
       "category": "机关与职能部门",
       "official": true,
-      "note": "模板B · 5/5 · 2025-12-19；一站式社区预约、住宿申办"
+      "note": "同 S223",
+      "collectible": false
     }
   ]
 }

@@ -14,6 +14,8 @@ export interface CatalogEntry {
   category: string;
   official: boolean;
   note: string;
+  /** false = 仅参考（官网首页/服务器抓不了的入口），不可勾选入库。 */
+  collectible?: boolean;
 }
 
 export interface CatalogItem extends CatalogEntry {
