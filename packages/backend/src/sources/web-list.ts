@@ -13,8 +13,10 @@ export function parseLooseDate(value: string | null | undefined, utcOffset = "+0
   if (!value) return null;
   const v = value.trim();
   if (!v) return null;
+  // Date-only strings ("2026-09-30") parse as UTC midnight via Date.parse; they belong to the
+  // source's own zone, so only strings carrying a time or an explicit zone take this shortcut.
   const direct = Date.parse(v);
-  if (Number.isFinite(direct) && /\d{4}/.test(v)) return new Date(direct);
+  if (Number.isFinite(direct) && /\d{4}/.test(v) && /(?:[T ]\d{1,2}:\d{2}|[zZ]|[+-]\d{2}:?\d{2}$)/.test(v)) return new Date(direct);
   // 2026-09-26 / 2026/09/26 / 2026年9月26日 (+ optional time), interpreted in the given offset.
   const m = /(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})日?(?:\s*(\d{1,2}):(\d{2})(?::(\d{2}))?)?/.exec(v);
   if (m) {
