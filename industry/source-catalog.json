@@ -1331,6 +1331,36 @@
       "category": "学院与书院",
       "official": true,
       "note": "模板K · 20/20 · 09-30；仅HTTP不可https"
+    },
+    {
+      "catalogId": "S223",
+      "name": "学生处·学生管理",
+      "kind": "web_list",
+      "url": "https://xsc.seu.edu.cn/64958/list.psp",
+      "wxid": null,
+      "category": "机关与职能部门",
+      "official": true,
+      "note": "模板B · 13/13 · 2025-12-17；办事指南型（奖助学金评审流程），低频但有用"
+    },
+    {
+      "catalogId": "S224",
+      "name": "学生处·就业服务",
+      "kind": "web_list",
+      "url": "https://xsc.seu.edu.cn/64960/list.psp",
+      "wxid": null,
+      "category": "机关与职能部门",
+      "official": true,
+      "note": "模板B · 5/5 · 2025-12-25；就业主站在 career.seu.edu.cn（SPA 待 json_list）"
+    },
+    {
+      "catalogId": "S225",
+      "name": "学生处·公寓管理",
+      "kind": "web_list",
+      "url": "https://xsc.seu.edu.cn/65035/list.psp",
+      "wxid": null,
+      "category": "机关与职能部门",
+      "official": true,
+      "note": "模板B · 5/5 · 2025-12-19；一站式社区预约、住宿申办"
     }
   ]
 }
