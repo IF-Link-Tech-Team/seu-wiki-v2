@@ -17,16 +17,18 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/xxtz/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "tr",
+        "itemSelector": "#wp_news_w8 tr",
         "linkSelector": "a[title]",
         "publishedAtRegex": "(20\\d{2}-\\d{2}-\\d{2})",
         "allowUrlPrefixes": [
-          "https://jwc.seu.edu.cn/2"
+          "https://jwc.seu.edu.cn/2",
+          "https://news.seu.edu.cn/2"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
         }
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "jwc-xjgl",
@@ -44,7 +46,7 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/xjgl/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "tr",
+        "itemSelector": "#wp_news_w8 tr",
         "linkSelector": "a[title]",
         "publishedAtRegex": "(20\\d{2}-\\d{2}-\\d{2})",
         "allowUrlPrefixes": [
@@ -53,7 +55,8 @@
         "_aihot": {
           "initialBackfillLimit": 5
         }
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "radio-zqkh",
@@ -79,7 +82,8 @@
         "_aihot": {
           "initialBackfillLimit": 5
         }
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "electronic-tzgg",
@@ -94,7 +98,7 @@
         "电子科学与工程学院"
       ],
       "config": {
-        "url": "https://electronic.seu.edu.cn/23231/list.htm",
+        "url": "https://electronic.seu.edu.cn/11484/list.htm",
         "baseUrl": "https://electronic.seu.edu.cn",
         "itemSelector": "li.news",
         "linkSelector": "span.news_title a[title]",
@@ -105,7 +109,8 @@
         "_aihot": {
           "initialBackfillLimit": 5
         }
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "automation-tzgg",
@@ -131,7 +136,8 @@
         "_aihot": {
           "initialBackfillLimit": 5
         }
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "bme-news",
@@ -157,7 +163,8 @@
         "_aihot": {
           "initialBackfillLimit": 5
         }
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "news-xsdt",
@@ -185,7 +192,8 @@
         }
       },
       "enabled": false,
-      "_note": "首批只上 6 个网站源（教务处×2+四学院），新闻网学术动态暂缓（2026-09-30 负责人决策）"
+      "_note": "首批只上 6 个网站源（教务处×2+四学院），新闻网学术动态暂缓（2026-09-30 负责人决策）",
+      "site_fulltext": true
     },
     {
       "id": "mp-seu",
@@ -203,7 +211,8 @@
       "config": {
         "nickname": "东南大学",
         "wxid": "seu_dndx"
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "mp-seu-jwc",
@@ -221,7 +230,8 @@
       "enabled": false,
       "config": {
         "nickname": "东南大学教务处"
-      }
+      },
+      "site_fulltext": true
     },
     {
       "id": "mp-seu-jyzd",
@@ -239,7 +249,1396 @@
       "config": {
         "nickname": "东南大学就业指导中心",
         "wxid": "jyzdzxseu"
-      }
+      },
+      "site_fulltext": true
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "seugs-notices",
+      "name": "研究生院·公告",
+      "config": {
+        "url": "https://seugs.seu.edu.cn/26671/list.htm",
+        "baseUrl": "https://seugs.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://seugs.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "机关与职能部门"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "seugs-peiyang",
+      "name": "研究生院·培养工作",
+      "config": {
+        "url": "https://seugs.seu.edu.cn/26673/list.htm",
+        "baseUrl": "https://seugs.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://seugs.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "机关与职能部门"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "kjc-tzgg",
+      "name": "科研院·通知公告",
+      "config": {
+        "url": "https://kjc.seu.edu.cn/29197/list.htm",
+        "baseUrl": "https://kjc.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://kjc.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.column-news-item",
+        "linkSelector": "span.column-news-title a[title]",
+        "publishedAtSelector": "span.column-news-date"
+      },
+      "tags": [
+        "机关与职能部门"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "yzb-yaowen",
+      "name": "研招网·要闻",
+      "config": {
+        "url": "https://yzb.seu.edu.cn/main.htm",
+        "baseUrl": "https://yzb.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://yzb.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "[id^=wp_news_w] table tr",
+        "linkSelector": "td a[title]",
+        "publishedAtSelector": "td div"
+      },
+      "tags": [
+        "机关与职能部门"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "news-yaowen",
+      "name": "新闻网·东大要闻",
+      "config": {
+        "url": "https://news.seu.edu.cn/5486/list.htm",
+        "baseUrl": "https://news.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://news.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "校级媒体与权益服务"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "news-jjxy",
+      "name": "新闻网·菁菁校园",
+      "config": {
+        "url": "https://news.seu.edu.cn/5495/list.htm",
+        "baseUrl": "https://news.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://news.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "校级媒体与权益服务"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "news-yxfc",
+      "name": "新闻网·院系传真",
+      "config": {
+        "url": "https://news.seu.edu.cn/5496/list.htm",
+        "baseUrl": "https://news.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://news.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "校级媒体与权益服务"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "wx-tzgg",
+      "name": "无锡校区·通知公告",
+      "config": {
+        "url": "https://wx.seu.edu.cn/5269/list.htm",
+        "baseUrl": "https://wx.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://wx.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "校区与社区空间"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "fzwyh-xwdt",
+      "name": "校友基金处·新闻动态",
+      "config": {
+        "url": "https://fzwyh.seu.edu.cn/12368/list.htm",
+        "baseUrl": "https://fzwyh.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://fzwyh.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "机关与职能部门"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "cs-tzgg-yjs",
+      "name": "计算机·通知公告(研)",
+      "config": {
+        "url": "https://cs.seu.edu.cn/49447/list.htm",
+        "baseUrl": "https://cs.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://cs.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "cs-tzgg-bk",
+      "name": "计算机·通知公告(本)",
+      "config": {
+        "url": "https://cs.seu.edu.cn/49469/list.htm",
+        "baseUrl": "https://cs.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://cs.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "math-xstz",
+      "name": "数学·学生通知",
+      "config": {
+        "url": "https://math.seu.edu.cn/53575/list.htm",
+        "baseUrl": "https://math.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://math.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "physics-xxfb",
+      "name": "物理·信息发布",
+      "config": {
+        "url": "https://physics.seu.edu.cn/23176/list.htm",
+        "baseUrl": "https://physics.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://physics.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "physics-xsbg",
+      "name": "物理·学术报告",
+      "config": {
+        "url": "https://physics.seu.edu.cn/xsbgcs/list.htm",
+        "baseUrl": "https://physics.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://physics.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "ils-tzgg",
+      "name": "生科·通知公告",
+      "config": {
+        "url": "https://ils.seu.edu.cn/tzgg/list.htm",
+        "baseUrl": "https://ils.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://ils.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "ils-xsjz",
+      "name": "生科·学术讲座",
+      "config": {
+        "url": "https://ils.seu.edu.cn/xsjz/list.htm",
+        "baseUrl": "https://ils.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://ils.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "cyber-xwkx",
+      "name": "网安·新闻快讯",
+      "config": {
+        "url": "https://cyber.seu.edu.cn/xwkx/list.htm",
+        "baseUrl": "https://cyber.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://cyber.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "wjx-xxgxx",
+      "name": "吴健雄·学工信息",
+      "config": {
+        "url": "https://wjx.seu.edu.cn/xxgxx/list.htm",
+        "baseUrl": "https://wjx.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://wjx.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "wjx-tzgg",
+      "name": "吴健雄·通知公告",
+      "config": {
+        "url": "https://wjx.seu.edu.cn/tzgg/list.htm",
+        "baseUrl": "https://wjx.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://wjx.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "em-xstz",
+      "name": "经管·学生通知",
+      "config": {
+        "url": "https://em.seu.edu.cn/xstz/list.htm",
+        "baseUrl": "https://em.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://em.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "em-gsgg",
+      "name": "经管·公示公告",
+      "config": {
+        "url": "https://em.seu.edu.cn/gsgg/list.htm",
+        "baseUrl": "https://em.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://em.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "sfl-xsgg",
+      "name": "外国语·学生公告",
+      "config": {
+        "url": "https://sfl.seu.edu.cn/9828/list.htm",
+        "baseUrl": "https://sfl.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://sfl.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "[class^=\"news_title\"] a",
+        "publishedAtSelector": "[class^=\"news_meta\"]"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "automation-bkspy",
+      "name": "自动化·本科生培养",
+      "config": {
+        "url": "https://automation.seu.edu.cn/24509/list.htm",
+        "baseUrl": "https://automation.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://automation.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.list_item",
+        "linkSelector": "span.Article_Title a[title]",
+        "publishedAtSelector": "span.Article_PublishDate"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "electronic-bkjw",
+      "name": "电子·本科教务",
+      "config": {
+        "url": "https://electronic.seu.edu.cn/11472/list.htm",
+        "baseUrl": "https://electronic.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://electronic.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "bme-ggl",
+      "name": "生医·公告栏",
+      "config": {
+        "url": "https://bme.seu.edu.cn/480/list.htm",
+        "baseUrl": "https://bme.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://bme.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "bme-jt",
+      "name": "生医·吴健雄大讲堂",
+      "config": {
+        "url": "https://bme.seu.edu.cn/479/list.htm",
+        "baseUrl": "https://bme.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://bme.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "me-tzgg",
+      "name": "机械·通知公告",
+      "config": {
+        "url": "https://me.seu.edu.cn/1382/list.htm",
+        "baseUrl": "https://me.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://me.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.list_item",
+        "linkSelector": "span.Article_Title a[title]",
+        "publishedAtSelector": "span.Article_PublishDate"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "arch-tzgg",
+      "name": "建筑·通知公告",
+      "config": {
+        "url": "https://arch.seu.edu.cn/9126/list.htm",
+        "baseUrl": "https://arch.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://arch.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "law-tzgg",
+      "name": "法学·通知公告",
+      "config": {
+        "url": "https://law.seu.edu.cn/9381/list.htm",
+        "baseUrl": "https://law.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://law.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "med-tzgg",
+      "name": "医学·通知公告",
+      "config": {
+        "url": "https://med.seu.edu.cn/8756/list.htm",
+        "baseUrl": "https://med.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://med.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "marxism-xyxw",
+      "name": "马克思·学院新闻",
+      "config": {
+        "url": "https://marxism.seu.edu.cn/23334/list.htm",
+        "baseUrl": "https://marxism.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://marxism.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "tyx-xxtg",
+      "name": "体育系·信息通告",
+      "config": {
+        "url": "https://tyx.seu.edu.cn/2192/list.htm",
+        "baseUrl": "https://tyx.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://tyx.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "xsxy-tzgg",
+      "name": "新生学院·通知公告",
+      "config": {
+        "url": "https://xsxy.seu.edu.cn/57141/list.htm",
+        "baseUrl": "https://xsxy.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://xsxy.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "ic-tzgg",
+      "name": "集成电路·通知公告",
+      "config": {
+        "url": "https://ic.seu.edu.cn/tzgg/list.htm",
+        "baseUrl": "https://ic.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://ic.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "power-tzgg",
+      "name": "能源环境·通知公告",
+      "config": {
+        "url": "https://power.seu.edu.cn/9497/list.htm",
+        "baseUrl": "https://power.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://power.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "div.news_title a",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "tc-xxgg",
+      "name": "交通·信息公告",
+      "config": {
+        "url": "https://tc.seu.edu.cn/831/list.htm",
+        "baseUrl": "https://tc.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://tc.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "div.news_title a",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "ins-xsdt",
+      "name": "仪科·学术动态",
+      "config": {
+        "url": "https://ins.seu.edu.cn/45072/list.htm",
+        "baseUrl": "https://ins.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://ins.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "chem-xsgg",
+      "name": "化工·学生公告",
+      "config": {
+        "url": "https://chem.seu.edu.cn/34307/list.htm",
+        "baseUrl": "https://chem.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://chem.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "ee-xsjl",
+      "name": "电气·学术动态",
+      "config": {
+        "url": "https://ee.seu.edu.cn/xsjl/list.htm",
+        "baseUrl": "https://ee.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://ee.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "smse-zsxx",
+      "name": "材料·招生信息",
+      "config": {
+        "url": "https://smse.seu.edu.cn/54244/list.htm",
+        "baseUrl": "https://smse.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://smse.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "civil-zsjy",
+      "name": "土木·招生与就业",
+      "config": {
+        "url": "https://civil.seu.edu.cn/20024/list.htm",
+        "baseUrl": "https://civil.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://civil.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "rwxy-tzgg",
+      "name": "人文·通知公告",
+      "config": {
+        "url": "https://rwxy.seu.edu.cn/tzgg/list.htm",
+        "baseUrl": "https://rwxy.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://rwxy.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "stat-xskb",
+      "name": "统计数据·学生看板",
+      "config": {
+        "url": "https://stat.seu.edu.cn/60842/list.htm",
+        "baseUrl": "https://stat.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://stat.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "div.jzlb",
+        "linkSelector": "div.btt3 a[href]",
+        "publishedAtSelector": "div.fbsj4"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "gjzygcs-xygg",
+      "name": "卓工·学院公告",
+      "config": {
+        "url": "https://gjzygcs.seu.edu.cn/50331/list.htm",
+        "baseUrl": "https://gjzygcs.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://gjzygcs.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "div.jzlb",
+        "linkSelector": "div.btt3 a[href]",
+        "publishedAtSelector": "div.fbsj4"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "futuretech-tzgg",
+      "name": "未来技术·通知公告",
+      "config": {
+        "url": "https://futuretech.seu.edu.cn/54974/list.htm",
+        "baseUrl": "https://futuretech.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://futuretech.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        }
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "cis-xsjy",
+      "name": "海外教育·学生就业",
+      "config": {
+        "url": "https://cis.seu.edu.cn/xsjy/list.htm",
+        "baseUrl": "https://cis.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://cis.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": ".news_title a",
+        "publishedAtSelector": ".news_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "srjgs-xxgg",
+      "name": "雷恩学院·信息公告",
+      "config": {
+        "url": "https://srjgs.seu.edu.cn/69890/list.htm",
+        "baseUrl": "https://srjgs.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "https://srjgs.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_time"
+      },
+      "tags": [
+        "学院与书院"
+      ]
+    },
+    {
+      "kind": "web_list",
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "id": "cxxy-xwdt",
+      "name": "成贤学院·新闻动态",
+      "config": {
+        "url": "http://cxxy.seu.edu.cn/65/list.htm",
+        "baseUrl": "http://cxxy.seu.edu.cn",
+        "allowUrlPrefixes": [
+          "http://cxxy.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 10
+        },
+        "itemSelector": "li.cols",
+        "linkSelector": "span.cols_title a[title]",
+        "publishedAtSelector": "span.cols_meta"
+      },
+      "tags": [
+        "学院与书院"
+      ]
     }
   ]
 }
