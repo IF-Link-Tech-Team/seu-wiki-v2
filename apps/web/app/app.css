@@ -144,14 +144,14 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #13191c;
-  --bg-sunk: #182024;
-  --bg-muted: #202a2f;
-  --surface: #1a2226;
-  --surface-2: #1d272b;
-  --raised: #202a2f;
-  --sidebar: #161e21;
-  --daybar: #182024;
+  --bg: #000000;
+  --bg-sunk: #0a0a0a;
+  --bg-muted: #141414;
+  --surface: #0d0d0d;
+  --surface-2: #121212;
+  --raised: #161616;
+  --sidebar: #050505;
+  --daybar: #0a0a0a;
   --field: rgba(255, 255, 255, 0.06);
   --ink: #e7eceb;
   --ink-2: #d2dada;
