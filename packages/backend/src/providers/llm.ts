@@ -37,6 +37,13 @@ export const MODELS: Record<string, ModelSpec> = {
     get jsonMode() { return process.env.LLM_JSON_MODE !== "false"; },
     get vision() { return process.env.LLM_VISION === "true"; },
   },
+  // MiniMax M2.7：score/structure 这类重 JSON 任务用（M3.1-Flash 强制思考会烧光 max_tokens、content 为空）。
+  // 历史上用 M2.5，2026-10-02 起升级到 M2.7。
+  "minimax-m27": {
+    key: "minimax-m27", service: "llm", model: "MiniMax-M2.7",
+    baseUrlEnv: "LLM_BASE_URL", apiKeyEnv: "LLM_API_KEY",
+    jsonMode: true,
+  },
   // MiniMax M2.5：思考型，输出 <think> 块（extractJson 会剥离）。score/structure 这类重 JSON 任务
   // 用 M3.1-Flash 会在 rubric 上反复思考烧光 max_tokens（content 为空），M2.5 已验证能稳定出活。
   "minimax-m25": {
