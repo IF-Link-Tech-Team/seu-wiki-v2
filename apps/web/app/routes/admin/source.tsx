@@ -139,6 +139,14 @@ export default function SourceDetail({ loaderData }: Route.ComponentProps) {
       subtitle={<span className="font-mono text-[12px]">{s.id}</span>}
       actions={
         <>
+          {(() => {
+            const siteUrl = (s.config.url ?? s.config.feedUrl) as string | undefined;
+            return siteUrl ? (
+              <a href={siteUrl} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center justify-center gap-1.5 whitespace-nowrap rounded-control bg-surface px-3.5 text-[13.5px] font-medium text-ink ring-1 ring-line-strong transition-[opacity,background-color] hover:bg-bg-sunk">
+                打开原站 ↗
+              </a>
+            ) : null;
+          })()}
           <Button
             busy={pending === "preview"}
             onClick={async () => {
