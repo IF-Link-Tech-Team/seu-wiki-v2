@@ -9,7 +9,7 @@ import http from "node:http";
 import { after, test } from "node:test";
 import { config } from "@aihot/backend/config";
 import { sanitizeBody, trimTrailingChrome } from "@aihot/backend/content/sanitize";
-import { fetchDetail, fetchWebList, fromHtml, fromMarkdown } from "@aihot/backend/sources/web-list";
+import { fetchDetail, fetchWebList, fromHtml, fromMarkdown, parseLooseDate } from "@aihot/backend/sources/web-list";
 import { fetchRss } from "@aihot/backend/sources/rss";
 import { fetchJsonList } from "@aihot/backend/sources/json-list";
 import { noiseFiltered } from "@aihot/backend/sources/collect";
@@ -209,4 +209,23 @@ test("dates in yyyymmdd and in JSON-LD are read", async () => {
   assert.deepEqual(days.map((c) => c.publishedAt?.toISOString() ?? null), ["2026-09-22T00:00:00.000Z", null], "February 30 is no date");
   const got = await fetchDetail(`${site}/ld-post`, { id: "test-feed", config: { detail: { maxFetches: 20 } } } as never, { date: true, title: false, summary: false, body: false });
   assert.equal(got.publishedAt?.toISOString(), "2026-09-23T16:00:00.000Z");
+});
+
+test("loose dates stay in the source's zone and reject impossible years", () => {
+  // date-only belongs to the source zone (+08:00 default), not UTC midnight
+  assert.equal(parseLooseDate("2026-09-30")?.toISOString(), "2026-09-29T16:00:00.000Z");
+  // day + year-month glued together ("24" + "2026/09") must not become the year 242026
+  assert.equal(parseLooseDate("242026/09"), null);
+  // year and month-day split by whitespace, either order (wjx / futuretech 的列表页)
+  assert.equal(parseLooseDate("2026 09.29")?.toISOString(), "2026-09-28T16:00:00.000Z");
+  assert.equal(parseLooseDate("09.24 2026")?.toISOString(), "2026-09-23T16:00:00.000Z");
+  // explicit times and zones still parse as before
+  assert.equal(parseLooseDate("2026-09-30T15:04:05Z")?.toISOString(), "2026-09-30T15:04:05.000Z");
+  assert.equal(parseLooseDate("2026年9月30日")?.toISOString(), "2026-09-29T16:00:00.000Z");
+});
+
+test("a split day/year-month date element is composed before parsing", () => {
+  const html = `<ul><li class="news"><div class="news_title"><a href="/2026/0924/c1a2/page.htm">一条通知公告的标题</a></div><span class="news_meta"><span class="day">24</span><span class="year">2026/09</span></span></li></ul>`;
+  const items = fromHtml(html, "https://zwc.seu.edu.cn", { id: "t", kind: "web_list", config: { url: "https://zwc.seu.edu.cn/60881/list.htm", itemSelector: "li.news", linkSelector: ".news_title a", publishedAtSelector: ".news_meta" } } as never);
+  assert.equal(items[0]?.publishedAt?.toISOString(), "2026-09-23T16:00:00.000Z");
 });
