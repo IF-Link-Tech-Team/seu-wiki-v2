@@ -30,7 +30,7 @@ export const SITE = {
   /** 页脚的一行小字（选填）。 */
   footerNote: "由 IF.Link 社区维护 · 基于 AIHOT 开源框架",
   /** 中国大陆网站的 ICP 备案号（选填），填了就显示在页脚并链接到工信部备案系统。 */
-  icp: null as string | null,
+  icp: "津ICP备2026012031号" as string | null,
   /** 结构化数据里的网站运营者（搜索引擎用）。 */
   organization: {
     name: "SEU Wiki",
