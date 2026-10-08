@@ -1,0 +1,77 @@
+# Deploys main to iflink-prod after the Check workflow passes: rsync the repo to
+# /srv/seuwiki-v2, rebuild and restart the compose stack (setup re-applies migrations
+# and seeds), then smoke-check the site from inside the compose network.
+# Secrets: DEPLOY_SSH_KEY, DEPLOY_KNOWN_HOSTS. Vars: DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT.
+name: Deploy
+
+on:
+  workflow_run:
+    workflows:
+      - Check
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-seuwiki-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_repository.full_name == github.repository
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: seuwiki-prod
+      url: https://seu.wiki
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate configuration
+        run: |
+          for name in DEPLOY_HOST DEPLOY_PORT DEPLOY_USER; do
+            if [ -z "${!name}" ]; then echo "missing variable: $name" >&2; exit 1; fi
+          done
+          for name in DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS; do
+            if [ -z "${!name:-}" ]; then echo "missing secret: $name" >&2; exit 1; fi
+          done
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      - name: Configure SSH identity
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 "${HOME}/.ssh"
+          printf '%s\n' "${DEPLOY_SSH_KEY}" > "${HOME}/.ssh/id_ed25519"
+          printf '%s\n' "${DEPLOY_KNOWN_HOSTS}" > "${HOME}/.ssh/known_hosts"
+          chmod 0600 "${HOME}/.ssh/id_ed25519" "${HOME}/.ssh/known_hosts"
+      - name: Sync the tree to iflink-prod
+        run: |
+          rsync -az --delete -e "ssh -p ${DEPLOY_PORT}" \
+            --exclude .git --exclude node_modules --exclude build --exclude .data \
+            --exclude .env --exclude '.env.*' --exclude docker-compose.override.yml \
+            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:/srv/seuwiki-v2/"
+      - name: Rebuild and restart the stack
+        run: |
+          ssh -p "${DEPLOY_PORT}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            'cd /srv/seuwiki-v2 && docker compose up -d --build'
+      - name: Smoke check from inside the compose network
+        run: |
+          ssh -p "${DEPLOY_PORT}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            'cd /srv/seuwiki-v2 && docker compose run --rm --no-deps --entrypoint node setup scripts/smoke.ts --base http://web:3000'
