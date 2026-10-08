@@ -48,6 +48,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf9f6" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#13191c" />
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <script
+          defer
+          src="https://umami.iflink.tech/script.js"
+          data-website-id="1b53b854-a92d-44c6-8b4b-e338a223822d"
+          data-domains="seu.wiki,www.seu.wiki"
+        />
         <Meta />
         <Links />
       </head>
