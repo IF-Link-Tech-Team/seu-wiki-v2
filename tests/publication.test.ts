@@ -221,7 +221,7 @@ test("an early release keeps the selected ledger in order", async () => {
   const y = await article();
   await publishArticle(y); // still behind the release gate
   await setVisibility(x, { visibility: "withdrawn", reason: "test", version: 0 }, "test");
-  await sql`UPDATE articles SET grouped_at = now() WHERE id = ${y}`;
+  await sql`UPDATE articles SET grouped_at = now() - interval '10 seconds' WHERE id = ${y}`;
   await publishArticle(y); // grouped: released now
 
   const [entry] = await sql<{ seq: number }[]>`SELECT max(seq)::int AS seq FROM selected_ledger WHERE article_id = ${y}`;
@@ -245,7 +245,7 @@ test("a withdrawal waiting behind an unreleased item leaves new snapshots at onc
   }
   // A client that saved this snapshot's watermark receives y and x's removal once y is released.
   const snapshot = JSON.parse((await get("/api/v1/selected/snapshot?fields=minimal&limit=1000")).body) as { cursor: string };
-  await sql`UPDATE articles SET grouped_at = now() WHERE id = ${y}`;
+  await sql`UPDATE articles SET grouped_at = now() - interval '10 seconds' WHERE id = ${y}`;
   await publishArticle(y);
   const changes = JSON.parse((await get(`/api/v1/selected/changes?cursor=${encodeURIComponent(snapshot.cursor)}&limit=100`)).body) as {
     changes: Array<{ op: string; id?: string; item?: { id: string } }>;
