@@ -1,27 +1,20 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.png">
-    <img src="docs/assets/banner-light.png" alt="AIHOT：每个行业，都可以有自己的 AIHOT。很多条信源流进中间的精选，再分给法律、人力资源、金融等各个行业" width="100%">
-  </picture>
-</p>
-
-<p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-176b75?style=flat-square" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Node.js-24-176b75?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js 24">
   <img src="https://img.shields.io/badge/PostgreSQL-17-176b75?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL 17">
   <img src="https://img.shields.io/badge/Docker-Compose-176b75?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose">
-  <a href="https://aihot.news"><img src="https://img.shields.io/badge/demo-aihot.news-202a30?style=flat-square" alt="aihot.news"></a>
+  <a href="https://seu.wiki"><img src="https://img.shields.io/badge/site-seu.wiki-202a30?style=flat-square" alt="seu.wiki"></a>
 </p>
 
 <p align="center">
-  <b>一个自己找热点、自己写日报的网站框架。</b><br>
-  把信源换成你的，把精选标准换成你的 KnowHow，它就是你的行业热点站。
+  <b>SEU Wiki — 东南大学信息聚合</b><br>
+  与你有关的东大信息。
 </p>
 
 <p align="center">
-  <a href="#跑起来">跑起来</a> ·
-  <a href="docs/customize.md">改成你的行业</a> ·
+  <a href="#这是什么">这是什么</a> ·
   <a href="#它是怎么工作的">它是怎么工作的</a> ·
+  <a href="#跑起来">跑起来</a> ·
   <a href="#文档">文档</a>
 </p>
 
@@ -29,148 +22,85 @@
 
 ## 这是什么
 
-[AIHOT](https://aihot.news) 是我做的一个 AI 热点网站。它每天从一批信源里收资料，用大模型先筛一遍、再独立打两次分，挑出真正值得看的，写成中文标题和摘要；把不同来源说的同一件事聚成一个事件，按有多少人在说排出热点；每天早上出一份日报。
+[SEU Wiki](https://seu.wiki) 是面向东南大学同学的校园信息聚合站，由 IF.Link 社区维护。
 
-这个仓库是它的完整框架：网站、后台、精选流程、聚簇和热度算法，**所有提示词的原文和入选门槛**，都在这里。
+学校里的通知和机会很多：教务处、学生处、各学院官网和公众号，分散在几十个入口里。SEU Wiki 替你盯着这些信源——抓取消重、用模型筛选和写摘要，把同一件事的多次通知归到一起，每天早上 8 点出一份**校园日报**。免费，不用注册。
 
-## 为什么开源
+除了信息流，站点还包括：
 
-这半年，很多做法律、做 HR、做金融、做贵金属的朋友问我，能不能也给他们的行业做一个。
+- **东大生存手册**（`/handbook`）：学习、生活、就业等版块的长文指南；
+- **经验社区**：经验帖与讨论（论坛后端在 [seu-wiki-forum](https://github.com/IF-Link-Tech-Team/seu-wiki-forum)）；
+- **手机 App**：[iOS](https://github.com/IF-Link-Tech-Team/seu-wiki-app) 与 [Android](https://github.com/IF-Link-Tech-Team/seu-wiki-android) 原生客户端；
+- **开放接口**：RSS、公开 API、MCP、`llms.txt`，同一份内容给人看也给 Agent 用。
 
-我做不了。我不懂你们的行业，不知道哪些信源有用，也不知道什么样的消息，对你们来说才叫热点。
-
-但你们懂。
-
-既然我没办法满足所有人，那就把火种交到大家自己手上。
-
-## 说在前面
-
-- **我不是专业的开发者。** 我是设计师出身，半年前还看不太懂代码。这套代码是我和 AI 一起重写的，比以前干净了很多，但一定还有写得不好的地方。发现问题欢迎提 Issue，我不一定能很快回复，先说声抱歉。
-- **这是一份快照。** 它来自 AIHOT 正在线上跑的代码，不是精心打磨的通用框架。以后 AIHOT 的更新，我会尽量同步过来，但没法保证每一次都同步。
-- **里面没有 AIHOT 的信源名单和运营数据。** 仓库带了 18 个公开的海外 AI 资讯源做示范，够你跑起来看效果；真正的信源，要换成你自己行业的。
-- **请不要用 AIHOT 的名字和 Logo。** 换上你自己的名字，它就是你的站。
+本仓库基于 [AIHOT](https://github.com/KKKKhazix/AIHOT) 开源框架构建（致谢 @数字生命卡兹克），行业相关的一切——站名文案、分类标签、校园信源、精选提示词、入选门槛——都在 [`industry/`](industry/) 目录。
 
 ## 它是怎么工作的
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-dark.png">
-  <img src="docs/assets/how-light.png" alt="六步：采集、预筛、两次评分、写作、聚簇、热点与成刊" width="100%">
-</picture>
+一条通知从信源进来，先判重，再预筛；可能重要的独立打两次分，过了门槛才进精选；然后写中文标题和摘要，和别的报道聚成事件，算进热度，最后进日报。每一步的提示词都在 [`industry/prompts/`](industry/prompts/)，改标准不用改代码。详见 [精选与校准](docs/selection.md)。
 
-一条资料从信源进来，先判重，再预筛；可能重要的独立打两次分，过了门槛才进精选；然后写中文标题和摘要，和别的报道聚成事件，算进热度，最后进日报。每一步的提示词都在 [`industry/prompts/`](industry/prompts/)，改标准不用改代码。详见 [精选与校准](docs/selection.md)。
+热度按事件算，不按文章算：48 小时内每个独立来源只算一次，24 小时减半。重复发布不会多算，所以排在前面的，是真正有很多渠道在说的事。
 
-### 聚簇与热点
+技术上分三个进程（详见 [架构](docs/architecture.md)）：
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cluster-dark.png">
-  <img src="docs/assets/cluster-light.png" alt="五个来源的报道聚成一个事件，事件进入当前热点榜" width="100%">
-</picture>
+| 进程 | 位置 | 做什么 |
+|---|---|---|
+| api | `apps/api/` | Fastify。网站自用接口、公开 API（`/api/v1/`）、RSS、MCP、后台接口 |
+| worker | `apps/worker/` | pg-boss 任务队列：抓信源、调模型、归组、热度、日报、告警 |
+| web | `apps/web/` | React Router 服务端渲染的网页。只通过 HTTP 读 api，不碰数据库 |
 
-同一件事，官网发一篇、媒体转十篇、X 上吵一天，读者只需要看到一次。AIHOT 把它们聚成一个**事件**：先用标题摘要的向量在最近两周里找候选，再让模型判断是同一件事、后续进展，还是两件事；拿不准的合并，换一家模型再确认一遍。
-
-**热度**按事件算，不按文章算：48 小时内，每个独立来源只算一次，24 小时减半。重复抓取不会多算，一家媒体发十篇也只算一次，所以排在前面的，是真正有很多人在说的事。
-
-### 速度
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/perf-dark.png">
-  <img src="docs/assets/perf-light.png" alt="AIHOT 线上实测：页面中位数 10 毫秒，95% 在 50 毫秒内；接口中位数 6 毫秒，95% 在 12 毫秒内；文章页 95% 在 14 毫秒内" width="100%">
-</picture>
+几条不变的规则：所有公开出口都从 `packages/backend/src/publication/` 这一个读取层读；读者打开页面不触发模型调用；付费请求（模型、公众号抓取等）走回执与预算熔断。
 
 ## 你会得到什么
 
 | | |
 |---|---|
-| **六种信源** | RSS、网页列表、JSON 接口、X 账号、微信公众号，以及你自己脚本推送进来的内容。信源分级（官方一手 / 媒体个人），抓取频率按产出自动调整 |
-| **精选** | 预筛，同一份评分标准独立打两次分，再按信源分级的门槛决定入选。提示词和门槛全部公开，全部可以改；用你自己标注的样本在 SelectBench 里校准 |
-| **写作** | 中文标题、答案先行的摘要、推荐理由、标签，外文全文翻译；防止模型把原文没提到的公司写进标题 |
-| **聚簇** | 不同来源报道的同一件事聚成一个事件，后续进展挂在同一个事件下，事件页有综述；人工改过的归属不会被覆盖 |
-| **热点** | 按事件算热度：独立来源越多越靠前，X 上的讨论也算进来；和 6 小时前比，涨得快的标上升，新出现的标“新” |
-| **日报、周报、月报** | 每天 08:00 出日报，每周一出周报，每月 1 日出月报，按分类分节，带导语 |
-| **主题与搜索** | 公司、方向、内容形态三类主题页；标题摘要搜索和全文相关搜索 |
-| **给 Agent 用** | RSS（精选、全部、全文、日报）、公开 API、MCP、`llms.txt`，同一份内容给人看也给 Agent 用 |
-| **后台** | 信源管理与试抓、内容诊断、精选评测、每一步单独换模型、付费服务的预算熔断、运行记录与告警 |
-| **AI 专属模块** | 模型榜（汇总多家公开评测，方法公开）和 Codex 重置监控。别的行业一个开关关掉 |
-
-## 看一眼
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/shots-dark.png">
-  <img src="docs/assets/shots-light.png" alt="首页的当前热点与精选，关于页的信源河" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/board-dark.png">
-  <img src="docs/assets/board-light.png" alt="模型榜" width="100%">
-</picture>
-
-<p align="center"><sub>截图来自用示范信源跑起来的本地站，站名是默认的 MyHOT。</sub></p>
+| **六种信源** | RSS、网页列表、JSON 接口、X 账号、微信公众号，以及脚本推送。信源分级，抓取频率按产出自动调整 |
+| **精选** | 预筛 + 独立两次评分 + 按信源分级的入选门槛。提示词和门槛全部公开、可校准 |
+| **写作** | 中文标题、答案先行的摘要、推荐理由、标签；防止模型编造原文没有的内容 |
+| **聚簇与热点** | 同一件事的多次通知归为一个事件，延期和更正会更新原条目；事件页有综述 |
+| **校园日报** | 每天 08:00 出日报，每周一出周报，每月 1 日出月报，按分类分节 |
+| **主题与搜索** | 按部门、话题、内容形态组织主题页；标题摘要搜索和全文相关搜索 |
+| **给 Agent 用** | RSS（精选、全部、全文、日报）、公开 API、MCP、`llms.txt` |
+| **后台** | 信源管理与试抓、内容诊断、精选评测、每一步单独换模型、预算熔断、运行记录与告警 |
 
 ## 跑起来
 
 需要 [Docker](https://docs.docker.com/get-docker/)，和一个 OpenAI 兼容的模型 API Key（DeepSeek、千问、智谱都可以）。
 
 ```bash
-git clone https://github.com/KKKKhazix/AIHOT.git myhot
-cd myhot
+git clone https://github.com/IF-Link-Tech-Team/seu-wiki-v2.git
+cd seu-wiki-v2
 node scripts/init-env.ts --llm-key <你的模型 API Key>
 docker compose up -d --build
 ```
 
-打开 <http://localhost:3000>。后台在 `/admin`，用 IF.Link 统一账户登录（需要社区管理员角色，配置见 `.env.example` 的 LOGTO_*/ACCOUNTS_*）；本地改前端可设 DEV_ADMIN_BYPASS=true 跳过登录（仅非生产）。一两分钟后开始有内容，第一次导入的资料大约半小时处理完。
+打开 <http://localhost:3000>。后台在 `/admin`，用 IF.Link 统一账户登录（需要社区管理员角色，配置见 `.env.example` 的 LOGTO_*/ACCOUNTS_*）；本地改前端可设 DEV_ADMIN_BYPASS=true 跳过登录（仅非生产）。
 
-机器上没有 Node、服务器在中国大陆、要配域名和 HTTPS，见 [部署](docs/deploy.md)。
+服务器部署、域名和 HTTPS、备份，见 [部署](docs/deploy.md)；本仓库的生产部署说明见 [deploy/seuwiki-prod.md](deploy/seuwiki-prod.md)。
 
-## 把它改成你的行业
+## 参与共建
 
-最省事的办法：打开你的 Agent（Claude Code、Codex 都可以），把这个仓库交给它，然后说：
+欢迎 Issue 和 Pull Request，先读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [AGENTS.md](AGENTS.md)。改动后的自检：
 
-```text
-请读 AGENTS.md 和 docs/customize.md，把这个站改成「法律」行业的热点站。
-我关心的是：……（你想盯哪些信源，你觉得什么消息重要、什么不重要，越具体越好）。
+```bash
+npm run typecheck
+DATABASE_URL=postgres://127.0.0.1:5432/<名字>_test npm test   # 空库，先 node scripts/migrate.ts
+npm run build -w @aihot/web && node --test apps/web/tests/*.test.ts
 ```
-
-要改的东西几乎都在 [`industry/`](industry/) 这一个文件夹里，代码基本不用动：
-
-| 文件 | 改什么 |
-|---|---|
-| `site.ts` | 站名、行业词、首页文案、关于页 |
-| `taxonomy.ts`、`topics.json` | 分类、标签、主题 |
-| `sources.json` | 首次启动时导入的信源 |
-| `prompts/` | 精选标准和写作要求。**你的行业 KnowHow，就写在这里** |
-| `selection.ts` | 入选门槛 |
-| `features.ts` | 模型榜、Codex 重置监控的开关 |
-| `brand/`、`pages/` | 图标、使用规则和隐私说明 |
-
-最值得花时间的是评分标准（`prompts/selection-score.md`）和门槛：拿一两百条你自己标注过的资料，用 `scripts/eval-selection.ts` 跑一遍，看它选得准不准，再回去改。怎么做写在 [精选与校准](docs/selection.md) 里。
 
 ## 文档
 
 | 文档 | 内容 |
 |---|---|
-| [把它改成你的行业](docs/customize.md) | 站名、分类、信源、提示词、门槛、品牌，一步一步来 |
+| [改成你的行业](docs/customize.md) | 站名、分类、信源、提示词、门槛、品牌（上游框架的通用定制指南） |
 | [信源](docs/sources.md) | 六种信源怎么配，分级和全文，外部推送接口 |
-| [精选与校准](docs/selection.md) | 一条资料怎么变成精选，怎么用自己的样本校准 |
-| [部署](docs/deploy.md) | Docker、域名和 HTTPS、中国大陆、更新、备份、花多少钱 |
+| [精选与校准](docs/selection.md) | 一条资料怎么变成精选，怎么用标注样本校准 |
+| [部署](docs/deploy.md) | Docker、域名和 HTTPS、中国大陆、更新、备份 |
 | [架构](docs/architecture.md) | 三个进程、几条不变的规则、目录、对外出口 |
-| [模型榜与 Codex 重置监控](docs/leaderboard.md) | 两个 AI 专属模块 |
 
 技术栈：Node.js 24 · TypeScript · React Router（服务端渲染）· Fastify · PostgreSQL · pg-boss · Tailwind CSS · Docker Compose。
 
-## 最后
-
-AIHOT 曾经只是我无数个深夜里，一个很小、很小的念头。
-
-我不知道它会被改成什么样子，会走到多远的地方。但这可能就是开源最浪漫的地方。
-
-剩下的路，就交给你们了。
-
-<p align="right">—— 数字生命卡兹克</p>
-
 ## 许可
 
-代码使用 [MIT 许可证](LICENSE)。AIHOT 的名字和 Logo 不在许可范围内。字体、模型厂商和评测来源的标志各有自己的许可和商标归属，见 [NOTICE](NOTICE)。
-
----
-
-<sub>**In English:** AIHOT ([aihot.news](https://aihot.news)) is an AI news site that collects from many sources, lets a language model filter and score every item twice, writes Chinese headlines and summaries, clusters reports of the same story into one event, ranks events by how many independent sources discuss them, and publishes a daily briefing. This repository is its complete framework, including every prompt and threshold. Hand it to your coding agent with `AGENTS.md` and `docs/customize.md` to turn it into a news site for your own field. The documentation is in Chinese.</sub>
+代码使用 [MIT 许可证](LICENSE)。AIHOT 的名字和 Logo 不在许可范围内，归上游作者所有；字体、模型厂商和评测来源的标志各有自己的许可和商标归属，见 [NOTICE](NOTICE)。
