@@ -68,8 +68,8 @@ export function DocPage({ doc, parts }: { doc: DocDetail; parts?: SurvivalPartVi
       {parts && (
         <aside className="hidden lg:block">
           <div className="sticky top-6 max-h-[calc(100dvh-48px)] overflow-y-auto pb-6 pr-1">
-            <Link to="/survival" className="mb-3 block text-[12.5px] text-ink-4 hover:text-accent">
-              ← 手册目录
+            <Link to="/handbook" className="mb-3 block text-[12.5px] text-ink-4 hover:text-accent">
+              ← 东大生存手册
             </Link>
             <DocTree parts={parts} activeSlug={doc.slug} />
           </div>

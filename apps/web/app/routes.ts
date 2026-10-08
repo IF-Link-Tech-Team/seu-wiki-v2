@@ -2,11 +2,15 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 
 export default [
   index("routes/home.tsx"),
-  route("for-you", "routes/for-you.tsx"),
-  route("survival", "routes/survival.tsx"),
+  route("for-you", "routes/redirects.tsx", { id: "redirect-for-you" }),
+  route("survival", "routes/redirects.tsx", { id: "redirect-survival" }),
   route("survival/*", "routes/survival.$.tsx"),
-  route("experience", "routes/experience.tsx"),
+  route("experience", "routes/redirects.tsx", { id: "redirect-experience" }),
   route("experience/*", "routes/experience.$.tsx"),
+  route("experience-forum", "routes/experience-forum.tsx"),
+  route("handbook", "routes/handbook.tsx"),
+  route("handbook/article/:id", "routes/handbook.article.$id.tsx"),
+  route("handbook/:slug", "routes/handbook.$slug.tsx"),
   route("all", "routes/all.tsx"),
   route("all/search-busy", "routes/search-busy.tsx", { id: "all-search-busy" }),
   route("search-busy", "routes/search-busy.tsx", { id: "search-busy" }),

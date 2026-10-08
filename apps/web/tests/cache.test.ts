@@ -31,6 +31,11 @@ const api = createServer((req, res) => {
     return res.end(JSON.stringify({ filters, cards: [], nextCursor: null, refreshAt, dayCounts: [], hot: null, generatedAt: "2026-09-28T00:00:00Z" }));
   }
   if (url.pathname === "/api/site/hot") return res.end(JSON.stringify({ entries: [] }));
+  if (url.pathname === "/api/site/sources") return res.end(JSON.stringify({ sources: [] }));
+  if (url.pathname === "/api/site/pool") {
+    const filters = { channel: url.searchParams.get("channel") ?? "all", category: url.searchParams.get("category"), tag: null, topic: null, sources: null, q: null, tab: "time", type: "feed" };
+    return res.end(JSON.stringify({ filters, items: [], docs: [], page: 1, pageCount: 1, total: 0, todayCount: 0, freshness: "2026-09-28T00:00:00Z", generatedAt: "2026-09-28T00:00:00Z" }));
+  }
   if (url.pathname === "/api/site/echo-client") return res.end(JSON.stringify({ forwarded: req.headers["x-forwarded-for"], real: req.headers["x-real-ip"] }));
   if (url.pathname === "/api/site/items/long-lived") return res.end(JSON.stringify({ id: "long-lived", title: "t" }));
   if (url.pathname === "/api/site/contact") return res.end(JSON.stringify({ wechatQr: "/qr.png", feishuQr: "/qr.png" }));

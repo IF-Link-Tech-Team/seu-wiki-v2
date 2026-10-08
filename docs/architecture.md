@@ -57,7 +57,8 @@ flowchart LR
 
 | 地址 | 内容 |
 |---|---|
-| `/` `/all` `/hot` `/topics` `/daily` `/weekly` `/monthly` | 精选、全部动态、热门事件、主题、日报周报月报 |
+| `/` `/all` `/hot` `/topics` `/daily` `/weekly` `/monthly` | 精选（含分类、信源筛选）、全部动态、热门事件、主题、日报周报月报。左侧导航只保留精选、日报、经验论坛、生存手册、收藏，其余页面从「更多」进入 |
+| `/experience-forum` `/handbook` | 经验论坛、东大生存手册。这两个页从论坛站（forum.seu.wiki，`FORUM_API_BASE`）SSR 读取，是「一个公开读取层」规则的例外：论坛是独立仓库（seu-wiki-forum），有自己的数据库 |
 | `/feed.xml` `/feed/all.xml` `/feed/full.xml` `/feed/daily.xml` | RSS：精选、全部、全文、日报 |
 | `/api/v1/` | 公开 API，文档在 `/openapi-v1.json`，说明页在 `/agent` |
 | `/api/mcp` | MCP 服务，工具名前缀是 `industry/site.ts` 的 `mcpPrefix` |

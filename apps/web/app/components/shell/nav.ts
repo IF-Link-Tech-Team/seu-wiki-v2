@@ -3,7 +3,7 @@ import { withSubject } from "@aihot/industry/site";
 import { FEATURES } from "@aihot/industry/features";
 import type { ReactNode } from "react";
 import {
-  IconApps, IconBolt, IconBook, IconBookmark, IconChart, IconDoc, IconFlame, IconGrid, IconHeart, IconHistory, IconList, IconMessage, IconPen, IconPlug, IconUsers,
+  IconApps, IconBolt, IconBook, IconBookmark, IconChart, IconDoc, IconHeart, IconHistory, IconMessage, IconPen, IconPlug,
 } from "../icons";
 
 export interface NavItem {
@@ -21,13 +21,9 @@ export const SIDEBAR: Array<{ title: string; items: NavItem[] }> = [
     title: "内容",
     items: [
       { to: "/", label: "精选", icon: IconBolt, end: true },
-      { to: "/for-you", label: "为你", icon: IconUsers },
-      { to: "/survival", label: "手册", icon: IconBook },
-      { to: "/experience", label: "经验", icon: IconPen },
-      { to: "/all", label: `全部${withSubject("动态")}`, icon: IconList },
-      { to: "/hot", label: "热点榜", icon: IconFlame },
       { to: "/daily", label: withSubject("日报"), icon: IconDoc },
-      { to: "/topics", label: "主题", icon: IconGrid },
+      { to: "/experience-forum", label: "经验论坛", icon: IconPen },
+      { to: "/handbook", label: "东大生存手册", icon: IconBook },
       { to: "/starred", label: "收藏", icon: IconBookmark },
     ],
   },
@@ -56,13 +52,13 @@ export const SIDEBAR: Array<{ title: string; items: NavItem[] }> = [
 
 export const TABBAR: NavItem[] = [
   { to: "/", label: "精选", icon: IconBolt, end: true },
-  { to: "/all", label: "全部", icon: IconList },
   { to: "/daily", label: "日报", icon: IconDoc },
+  { to: "/experience-forum", label: "论坛", icon: IconPen },
   { to: "/more", label: "更多", icon: IconApps, changelog: true },
 ];
 
 /** Pages reached from the mobile "更多" tab keep that tab highlighted. */
-export const MORE_PATHS = ["/more", "/for-you", "/hot", "/topics", "/starred", "/leaderboard", "/codex-reset", "/agent", "/about", "/changelog", "/feedback", "/terms", "/privacy"];
+export const MORE_PATHS = ["/more", "/all", "/for-you", "/hot", "/topics", "/starred", "/handbook", "/leaderboard", "/codex-reset", "/agent", "/about", "/changelog", "/feedback", "/terms", "/privacy"];
 
 export function tabIsActive(item: NavItem, pathname: string): boolean {
   if (item.end) return pathname === item.to;

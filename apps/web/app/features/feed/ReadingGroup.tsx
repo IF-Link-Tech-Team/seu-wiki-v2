@@ -14,6 +14,7 @@ function filterParams(filters: TimelineFilters | undefined, cursor: string | nul
   if (filters?.channel && filters.channel !== "all") sp.set("channel", filters.channel);
   if (filters?.category) sp.set("category", filters.category);
   if (filters?.tag) sp.set("tag", filters.tag);
+  if (filters?.sources?.length) sp.set("sources", filters.sources.join(","));
   if (cursor) sp.set("cursor", cursor);
   return sp;
 }

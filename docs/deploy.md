@@ -91,6 +91,8 @@ createdb myhot
 ```bash
 DATABASE_URL=postgres://你的用户名@127.0.0.1:5432/myhot
 API_BASE_URL=http://127.0.0.1:3001
+# 可选：经验论坛 / 东大生存手册页面的论坛站地址，默认 https://forum.seu.wiki
+# FORUM_API_BASE=https://forum.example.com
 ```
 
 然后：
