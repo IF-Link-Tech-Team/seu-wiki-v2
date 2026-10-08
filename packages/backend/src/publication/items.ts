@@ -102,6 +102,12 @@ export function tagCondition(tag: string | null | undefined) {
   return sql`AND p.tags @> ${[tag]}::text[]`;
 }
 
+/** 信源筛选：按 sources.id 限定（学院/部门筛选器的选择）。 */
+export function sourceCondition(sources: string[] | null | undefined) {
+  if (!sources || sources.length === 0) return sql``;
+  return sql`AND p.source_id IN ${sql(sources)}`;
+}
+
 export function topicCondition(topicTags: string[] | null | undefined) {
   if (!topicTags || topicTags.length === 0) return sql``;
   return sql`AND p.tags && ${topicTags}::text[]`;

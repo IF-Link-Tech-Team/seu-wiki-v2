@@ -105,6 +105,8 @@ export interface TimelineFilters {
   category: CategoryKey | null;
   tag: string | null;
   topic?: string | null;
+  /** 信源筛选（sources.id 列表）；空/null 为不筛选。应用到精选、分类、全部与搜索。 */
+  sources?: string[] | null;
 }
 
 export interface TimelineResponse {
@@ -131,6 +133,22 @@ export interface PoolResponse {
   todayCount: number;
   freshness: string;
   generatedAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// 信源筛选（/api/site/sources）
+// ---------------------------------------------------------------------------
+
+/** 信源筛选器的一个可选项：只暴露筛选器需要的字段。 */
+export interface SourceOption {
+  id: string;
+  name: string;
+  /** 来源分组（sources.tags 里的组别词），如 学院与书院 / 机关与职能部门；未分组为 null。 */
+  group: string | null;
+}
+
+export interface SourceListResponse {
+  sources: SourceOption[];
 }
 
 // ---------------------------------------------------------------------------

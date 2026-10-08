@@ -3,7 +3,7 @@ import type { PoolResponse, TimelineFilters } from "@aihot/contracts/site";
 import { beijingDate, beijingMidnight } from "@aihot/contracts/time";
 import { one, sql, withCustomPlans, type Db } from "../db.ts";
 import {
-  categoryCondition, channelCondition, ITEM_COLUMNS, ITEM_FROM, listedCondition, tagCondition, toFeedItemSummary, topicCondition,
+  categoryCondition, channelCondition, ITEM_COLUMNS, ITEM_FROM, listedCondition, sourceCondition, tagCondition, toFeedItemSummary, topicCondition,
   type ItemRow,
 } from "./items.ts";
 import { searchDocs } from "./search.ts";
@@ -120,11 +120,11 @@ export async function loadPool(query: PoolQuery): Promise<PoolResponse> {
   const tab = q && query.tab === "relevance" ? "relevance" : "time";
   const type = query.type ?? "all";
   const terms = q ? searchTerms(q) : [];
-  const filters = sql`${channelCondition(query.channel)} ${categoryCondition(query.category)} ${tagCondition(query.tag)} ${topicCondition(query.topicTags)}`;
+  const filters = sql`${channelCondition(query.channel)} ${categoryCondition(query.category)} ${tagCondition(query.tag)} ${topicCondition(query.topicTags)} ${sourceCondition(query.sources)}`;
   const offset = (page - 1) * POOL_PAGE_SIZE;
   const cap = POOL_MAX_PAGES * POOL_PAGE_SIZE;
   // A fixed clock (tests, replays) never shares cached totals.
-  const filterKey = query.now ? null : JSON.stringify([query.channel, query.category, query.tag, query.topicTags ?? null]);
+  const filterKey = query.now ? null : JSON.stringify([query.channel, query.category, query.tag, query.topicTags ?? null, query.sources ?? null]);
 
   // 统一搜索的手册/经验半边：有检索词且不是只看动态时按相关度查 docs（不按时间埋没长文）。
   const docs = q && type !== "feed" ? await searchDocs(q, type === "all" ? null : type) : [];
@@ -153,7 +153,7 @@ export async function loadPool(query: PoolQuery): Promise<PoolResponse> {
       // can make PostgreSQL scan every toasted body instead. Keep other searches inline so short
       // terms, additional terms and selective publication filters retain their existing plans.
       const splitFields = terms.length === 1 && /[\p{L}\p{N}]{3}/u.test(terms[0]!)
-        && (!query.channel || query.channel === "all") && !query.category && !query.tag && !query.topicTags?.length;
+        && (!query.channel || query.channel === "all") && !query.category && !query.tag && !query.topicTags?.length && !query.sources?.length;
       const partScore = terms.reduce(
         (acc, t) => sql`${acc} + (CASE WHEN ${like(sql`ps.direct`, t)} THEN 3 ELSE 0 END) + (CASE WHEN ${like(sql`ps.body`, t)} THEN 1 ELSE 0 END)`,
         sql`0`,
@@ -207,7 +207,7 @@ export async function loadPool(query: PoolQuery): Promise<PoolResponse> {
       (SELECT max(p.updated_at) FROM publications p WHERE p.eligible) AS updated_at`);
 
   return {
-    filters: { channel: query.channel, category: query.category, tag: query.tag, topic: query.topic ?? null, q, tab, type: query.type ?? "all" },
+    filters: { channel: query.channel, category: query.category, tag: query.tag, topic: query.topic ?? null, sources: query.sources ?? null, q, tab, type: query.type ?? "all" },
     items: rows.map(toFeedItemSummary),
     docs,
     page,

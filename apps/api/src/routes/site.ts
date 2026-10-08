@@ -6,6 +6,7 @@ import { isCategoryKey, isChannelKey, type CategoryKey, type ChannelKey } from "
 import { InvalidCursorError } from "@aihot/backend/lib/cursor";
 import { exportMarkdown, loadItemDetail, siteItemDetail } from "@aihot/backend/publication/detail";
 import { loadPool, SearchBusyError } from "@aihot/backend/publication/pool";
+import { listPublicSources } from "@aihot/backend/publication/sources";
 import { loadTimeline } from "@aihot/backend/publication/timeline";
 import { loadForYou, parseForYouProfile } from "@aihot/backend/publication/foryou";
 import { loadDoc, loadExperienceIndex, loadSurvivalIndex, resolveDocRedirect } from "@aihot/backend/publication/docs";
@@ -65,6 +66,14 @@ export interface FilterParams {
   tag: string | null;
   topic: string | null;
   topicTags: string[] | null;
+  sources: string[] | null;
+}
+
+/** 信源筛选参数：?sources=id1,id2，id 白名单字符，最多 20 个。 */
+function parseSources(value: string | undefined): string[] | null {
+  const ids = (value ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+  if (ids.some((id) => !/^[a-zA-Z0-9_-]{1,80}$/.test(id))) throw new BadRequest("invalid sources");
+  return ids.length ? ids : null;
 }
 
 export async function parseFilters(q: Record<string, string>): Promise<FilterParams> {
@@ -79,7 +88,7 @@ export async function parseFilters(q: Record<string, string>): Promise<FilterPar
     topicTags = await loadTopicTags(topic);
     if (!topicTags) throw new BadRequest("unknown topic");
   }
-  return { channel, category: category as CategoryKey | null, tag, topic, topicTags };
+  return { channel, category: category as CategoryKey | null, tag, topic, topicTags, sources: parseSources(q.sources) };
 }
 
 export function registerSite(app: FastifyInstance) {
@@ -93,7 +102,7 @@ export function registerSite(app: FastifyInstance) {
     const q = looseQuery(req);
     const filters = await parseFilters(q);
     const limit = Math.min(Math.max(Number(q.limit) || 20, 1), 40);
-    const unfiltered = filters.channel === "all" && !filters.category && !filters.tag && !filters.topic && !q.cursor;
+    const unfiltered = filters.channel === "all" && !filters.category && !filters.tag && !filters.topic && !filters.sources && !q.cursor;
     const [data, hot] = await Promise.all([
       loadTimeline({ ...filters, cursor: q.cursor || null, limit }),
       unfiltered ? loadHotStrip() : null,
@@ -112,6 +121,11 @@ export function registerSite(app: FastifyInstance) {
     const data = await loadForYou({ profile: parseForYouProfile(q), category: category as CategoryKey | null, cursor: q.cursor || null, limit });
     reply.header("Cache-Control", "private, no-store");
     return reply.send(data);
+  }));
+
+  // 信源筛选器的选项（学院/部门筛选）：启用且产出过公开条目的信源。
+  app.get("/api/site/sources", siteHandler(async (req, reply) => {
+    return sendJsonWithEtag(req, reply, await listPublicSources(), { etagPrefix: "sources", cacheControl: "public, max-age=300, s-maxage=300" });
   }));
 
   app.get("/api/site/docs/survival", siteHandler(async (req, reply) => {
