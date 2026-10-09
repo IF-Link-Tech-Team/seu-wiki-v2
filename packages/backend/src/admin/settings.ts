@@ -7,6 +7,7 @@ import sharp from "sharp";
 import { config } from "../config.ts";
 import { sql } from "../db.ts";
 import { sha256 } from "../lib/ids.ts";
+import { rasterImageType } from "../media/raster.ts";
 import { loadContact, type ContactSettings } from "../site/contact.ts";
 import { audit } from "./auth.ts";
 
@@ -15,6 +16,7 @@ const MAX_QR_BYTES = 2 * 1024 * 1024;
 export async function replaceContactQr(input: { slot: keyof ContactSettings; data: Buffer }, actor: string) {
   if (input.slot !== "wechatQr" && input.slot !== "feishuQr") throw new Error("unknown slot");
   if (input.data.length > MAX_QR_BYTES) throw new Error("二维码图片最大 2MB");
+  if (!["image/png", "image/jpeg", "image/webp"].includes(await rasterImageType(input.data) ?? "")) throw new Error("需要 PNG、JPG 或 WebP 图片");
   const meta = await sharp(input.data).metadata().catch(() => null);
   if (!meta || !["png", "jpeg", "webp"].includes(meta.format ?? "")) throw new Error("需要 PNG、JPG 或 WebP 图片");
   if ((meta.width ?? 0) < 120 || (meta.height ?? 0) < 120) throw new Error("图片太小，二维码可能扫不出来");

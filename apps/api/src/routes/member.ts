@@ -10,7 +10,7 @@ import { cookie, createAdminSessionForIdentity, endSession, parseCookies, SESSIO
 import { forwardRevocation, resolveAccountsUuid } from "@aihot/backend/member/accounts";
 import { createMemberSession, endMemberSession, MEMBER_SESSION_COOKIE, MEMBER_SESSION_DAYS, memberPrincipal, updateMemberProfile, upsertMember } from "@aihot/backend/member/auth";
 import { memberAuthConfig, type MemberAuthConfig } from "@aihot/backend/member/config";
-import { beginSignIn, completeSignIn, OIDC_PENDING_COOKIE, OIDC_STATE_COOKIE, OidcError, readPendingIdentity, verifyLogoutToken } from "@aihot/backend/member/oidc";
+import { beginSignIn, completeSignIn, consumePendingIdentity, OIDC_PENDING_COOKIE, OIDC_PENDING_MAX_AGE, OIDC_STATE_COOKIE, OIDC_STATE_MAX_AGE, OidcError, readPendingIdentity, verifyLogoutToken } from "@aihot/backend/member/oidc";
 import { sendProblem } from "../http/respond.ts";
 
 /** 合同包按 Fetch 的 Request 写（headers.get）；Fastify 的 headers 是平面对象，适配一层。 */
@@ -43,7 +43,7 @@ export function registerMember(app: FastifyInstance) {
     const { url, cookieValue } = beginSignIn(cfg);
     reply.header("Set-Cookie", [
       cookie(RETURN_COOKIE, serializeAuthReturnCookieValue(redirectTo, cfg.baseUrl), AUTH_RETURN_COOKIE_MAX_AGE, secure(cfg)),
-      cookie(OIDC_STATE_COOKIE, cookieValue, AUTH_RETURN_COOKIE_MAX_AGE, secure(cfg)),
+      cookie(OIDC_STATE_COOKIE, cookieValue, OIDC_STATE_MAX_AGE, secure(cfg)),
     ]);
     return reply.redirect(url, 302);
   });
@@ -55,9 +55,9 @@ export function registerMember(app: FastifyInstance) {
     if (!cfg) return unavailable(req, reply);
     try {
       const raw = new URL(req.raw.url ?? "/", cfg.baseUrl).toString();
-      const { identity, pendingCookie } = await completeSignIn(cfg, raw, parseCookies(req.headers.cookie)[OIDC_STATE_COOKIE]);
+      const { pendingCookie } = await completeSignIn(cfg, raw, parseCookies(req.headers.cookie)[OIDC_STATE_COOKIE]);
       reply.header("Set-Cookie", [
-        cookie(OIDC_PENDING_COOKIE, pendingCookie, AUTH_RETURN_COOKIE_MAX_AGE, secure(cfg)),
+        cookie(OIDC_PENDING_COOKIE, pendingCookie, OIDC_PENDING_MAX_AGE, secure(cfg)),
         cookie(OIDC_STATE_COOKIE, "", 0, secure(cfg)),
       ]);
       return reply.redirect(buildAccountsBootstrapCompleteUrl(cfg.accountsUrl, `${cfg.baseUrl}/api/logto/bootstrap-complete`), 302);
@@ -74,16 +74,18 @@ export function registerMember(app: FastifyInstance) {
     const cfg = memberAuthConfig();
     if (!cfg) return unavailable(req, reply);
     const cookies = parseCookies(req.headers.cookie);
-    const identity = readPendingIdentity(cfg, cookies[OIDC_PENDING_COOKIE]);
     const clearCookies = [cookie(OIDC_PENDING_COOKIE, "", 0, secure(cfg)), cookie(RETURN_COOKIE, "", 0, secure(cfg))];
-    reply.header("Set-Cookie", clearCookies);
-    if (!identity) return reply.redirect("/", 302);
     try {
-      const resolved = await resolveAccountsUuid(cfg, identity.sub);
+      const pending = await readPendingIdentity(cfg, cookies[OIDC_PENDING_COOKIE]);
+      if (!pending) return reply.header("Set-Cookie", clearCookies).redirect("/", 302);
+      const resolved = await resolveAccountsUuid(cfg, pending.sub);
       if (!resolved) {
         // 该端点不建用户：没建档说明 bootstrap 没成功，重新走一遍。
         return reply.redirect(buildAccountsBootstrapCompleteUrl(cfg.accountsUrl, `${cfg.baseUrl}/api/logto/bootstrap-complete`), 302);
       }
+      const identity = await consumePendingIdentity(cfg, cookies[OIDC_PENDING_COOKIE]);
+      reply.header("Set-Cookie", clearCookies);
+      if (!identity) return reply.redirect("/", 302);
       const memberId = await upsertMember({ uuid: resolved.uuid, sub: identity.sub, email: identity.email ?? resolved.email, name: identity.name ?? resolved.name });
       const session = await createMemberSession(memberId, identity, req.headers["user-agent"]);
       const setCookies = [...clearCookies, cookie(MEMBER_SESSION_COOKIE, session, MEMBER_SESSION_DAYS * 86400, secure(cfg))];

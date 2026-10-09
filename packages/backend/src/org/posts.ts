@@ -7,6 +7,7 @@ import { beijingDate, beijingTime } from "@aihot/contracts/time";
 import { config } from "../config.ts";
 import { sql } from "../db.ts";
 import { sha256 } from "../lib/ids.ts";
+import { rasterImageType } from "../media/raster.ts";
 import { audit } from "../admin/auth.ts";
 import { recordCandidate } from "../taxonomy/terms.ts";
 import { orgActorOf, type OrgPrincipal } from "./auth.ts";
@@ -194,6 +195,7 @@ const MAX_POSTER_BYTES = 5 * 1024 * 1024;
 /** 海报：PNG/JPEG/WebP，≤ 5MB；内容哈希命名，公开地址永久缓存。 */
 export async function uploadPoster(data: Buffer): Promise<{ key: string; url: string }> {
   if (data.length > MAX_POSTER_BYTES) throw new OrgError(400, "海报最大 5MB");
+  if (!["image/png", "image/jpeg", "image/webp"].includes(await rasterImageType(data) ?? "")) throw new OrgError(400, "需要 PNG、JPG 或 WebP 图片");
   const meta = await sharp(data).metadata().catch(() => null);
   if (!meta || !["png", "jpeg", "webp"].includes(meta.format ?? "")) throw new OrgError(400, "需要 PNG、JPG 或 WebP 图片");
   const ext = meta.format === "jpeg" ? "jpg" : meta.format!;

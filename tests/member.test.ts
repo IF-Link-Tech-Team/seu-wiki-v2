@@ -8,6 +8,7 @@ import { exportJWK, generateKeyPair, SignJWT } from "jose";
 import { closeDb, sql } from "@aihot/backend/db";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { buildApp } from "../apps/api/src/app.ts";
+import { createHmac } from "node:crypto";
 
 const T = tag();
 const SUB = `logto-sub-${T}`;
@@ -21,6 +22,7 @@ const jwk = { ...(await exportJWK(publicKey)), kid: "test-key", alg: "RS256", us
 const nonces = new Map<string, string>(); // state → nonce（auth 时记，token 时用）
 let userinfoSub: string | null = null; // 设为别的值可测 sub 不一致
 let rolesForUser: string[] = []; // 设为 ["community_admin"] 可测后台授权
+let accountsReady = true;
 let revokedKeys = new Set<string>(); // "sub|sid|iat"
 let sidCounter = 0; // "sub|sid|iat"
 const forwardedRevocations: unknown[] = [];
@@ -57,6 +59,7 @@ const raw = http.createServer(async (req, res) => {
       return res.end();
     }
     if (url.pathname === "/internal/v1/users/by-subject") {
+      if (!accountsReady) { res.writeHead(404); return res.end("{}"); }
       if (req.headers.authorization !== "Bearer m2m-token") {
         res.writeHead(401);
         return res.end("{}");
@@ -99,6 +102,7 @@ before(() => {
 after(async () => {
   for (const k of Object.keys(ENV)) delete process.env[k];
   await sql`DELETE FROM members WHERE logto_sub = ${SUB}`;
+  await sql`DELETE FROM member_oidc_pending WHERE identity->>'sub' = ${SUB}`;
   await new Promise<void>((resolve) => raw.close(() => resolve()));
   await app_.close();
   await stopBoss();
@@ -126,7 +130,7 @@ const merge = (a: Jar, b: Map<string, string | null>): Jar => {
 };
 const cookieHeader = (jar: Jar) => [...jar.entries()].map(([k, v]) => `${k}=${v}`).join("; ");
 
-async function loginFlow(returnPath: string): Promise<Jar> {
+async function pendingFlow(returnPath: string): Promise<Jar> {
   const r1 = await app_.inject({ method: "GET", url: `/api/logto/sign-in?redirect=${encodeURIComponent(returnPath)}` });
   assert.equal(r1.statusCode, 302);
   let jar: Jar = new Map([...jarOf(r1.headers["set-cookie"])].filter((e): e is [string, string] => e[1] !== null));
@@ -136,17 +140,66 @@ async function loginFlow(returnPath: string): Promise<Jar> {
   const callbackUrl = new URL(auth.headers.get("location")!);
   const r2 = await app_.inject({ method: "GET", url: `${callbackUrl.pathname}${callbackUrl.search}`, headers: { cookie: cookieHeader(jar) } });
   assert.equal(r2.statusCode, 302, "callback 302 去 Accounts bootstrap");
+  assert.match(String(r2.headers["set-cookie"]), /seuwiki_oidc_pending=[^;]+;[^,]*Max-Age=300/);
   jar = merge(jar, jarOf(r2.headers["set-cookie"]));
   const bootstrapUrl = r2.headers.location!;
   assert.ok(bootstrapUrl.startsWith(`${logtoBase}/bootstrap?`), "去 Accounts 建档");
   assert.ok(decodeURIComponent(bootstrapUrl).includes("return_to=http://localhost/api/logto/bootstrap-complete"), "固定完成地址");
+  return jar;
+}
+
+async function loginFlow(returnPath: string): Promise<Jar> {
+  let jar = await pendingFlow(returnPath);
   // Accounts 建档后回固定完成地址。
-  const boot = await fetch(bootstrapUrl, { redirect: "manual" });
-  const completeUrl = new URL(boot.headers.get("location")!);
-  const r3 = await app_.inject({ method: "GET", url: `${completeUrl.pathname}${completeUrl.search}`, headers: { cookie: cookieHeader(jar) } });
+  const r3 = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
   jar = merge(jar, jarOf(r3.headers["set-cookie"]));
   return Object.assign(jar, { lastStatus: r3.statusCode, lastBody: r3.body });
 }
+
+test("pending identity is consumed once, including concurrent bootstrap requests", async () => {
+  rolesForUser = ["community_admin"];
+  try {
+    const jar = await pendingFlow("/admin");
+    const request = { method: "GET" as const, url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } };
+    const results = await Promise.all([app_.inject(request), app_.inject(request)]);
+    assert.equal(results.filter(r => jarOf(r.headers["set-cookie"]).get("seuwiki_member")).length, 1);
+    assert.equal(results.filter(r => jarOf(r.headers["set-cookie"]).get("aihot_admin")).length, 1);
+    const replay = await app_.inject(request);
+    assert.equal(replay.headers.location, "/");
+    assert.ok(!jarOf(replay.headers["set-cookie"]).get("seuwiki_member"));
+    assert.ok(!jarOf(replay.headers["set-cookie"]).get("aihot_admin"));
+  } finally { rolesForUser = []; }
+});
+
+test("server rejects an expired pending identity even when the browser resends the cookie", async () => {
+  const jar = await pendingFlow("/");
+  await sql`UPDATE member_oidc_pending SET expires_at = now() - interval '1 second' WHERE identity->>'sub' = ${SUB}`;
+  const result = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
+  assert.equal(result.headers.location, "/");
+  assert.ok(!jarOf(result.headers["set-cookie"]).get("seuwiki_member"));
+});
+
+test("unfinished Accounts bootstrap preserves pending and return cookies for retry", async () => {
+  const jar = await pendingFlow("/for-you");
+  accountsReady = false;
+  try {
+    const result = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
+    assert.ok(result.headers.location?.startsWith(logtoBase + "/bootstrap"));
+    assert.equal(result.headers["set-cookie"], undefined);
+  } finally { accountsReady = true; }
+  const retried = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
+  assert.equal(retried.headers.location, "/for-you");
+  assert.ok(jarOf(retried.headers["set-cookie"]).get("seuwiki_member"));
+});
+
+test("server rejects signed state older than ten minutes before token exchange", async () => {
+  const value = JSON.stringify({ state: "stale", nonce: "nonce", issuedAt: Date.now() - 601_000 });
+  const signed = value + "." + createHmac("sha256", ENV.LOGTO_COOKIE_SECRET).update(value).digest("base64url");
+  const result = await app_.inject({ method: "GET", url: "/api/logto/sign-in-callback?code=unused&state=stale",
+    headers: { cookie: "seuwiki_oidc_state=" + encodeURIComponent(signed) } });
+  assert.equal(result.statusCode, 400);
+  assert.match(result.body, /expired oidc state/);
+});
 
 test("完整登录链：sign-in → callback → bootstrap → member 落库 → 302 回原页面，return cookie 已删", async () => {
   const jar = await loginFlow("/for-you");

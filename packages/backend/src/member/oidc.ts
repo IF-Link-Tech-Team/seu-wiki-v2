@@ -4,11 +4,15 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
 import { canonicalizeCallbackUrl } from "iflink-community-auth";
 import { memberAuthConfig, type MemberAuthConfig } from "./config.ts";
+import { sql } from "../db.ts";
+import { sha256 } from "../lib/ids.ts";
 
 export class OidcError extends Error {}
 
 export const OIDC_STATE_COOKIE = "seuwiki_oidc_state";
 export const OIDC_PENDING_COOKIE = "seuwiki_oidc_pending";
+export const OIDC_STATE_MAX_AGE = 600;
+export const OIDC_PENDING_MAX_AGE = 300;
 
 function sign(cfg: MemberAuthConfig, value: string): string {
   return `${value}.${createHmac("sha256", cfg.cookieSecret).update(value).digest("base64url")}`;
@@ -27,11 +31,12 @@ function unsign(cfg: MemberAuthConfig, signed: string | undefined): string | nul
 export interface OidcState {
   state: string;
   nonce: string;
+  issuedAt: number;
 }
 
 /** 发起授权：state+nonce 写一次性 cookie，返回 Logto 授权地址。 */
 export function beginSignIn(cfg: MemberAuthConfig): { url: string; cookieValue: string } {
-  const s: OidcState = { state: randomBytes(16).toString("base64url"), nonce: randomBytes(16).toString("base64url") };
+  const s: OidcState = { state: randomBytes(16).toString("base64url"), nonce: randomBytes(16).toString("base64url"), issuedAt: Date.now() };
   const url = new URL(`${cfg.logtoEndpoint}/oidc/auth`);
   url.searchParams.set("client_id", cfg.appId);
   url.searchParams.set("redirect_uri", `${cfg.baseUrl}/api/logto/sign-in-callback`);
@@ -83,6 +88,9 @@ export async function completeSignIn(cfg: MemberAuthConfig, requestUrl: string, 
   const stored = unsign(cfg, stateCookie);
   if (!stored) throw new OidcError("missing oidc state cookie");
   const expected = JSON.parse(stored) as OidcState;
+  if (!Number.isFinite(expected.issuedAt) || expected.issuedAt > Date.now() || Date.now() - expected.issuedAt >= OIDC_STATE_MAX_AGE * 1000) {
+    throw new OidcError("expired oidc state");
+  }
   if (!code || !state || state !== expected.state) throw new OidcError("state mismatch");
 
   const tokenRes = await fetch(`${cfg.logtoEndpoint}/oidc/token`, {
@@ -126,19 +134,29 @@ export async function completeSignIn(cfg: MemberAuthConfig, requestUrl: string, 
     name: me.name ?? null,
     roles,
   };
-  return { identity, pendingCookie: sign(cfg, JSON.stringify(identity)) };
+  const token = randomBytes(32).toString("base64url");
+  // 清理过期建档凭证；浏览器只持有随机令牌，身份和有效期由服务器保存。
+  await sql`DELETE FROM member_oidc_pending WHERE expires_at <= now()`;
+  await sql`INSERT INTO member_oidc_pending (id_hash, identity, expires_at)
+            VALUES (${sha256(token)}, ${sql.json({ ...identity })}, now() + ${OIDC_PENDING_MAX_AGE} * interval '1 second')`;
+  return { identity, pendingCookie: sign(cfg, token) };
 }
 
-/** bootstrap-complete 读 pending cookie（一次性，读完即删由路由负责）。 */
-export function readPendingIdentity(cfg: MemberAuthConfig, cookieValue: string | undefined): OidcIdentity | null {
-  const raw = unsign(cfg, cookieValue);
-  if (!raw) return null;
-  try {
-    const v = JSON.parse(raw) as OidcIdentity;
-    return typeof v.sub === "string" && v.sub ? v : null;
-  } catch {
-    return null;
-  }
+/** 建档尚未完成可重试；成功后必须原子消费，不能只依靠客户端删除 cookie。 */
+export async function readPendingIdentity(cfg: MemberAuthConfig, cookieValue: string | undefined): Promise<OidcIdentity | null> {
+  const token = unsign(cfg, cookieValue);
+  if (!token) return null;
+  const [row] = await sql<{ identity: OidcIdentity }[]>`
+    SELECT identity FROM member_oidc_pending WHERE id_hash = ${sha256(token)} AND expires_at > now()`;
+  return row?.identity ?? null;
+}
+
+export async function consumePendingIdentity(cfg: MemberAuthConfig, cookieValue: string | undefined): Promise<OidcIdentity | null> {
+  const token = unsign(cfg, cookieValue);
+  if (!token) return null;
+  const [row] = await sql<{ identity: OidcIdentity }[]>`
+    DELETE FROM member_oidc_pending WHERE id_hash = ${sha256(token)} AND expires_at > now() RETURNING identity`;
+  return row?.identity ?? null;
 }
 
 const BACKCHANNEL_LOGOUT_EVENT = "http://schemas.openid.net/event/backchannel-logout";
