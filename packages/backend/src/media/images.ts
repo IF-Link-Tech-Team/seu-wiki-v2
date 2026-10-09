@@ -8,6 +8,7 @@ import { config } from "../config.ts";
 import { guardedFetch, type GuardedResponse } from "../lib/http-fetch.ts";
 
 import { IMAGE_WIDTHS } from "./renditions.ts";
+import { rasterImageType } from "./raster.ts";
 
 const CACHE_DIR = path.join(config.dataDir, "imgcache");
 const ORIGINAL_TTL_MS = 60_000;
@@ -127,7 +128,8 @@ export function produceImage(url: string, mode: string): Promise<{ body: Buffer;
 }
 
 function cacheFile(url: string, mode: string): string {
-  const key = createHash("sha256").update(`${mode}|${url}`).digest("hex");
+  // Do not reuse renditions that predate the raster-only input policy.
+  const key = createHash("sha256").update(`raster-v1|${mode}|${url}`).digest("hex");
   return path.join(CACHE_DIR, key.slice(0, 2), key);
 }
 
@@ -181,8 +183,8 @@ export async function convertAnimated(url: string, mode: string): Promise<number
 export async function resizeImage(body: Buffer, upstreamType: string, mode: string): Promise<{ body: Buffer; type: string }> {
   const ico = decodeIco(body);
   if (!upstreamType.startsWith("image/") && !ico) throw new Error("upstream is not an image");
-  const type = ico ? "image/png" : upstreamType.split(";")[0]!;
-  if (/icon$/.test(type) && !ico) throw new Error("unreadable icon");
+  const type = ico ? "image/png" : await rasterImageType(body);
+  if (!type) throw new Error("unsupported raster image");
   const avatar = mode === "avatar" || mode.startsWith("avatar-");
   const width = IMAGE_WIDTHS[mode as keyof typeof IMAGE_WIDTHS] ?? 1600;
   const raw = ico && !Buffer.isBuffer(ico) ? { raw: { width: ico.width, height: ico.height, channels: 4 as const } } : {};
@@ -191,15 +193,11 @@ export async function resizeImage(body: Buffer, upstreamType: string, mode: stri
   // A large animation can be hundreds of frames: do not silently replace it with a still or decode
   // all its frames on an HTTP request. Keep frame timing, loop count and transparency unchanged.
   if ((meta.pages ?? 1) > 1 || type === "image/gif") return { body, type };
-  // Small vectors are already compact and remain sharp at every zoom level. Rasterize oversized
-  // SVGs (often screenshots embedded as base64) and avatars at their actual display rendition.
-  if (type === "image/svg+xml" && !avatar && body.length <= 128 * 1024) return { body, type };
-  const density = type === "image/svg+xml" && meta.width ? Math.max(72, Math.min(300, Math.ceil(width / meta.width * 72))) : 72;
-  let image = sharp(input, { ...raw, failOn: "none", density }).rotate();
+  let image = sharp(input, { ...raw, failOn: "none" }).rotate();
   image = avatar ? image.resize(width, width, { fit: "cover" }) : image.resize({ width, withoutEnlargement: true });
   // Screenshots and transparent PNGs benefit most from modern encoding. Already lossy JPEGs
   // measured larger at WebP 88, so retain their established encoder/quality instead of growing them.
-  if (ico || type === "image/png" || type === "image/svg+xml") {
+  if (ico || type === "image/png" || type === "image/apng") {
     return { body: await image.webp({ quality: 88, alphaQuality: 100, smartSubsample: true, effort: 4 }).toBuffer(), type: "image/webp" };
   }
   if (type === "image/webp") return { body: await image.webp({ quality: 82 }).toBuffer(), type };

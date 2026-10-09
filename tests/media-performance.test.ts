@@ -2,9 +2,10 @@ import "./setup.ts";
 import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import { createServer } from "node:http";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import sharp from "sharp";
 
 const dir = await mkdtemp(path.join(tmpdir(), "aihot-media-test-"));
@@ -132,15 +133,34 @@ test("modern raster output preserves transparency and never flattens animation",
   assert.deepEqual((await resizeImage(animatedWebp, "image/webp", "image-336")).body, animatedWebp);
 });
 
-test("small SVG stays vector while a large vector receives the requested browser rendition", async () => {
+test("external SVG is rejected even with a forged raster MIME type", async () => {
   const { resizeImage } = await import("@aihot/backend/media/images");
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"><rect width="1200" height="600" fill="#176b75"/></svg>';
-  const vector = await resizeImage(Buffer.from(svg), "image/svg+xml", "image-720");
-  assert.equal(vector.type, "image/svg+xml");
   const large = Buffer.from(svg.replace("</svg>", `<!--${"padding".repeat(20_000)}--></svg>`));
-  const raster = await resizeImage(large, "image/svg+xml", "image-720");
-  assert.equal(raster.type, "image/webp");
-  assert.equal((await sharp(raster.body).metadata()).width, 720);
+  for (const input of [Buffer.from(svg), large, Buffer.from(`\ufeff<?xml version="1.0"?>${svg}`, "utf16le")]) {
+    for (const mime of ["image/svg+xml", "image/png", "image/gif"]) {
+      await assert.rejects(resizeImage(input, mime, "image-720"), /unsupported raster image/);
+    }
+  }
+  const { uploadPoster } = await import("@aihot/backend/org/posts");
+  const { replaceContactQr } = await import("@aihot/backend/admin/settings");
+  await assert.rejects(uploadPoster(Buffer.from(svg)), /PNG/);
+  await assert.rejects(replaceContactQr({ slot: "wechatQr", data: Buffer.from(svg) }, "test"), /PNG/);
+  const rendered = await resizeImage(png, "image/gif", "image-720");
+  assert.equal(rendered.type, "image/webp");
+});
+
+test("old image caches cannot bypass the raster-only input policy", async () => {
+  const url = `${base}/legacy-cache`;
+  const key = createHash("sha256").update(`thumb|${url}`).digest("hex");
+  const file = path.join(dir, "imgcache", key.slice(0, 2), key);
+  await mkdir(path.dirname(file), { recursive: true });
+  await writeFile(file, '<svg xmlns="http://www.w3.org/2000/svg"/>');
+  await writeFile(`${file}.type`, "image/svg+xml");
+  const before = imageHits;
+  const image = await produceImage(url, "thumb");
+  assert.equal(imageHits, before + 1);
+  assert.equal(image.type, "image/webp");
 });
 
 test("responsive URLs and web body candidates retain exact signatures and stable expiry", async () => {
