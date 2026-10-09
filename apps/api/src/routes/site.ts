@@ -146,7 +146,10 @@ export function registerSite(app: FastifyInstance) {
   }));
 
   app.get("/api/site/docs/*", siteHandler(async (req, reply) => {
-    const slug = String((req.params as Record<string, string>)["*"] ?? "").replace(/\/+$/, "").slice(0, 300);
+    const raw = String((req.params as Record<string, string>)["*"] ?? "");
+    let end = raw.length;
+    while (end > 0 && raw[end - 1] === "/") end--;
+    const slug = raw.slice(0, Math.min(end, 300));
     const doc = slug ? await loadDoc(slug) : null;
     if (!doc) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "doc not found", cacheControl: "public, max-age=60" });
     return sendJsonWithEtag(req, reply, doc, { etagPrefix: "doc", cacheControl: "public, max-age=300, s-maxage=300" });

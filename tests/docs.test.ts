@@ -103,3 +103,15 @@ test("API：文档详情、经验列表、映射查询与旧入口 301", async (
   assert.equal(resolveRedirect("/news", "")?.status, 301);
   assert.equal(resolveRedirect("/contribute/", "")?.location, "/feedback");
 });
+
+test("文档路径兼容末尾斜杠，空路径和异常长路径返回 404", async () => {
+  for (const suffix of ["/", "///"]) {
+    const res = await app.inject({ method: "GET", url: `/api/site/docs/survival/测试篇/b${suffix}` });
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json().slug, "survival/测试篇/b");
+  }
+  for (const slug of ["////", "/".repeat(32_000) + "x"]) {
+    const res = await app.inject({ method: "GET", url: `/api/site/docs/${slug}` });
+    assert.equal(res.statusCode, 404);
+  }
+});
