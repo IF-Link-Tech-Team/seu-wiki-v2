@@ -39,6 +39,12 @@
 - `detail`：列表缺日期、标题或摘要时抓详情页补齐（`publishedAtSelector`、`titleSelector`、`summarySelector` 等）。
 - `allowUrlPrefixes` / `denyUrlPrefixes`：只收某些路径下的文章。
 
+### 正文抽取与 PDF
+
+详情页正文先按 `.wp_articlecontent`（WebPlus 站群）直连提取，失败再走 Readability，最后可经 Jina Reader 兜底（按次计费）。页面太薄或抽不出正文时，会自动尝试页面里内嵌/附件的 PDF（`pdfsrc` 播放器、`*.pdf` 链接），PDF 的文字并入正文；条目网址直接指向 PDF 的也照读。PDF 在本地解析（pdfjs），不花模型额度。扫描件（图片型 PDF）读不出文字，按"抽不到正文"处理。
+
+抽不到正文的条目不会被丢弃：保留原标题，配一句如实说明的占位摘要，照常进分类栏目、全部动态和搜索，但不进精选（没有内容可评，不能仅凭标题入选）。
+
 ### x_search
 
 ```json

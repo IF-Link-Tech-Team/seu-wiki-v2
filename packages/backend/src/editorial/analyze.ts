@@ -372,6 +372,9 @@ async function runUnderstand(a: AnalyzeInputArticle, opts: StepOpts): Promise<An
   };
 }
 
+/** 占位摘要：正文没抓到（附件/PDF 页、校内限定页）时如实说明，让条目仍能进列表和搜索。 */
+export const NO_BODY_SUMMARY = "暂未获取到正文（可能为附件页或仅校内可见），请打开原文查看。";
+
 /** The title/summary prompts (articles, long and short posts). */
 async function runSummarize(a: AnalyzeInputArticle, opts: StepOpts): Promise<NonNullable<AnalysisRun["writing"]>> {
   const t = translateInputOf(a);
@@ -381,7 +384,12 @@ async function runSummarize(a: AnalyzeInputArticle, opts: StepOpts): Promise<Non
   const plain = { reasonZh: null, tags: null, receiptIds: [] as number[], reused: true };
   // A short post already in Chinese is its own copy, and too little text is not written up from a title.
   if (short && !needsShortTweetTranslation(main)) return { kind: "verbatim", model: null, titleZh: main, summaryZh: main, ...plain };
-  if (!short && t.text.trim().length < 20) return { kind: "none", model: null, titleZh: looksZh(t.title) ? t.title : "", summaryZh: "", ...plain };
+  // 正文太薄（附件/PDF 页、校内限定页、图片页）时不硬编摘要：给一句如实说明，让条目照常进列表和
+  // 搜索——校园里漏掉一条通知的代价高于多展示一条薄条目。无正文条目不进精选（见 normalizeAnalysis）。
+  if (!short && t.text.trim().length < 20) {
+    const titleZh = looksZh(t.title) ? t.title : "";
+    return { kind: "none", model: null, titleZh, summaryZh: titleZh ? NO_BODY_SUMMARY : "", ...plain };
+  }
   const model = await modelFor("summarize");
   checkAnalysisRunning();
   const res = await chatJson({
@@ -445,15 +453,16 @@ export function normalizeAnalysis(run: AnalysisRun) {
   const titleZh = collapseWhitespace(run.writing?.titleZh ?? "");
   const summaryZh = (run.writing?.summaryZh ?? "").trim();
   // Past the prefilter (PASS or UNKNOWN) an item is relevant, but without a usable Chinese title and
-  // summary it cannot be published: it waits.
+  // summary it cannot be published: it waits. (A thin body gets NO_BODY_SUMMARY, not a fabricated one.)
   const relevance = label === "BLOCK" ? "block" : run.writing && (!titleZh || !summaryZh) ? "unknown" : "pass";
   // Selected when the two scores add up to twice the tier threshold; the mean, floored,
-  // is the score shown (it never decides a half point on its own).
+  // is the score shown (it never decides a half point on its own). An item without a body
+  // (kind "none") is listed but never selected: the title alone must not carry it into 精选.
   const values = run.scores && !run.scores.refused ? run.scores.values : null;
   const sum = values?.length === SCORE_CALLS ? values.reduce((total, v) => total + v, 0) : null;
   const score = sum === null ? null : Math.floor(sum / SCORE_CALLS);
   const threshold = run.scores?.threshold ?? null;
-  const selected = relevance === "pass" && sum !== null && threshold !== null && sum >= threshold * SCORE_CALLS;
+  const selected = relevance === "pass" && run.writing?.kind !== "none" && sum !== null && threshold !== null && sum >= threshold * SCORE_CALLS;
   const subjects = run.structure?.subjects ?? [];
   const tags = [...(run.writing?.tags ?? run.structure?.tags ?? [])];
   for (const s of subjects) {

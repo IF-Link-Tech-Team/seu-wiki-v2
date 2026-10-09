@@ -6,6 +6,7 @@ import { sql } from "../db.ts";
 import { guardedFetch } from "../lib/http-fetch.ts";
 import { collapseWhitespace, stripTags } from "../lib/text.ts";
 import { jinaRead } from "../providers/jina.ts";
+import { extractPdfText, fetchPdfText, findPdfUrls, isPdfContent, pdfTextToHtml } from "./pdf.ts";
 import { BudgetExceededError } from "../providers/receipts.ts";
 import { getArticle } from "../providers/socialdata.ts";
 import { onlyXArticleLink, xArticleText } from "../sources/x.ts";
@@ -16,7 +17,7 @@ export interface ExtractedBody {
   html: string;
   text: string;
   images: Array<{ kind: "image"; url: string; width: number | null; height: number | null }>;
-  via: "readability" | "jina";
+  via: "readability" | "jina" | "pdf";
 }
 
 const MIN_BODY_CHARS = 200;
@@ -76,13 +77,34 @@ function markdownToHtml(md: string): string {
     .join("");
 }
 
+/** Thin/no body plus the page's embedded or attached PDF: the PDF text is the rest of the body. */
+function withPdfBody(got: ExtractedBody | null, pdfText: string, url: string): ExtractedBody | null {
+  const clean = trimTrailingChrome(sanitizeBody((got?.html ?? "") + pdfTextToHtml(pdfText), url));
+  const text = stripTags(clean);
+  if (text.length < 20) return null;
+  return { html: clean, text, images: got?.images ?? [], via: "pdf" };
+}
+
 export async function extractFromUrl(url: string, opts: { allowJina: boolean; subject: string; headers?: Record<string, string> }): Promise<ExtractedBody | null> {
   try {
     const res = await guardedFetch(url, { timeoutMs: 20_000, maxBytes: 6 * 1024 * 1024, headers: opts.headers });
     const type = res.headers.get("content-type") ?? "";
     if (res.status === 200 && /html/.test(type)) {
-      const got = readable(res.text(), res.url);
+      const html = res.text();
+      const got = readable(html, res.url);
+      if (got && got.text.length >= MIN_BODY_CHARS) return got;
+      // 太薄或抽不出正文的页面，内容常在附件/内嵌 PDF 里；本地解析不花额度，排在 Jina 前面。
+      for (const pdfUrl of findPdfUrls(html, res.url)) {
+        const pdfText = await fetchPdfText(pdfUrl);
+        if (pdfText) {
+          const merged = withPdfBody(got, pdfText, res.url);
+          if (merged) return merged;
+        }
+      }
       if (got) return got;
+    } else if (res.status === 200 && isPdfContent(type, res.url)) {
+      const text = await extractPdfText(new Uint8Array(res.body.buffer, res.body.byteOffset, res.body.byteLength));
+      if (text) return { html: pdfTextToHtml(text), text, images: [], via: "pdf" };
     }
   } catch {
     // fall through to Jina
