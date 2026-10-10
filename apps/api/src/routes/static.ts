@@ -15,10 +15,15 @@ import { llmsTxt, loadLlmsAvailability } from "@aihot/backend/publication/llms";
 const REF = path.join(REPO_ROOT, "reference");
 const ASSETS = path.join(REPO_ROOT, "assets");
 const BRAND = path.join(REPO_ROOT, "industry/brand");
+const SKILL = path.join(REPO_ROOT, "industry/skill");
 
 const TYPES: Record<string, string> = {
   ".json": "application/json; charset=UTF-8",
   ".txt": "text/plain; charset=UTF-8",
+  ".md": "text/markdown; charset=UTF-8",
+  ".sh": "text/plain; charset=UTF-8",
+  ".yaml": "text/yaml; charset=UTF-8",
+  ".sha256": "text/plain; charset=UTF-8",
   ".svg": "image/svg+xml",
   ".png": "image/png",
   ".jpg": "image/jpeg",
@@ -171,5 +176,20 @@ export function registerStatic(app: FastifyInstance) {
     const uploaded = path.join(config.dataDir, "uploads", file);
     const target = (await stat(uploaded).then(() => true, () => false)) ? uploaded : path.join(BRAND, "contact", file);
     return sendFile(req, reply, target, { cacheControl });
+  });
+
+  // The Agent Skill package (industry/skill/): exactly these files, nothing else in the directory.
+  const SKILL_FILES = new Set(["SKILL.md", "README.md", "LICENSE", "install.sh", "manifest.sha256", "agents/openai.yaml"]);
+  app.get("/seuwiki-skill", (req, reply) => sendFile(req, reply, path.join(SKILL, "README.md"), { type: TYPES[".md"], cacheControl: "public, max-age=300, stale-while-revalidate=3600" }));
+  app.get("/seuwiki-skill/:file", (req, reply) => {
+    const file = (req.params as { file: string }).file;
+    if (!SKILL_FILES.has(file)) return reply.code(404).type("text/plain; charset=utf-8").send("Not found");
+    return sendFile(req, reply, path.join(SKILL, file), { type: file === "LICENSE" ? "text/plain; charset=UTF-8" : undefined, cacheControl: "public, max-age=300, stale-while-revalidate=3600" });
+  });
+  app.get("/seuwiki-skill/agents/:file", (req, reply) => {
+    const file = (req.params as { file: string }).file;
+    const rel = `agents/${file}`;
+    if (!SKILL_FILES.has(rel)) return reply.code(404).type("text/plain; charset=utf-8").send("Not found");
+    return sendFile(req, reply, path.join(SKILL, rel), { cacheControl: "public, max-age=300, stale-while-revalidate=3600" });
   });
 }

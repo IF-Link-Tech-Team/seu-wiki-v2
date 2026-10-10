@@ -1841,7 +1841,1243 @@
           }
         }
       }
-    }
+    },
+      "/api/v1/agent": {
+        "get": {
+          "operationId": "agentGuide",
+          "summary": "Usage guide for AI agents",
+          "description": "Markdown that tells an AI agent which /api/v1/agent address answers which kind of question, how to present results and the usage rules. Agents read these addresses and never need updating: new abilities are added here as new addresses.",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/agent/latest": {
+        "get": {
+          "operationId": "agentLatest",
+          "summary": "Latest items as an agent answer",
+          "description": "The same items as /api/v1/items (timeline order), rendered for an agent to relay: titles linked to {{siteName}}, source, Beijing time, summary and reason. Defaults to the editorial picks of the past 24 hours, 10 items.",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            },
+            {
+              "name": "window",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "24h",
+                  "7d"
+                ],
+                "default": "24h"
+              }
+            },
+            {
+              "name": "mode",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "selected",
+                  "all"
+                ],
+                "default": "selected"
+              }
+            },
+            {
+              "name": "category",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "examples": [
+                  "{{categories}}"
+                ],
+                "description": "Current values: {{categoryList}}."
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30,
+                "default": 10
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/agent/search": {
+        "get": {
+          "operationId": "agentSearch",
+          "summary": "Search as an agent answer",
+          "description": "Searches the editorial picks first and, only when they have nothing, every public item, and says which. Defaults to the latest 7 days.",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            },
+            {
+              "name": "q",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 200
+              }
+            },
+            {
+              "name": "window",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "24h",
+                  "7d"
+                ],
+                "default": "7d"
+              }
+            },
+            {
+              "name": "category",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "examples": [
+                  "{{categories}}"
+                ],
+                "description": "Current values: {{categoryList}}."
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30,
+                "default": 10
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/agent/hot": {
+        "get": {
+          "operationId": "agentHot",
+          "summary": "Current hot topics as an agent answer",
+          "description": "The current Top 10 by rank, each with the address of its story answer. No heat values.",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10,
+                "default": 10
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/agent/stories/{publicId}": {
+        "get": {
+          "operationId": "agentStory",
+          "summary": "A story's timeline as an agent answer",
+          "description": "Latest development, digest, reports from newest to oldest and related stories. Only use addresses given by /api/v1/agent/hot or another story answer.",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            },
+            {
+              "name": "publicId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50,
+                "default": 20
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/agent/daily": {
+        "get": {
+          "operationId": "agentLatestDaily",
+          "summary": "The latest daily report as an agent answer",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/agent/daily/{date}": {
+        "get": {
+          "operationId": "agentDaily",
+          "summary": "A dated daily report as an agent answer",
+          "description": "A real YYYY-MM-DD date; a date without a report is 404, never another day's report.",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/ActorUserAgent"
+            },
+            {
+              "$ref": "#/components/parameters/IfNoneMatch"
+            },
+            {
+              "name": "date",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Chinese Markdown answer for an AI agent: the requested content followed by a 「回答提示」 section that says how to present it.",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "text/markdown": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "304": {
+              "description": "Not Modified",
+              "headers": {
+                "ETag": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Cache-Control": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "Retry-After": {
+                  "description": "Minimum number of seconds to wait before retrying.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            },
+            "503": {
+              "description": "Machine-readable problem response.",
+              "headers": {
+                "X-Request-Id": {
+                  "description": "Support correlation identifier for this failed request.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/problem+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
   },
   "components": {
     "parameters": {

@@ -20,11 +20,15 @@ const MCP_VERSION = "2.0.0";
 /** The machine-readable entry points, with what each one is for. */
 const RESOURCES: Array<[label: string, href: string, note: string]> = [
   ["llms.txt", "/llms.txt", "给大模型读的站点说明"],
+  ["Agent 使用说明", "/api/v1/agent", "Agent 读了就能查，Skill 用的也是它"],
+  ["Skill 完整包", "/seuwiki-skill/README.md", "安装说明与全部文件"],
+  ["GitHub 镜像", "https://github.com/IF-Link-Tech-Team/seu-wiki-v2/tree/main/industry/skill", "Skill 源文件"],
   ["MCP Server", "/api/mcp", "MCP 客户端的连接地址"],
   ["OpenAPI 3.1", "/openapi-v1.json", "REST API v1 的完整定义"],
 ];
 
 const TABS = [
+  { key: "skill", label: "Agent Skill" },
   { key: "mcp", label: "MCP" },
   { key: "rss", label: "RSS" },
   { key: "api", label: "REST API" },
@@ -41,13 +45,13 @@ export async function loader({ request }: Route.LoaderArgs) {
     healthy = false;
   }
   // The public address the examples show is the configured one, the same on the server and in the browser.
-  return { tab: (TABS.some((t) => t.key === tab) ? tab : "mcp") as TabKey, healthy, base: siteUrl() };
+  return { tab: (TABS.some((t) => t.key === tab) ? tab : "skill") as TabKey, healthy, base: siteUrl() };
 }
 
 export function meta({ loaderData }: Route.MetaArgs) {
-  // Only the tab is part of the address (mcp is the default and not written).
-  const path = listPath("/agent", { tab: loaderData && loaderData.tab !== "mcp" ? loaderData.tab : null });
-  return pageMeta({ title: "Agent 接入", description: `让 Agent 直接使用 ${SITE.name}：MCP、RSS、REST API v1，匿名只读。`, path, image: "/og/pages/agent.png" });
+  // Only the tab is part of the address (skill is the default and not written).
+  const path = listPath("/agent", { tab: loaderData && loaderData.tab !== "skill" ? loaderData.tab : null });
+  return pageMeta({ title: "Agent 接入", description: `让 Agent 直接使用 ${SITE.name}：Agent Skill、MCP、RSS、REST API v1，匿名只读。`, path, image: "/og/pages/agent.png" });
 }
 
 function Section({ title, children, id }: { title: string; children: ReactNode; id?: string }) {
@@ -71,6 +75,47 @@ function Bullets({ items }: { items: ReactNode[] }) {
 
 function Mono({ children }: { children: ReactNode }) {
   return <code className="mono rounded-mark bg-bg-sunk px-1.5 py-0.5 text-[0.88em] text-ink">{children}</code>;
+}
+
+function SkillTab({ base }: { base: string }) {
+  const prompt = `请安装 ${SITE.name} Skill：${base}/seuwiki-skill/README.md 装完告诉我是否需要开启新会话。`;
+  const install = (args: string) => `bash <(curl -fsSL ${base}/seuwiki-skill/install.sh) ${args}`;
+  return (
+    <>
+      <div className="flex flex-wrap items-center gap-2.5">
+        <span className="inline-flex h-[20px] items-center rounded-full bg-accent-soft px-2.5 text-[11.5px] font-medium text-accent">最省事</span>
+        <h2 className="text-[20px] font-bold text-ink">装一次，以后不用再更新</h2>
+      </div>
+      <p className="mt-2 text-[14.5px] text-ink-3">适合 Claude Code、Codex、Gemini CLI、OpenCode 这类支持 Agent Skills 的工具。Skill 只负责把问题交给 {SITE.name}、把结果讲给你；查什么、怎么整理都在服务器上完成，新增能力不用重装。</p>
+      <Section title="① 把安装提示词发给 Agent">
+        <p>复制这句话发给它，它会自己读安装说明、下载并校验安装：</p>
+        <CodeBlock title="发给 Agent 的话" code={prompt} />
+      </Section>
+      <Section title="② 或用命令行安装">
+        <p>适用于 macOS、Linux 与 WSL。脚本必须显式指定目标，下载后逐文件校验 SHA-256，全部通过才替换安装目录；发现其它位置的旧副本会先停下，不会静默覆盖。</p>
+        <CodeBlock title="Codex、Gemini CLI、OpenCode 等（通用目录）" lang="bash" code={install("--target agents")} />
+        <CodeBlock title="Claude Code（通用目录 + 兼容软链）" lang="bash" code={install("--target claude")} />
+        <CodeBlock title="自定义目录" lang="bash" code={install('--dir "$HOME/path/to/skills/seuwiki"')} />
+        <p>装完重启 Agent 或开启新会话，问一句<span className="font-medium text-ink">「过去 24 小时校园里最重要的 5 件事是什么？」</span>验证：回答写明时间范围、标题链接到 {SITE.name}，就是装好了。</p>
+      </Section>
+      <Section title="③ 能查什么">
+        <Bullets items={[
+          "过去 24 小时或最近 7 天的精选与全部公开动态，可按分类过滤。",
+          "部门、学院、活动和话题的关键词搜索（最近 7 天）。",
+          "当前最热的校园事件，以及每个事件的来龙去脉和时间线。",
+          `最新或指定日期的${withSubject("日报")}（每天 08:00 北京时间发布）。`,
+          <>完整能力以 <a href="/api/v1/agent" className="text-accent hover:underline">给 Agent 的使用说明</a> 为准，新能力会先加在那里。</>,
+        ]} />
+      </Section>
+      <Section title="不装 Skill 也能用">
+        <Bullets items={[
+          <>让 Agent 读 <Mono>/api/v1/agent</Mono>，按里面的说明查询。</>,
+          <>支持远程 MCP 的客户端接 <Mono>/api/mcp</Mono>（见 MCP 页签）。</>,
+          "Skill 包由 SKILL.md、LICENSE、agents/openai.yaml 三个文件组成，安装前可以在「接入资源」栏的「Skill 完整包」里逐个审阅。",
+        ]} />
+      </Section>
+    </>
+  );
 }
 
 function McpTab({ base }: { base: string }) {
@@ -210,11 +255,11 @@ export default function AgentPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<TabKey>(initialTab);
 
-  useEffect(() => setTab((params.get("tab") as TabKey) || "mcp"), [params]);
+  useEffect(() => setTab((params.get("tab") as TabKey) || "skill"), [params]);
 
   const select = (key: TabKey) => {
     setTab(key);
-    navigate(key === "mcp" ? "/agent" : `/agent?tab=${key}`, { replace: true, preventScrollReset: true });
+    navigate(key === "skill" ? "/agent" : `/agent?tab=${key}`, { replace: true, preventScrollReset: true });
   };
 
   const pill = "inline-flex h-6 items-center rounded-mark border border-line bg-surface px-2 text-[11.5px] text-ink-3";
@@ -245,7 +290,7 @@ export default function AgentPage() {
     <ReadingLayout aside={aside}>
       <header>
         <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">让 Agent 直接使用 {SITE.name}</h1>
-        <p className="mt-1.5 text-[13px] text-ink-3">三条接入路径都是匿名只读、无需 API Key：MCP、RSS、REST API v1。</p>
+        <p className="mt-1.5 text-[13px] text-ink-3">四条接入路径都是匿名只读、无需 API Key：Agent Skill、MCP、RSS、REST API v1。</p>
         <div className="mt-3.5 flex flex-wrap items-center gap-1.5">
           <span className={pill}>匿名只读</span>
           <span className={`${pill} mono`}>API v1</span>
@@ -270,6 +315,7 @@ export default function AgentPage() {
       </div>
 
       <div className="mt-7" role="tabpanel">
+        {tab === "skill" && <SkillTab base={base} />}
         {tab === "mcp" && <McpTab base={base} />}
         {tab === "rss" && <RssTab base={base} />}
         {tab === "api" && <ApiTab base={base} />}

@@ -29,6 +29,7 @@ export function llmsTxt(opts: { hasDailies: boolean; hasWeekly: boolean; hasMont
   lines.push(`> ${SITE.description}`, "");
   lines.push("## 给 Agent 的数据接口", "");
   lines.push("所有接口匿名只读、无需 API Key。", "");
+  lines.push(`- [给 Agent 的使用说明](${u("/api/v1/agent")}): 按问题列出该请求的地址，返回整理好的中文 Markdown 和回答提示；Agent 读它就能查，Skill 用的也是这些地址`);
   lines.push(`- [MCP Server](${u("/api/mcp")}): 远程 Streamable HTTP，版本 ${PUBLIC_VERSIONS.mcp}；提供 ${MCP_TOOLS.map((t) => t.name).join("、")} ${MCP_TOOLS.length} 个只读工具`);
   lines.push(`- [精选摘要 RSS](${u("/feed.xml")}): 最新 50 条精选摘要，保留标题、站内阅读与原文入口`);
   lines.push(`- [精选全文 RSS](${u("/feed/full.xml")}): 与精选摘要相同的最新 50 条；只对明确允许再分发的来源内联正文`);

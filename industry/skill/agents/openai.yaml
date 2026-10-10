@@ -1,0 +1,4 @@
+interface:
+  display_name: "SEU Wiki"
+  short_description: "查询东南大学校园动态、通知、当前热点与校园日报"
+  default_prompt: "使用 $seuwiki 总结过去 24 小时最重要的校园动态。"
