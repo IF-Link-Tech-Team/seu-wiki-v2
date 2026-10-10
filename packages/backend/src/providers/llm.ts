@@ -89,6 +89,12 @@ export const MODELS: Record<string, ModelSpec> = {
     baseUrlEnv: "XIAOMI_MIMO_BASE_URL", apiKeyEnv: "XIAOMI_MIMO_API_KEY",
     extra: { thinking: { type: "disabled" } }, jsonMode: true,
   },
+  // Agnes 3.0 Flash：免费模型，JSON mode 正常，实测 10 并发无 429（2026-10-10 探测）。
+  "agnes-3.0-flash": {
+    key: "agnes-3.0-flash", service: "agnes", model: "agnes-3.0-flash",
+    baseUrlEnv: "AGNES_BASE_URL", apiKeyEnv: "AGNES_API_KEY",
+    jsonMode: true,
+  },
   "qwen3-vl-flash": {
     key: "qwen3-vl-flash", service: "dashscope", model: "qwen3-vl-flash",
     baseUrlEnv: "DASHSCOPE_BASE_URL", apiKeyEnv: "DASHSCOPE_API_KEY",
