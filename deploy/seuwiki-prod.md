@@ -115,7 +115,8 @@ docker compose exec -T db pg_dump -U aihot aihot | gzip > seuwiki-$(date +%F).sq
 ## 7. 验收清单
 
 **本站功能冒烟**（smoke.ts 之外手工过一遍）：
-- / 精选、/all 搜索（搜"保研"应同时命中动态与手册）、/for-you（画像条+理由 chip）、/survival 手册目录与连续阅读、/experience 三维筛选、/org/login 组织登录
+- / 精选（tab 行：精选 / 一手 / 各分类 / 全部，「学院/部门」信源筛选生效）、/all 搜索（搜"保研"应同时命中动态与手册）、/experience-forum 经验论坛（热门 + 关注）、/handbook 手册三级页、/org/login 组织登录
+- 旧入口 301：/for-you → /、/survival → /handbook、/experience → /experience-forum；/survival/…、/experience/… 旧文档深链仍可打开
 - 旧路径：`/news/` → 301 /all；`/contribute/` → 301 /feedback；手册 6 个兼容页 301 到经验库
 - RSS /feed.xml、sitemap.xml、/api/health
 
@@ -123,7 +124,7 @@ docker compose exec -T db pg_dump -U aihot aihot | gzip > seuwiki-$(date +%F).sq
 - [ ] Logto 控制台：SEU Wiki 独立 Traditional Web 应用，Redirect URI 只填 `https://seu.wiki/api/logto/sign-in-callback`，Post sign-out 只填 `https://seu.wiki`，scope ≥ `email profile roles`，backchannel logout 填 `https://seu.wiki/api/logto/backchannel-logout` 并打开 session required
 - [ ] M2M 应用授 `users:resolve`，App ID 加入 Accounts 的 `LOGTO_M2M_ALLOWED_CLIENT_IDS`
 - [ ] Accounts `BOOTSTRAP_RETURN_TO_URLS` 只登记 `https://seu.wiki/api/logto/bootstrap-complete`
-- [ ] 深层页面（/admin、/for-you）发起登录 → 完成后 302 回原页面；return cookie 已删；非法回 `/`
+- [ ] 深层页面（/admin、/org）发起登录 → 完成后 302 回原页面；return cookie 已删；非法回 `/`
 - [ ] 无 `community_admin` 角色进 /admin → 403；有角色 → 进后台；撤权后旧会话失效
 - [ ] 伪造 Origin / 缺 CSRF 的写请求 403
 - [ ] 断开 Accounts 时账号入口显示"暂时不可用"，后台 fail closed

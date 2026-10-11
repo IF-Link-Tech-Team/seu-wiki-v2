@@ -1,6 +1,6 @@
 # 把它改成你的行业
 
-这份仓库默认是一个“AI 行业”的示例站：示范信源是一批公开的 AI 资讯源，精选口味是 AIHOT 在 AI 领域调了很久的那一套。要把它变成“法律热点”“HR 热点”“黄金热点”，要改的东西几乎都在 [`industry/`](../industry/) 这一个文件夹里，代码基本不用动。
+这份文档是上游 AIHOT 框架的通用定制指南：本仓库的行业包已经是东南大学校园信息（`industry/`）。要把框架变成“法律热点”“HR 热点”“黄金热点”，要改的东西几乎都在 [`industry/`](../industry/) 这一个文件夹里，代码基本不用动。
 
 如果你用 Claude Code、Codex 这类 Agent，可以把下面这段直接发给它，然后回答它的问题：
 
@@ -30,7 +30,7 @@
 - `CATEGORY_TAGS`、`TOPIC_TAGS`、`ENTITY_TAGS`：模型打标签时只能从这里选。第一个标签必须是“分类标签”。
 - `ENTITIES`：行业里的主要公司或机构，用于“公司”类主题页。`IDENTITY_LEXICON`、`PUBLISHER_DOMAINS` 用来防止模型在标题摘要里写进原文没提到的公司，别的行业没有这个需要可以清空。
 - `ITEM_TYPES`：内容类型，和评分提示词里的权重表对应，改了要一起改提示词。
-- `topics.json`：主题目录（`/topics`）。分三组：`company`（公司与机构）、`field`（方向）、`genre`（内容形态）。每个主题用 `tags` 或 `entityId` 决定收哪些内容。`slug` 上线后不要改。
+- `topics.json`：主题目录（`/topics`）。分组在 `groups` 里定义（本仓库是 `org` 部门与机构、`college` 学院、`topic` 主题三组），每个主题用 `tags` 或 `entityId` 决定收哪些内容。`slug` 上线后不要改。
 
 改完主题后运行 `node --env-file=.env scripts/seed.ts`（Docker 里会在启动时自动运行），主题会更新进数据库。
 
@@ -119,6 +119,6 @@ DATABASE_URL=postgres://…/myhot_test npm test     # 库名必须以 _test 或 
 node scripts/smoke.ts --base http://localhost:3000   # 站点跑起来以后
 ```
 
-`tests/` 里有些测试用的是示例行业的分类、标签和公司（比如 `ai-models`、“模型发布”、Anthropic）。改了 `industry/taxonomy.ts` 以后这些测试会失败，把例子换成你行业里的对应项即可，测的规则本身不用改。
+`tests/` 里有些测试用的是当前行业包的分类、标签和机构（比如 `academic`、“教务通知”、教务处）。改了 `industry/taxonomy.ts` 以后这些测试会失败，把例子换成你行业里的对应项即可，测的规则本身不用改。
 
 然后打开网站看一眼首页、全部动态、日报和关于页，再去后台“信源”页看信源是不是都抓成功了。

@@ -6,8 +6,11 @@
 |---|---|
 | `site.ts` | 站名、行业词、首页文案、关于页、备案号 |
 | `taxonomy.ts` | 分类、标签、公司与机构、防止模型写错公司的词表 |
+| `colleges.ts` | 东大 34 个学院（系）全称名单 |
 | `topics.json` | 主题目录（`/topics`） |
 | `sources.json` | 首次启动时导入的示范信源 |
+| `source-catalog.json` | 候选信源底册，后台「信源目录」页勾选入库 |
+| `skill/` | Agent Skill 完整包（`/seuwiki-skill/` 对外提供） |
 | `prompts/` | 每一步的提示词：预筛、评分、写作、结构化、归组、综述、日报、翻译 |
 | `selection.ts` | 入选门槛 |
 | `features.ts` | 模型榜、Codex 重置监控的开关 |
