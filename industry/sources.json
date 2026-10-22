@@ -1559,6 +1559,72 @@
       ]
     },
     {
+      "id": "futuretech-56660",
+      "kind": "web_list",
+      "name": "未来技术·学工信息",
+      "config": {
+        "url": "https://futuretech.seu.edu.cn/56660/list.htm",
+        "baseUrl": "https://futuretech.seu.edu.cn",
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        },
+        "allowUrlPrefixes": [
+          "https://futuretech.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "tags": [
+        "学院与书院"
+      ],
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "futuretech-kwyx",
+      "kind": "web_list",
+      "name": "未来技术·课外研学",
+      "config": {
+        "url": "https://futuretech.seu.edu.cn/kwyx/list.htm",
+        "baseUrl": "https://futuretech.seu.edu.cn",
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        },
+        "allowUrlPrefixes": [
+          "https://futuretech.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "tags": [
+        "学院与书院"
+      ],
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
       "kind": "web_list",
       "tier": "T2",
       "participation_mode": "editorial",
@@ -16216,6 +16282,72 @@
       "name": "吴健雄学院·党建动态",
       "config": {
         "url": "https://wjx.seu.edu.cn/djdt/list.htm",
+        "baseUrl": "https://wjx.seu.edu.cn",
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        },
+        "allowUrlPrefixes": [
+          "https://wjx.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "tags": [
+        "学院与书院"
+      ],
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "wjx-xjxxx",
+      "kind": "web_list",
+      "name": "吴健雄学院·教学信息",
+      "config": {
+        "url": "https://wjx.seu.edu.cn/xjxxx/list.htm",
+        "baseUrl": "https://wjx.seu.edu.cn",
+        "itemSelector": "li.news",
+        "linkSelector": "a[href]",
+        "titleSelector": "div.news_title",
+        "publishedAtSelector": "div.news_meta",
+        "detail": {
+          "publishedAtSelector": "span.arti_update",
+          "maxFetches": 10
+        },
+        "allowUrlPrefixes": [
+          "https://wjx.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "first_party": true,
+      "tags": [
+        "学院与书院"
+      ],
+      "site_fulltext": true,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "wjx-dsjl",
+      "kind": "web_list",
+      "name": "吴健雄学院·导师交流",
+      "config": {
+        "url": "https://wjx.seu.edu.cn/dsjl/list.htm",
         "baseUrl": "https://wjx.seu.edu.cn",
         "itemSelector": "li.news",
         "linkSelector": "a[href]",
