@@ -3,11 +3,9 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { PUBLIC_API_CATEGORY_KEYS, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
 import { V1_CACHE_CONTROL } from "@aihot/contracts/http-policy";
-import { isValidDate } from "@aihot/contracts/time";
-import { agentGuide, dailyAnswer, hotAnswer, latestAnswer, searchAnswer, searchItems, storyAnswer } from "@aihot/backend/publication/agent";
+import { agentGuide, hotAnswer, latestAnswer, searchAnswer, searchItems, storyAnswer } from "@aihot/backend/publication/agent";
 import { v1Items } from "@aihot/backend/publication/v1";
 import { resolveStory, v1HotTopics, v1Story } from "@aihot/backend/publication/stories";
-import { v1Daily } from "@aihot/backend/publication/reports";
 import { QueryError, sendProblem, sendTextWithEtag, strictQuery } from "../http/respond.ts";
 import { enumParam, intParam, publicHandler } from "./v1.ts";
 
@@ -63,20 +61,7 @@ export function registerAgent(app: FastifyInstance) {
     return markdown(req, reply, storyAnswer(body.story, limit, "http"), "agent-story", V1_CACHE_CONTROL.storyByPublicId);
   }));
 
-  app.get("/api/v1/agent/daily", publicHandler(async (req, reply) => {
-    strictQuery(req, []);
-    const res = await v1Daily("latest");
-    if (!res) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "还没有发布过日报。" });
-    return markdown(req, reply, dailyAnswer(res.report, "http"), "agent-daily", V1_CACHE_CONTROL.latestDaily);
-  }));
+  app.get("/api/v1/agent/daily", publicHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/v1/agent/daily/:date", publicHandler(async (req, reply) => {
-    strictQuery(req, []);
-    const date = (req.params as { date: string }).date;
-    if (!isValidDate(date)) throw new QueryError("date must be a real YYYY-MM-DD calendar date.");
-    const res = await v1Daily(date);
-    if (!res) return sendProblem(req, reply, { status: 404, code: "not_found", detail: `没有 ${date} 的日报；不要换一天冒充。`, cacheControl: "public, max-age=60" });
-    return markdown(req, reply, dailyAnswer(res.report, "http"), "agent-daily", V1_CACHE_CONTROL.dailyByDate);
-  }));
+  app.get("/api/v1/agent/daily/:date", publicHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 }
-

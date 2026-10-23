@@ -8,7 +8,6 @@ export interface SourceRef {
   id: string;
   name: string;
   kind: SourceKind;
-  firstParty: boolean;
   iconUrl: string | null;
   iconSrcSet?: string;
 }
@@ -406,68 +405,9 @@ export interface StoryDetail {
     heat: number | null;
   };
   developments: StoryFactView[];
-  officialReports: StoryReportView[];
   timeline: StoryReportView[];
   heat: HeatPoint[];
   related: Array<StoryRef & { relation: "storyline" | "related"; latestAt: string | null }>;
-}
-
-// ---------------------------------------------------------------------------
-// Reports (daily / weekly / monthly)
-// ---------------------------------------------------------------------------
-
-export type ReportKind = "daily" | "weekly" | "monthly";
-
-export interface ReportCitation {
-  itemId: string | null;
-  title: string;
-  summary: string | null;
-  sourceName: string;
-  sourceUrl: string;
-  sourceId: string | null;
-  sourceIconUrl: string | null;
-  sourceIconSrcSet?: string;
-  firstParty: boolean;
-  role: string | null;
-  storyPublicId: string | null;
-  /** When the cited report was published, if it is still in the database. */
-  publishedAt: string | null;
-  /** False once the item was withdrawn; the citation then shows as removed. */
-  available: boolean;
-}
-
-export interface ReportDetail {
-  kind: ReportKind;
-  key: string;
-  title: string;
-  windowStart: string;
-  windowEnd: string;
-  generatedAt: string;
-  revision: number;
-  lead: { title: string; leadParagraph: string } | null;
-  overview: string | null;
-  highlights: ReportCitation[];
-  /** As edited: daily categories, weekly and monthly themes. */
-  sections: Array<{ label: string; summary: string | null; items: ReportCitation[] }>;
-  /** Reading order: every section item once, labelled with its section. */
-  stories: Array<ReportCitation & { label: string }>;
-  flashes: ReportCitation[];
-  /**
-   * The front page's picture: from the lead item (a daily's lead, a weekly or monthly's first highlight),
-   * else from another public report of that event. Captioned with the story when it is not the lead's own.
-   */
-  cover: { url: string; srcSet?: string; width: number | null; height: number | null; caption: string | null } | null;
-  metrics: Record<string, number>;
-  readingMinutes: number;
-  prev: string | null;
-  next: string | null;
-}
-
-export interface ReportIndexEntry {
-  key: string;
-  title: string | null;
-  generatedAt: string;
-  count: number;
 }
 
 /** Figures and samples for the about page (site-only; not part of v1). */
@@ -481,7 +421,6 @@ export interface SiteStats {
   /** Everything collected and not withdrawn, heat-only sources included. */
   items: number;
   selected: number;
-  dailies: number;
   /** The last 24 hours: items found (heat-only sources included), and items that made 精选 (by their place on the timeline). */
   day: { collected: number; selected: number };
   /** Enabled sources in a daily shuffle, for the about page's river: one line per source. */
@@ -502,6 +441,3 @@ export interface StoryFollowup {
   representative: { id: string; title: string; source: { name: string }; timelineAt: string };
 }
 export interface StoryFollowupsResponse { items: StoryFollowup[]; more: boolean }
-
-/** All issue keys keep numbering and calendars stable; closed daily months omit their titles. */
-export interface ReportNavigationEntry { key: string; title?: string | null; count?: number }

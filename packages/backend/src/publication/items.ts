@@ -25,7 +25,6 @@ export interface ItemRow {
   timeline_at: Date;
   /** Reading-group anchor for a selected item (timeline_at otherwise). */
   sort_at: Date;
-  first_party: boolean;
   visibility: string;
   body_mode: "full" | "summary";
   syndicate: boolean;
@@ -53,7 +52,7 @@ export interface ItemRow {
 /** Columns every item listing selects. Internal judgement details never leave this layer. */
 export const ITEM_COLUMNS = sql`
   p.article_id AS id, p.revision, p.title, p.original_title, p.summary, p.reason, p.category, p.tags, p.score,
-  p.selected, p.eligible, p.channel, p.url, p.published_at, p.discovered_at, p.timeline_at, p.sort_at, p.first_party, p.visibility,
+  p.selected, p.eligible, p.channel, p.url, p.published_at, p.discovered_at, p.timeline_at, p.sort_at, p.visibility,
   p.body_mode, p.syndicate, p.indexable, p.visible_after, p.backfill, p.fact_id, p.story_id,
   s.id AS source_id, s.name AS source_name, s.kind AS source_kind, s.participation_mode AS source_mode, s.icon_url AS source_icon,
   a.x_post, a.author, a.language,
@@ -88,7 +87,7 @@ export function selectedCondition(now: Date) {
 
 export function channelCondition(channel: ChannelKey | null | undefined) {
   if (!channel || channel === "all") return sql``;
-  if (channel === "firstParty") return sql`AND p.first_party`;
+
   return sql`AND p.channel = ${channel}`;
 }
 
@@ -166,7 +165,7 @@ export function toItemSummary(row: ItemRow): ItemSummary {
       id: row.source_id,
       name: row.source_name,
       kind: row.source_kind,
-      firstParty: row.first_party,
+
       iconUrl: proxiedImage(row.source_icon, "avatar"),
       ...(proxiedImageSet(row.source_icon, "avatar") ? { iconSrcSet: proxiedImageSet(row.source_icon, "avatar")! } : {}),
     },

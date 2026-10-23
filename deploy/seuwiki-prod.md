@@ -115,7 +115,7 @@ docker compose exec -T db pg_dump -U aihot aihot | gzip > seuwiki-$(date +%F).sq
 ## 7. 验收清单
 
 **本站功能冒烟**（smoke.ts 之外手工过一遍）：
-- / 精选（tab 行：精选 / 一手 / 各分类 / 全部，「学院/部门」信源筛选生效）、/all 搜索（搜"保研"应同时命中动态与手册）、/experience-forum 经验论坛（热门 + 关注）、/handbook 手册三级页、/org/login 组织登录
+- / 精选（tab 行：精选 / 订阅 / 各分类 / 全部，「学院/部门」信源筛选生效）、/all 搜索（搜"保研"应同时命中动态与手册）、/experience-forum 经验论坛（热门 + 关注）、/handbook 手册三级页、/org/login 组织登录
 - 旧入口 301：/for-you → /、/survival → /handbook、/experience → /experience-forum；/survival/…、/experience/… 旧文档深链仍可打开
 - 旧路径：`/news/` → 301 /all；`/contribute/` → 301 /feedback；手册 6 个兼容页 301 到经验库
 - RSS /feed.xml、sitemap.xml、/api/health

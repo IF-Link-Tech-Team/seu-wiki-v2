@@ -70,10 +70,10 @@ jobs:
             --exclude .git --exclude node_modules --exclude build --exclude .data \
             --exclude .env --exclude '.env.*' --exclude docker-compose.override.yml \
             ./ "${DEPLOY_USER}@${DEPLOY_HOST}:/srv/seuwiki-v2/"
-      - name: Rebuild and restart the stack
+      - name: Build images, stop the old worker, and restart the stack
         run: |
           ssh -p "${DEPLOY_PORT}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
-            'cd /srv/seuwiki-v2 && docker compose up -d --build'
+            'cd /srv/seuwiki-v2 && docker compose build && docker compose stop -t 120 worker && docker compose up -d --no-build'
       - name: Smoke check from inside the compose network
         run: |
           ssh -p "${DEPLOY_PORT}" "${DEPLOY_USER}@${DEPLOY_HOST}" \

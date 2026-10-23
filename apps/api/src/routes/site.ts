@@ -23,7 +23,6 @@ import { listTopicSummaries, loadTopicPage } from "@aihot/backend/publication/to
 import { registerFeedback } from "./feedback.ts";
 
 import { loadHot, loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
-import { listReports, loadReport, reportNavigation, loadReportNavigation, loadReportMonth, type ReportKind } from "@aihot/backend/publication/reports";
 import { loadSiteCodexResetPage, loadSiteCodexResetDay } from "@aihot/backend/publication/monitor";
 import { codexResetVersion } from "@aihot/backend/monitor/read";
 import { cached } from "@aihot/backend/lib/cache";
@@ -268,43 +267,15 @@ export function registerSite(app: FastifyInstance) {
     return sendJsonWithEtag(req, reply, data, { etagPrefix: "story", cacheControl: "public, max-age=60, s-maxage=60" });
   }));
 
-  app.get("/api/site/reports/:kind", siteHandler(async (req, reply) => {
-    const kind = (req.params as { kind: string }).kind;
-    if (!["daily", "weekly", "monthly"].includes(kind)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "unknown report kind" });
-    const data = await listReports(kind as ReportKind);
-    return sendJsonWithEtag(req, reply, { kind, items: data }, { etagPrefix: "reports", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/:kind", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  // The latest report page needs its archive selector and the report in one HTTP request.
-  app.get("/api/site/reports/:kind/latest-page", siteHandler(async (req, reply) => {
-    const kind = (req.params as { kind: string }).kind;
-    if (!["daily", "weekly", "monthly"].includes(kind)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "unknown report kind" });
-    const index = await listReports(kind as ReportKind);
-    const report = index[0] ? await loadReport(kind as ReportKind, index[0].key) : null;
-    return sendJsonWithEtag(req, reply, { index: reportNavigation(kind as ReportKind, index, report?.key ?? ""), report }, { etagPrefix: "report-latest", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/:kind/latest-page", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/site/reports/:kind/navigation/:key", siteHandler(async (req, reply) => {
-    const { kind, key } = req.params as { kind: string; key: string };
-    if (!["daily", "weekly", "monthly"].includes(kind) || !/^\d{4}-(\d{2}(-\d{2})?|W\d{2})$/.test(key)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "report not found" });
-    return sendJsonWithEtag(req, reply, { items: await loadReportNavigation(kind as ReportKind, key) }, { etagPrefix: "report-navigation", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/:kind/navigation/:key", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/site/reports/daily/months/:month", siteHandler(async (req, reply) => {
-    const { month } = req.params as { month: string };
-    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "month not found" });
-    return sendJsonWithEtag(req, reply, { items: await loadReportMonth("daily", month) }, { etagPrefix: "report-month", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/daily/months/:month", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/site/reports/:kind/:key", siteHandler(async (req, reply) => {
-    const { kind, key } = req.params as { kind: string; key: string };
-    if (!["daily", "weekly", "monthly"].includes(kind) || !/^\d{4}-(\d{2}(-\d{2})?|W\d{2})$/.test(key)) {
-      return sendProblem(req, reply, { status: 404, code: "not_found", detail: "report not found" });
-    }
-    const data = await loadReport(kind as ReportKind, key);
-    if (!data) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "report not found", cacheControl: "public, max-age=60" });
-    return sendJsonWithEtag(req, reply, data, { etagPrefix: "report", cacheControl: "public, max-age=120, s-maxage=120" });
-  }));
+  app.get("/api/site/reports/:kind/:key", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
   // Markdown export: attachment, 404 when there is nothing to export (same predicate as the button).
   app.get("/items/:id/markdown", siteHandler(async (req, reply) => {
