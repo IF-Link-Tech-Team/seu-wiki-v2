@@ -1528,7 +1528,6 @@
       "tier": "T2",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "first_party": true,
       "tags": [
         "学院与书院"
       ],
@@ -1561,7 +1560,6 @@
       "tier": "T2",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "first_party": true,
       "tags": [
         "学院与书院"
       ],
@@ -15760,7 +15758,6 @@
       "tier": "T2",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "first_party": true,
       "tags": [
         "学院与书院"
       ],
@@ -15793,7 +15790,6 @@
       "tier": "T2",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "first_party": true,
       "tags": [
         "学院与书院"
       ],
