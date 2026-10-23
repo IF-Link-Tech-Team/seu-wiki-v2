@@ -14,7 +14,6 @@ interface Source {
   kind: string;
   config: Record<string, unknown>;
   tags: string[];
-  first_party: boolean;
   owner_entity_id: string | null;
   tier: string;
   participation_mode: string;
@@ -61,7 +60,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export const meta: Route.MetaFunction = ({ loaderData }) => [{ title: `${loaderData?.source.name ?? "信源"} · ${SITE.name} 后台` }];
 
-type Draft = Pick<Source, "name" | "interval_minutes" | "tier" | "participation_mode" | "signal_group_id" | "first_party" | "owner_entity_id" | "site_fulltext" | "syndicate_fulltext"> & { tags: string; config: string };
+type Draft = Pick<Source, "name" | "interval_minutes" | "tier" | "participation_mode" | "signal_group_id" | "owner_entity_id" | "site_fulltext" | "syndicate_fulltext"> & { tags: string; config: string };
 
 function draftOf(s: Source): Draft {
   return {
@@ -70,7 +69,6 @@ function draftOf(s: Source): Draft {
     tier: s.tier,
     participation_mode: s.participation_mode,
     signal_group_id: s.signal_group_id,
-    first_party: s.first_party,
     owner_entity_id: s.owner_entity_id,
     site_fulltext: s.site_fulltext,
     syndicate_fulltext: s.syndicate_fulltext,
@@ -231,7 +229,6 @@ export default function SourceDetail({ loaderData }: Route.ComponentProps) {
               </Field>
               <div className="flex flex-col justify-end gap-2 text-[13px] text-ink-2">
                 {([
-                  ["first_party", "一手信源（官方账号或官网）"],
                   ["site_fulltext", "站内可展示全文"],
                   ["syndicate_fulltext", "对外接口可带全文"],
                 ] as const).map(([k, label]) => (

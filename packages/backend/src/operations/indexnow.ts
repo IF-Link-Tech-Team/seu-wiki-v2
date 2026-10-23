@@ -12,11 +12,9 @@ export async function submitIndexNow(now = new Date()) {
   const items = await sql<{ id: string }[]>`
     SELECT article_id AS id FROM publications WHERE visibility = 'public' AND indexable AND updated_at > ${since} AND updated_at <= ${now}
     ORDER BY updated_at LIMIT ${MAX_URLS}`;
-  const reports = await sql<{ kind: string; key: string }[]>`SELECT kind, key FROM reports WHERE generated_at > ${since} AND generated_at <= ${now}`;
   const stories = await sql<{ public_id: string }[]>`SELECT public_id::text FROM stories WHERE merged_into IS NULL AND created_at > ${since} AND created_at <= ${now} LIMIT 500`;
   const urls = [
     ...items.map((i) => siteUrl(`/items/${i.id}`)),
-    ...reports.map((r) => siteUrl(`/${r.kind}/${r.key}`)),
     ...stories.map((s) => siteUrl(`/story/${s.public_id}`)),
   ].slice(0, MAX_URLS);
   let status: "sent" | "disabled" | "empty" | "failed" = urls.length ? "disabled" : "empty";

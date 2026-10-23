@@ -57,11 +57,11 @@ after(async () => {
 
 const principal = async () => (await orgLogin(ownerToken, "test"))!.principal;
 
-test("创建组织：同名 external 信源（first_party、T1_5、不采集）与 owner 令牌", async () => {
+test("创建组织：同名 external 信源（T1_5、不采集）与 owner 令牌", async () => {
   const [o] = await sql<{ source_id: string; verified: boolean }[]>`SELECT source_id, verified FROM organizations WHERE id = ${orgId}`;
   assert.equal(o!.verified, false);
   const [s] = await sql<{ kind: string; first_party: boolean; tier: string; enabled: boolean }[]>`SELECT kind, first_party, tier, enabled FROM sources WHERE id = ${o!.source_id}`;
-  assert.deepEqual(s, { kind: "external", first_party: true, tier: "T1_5", enabled: false });
+  assert.deepEqual(s, { kind: "external", first_party: false, tier: "T1_5", enabled: false });
   const login = await orgLogin(ownerToken, "test");
   assert.equal(login!.principal.role, "owner");
   assert.equal(await orgLogin("suo_wrong-token", "test"), null);

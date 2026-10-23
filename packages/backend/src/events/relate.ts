@@ -20,7 +20,7 @@ export type Relation = (typeof RELATIONS)[number];
 export interface ReportView {
   title: string;
   source: string;
-  firstParty: boolean;
+
   at: Date | null;
   summary: string | null;
   frame?: { subject?: string | null; action?: string | null; object?: string | null; occurredAt?: string | null } | null;
@@ -80,7 +80,7 @@ export function describeReport(r: ReportView, label: string, extra = ""): string
   return [
     `【${label}】${extra}`,
     `标题：${r.title}`,
-    `来源：${r.source}${r.firstParty ? "（当事方/官方）" : ""}｜发布时间：${when(r.at)}`,
+    `来源：${r.source}｜发布时间：${when(r.at)}`,
     `摘要：${(r.summary ?? "").slice(0, 360) || "（无）"}`,
     f && (f.subject || f.action || f.object)
       ? `事实要素：主体=${f.subject || "?"}；动作=${f.action || "?"}；对象=${f.object || "?"}；日期=${f.occurredAt || "未知"}`

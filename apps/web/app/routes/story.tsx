@@ -150,7 +150,7 @@ function TimelineRow({ r }: { r: StoryReportView }) {
   );
 }
 
-type Filter = "all" | "official" | "selected";
+type Filter = "all" | "selected";
 
 export default function StoryPage() {
   const { story } = useLoaderData<typeof loader>();
@@ -163,11 +163,10 @@ export default function StoryPage() {
   const [activeSection, goSection] = useActiveSection(sectionKeys);
   const counts = {
     all: story.timeline.length,
-    official: story.timeline.filter((r) => r.source.firstParty).length,
     selected: story.timeline.filter((r) => r.selected).length,
   };
   const days = useMemo(() => {
-    const list = story.timeline.filter((r) => (filter === "official" ? r.source.firstParty : filter === "selected" ? r.selected : true));
+    const list = story.timeline.filter((r) => filter === "selected" ? r.selected : true);
     const sorted = [...list].sort((a, b) => (order === "desc" ? Date.parse(b.publishedAt) - Date.parse(a.publishedAt) : Date.parse(a.publishedAt) - Date.parse(b.publishedAt)));
     const out: Array<{ day: string; rows: StoryReportView[] }> = [];
     for (const r of sorted) {
@@ -186,10 +185,6 @@ export default function StoryPage() {
       : story.excerpt
         ? { label: "报道摘要", text: story.excerpt.text, note: `摘自 ${story.excerpt.sourceName}` }
         : null;
-  const showOfficial = () => {
-    setFilter("official");
-    goSection("reports");
-  };
 
   return (
     <div className="mx-auto max-w-[var(--page-max-reading)] pb-10">
@@ -315,7 +310,6 @@ export default function StoryPage() {
               onSelect={(k) => setFilter(k as Filter)}
               items={[
                 { key: "all", label: "全部报道", count: counts.all },
-                { key: "official", label: "官方一手", count: counts.official },
                 { key: "selected", label: "精选报道", count: counts.selected },
               ]}
             />
@@ -382,27 +376,6 @@ export default function StoryPage() {
                   </>
                 )}
               </p>
-            </RailCard>
-          )}
-          {story.officialReports.length > 0 && (
-            <RailCard title="官方一手" right={`${counts.official || story.officialReports.length} 篇`}>
-              <p className="text-[12px] text-ink-4">直接了解当事方的说法</p>
-              <ul className="mt-1 divide-y divide-line-soft">
-                {story.officialReports.slice(0, 5).map((r) => (
-                  <li key={r.id} className="py-3">
-                    <div className="truncate text-[11.5px] text-ink-4">{r.source.name}</div>
-                    <Link to={`/items/${r.id}`} className="group mt-1 block text-[13.5px] font-semibold leading-[1.6] text-ink transition-colors hover:text-accent">
-                      {r.title}
-                      <IconChevronRight size={13} className="ml-0.5 inline -translate-y-px text-ink-4 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              {counts.official > 0 && (
-                <button type="button" onClick={showOfficial} className="text-[12px] text-ink-4 transition-colors hover:text-accent">
-                  在时间线筛选全部官方报道
-                </button>
-              )}
             </RailCard>
           )}
           <RailCard title="事件记录" className="hidden lg:block">

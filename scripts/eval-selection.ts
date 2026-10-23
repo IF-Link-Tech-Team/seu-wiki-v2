@@ -30,7 +30,7 @@ const { values } = parseArgs({
 interface GoldRow {
   caseId: string;
   material: { title: string; originalTitle: string | null; publishedAt: string | null; sourceName: string; bodyZh: string | null; bodyOriginal: string | null };
-  sourceFacts: { sourceKind: string; sourceTier?: string; firstParty?: boolean; language?: string | null };
+  sourceFacts: { sourceKind: string; sourceTier?: string; language?: string | null };
   /** Optional: a split (e.g. development / holdout) and a stratum for reading the mistakes. */
   samplingContext?: { benchmarkSplit?: string; samplingStratum?: string };
   gold: { decision: "select" | "reject" | "either" };
@@ -65,7 +65,7 @@ function toInput(r: GoldRow): AnalyzeInputArticle {
     excerpt: null,
     xPost: isX ? { authorName: m.sourceName, handle: "", text: body ?? m.title } : null,
     media: [],
-    source: { name: m.sourceName, kind: r.sourceFacts.sourceKind, tier: r.sourceFacts.sourceTier ?? "T2", firstParty: r.sourceFacts.firstParty ?? false },
+    source: { name: m.sourceName, kind: r.sourceFacts.sourceKind, tier: r.sourceFacts.sourceTier ?? "T2" },
   };
 }
 

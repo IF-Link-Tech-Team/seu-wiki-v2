@@ -12,6 +12,20 @@ import { releaseBoundCache } from "../app/lib/api.server.ts";
 let web: ChildProcess;
 let origin: string;
 let logs = "";
+
+test("subscription is a public placeholder and retired reports are gone", async () => {
+  const subscription = await fetch(`${origin}/subscription`);
+  assert.equal(subscription.status, 200);
+  const html = await subscription.text();
+  assert.ok(html.includes("订阅尚未开放"));
+  assert.ok(html.includes("个性化规则仍在设计中"));
+  assert.doesNotMatch(html, /href="[^\"]*(?:channel=firstParty|\/daily|\/weekly|\/monthly)/);
+  for (const path of ["/daily", "/daily/archive", "/daily/2026-10-01", "/weekly", "/monthly/2026-10"]) {
+    const response = await fetch(`${origin}${path}`);
+    assert.equal(response.status, 410, path);
+    assert.ok((await response.text()).includes("已下线"), path);
+  }
+});
 let deadline: number;
 let refreshAt: string;
 let metaDelayMs = 0;

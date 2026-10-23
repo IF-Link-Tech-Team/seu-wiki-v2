@@ -31,7 +31,7 @@ export async function listSources(f: SourceListFilters) {
   const q = f.q?.trim() ? `%${f.q.trim()}%` : null;
   const rows = await sql`
     SELECT s.id, s.name, s.kind, s.tier, s.participation_mode, s.enabled, s.health, s.fail_count, s.interval_minutes,
-           s.last_ok_at, s.last_fetch_at, s.last_error, s.first_party, s.next_fetch_at,
+           s.last_ok_at, s.last_fetch_at, s.last_error, s.next_fetch_at,
            (SELECT count(*)::int FROM articles a WHERE a.source_id = s.id AND a.discovered_at > now() - interval '7 days') AS items_7d,
            (SELECT count(*)::int FROM publications p WHERE p.source_id = s.id AND p.selected AND p.discovered_at > now() - interval '30 days') AS selected_30d
     FROM sources s
@@ -50,8 +50,9 @@ export async function listSources(f: SourceListFilters) {
 }
 
 export async function sourceDetail(id: string) {
-  const [source] = await sql`SELECT * FROM sources WHERE id = ${id}`;
-  if (!source) return null;
+  const [sourceRow] = await sql`SELECT * FROM sources WHERE id = ${id}`;
+  if (!sourceRow) return null;
+  const { first_party: _retired, ...source } = sourceRow;
   const runs = await sql`SELECT id, started_at, finished_at, status, found_count, new_count, error, detail FROM fetch_runs WHERE source_id = ${id} ORDER BY started_at DESC LIMIT 30`;
   const items = await sql`
     SELECT a.id, a.title, a.url, a.discovered_at, a.published_at, a.processing_state, p.selected, p.visibility, p.title AS title_zh
@@ -91,7 +92,6 @@ const EDITABLE = z
     tier: z.enum(["T1", "T1_5", "T2", "EXCLUDE_MP"]),
     participation_mode: z.enum(["editorial", "hot_signal", "isolated"]),
     signal_group_id: z.string().max(120).nullable(),
-    first_party: z.boolean(),
     owner_entity_id: z.string().max(120).nullable(),
     site_fulltext: z.boolean(),
     syndicate_fulltext: z.boolean(),
@@ -128,7 +128,7 @@ export async function updateSource(id: string, input: { patch: unknown; version:
 }
 
 /** Source fields the public projection reads (publication/rules.ts and the v1 payload). */
-const PUBLICATION_FIELDS: string[] = ["participation_mode", "site_fulltext", "syndicate_fulltext", "tier", "name", "first_party"];
+const PUBLICATION_FIELDS: string[] = ["participation_mode", "site_fulltext", "syndicate_fulltext", "tier", "name"];
 
 const CreateSchema = z
   .object({
@@ -139,7 +139,6 @@ const CreateSchema = z
     tier: z.enum(["T1", "T1_5", "T2", "EXCLUDE_MP"]).default("T2"),
     participation_mode: z.enum(["editorial", "hot_signal", "isolated"]).default("editorial"),
     interval_minutes: z.number().int().min(1).max(1440).default(30),
-    first_party: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
     site_fulltext: z.boolean().default(false),
     syndicate_fulltext: z.boolean().default(false),
@@ -174,13 +173,14 @@ export async function createSource(input: unknown, actor: string) {
   const dup = await findDuplicateSource(s.kind, s.config);
   if (dup) return { created: false as const, duplicate: dup };
   const [row] = await sql`
-    INSERT INTO sources (id, name, kind, config, tier, participation_mode, interval_minutes, first_party, tags, site_fulltext, syndicate_fulltext, next_fetch_at)
-    VALUES (${s.id}, ${s.name}, ${s.kind}, ${sql.json(s.config as never)}, ${s.tier}, ${s.participation_mode}, ${s.interval_minutes}, ${s.first_party}, ${s.tags},
+    INSERT INTO sources (id, name, kind, config, tier, participation_mode, interval_minutes, tags, site_fulltext, syndicate_fulltext, next_fetch_at)
+    VALUES (${s.id}, ${s.name}, ${s.kind}, ${sql.json(s.config as never)}, ${s.tier}, ${s.participation_mode}, ${s.interval_minutes}, ${s.tags},
             ${s.site_fulltext}, ${s.syndicate_fulltext}, now())
     ON CONFLICT (id) DO NOTHING RETURNING *`;
   if (!row) throw new Conflict(`信源 ID ${s.id} 已存在`);
   await audit(actor, "source.create", `source:${s.id}`, null, null, s);
-  return { created: true as const, source: row };
+  const { first_party: _retired, ...source } = row;
+  return { created: true as const, source };
 }
 
 export async function fetchNow(id: string, actor: string) {

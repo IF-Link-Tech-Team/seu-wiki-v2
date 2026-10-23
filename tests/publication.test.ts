@@ -1,5 +1,5 @@
 // Public scope and sync through the real api routes: a licence revocation or a withdrawal reaches
-// every exit, reports stop quoting withdrawn items, the hot board drops a withdrawn item at once, item
+// every exit, the hot board drops a withdrawn item at once, item
 // pages follow the site's rule, an early release keeps the selected ledger in order, a withdrawal
 // waiting behind an unreleased item leaves new snapshots at once, and snapshots answer conditional requests.
 import { config } from "@aihot/backend/config";
@@ -25,7 +25,6 @@ import { buildApp } from "../apps/api/src/app.ts";
 const T = tag();
 const SOURCE = `test-publication-${T}`;
 const BODY = `FULLTEXT-${T} `.repeat(40);
-const REPORT_KEY = `2099-12-${String(10 + Math.floor(Math.random() * 19))}`;
 const app = await buildApp();
 
 before(async () => {
@@ -35,7 +34,6 @@ before(async () => {
             VALUES (${SOURCE}, 'Test publication', 'rss', 'T1', 'editorial', true, true, '2100-01-01')`;
 });
 after(async () => {
-  await sql`DELETE FROM reports WHERE kind = 'daily' AND key = ${REPORT_KEY}`;
   await app.close();
   await stopBoss();
   await closeDb();
@@ -118,30 +116,6 @@ test("revoking a source's licence takes its articles off every exit", async () =
   await sql`UPDATE sources SET participation_mode = 'editorial', site_fulltext = true, syndicate_fulltext = true WHERE id = ${SOURCE}`;
 });
 
-test("a withdrawn item leaves every report exit", async () => {
-  const id = await article();
-  await publishArticle(id, released());
-  const content = {
-    sections: [{ label: "教务", items: [{ itemId: id, title: `LEAD-${T}`, summary: `QUOTED-${T}`, sourceUrl: `https://example.com/original-${T}`, sourceName: "Test" }] }],
-    flashes: [],
-  };
-  await sql`INSERT INTO reports (kind, key, window_start, window_end, content, generated_at, origin)
-            VALUES ('daily', ${REPORT_KEY}, now() - interval '1 day', now(), ${sql.json(content as never)}, now(), 'manual')
-            ON CONFLICT (kind, key) DO UPDATE SET content = EXCLUDED.content`;
-  assert.ok((await get(`/api/v1/dailies/${REPORT_KEY}`)).body.includes(`QUOTED-${T}`), "the report quotes the item before");
-
-  await setVisibility(id, { visibility: "withdrawn", reason: "test", version: 0 }, "test");
-  for (const url of [`/api/v1/dailies/${REPORT_KEY}`, `/api/site/reports/daily/${REPORT_KEY}`]) {
-    const res = await get(url);
-    assert.equal(res.status, 200, url);
-    assert.ok(!res.body.includes(`QUOTED-${T}`) && !res.body.includes(`original-${T}`), `${url} still quotes the withdrawn item`);
-  }
-  for (const url of ["/api/v1/dailies"]) {
-    const res = await get(url);
-    assert.ok(res.body.includes(REPORT_KEY), `${url} lists the report`);
-    assert.ok(!res.body.includes(`LEAD-${T}`), `${url} headlines the withdrawn title`);
-  }
-});
 
 test("a withdrawal takes down only the stories citing it, including secondary memberships", async () => {
   const id = await article();
@@ -282,7 +256,7 @@ test("v1 story retains website content and fallback ordering without the website
     firstReportAt: site.firstReportAt, latestAt: site.latestAt, digest: site.digest, digestUpdatedAt: site.digestUpdatedAt });
   assert.equal(v1.latest, 'Latest development fallback');
   assert.deepEqual(v1.reports, site.timeline.slice(0, 50).map((r: any) => ({ id: r.id, title: r.title, summary: r.summary,
-    source: { name: r.source.name, firstParty: r.source.firstParty }, publishedAt: r.publishedAt,
+    source: { name: r.source.name }, publishedAt: r.publishedAt,
     links: { aihot: `${config.siteUrl}/items/${r.id}`, original: r.originalUrl } })));
   await sql`UPDATE publications SET visible_after = now() + interval '1 day' WHERE article_id = ${second}`;
   const gated = JSON.parse((await get(`/api/v1/stories/${publicId}`)).body).story;
