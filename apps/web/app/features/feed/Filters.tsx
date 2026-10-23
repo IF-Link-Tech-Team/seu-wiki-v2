@@ -1,10 +1,12 @@
-// Feed filters: the tab row (精选 / 订阅 / categories / 全部), the 信源 filter, and search.
+// Feed filters: the tab row (精选 / 订阅 / categories), the 信源 filter, and search.
 import { useEffect, useRef, useState } from "react";
 import { Form, Link, useLocation, useNavigate, useNavigation, useSearchParams } from "react-router";
 import { CATEGORY_KEYS, CATEGORY_LABELS, type CategoryKey } from "@aihot/contracts/taxonomy";
 import type { SourceOption } from "@aihot/contracts/site";
 import { IconChevronDown, IconClose, IconSearch } from "../../components/icons";
 import { PillTabs } from "../../components/ui/Tabs";
+
+const CATEGORY_TAB_LABELS = { ...CATEGORY_LABELS, academic: "教学教务", aid: "奖助学金", competition: "科创竞赛" };
 
 /** Same page with some query parameters changed (paging state dropped). */
 export function hrefWith(base: string, params: URLSearchParams, patch: Record<string, string | null>) {
@@ -21,7 +23,7 @@ export function hrefWith(base: string, params: URLSearchParams, patch: Record<st
 
 /**
  * The feed's one tab row, shared by the home page and 全部动态: 精选（过门槛的精选集）、订阅占位、
- * 各分类（该分类下收进来的全部条目），最后是全量的「全部」。切换 tab 时保留信源筛选。
+ * 教学教务至校园新闻的七个分类。生活服务与全量列表保留原入口，切换 tab 时保留信源筛选。
  * 搜索词只属于 /all：搜索中点分类是在结果内过滤（留在 /all），点「精选」才退出搜索回家。
  */
 export function CategoryTabs({ active, layoutId, size = "md", className = "" }: { active: string; layoutId: string; size?: "md" | "sm"; className?: string }) {
@@ -34,8 +36,7 @@ export function CategoryTabs({ active, layoutId, size = "md", className = "" }: 
   const items = [
     { key: "selected", label: "精选", to: homeTab({ channel: null, category: null }) },
     { key: "subscription", label: "订阅", to: "/subscription" },
-    ...CATEGORY_KEYS.map((k: CategoryKey) => ({ key: k, label: CATEGORY_LABELS[k], to: scopeTab({ category: k, channel: null }) })),
-    { key: "all", label: "全部", to: hrefWith("/all", params, { channel: null, category: null, tag: null, tab: null, type: null, search: null }) },
+    ...CATEGORY_KEYS.filter((k) => k !== "life").map((k: CategoryKey) => ({ key: k, label: CATEGORY_TAB_LABELS[k], to: scopeTab({ category: k, channel: null }) })),
   ];
   return <PillTabs items={items} active={active} layoutId={layoutId} label="筛选" size={size} className={className} />;
 }
