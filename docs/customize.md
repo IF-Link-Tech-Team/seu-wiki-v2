@@ -15,7 +15,7 @@
 ## 1. 站名和文案：`industry/site.ts`
 
 - `name`：站名。导航、标题、分享图、RSS、MCP、后台都用它。
-- `subject`：行业词。页面上“AI 日报”“全部 AI 动态”会变成“法律日报”“全部法律动态”。
+- `subject`：行业词。页面上“全部 AI 动态”会变成“全部法律动态”。
 - `homeTitle`、`description`、`tagline`：首页标题、一句话介绍、侧边栏小字。
 - `mcpPrefix`：MCP 工具名前缀，比如 `lawhot` 会得到 `lawhot_get_latest`。有人接入以后不要再改。
 - `crawlerName`：抓取信源时报的名字，别用别人的站名。
@@ -26,7 +26,7 @@
 
 ## 2. 分类、标签和主题：`industry/taxonomy.ts`、`industry/topics.json`
 
-- `CATEGORIES`：首页和“全部动态”的筛选类别。`key` 会出现在网址和接口里（`/all?category=`、`/feed/category/<key>.xml`），上线后不要改；`label` 是显示名；`section` 是日报里的分节；`guide` 告诉模型怎么归类。
+- `CATEGORIES`：首页和“全部动态”的筛选类别。`key` 会出现在网址和接口里（`/all?category=`、`/feed/category/<key>.xml`），上线后不要改；`label` 是显示名；`section` 是保留的分类分组元数据；`guide` 告诉模型怎么归类。
 - `CATEGORY_TAGS`、`TOPIC_TAGS`、`ENTITY_TAGS`：模型打标签时只能从这里选。第一个标签必须是“分类标签”。
 - `ENTITIES`：行业里的主要公司或机构，用于“公司”类主题页。`IDENTITY_LEXICON`、`PUBLISHER_DOMAINS` 用来防止模型在标题摘要里写进原文没提到的公司，别的行业没有这个需要可以清空。
 - `ITEM_TYPES`：内容类型，和评分提示词里的权重表对应，改了要一起改提示词。
@@ -44,12 +44,11 @@
 |---|---|
 | `kind` | `rss`、`web_list`（网页列表，配选择器）、`json_list`（JSON 接口）、`x_search`（X 账号，需要 SocialData）、`mp_account`（公众号，需要极致了）、`external`（外部推送） |
 | `config` | 每种信源的配置，见 [信源](sources.md) |
-| `tier` | 信源分级：`T1` 官方一手、`T1_5` 官方账号与准官方、`T2` 媒体与个人、`EXCLUDE_MP` 不参与精选。不同分级的入选门槛不同 |
+| `tier` | 信源分级：`T1` 官方来源、`T1_5` 官方账号与准官方、`T2` 媒体与个人、`EXCLUDE_MP` 不参与精选。不同分级的入选门槛不同 |
 | `participation_mode` | `editorial` 进精选和全部动态；`hot_signal` 只作热度证据；`isolated` 不进任何公开页面 |
-| `first_party` | 是不是当事方自己发的（官网、官方账号） |
 | `site_fulltext` | 站内能不能展示全文。**默认关**：只展示摘要和原文链接。只有来源明确允许时才打开 |
 
-中国大陆的很多行业，一手信息在公众号上。公众号信源需要极致了（Dajiala）的 key，按请求计费，有预算熔断。
+中国大陆的很多行业，官方信息在公众号上。公众号信源需要极致了（Dajiala）的 key，按请求计费，有预算熔断。
 
 ## 4. 精选标准：`industry/prompts/`
 
@@ -64,7 +63,7 @@
 | `summarize-*.md` | 其他内容的标题摘要写法 |
 | `structure.md` | 分类、标签、主体公司、事实的结构化抽取 |
 | `group-*.md` | 事件归组：两篇报道是不是同一件事 |
-| `story-digest.md`、`report-*.md` | 事件综述、日报导语、周报月报 |
+| `story-digest.md` | 事件综述 |
 | `translate-*.md` | 全文翻译 |
 
 提示词里用 `{{siteName}}` 指代站名，`{{> 文件名}}` 引用另一份提示词。改提示词不用改代码。
@@ -91,11 +90,6 @@
 ## 7. 品牌：`industry/brand/`
 
 - `logo.svg`、`icon.png`（512）、`icon-192.png`、`apple-icon.png`（180）、`favicon.ico`：站点图标。
-- `nameplates/`：日报、周报、月报页顶部的报头字（比如“AI日报”）。换了行业词以后重新生成：
-  ```bash
-  npm pack @fontsource/noto-sans-sc@5.3.0 && tar xzf fontsource-noto-sans-sc-5.3.0.tgz
-  node scripts/nameplates.ts package
-  ```
 - 关于页的二维码：在后台“设置”里上传，或者把图片放进 `industry/brand/contact/`。
 - 网页左上角的站名标志在 `apps/web/app/components/Logo.tsx`，默认用站名文字；有自己的 Logo 可以换成图片。
 
@@ -121,4 +115,4 @@ node scripts/smoke.ts --base http://localhost:3000   # 站点跑起来以后
 
 `tests/` 里有些测试用的是当前行业包的分类、标签和机构（比如 `academic`、“教务通知”、教务处）。改了 `industry/taxonomy.ts` 以后这些测试会失败，把例子换成你行业里的对应项即可，测的规则本身不用改。
 
-然后打开网站看一眼首页、全部动态、日报和关于页，再去后台“信源”页看信源是不是都抓成功了。
+然后打开网站看一眼首页、订阅占位、全部动态和关于页，再去后台“信源”页看信源是不是都抓成功了。

@@ -6,7 +6,6 @@ export interface SourceFacts {
   kind: string;
   tier: string;
   participation_mode: string;
-  first_party: boolean;
   site_fulltext: boolean;
   syndicate_fulltext: boolean;
 }

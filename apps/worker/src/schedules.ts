@@ -11,8 +11,6 @@ import { refreshSourceIcons } from "@aihot/backend/sources/icons";
 import { computeHotRanking, snapshotHeat } from "@aihot/backend/events/hot";
 import { refreshStoryStatuses } from "@aihot/backend/events/digest";
 import { linkRelatedStories } from "@aihot/backend/events/group";
-import { catchUpReports, composeDaily, composeMonthly, composeWeekly } from "@aihot/backend/reports/compose";
-import { addDays, beijingDate, isoWeekLabel } from "@aihot/contracts/time";
 import { runLeaderboardRound } from "@aihot/backend/leaderboard/method/run";
 import { refreshLeaderboard } from "@aihot/backend/leaderboard/fetch/refresh";
 import { monitorTick } from "@aihot/backend/monitor/scan";
@@ -43,18 +41,6 @@ export const SCHEDULES: Scheduled[] = [
   { name: "hot.snapshot", cron: "2 * * * *", run: () => snapshotHeat() },
   { name: "stories.status", cron: "7 * * * *", run: refreshStoryStatuses },
   { name: "stories.links", cron: "12 * * * *", run: linkRelatedStories },
-  { name: "reports.daily", cron: "0 8 * * *", missed: "once", run: () => composeDaily(beijingDate(Date.now())) },
-  { name: "reports.weekly", cron: "0 10 * * 1", missed: "once", run: () => composeWeekly(isoWeekLabel(addDays(beijingDate(Date.now()), -7))) },
-  {
-    name: "reports.monthly",
-    cron: "30 10 1 * *",
-    missed: "once",
-    run: () => {
-      const [y, m] = beijingDate(Date.now()).split("-").map(Number) as [number, number];
-      return composeMonthly(m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, "0")}`);
-    },
-  },
-  { name: "reports.catch-up", cron: "15 * * * *", run: () => catchUpReports() },
   { name: "ops.retention", cron: "30 3 * * *", missed: "once", run: () => dailyRetention() },
   { name: "sources.icons", cron: "40 4 * * *", missed: "once", run: () => refreshSourceIcons() },
   // IndexNow for new indexable pages (off unless INDEXNOW_SUBMIT_ENABLED).

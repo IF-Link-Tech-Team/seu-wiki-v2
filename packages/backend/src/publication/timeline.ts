@@ -1,7 +1,7 @@
 // Home timeline: selected items folded into reading groups (reference SELECTED_READING):
 // one card per story, per fact outside a story, or per standalone article. A card sits at its latest
 // development's first appearance, so a new development brings it back up while a representative swap
-// never moves it; the representative is the first-party pick of the story's initiating fact.
+// never moves it; the representative is picked from the story's initiating fact.
 import type { GroupInfo, TimelineCard, TimelineFilters, TimelineResponse } from "@aihot/contracts/site";
 import { beijingDate } from "@aihot/contracts/time";
 import { sql } from "../db.ts";
@@ -31,11 +31,10 @@ function binding(q: TimelineQuery): string {
   return queryBinding({ c: q.channel, k: q.category, t: q.tag, p: q.topic ?? null, s: q.sources ?? null });
 }
 
-/** Representative preference: first-party, full text, higher score, earliest. */
-type RepresentativeRow = Pick<ItemRow, "first_party" | "body_mode" | "score" | "timeline_at">;
+/** Representative preference: full text, higher score, earliest. */
+type RepresentativeRow = Pick<ItemRow, "body_mode" | "score" | "timeline_at">;
 export function pickRepresentative<T extends RepresentativeRow>(rows: T[]): T {
   return [...rows].sort((a, b) => {
-    if (a.first_party !== b.first_party) return a.first_party ? -1 : 1;
     if (a.body_mode !== b.body_mode) return a.body_mode === "full" ? -1 : 1;
     const sa = a.score ?? 0;
     const sb = b.score ?? 0;
@@ -123,7 +122,7 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
   const [members, pool] = await Promise.all([
     storyIds.length || factIds.length
       ? sql<Member[]>`
-        SELECT p.story_id, p.fact_id, p.article_id AS id, p.first_party, p.body_mode, p.score, p.timeline_at, p.sort_at FROM publications p
+        SELECT p.story_id, p.fact_id, p.article_id AS id, p.body_mode, p.score, p.timeline_at, p.sort_at FROM publications p
         WHERE (p.story_id IN ${sql(storyIds.length ? storyIds : [0])} OR (p.story_id IS NULL AND p.fact_id IN ${sql(factIds.length ? factIds : [0])}))
           AND ${selectedCondition(now)} ${filterSql(q)}`
       : Promise.resolve([] as Member[]),
@@ -150,7 +149,7 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
     }
     if (byFact.size === 0) continue;
     const reports = pool.filter((r) => (isStory ? r.story_id === id : r.fact_id === id));
-    // The group stands for its initiating fact, the one first reported; that fact's first-party pick
+    // The group stands for its initiating fact, the one first reported; that fact's representative
     // represents it, or, when it has no selected report, the pick of the earliest fact that has one.
     const firstReport = new Map<number, number>();
     for (const r of reports) firstReport.set(r.fact_id, Math.min(firstReport.get(r.fact_id) ?? Infinity, r.at.getTime()));

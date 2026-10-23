@@ -27,7 +27,7 @@ interface Preview {
 export default function NewSource() {
   const navigate = useNavigate();
   const { run, pending } = useAdminAction();
-  const [form, setForm] = useState({ id: "", name: "", kind: "rss", tier: "T2", participation_mode: "editorial", interval_minutes: 30, first_party: false, site_fulltext: true, syndicate_fulltext: false, tags: "" });
+  const [form, setForm] = useState({ id: "", name: "", kind: "rss", tier: "T2", participation_mode: "editorial", interval_minutes: 30, site_fulltext: true, syndicate_fulltext: false, tags: "" });
   const [config, setConfig] = useState(JSON.stringify(TEMPLATES.rss, null, 2));
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -44,7 +44,7 @@ export default function NewSource() {
   };
 
   return (
-    <AdminPage title="新建信源" subtitle="先判重、先预览：优先 RSS/JSON 等稳定协议；首抓成功且有真实条目才算接入完成。一手身份要有运营主体或官方交叉链接证据。">
+    <AdminPage title="新建信源" subtitle="先判重、先预览：优先 RSS/JSON 等稳定协议；首抓成功且有真实条目才算接入完成。">
       <div className="grid gap-5 xl:grid-cols-[1fr_420px]">
         <Card title="信源定义">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -84,7 +84,6 @@ export default function NewSource() {
             </Field>
             <div className="flex flex-col justify-end gap-2 text-[13px] text-ink-2">
               {([
-                ["first_party", "一手信源"],
                 ["site_fulltext", "站内可展示全文"],
                 ["syndicate_fulltext", "对外接口可带全文"],
               ] as const).map(([k, label]) => (

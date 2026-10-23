@@ -7,7 +7,6 @@ flowchart LR
   J --> G["归组<br/>事件 · 热度 · 综述"]
   J --> P["公开读取层<br/>publication/"]
   G --> P
-  P --> R["日报 · 周报 · 月报"]
   P --> O["网页 · RSS · API v1 · MCP · llms.txt · 站点地图 · 分享图"]
 ```
 
@@ -16,7 +15,7 @@ flowchart LR
 | 进程 | 位置 | 做什么 |
 |---|---|---|
 | api | `apps/api/` | Fastify。网站自用接口（`/api/site/`）、公开 API（`/api/v1/`）、RSS、MCP、后台接口、图片代理、分享图 |
-| worker | `apps/worker/` | pg-boss 任务队列和定时任务：抓信源、调模型、归组、热度、日报、告警、清理 |
+| worker | `apps/worker/` | pg-boss 任务队列和定时任务：抓信源、调模型、归组、热度、告警、清理 |
 | web | `apps/web/` | React Router 服务端渲染的网页。只通过 HTTP 读 api，不碰数据库 |
 
 业务代码都在 `packages/backend/`，前后端共用的类型和常量在 `packages/contracts/`，行业相关的一切在 `industry/`。
@@ -42,7 +41,6 @@ flowchart LR
 | `packages/backend/src/editorial/` | 判断与写作：`analyze.ts`（流程）、`prompts.ts`（读提示词）、`models.ts`（每一步用哪个模型） |
 | `packages/backend/src/events/` | 事件归组、热度、事件综述 |
 | `packages/backend/src/publication/` | 公开读取层 |
-| `packages/backend/src/reports/` | 日报、周报、月报 |
 | `packages/backend/src/providers/` | 模型、向量、X、公众号、Jina 的调用，回执与预算 |
 | `packages/backend/src/notify/` | 飞书推送 |
 | `packages/backend/src/operations/` | 告警、备份、清理、IndexNow |
@@ -57,13 +55,17 @@ flowchart LR
 
 | 地址 | 内容 |
 |---|---|
-| `/` `/all` `/hot` `/topics` `/daily` `/weekly` `/monthly` | 精选、全部动态、热门事件、主题、日报周报月报。首页 tab 行是「精选 / 一手 / 各分类 / 全部」：精选走 `/api/site/timeline`，一手（`channel=firstParty`）和各分类走 `/api/site/pool`，是不卡门槛的全量列表（时间倒序）；信源筛选（`?sources=`）对精选、分类、全部、搜索生效。左侧导航只保留精选、日报、经验论坛、生存手册、收藏，其余页面从「更多」进入 |
+| `/` `/subscription` `/all` `/hot` `/topics` | 精选、订阅占位、全部动态、热门事件、主题。首页 tab 行是「精选 / 订阅 / 各分类 / 全部」：精选走 `/api/site/timeline`，各分类走 `/api/site/pool`，是不卡门槛的全量列表（时间倒序）；信源筛选（`?sources=`）对精选、分类、全部、搜索生效。订阅仅显示尚未开放的说明，不查询个性化内容。左侧导航保留精选、经验论坛、生存手册、收藏，其余页面从「更多」进入 |
 | `/experience-forum` `/handbook` | 经验论坛、东大生存手册。这两个页从论坛站（forum.seu.wiki，`FORUM_API_BASE`）SSR 读取，是「一个公开读取层」规则的例外：论坛是独立仓库（seu-wiki-forum），有自己的数据库 |
-| `/feed.xml` `/feed/all.xml` `/feed/full.xml` `/feed/daily.xml` | RSS：精选、全部、全文、日报。另有按分类订阅：`/feed/category/<key>.xml`、`/feed/full/category/<key>.xml`（`key` 是 `industry/taxonomy.ts` 里的分类） |
+| `/feed.xml` `/feed/all.xml` `/feed/full.xml` | RSS：精选、全部、全文。另有按分类订阅：`/feed/category/<key>.xml`、`/feed/full/category/<key>.xml`（`key` 是 `industry/taxonomy.ts` 里的分类） |
 | `/api/v1/` | 公开 API，文档在 `/openapi-v1.json`，说明页在 `/agent` |
 | `/api/mcp` | MCP 服务，工具名前缀是 `industry/site.ts` 的 `mcpPrefix` |
 | `/llms.txt` `/sitemap.xml` `/robots.txt` | 给大模型和搜索引擎的说明 |
 | `/admin` | 后台 |
+
+## 已移除能力
+
+日/周/月报生成与补生成任务已移除；旧网页和报告接口返回 410，对外发现文档不再提供这些入口。数据库增量迁移只清理报告历史及旧一手标识，不删除文章、事件或用户。内部信源健康周报与数据库备份继续保留。
 
 ## 测试
 

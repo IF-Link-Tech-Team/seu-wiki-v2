@@ -54,7 +54,6 @@ interface ArticleRow {
   source_id: string;
   source_name: string;
   signal_group_id: string | null;
-  first_party: boolean;
   participation_mode: string;
   regroup_pending: boolean;
   backfill: boolean;
@@ -234,17 +233,17 @@ async function recallFacts(queryId: string, queryText: string, minScore: number,
 }
 
 /**
- * What the judge sees of a candidate fact: its representative report (first-party first, else the
+ * What the judge sees of a candidate fact: its representative report (the
  * earliest), its size, and whether it started its story (rootFactOf).
  */
 async function candidateViews(recalled: Recalled[]): Promise<CandidateView[]> {
   if (recalled.length === 0) return [];
   const rows = await sql<{
     fact_id: number; story_id: number; fact_title: string; subject: string | null; action: string | null; object: string | null; occurred_at: Date | null;
-    title: string; summary: string | null; source: string; first_party: boolean; at: Date; members: number; root_fact_id: number;
+    title: string; summary: string | null; source: string; at: Date; members: number; root_fact_id: number;
   }[]>`
     SELECT DISTINCT ON (fa.fact_id) fa.fact_id, f.story_id, f.title AS fact_title, f.subject, f.action, f.object, f.occurred_at,
-           p.title, p.summary, s.name AS source, p.first_party, coalesce(p.published_at, p.discovered_at) AS at,
+           p.title, p.summary, s.name AS source, coalesce(p.published_at, p.discovered_at) AS at,
            (SELECT count(*) FROM fact_articles x WHERE x.fact_id = fa.fact_id AND x.role IN ('primary', 'report') AND ${trusted("x")}) AS members,
            ${rootFactOf(sql`f.story_id`)} AS root_fact_id
     FROM fact_articles fa
@@ -265,7 +264,7 @@ async function candidateViews(recalled: Recalled[]): Promise<CandidateView[]> {
       storyRoot: Number(row.root_fact_id) === r.factId,
       score: r.score,
       report: {
-        title: row.title, source: row.source, firstParty: row.first_party, at: row.at, summary: row.summary,
+        title: row.title, source: row.source, at: row.at, summary: row.summary,
         frame: { subject: row.subject, action: row.action, object: row.object, occurredAt: row.occurred_at ? row.occurred_at.toISOString().slice(0, 10) : null },
       },
     }];
@@ -426,9 +425,9 @@ interface StoryRoot {
 async function storyRoot(storyId: number): Promise<StoryRoot | null> {
   const [row] = await sql<{
     subject: string | null; action: string | null; object: string | null; occurred_at: Date | null;
-    title: string; summary: string | null; source: string; first_party: boolean; at: Date; started_at: Date; roundup: boolean;
+    title: string; summary: string | null; source: string; at: Date; started_at: Date; roundup: boolean;
   }[]>`
-    SELECT f.subject, f.action, f.object, f.occurred_at, p.title, p.summary, s.name AS source, p.first_party,
+    SELECT f.subject, f.action, f.object, f.occurred_at, p.title, p.summary, s.name AS source,
            coalesce(p.published_at, p.discovered_at) AS at,
            (SELECT min(coalesce(q.published_at, q.discovered_at)) FROM fact_articles z JOIN publications q ON q.article_id = z.article_id
             WHERE z.fact_id = f.id AND z.role IN ('primary', 'report') AND ${trusted("z")}) AS started_at,
@@ -444,7 +443,7 @@ async function storyRoot(storyId: number): Promise<StoryRoot | null> {
   return {
     storyId, at: row.started_at, roundup: row.roundup,
     report: {
-      title: row.title, source: row.source, firstParty: row.first_party, at: row.at, summary: row.summary,
+      title: row.title, source: row.source, at: row.at, summary: row.summary,
       frame: { subject: row.subject, action: row.action, object: row.object, occurredAt: row.occurred_at ? row.occurred_at.toISOString().slice(0, 10) : null },
     },
   };
@@ -605,7 +604,7 @@ export async function groupArticle(articleId: string, opts: GroupOptions = {}): 
 async function decide(articleId: string, opts: GroupOptions): Promise<GroupResult> {
   const [a] = await sql<ArticleRow[]>`
     SELECT a.id, a.title, a.url, a.published_at, a.discovered_at, a.grouped_at, a.body_text, a.x_post, a.backfill,
-           s.id AS source_id, s.name AS source_name, s.signal_group_id, s.first_party, s.participation_mode,
+           s.id AS source_id, s.name AS source_name, s.signal_group_id, s.participation_mode,
            EXISTS (SELECT 1 FROM regroup_pending rp WHERE rp.article_id = a.id) AS regroup_pending
     FROM articles a JOIN sources s ON s.id = a.source_id WHERE a.id = ${articleId}`;
   if (!a) return { verdict: "skipped" };
@@ -647,7 +646,7 @@ async function decide(articleId: string, opts: GroupOptions): Promise<GroupResul
   }
   const title = an.title_zh || a.title;
   const query: ReportView = {
-    title, source: a.source_name, firstParty: a.first_party, at: observedAt, summary: an.summary_zh,
+    title, source: a.source_name, at: observedAt, summary: an.summary_zh,
     frame: frame ? { subject: frame.subject, action: frame.action, object: frame.object, occurredAt: frame.occurredAt } : null,
   };
   const newTitle = String(frame?.title || title).slice(0, 60);
@@ -725,7 +724,7 @@ async function decide(articleId: string, opts: GroupOptions): Promise<GroupResul
     const story = storyId ?? (await createStory(tx, newTitle, observedAt));
     const fact = factId ?? (await createFact(tx, story, newTitle, frame, observedAt));
     const [hasPrimary] = await tx<{ n: number }[]>`SELECT count(*) AS n FROM fact_articles WHERE fact_id = ${fact} AND role = 'primary'`;
-    const role = a.first_party && Number(hasPrimary?.n ?? 0) === 0 ? "primary" : "report";
+    const role = Number(hasPrimary?.n ?? 0) === 0 ? "primary" : "report";
     await tx`INSERT INTO fact_articles (fact_id, article_id, role, created_at) VALUES (${fact}, ${articleId}, ${role}, ${observedAt}) ON CONFLICT (fact_id, article_id) DO NOTHING`;
     await recordSignal(tx, story, articleId, source, "editorial", observedAt);
     await recordDecision(tx, articleId, fact, story, verdict, decisionCandidates, receipts[0] ?? null);
@@ -854,7 +853,7 @@ async function groupSignal(a: ArticleRow, source: { id: string; signal_group_id:
   }
   const cands = await candidateViews(recalled);
   if (cands.length === 0) return { verdict: "signal-unmatched" };
-  const query: ReportView = { title: a.title, source: a.source_name, firstParty: false, at: observedAt, summary: a.body_text?.slice(0, 300) ?? null };
+  const query: ReportView = { title: a.title, source: a.source_name, at: observedAt, summary: a.body_text?.slice(0, 300) ?? null };
   const { verdicts, receiptId } = await judgeSignal(a.id, query, cands);
   const target = signalTarget(cands, verdicts);
   if (target) await recordSignal(sql, target.storyId, a.id, source, "signal", observedAt);

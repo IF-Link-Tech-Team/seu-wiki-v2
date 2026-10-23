@@ -65,21 +65,6 @@ export async function collectFindings(now = Date.now()): Promise<Finding[]> {
         since: p!.waiting >= 10 && p!.oldest ? p!.oldest : undefined,
       });
     }
-    // The daily report is composed at 08:00 and caught up hourly.
-    if (Number(beijingTime(now).slice(0, 2)) >= 10) {
-      const [r] = await sql`SELECT 1 FROM reports WHERE kind = 'daily' AND key = ${beijingDate(now)}`;
-      if (!r) {
-        out.push({
-          key: "report.daily",
-          level: "now",
-          title: "今天的日报还没生成",
-          impact: "读者看不到今天的日报",
-          heals: "系统每小时补做一次，到现在还没成功",
-          action: "转给 AI 处理",
-          detail: `reports daily ${beijingDate(now)} 不存在；看 reports.daily / reports.catch-up 的运行记录`,
-        });
-      }
-    }
   }
 
   // ---- Money, and things only the owner can do --------------------------------------------------
@@ -190,7 +175,7 @@ export async function collectFindings(now = Date.now()): Promise<Finding[]> {
 
 const MODEL_STOPS = "用到这家模型的步骤停了（看后台“模型与评测”），新内容可能进不了精选";
 const PROVIDERS: Record<string, { name: string; stops: string; where: string }> = {
-  llm: { name: "默认模型服务", stops: "新文章的精选、摘要、归组和日报停了", where: "模型服务商的控制台" },
+  llm: { name: "默认模型服务", stops: "新文章的精选、摘要和归组停了", where: "模型服务商的控制台" },
   zhipu: { name: "智谱", stops: MODEL_STOPS, where: "智谱开放平台" },
   dashscope: { name: "阿里云百炼", stops: MODEL_STOPS, where: "阿里云百炼控制台" },
   deepseek: { name: "DeepSeek", stops: MODEL_STOPS, where: "DeepSeek 开放平台" },

@@ -1,8 +1,8 @@
 // RSS routes. Unknown query parameters are accepted and never change content.
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { RSS_CACHE_CONTROL } from "@aihot/contracts/http-policy";
-import { dailyFeed, isFeedCategory, itemFeed, type ItemFeedKind } from "@aihot/backend/publication/feeds";
-import { applyPublicHeaders, sendTextWithEtag } from "../http/respond.ts";
+import { isFeedCategory, itemFeed, type ItemFeedKind } from "@aihot/backend/publication/feeds";
+import { applyPublicHeaders, sendProblem, sendTextWithEtag } from "../http/respond.ts";
 
 async function sendFeed(req: FastifyRequest, reply: FastifyReply, xml: string) {
   applyPublicHeaders(reply, { cors: false });
@@ -29,14 +29,7 @@ export function registerFeeds(app: FastifyInstance) {
   app.get("/feed.xml", item("selected"));
   app.get("/feed/full.xml", item("selected-full"));
   app.get("/feed/all.xml", item("all"));
-  app.get("/feed/daily.xml", async (req, reply) => {
-    try {
-      return await sendFeed(req, reply, await dailyFeed());
-    } catch (error) {
-      req.log.error({ err: error }, "feed error");
-      return feedError(reply);
-    }
-  });
+  app.get("/feed/daily.xml", async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报订阅已下线。" }));
   for (const full of [false, true]) {
     app.get(full ? "/feed/full/category/:file" : "/feed/category/:file", async (req, reply) => {
       const file = (req.params as { file: string }).file;

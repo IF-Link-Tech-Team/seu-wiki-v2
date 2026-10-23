@@ -44,7 +44,6 @@ interface ReportRow {
   source_id: string;
   source_name: string;
   source_kind: string;
-  first_party: boolean;
   icon_url: string | null;
   fact_public_id: string;
   fact_id: number;
@@ -60,7 +59,7 @@ async function storyReports(storyId: number, now: Date): Promise<ReportRow[]> {
   return sql<ReportRow[]>`
     SELECT DISTINCT ON (p.article_id) p.article_id AS id, p.title, p.summary, p.url, p.selected,
       coalesce(p.published_at, p.discovered_at) AS at, s.id AS source_id, s.name AS source_name, s.kind AS source_kind,
-      p.first_party, s.icon_url, f.public_id AS fact_public_id, f.id AS fact_id
+      s.icon_url, f.public_id AS fact_public_id, f.id AS fact_id
     FROM facts f JOIN fact_articles fa ON fa.fact_id = f.id JOIN publications p ON p.article_id = fa.article_id
     JOIN sources s ON s.id = p.source_id
     WHERE f.story_id = ${storyId} AND p.visibility = 'public' AND s.participation_mode = 'editorial'
@@ -73,7 +72,7 @@ function reportView(r: ReportRow): StoryReportView {
     id: r.id,
     title: r.title,
     summary: r.summary,
-    source: { id: r.source_id, name: r.source_name, kind: r.source_kind as never, firstParty: r.first_party, iconUrl: proxiedImage(r.icon_url, "avatar") },
+    source: { id: r.source_id, name: r.source_name, kind: r.source_kind as never, iconUrl: proxiedImage(r.icon_url, "avatar") },
     publishedAt: r.at.toISOString(),
     originalUrl: r.url,
     selected: r.selected,
@@ -97,7 +96,7 @@ async function storyContent(storyId: number, now: Date) {
     .filter((f) => byFact.has(f.id))
     .map((f) => {
       const members = byFact.get(f.id)!;
-      const rep = [...members].sort((a, b) => Number(b.first_party) - Number(a.first_party) || Number(b.selected) - Number(a.selected) || a.at.getTime() - b.at.getTime())[0]!;
+      const rep = [...members].sort((a, b) => Number(b.selected) - Number(a.selected) || a.at.getTime() - b.at.getTime())[0]!;
       const first = members.reduce((m, r) => (r.at < m ? r.at : m), members[0]!.at);
       return { factId: f.public_id, title: f.title, occurredAt: f.occurred_at?.toISOString() ?? null, firstReportAt: first.toISOString(), reportCount: members.length, representative: rep };
     })
@@ -159,7 +158,7 @@ export async function loadStoryDetail(storyId: number, now = new Date()): Promis
       heat: entry?.heat ?? null,
     },
     developments: developments.map((d) => ({ ...d, representative: reportView(d.representative) })),
-    officialReports: reports.filter((r) => r.first_party).slice(0, 12).map(reportView),
+
     timeline: reports.slice(0, 100).map(reportView),
     heat: heat.map((h): HeatPoint => ({ hour: h.hour.toISOString(), heat: Number(h.heat), participants: h.participants })),
     related: related.map((r) => ({ publicId: r.public_id, title: r.title, relation: r.relation, latestAt: r.latest_at?.toISOString() ?? null })),
@@ -217,7 +216,7 @@ async function queryHotCovers(entries: Array<{ storyId: number; representativeIt
     ) img
     WHERE p.story_id = ANY(${ids}::bigint[]) AND p.visibility = 'public' AND p.eligible AND p.body_mode <> 'summary'
       AND (NOT p.selected OR p.visible_after <= ${at})
-    ORDER BY p.story_id, (p.article_id::text = ANY(${reps}::text[])) DESC, p.first_party DESC, p.selected DESC, coalesce(p.score, 0) DESC, p.article_id`;
+    ORDER BY p.story_id, (p.article_id::text = ANY(${reps}::text[])) DESC, p.selected DESC, coalesce(p.score, 0) DESC, p.article_id`;
   const covers = new Map(rows.map((c) => [Number(c.story_id), { url: c.m.url, width: typeof c.m.width === "number" ? c.m.width : null, height: typeof c.m.height === "number" ? c.m.height : null }]));
   return covers;
 }
@@ -317,7 +316,7 @@ export async function v1Story(storyId: number) {
         id: r.id,
         title: r.title,
         summary: r.summary,
-        source: { name: r.source_name, firstParty: r.first_party },
+        source: { name: r.source_name, },
         publishedAt: r.at.toISOString(),
         links: { aihot: itemUrl(r.id), original: r.url },
       })),

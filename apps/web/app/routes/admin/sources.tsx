@@ -19,7 +19,6 @@ interface SourceRow {
   last_ok_at: string | null;
   last_fetch_at: string | null;
   last_error: string | null;
-  first_party: boolean;
   next_fetch_at: string | null;
   items_7d: number;
   selected_30d: number;
@@ -112,7 +111,6 @@ export default function Sources({ loaderData }: Route.ComponentProps) {
                 <div className="flex gap-1">
                   <Badge tone={r.participation_mode === "editorial" ? "accent" : "muted"}>{MODE_LABEL[r.participation_mode] ?? r.participation_mode}</Badge>
                   <Badge tone="info">{r.tier.replace("_", ".")}</Badge>
-                  {r.first_party && <Badge tone="ok">一手</Badge>}
                 </div>
               ),
             },

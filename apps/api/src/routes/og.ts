@@ -4,7 +4,6 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { CATEGORY_LABELS } from "@aihot/contracts/taxonomy";
 import { beijingDate } from "@aihot/contracts/time";
 import { loadItemShare } from "@aihot/backend/publication/og";
-import { loadReport, type ReportKind } from "@aihot/backend/publication/reports";
 import { loadTopic } from "@aihot/backend/publication/topics";
 import { loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
 import { SITE, withSubject } from "@aihot/industry/site";
@@ -18,9 +17,6 @@ const PAGES: Record<string, OgCard> = {
   site: { kicker: SITE.name, title: SITE.tagline, subtitle: SITE.description },
   all: { kicker: `全部${withSubject("动态")}`, title: "所有信源的最新动态，一站看完", subtitle: "按时间汇总各信源的最新动态，可按类别与标签筛选。" },
   hot: { kicker: "热点榜", title: `过去 48 小时，大家在讨论什么`, subtitle: "热度指数、趋势与组成热度的公开来源。", accent: "hot" },
-  daily: { kicker: withSubject("日报"), title: `每天 8 点，一份读得完的${withSubject("日报")}`, subtitle: `前一天值得关注的${S}动态。` },
-  weekly: { kicker: withSubject("周报"), title: "一周大事，一次看清", subtitle: "本周的主线、重要发布与值得回看的讨论。" },
-  monthly: { kicker: withSubject("月报"), title: "一个月的变化", subtitle: "月度主线与关键事件回顾。" },
   topics: { kicker: "主题", title: "长期追踪的方向", subtitle: "公司与机构、专题方向、内容形态。" },
   leaderboard: { kicker: "AI 模型排行榜", title: "多家公开评测的共识排名", subtitle: "综合、编程、推理、知识、专业办公；缺测不补零，价格不影响排名。" },
   "codex-reset": { kicker: "Tibo 重置监控", title: "Codex 额度重置什么时候生效", subtitle: "推算的北京时间窗口、适用范围与 Tibo 原话。", accent: "amber" },
@@ -50,7 +46,6 @@ function notFound(reply: FastifyReply) {
   return reply.code(404).header("Cache-Control", "public, max-age=300").type("text/plain; charset=utf-8").send("Not found");
 }
 
-const REPORT_NAMES: Record<ReportKind, string> = { daily: withSubject("日报"), weekly: withSubject("周报"), monthly: withSubject("月报") };
 
 export function registerOg(app: FastifyInstance) {
   app.get("/og/site.png", (req, reply) => send(req, reply, PAGES.site!, 86400));
@@ -99,18 +94,7 @@ export function registerOg(app: FastifyInstance) {
     return reply.type("image/png").send((await renderPoster(poster)).png);
   });
 
-  app.get("/og/reports/:kind/:file", async (req, reply) => {
-    const { kind, file } = req.params as { kind: string; file: string };
-    if (!["daily", "weekly", "monthly"].includes(kind) || !file.endsWith(".png")) return notFound(reply);
-    const r = await loadReport(kind as ReportKind, file.slice(0, -4));
-    if (!r) return notFound(reply);
-    return send(req, reply, {
-      kicker: `${REPORT_NAMES[r.kind]} · ${r.key}`,
-      title: r.lead?.title ?? r.title,
-      subtitle: r.lead?.leadParagraph ?? r.overview,
-      meta: `${r.stories.length} 条核心新闻 · 约 ${r.readingMinutes} 分钟读完`,
-    }, 86400);
-  });
+  app.get("/og/reports/:kind/:file", async (_req, reply) => reply.code(410).send("周期报告已下线。"));
 
   app.get("/og/topics/:file", async (req, reply) => {
     const file = (req.params as { file: string }).file;
