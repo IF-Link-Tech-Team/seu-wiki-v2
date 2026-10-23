@@ -40,10 +40,10 @@ export const SIDEBAR: Array<{ title: string; items: NavItem[] }> = [
   {
     title: "更多",
     items: [
-      { to: "/agent", label: "Agent 接入", icon: IconPlug },
-      { to: "/about", label: "关于", icon: IconHeart },
+      { to: "/feedback", label: "问题反馈", icon: IconMessage },
       { to: "/changelog", label: "更新日志", icon: IconHistory, changelog: true },
-      { to: "/feedback", label: "反馈", icon: IconMessage },
+      { to: "/agent", label: "Agent 接入", icon: IconPlug },
+      { to: "/about", label: "关于我们", icon: IconHeart },
     ],
   },
 ];
