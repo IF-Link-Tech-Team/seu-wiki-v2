@@ -5,7 +5,7 @@ import type { Route } from "./+types/item";
 import type { SiteItemDetail } from "@aihot/contracts/site";
 import { loadOr404 } from "../lib/api.server";
 import { breadcrumbLd, pageMeta, siteUrl, titled } from "../lib/seo";
-import { fullDateTime, relativeTime } from "../lib/format";
+import { fullDateTime, publishedDateTime, relativeTime } from "../lib/format";
 import { markRead } from "../lib/local-state";
 import { SelectedBadge } from "../components/ui/Badge";
 import { ScoreLabel } from "../components/ui/Score";
@@ -199,11 +199,9 @@ export default function ItemPage() {
       </div>
       <div className="mt-3 text-[12px] text-ink-4">发布时间</div>
       <time dateTime={publishedIso} className="mono mt-0.5 block text-[12.5px] text-ink-2">
-        {fullDateTime(publishedIso)}
+        {item.publishedAt ? publishedDateTime(publishedIso, item.publishedAtPrecision) : fullDateTime(publishedIso)}
       </time>
-      <div className="mt-0.5 text-[12px] text-ink-4" suppressHydrationWarning>
-        {relativeTime(publishedIso)}
-      </div>
+      {(!item.publishedAt || item.publishedAtPrecision === "minute" || item.publishedAtPrecision === "second") && <div className="mt-0.5 text-[12px] text-ink-4" suppressHydrationWarning>{relativeTime(publishedIso)}</div>}
     </RailSection>
   );
   const outline = showOutline && (
@@ -287,8 +285,8 @@ export default function ItemPage() {
             {isX && <span>· @{item.x!.handle} · X</span>}
             {item.author && !isX && <span>· {item.author}</span>}
             <span>·</span>
-            <time dateTime={publishedIso} className="mono">{fullDateTime(publishedIso)}</time>
-            <span suppressHydrationWarning>· {relativeTime(publishedIso)}</span>
+            <time dateTime={publishedIso} className="mono">{item.publishedAt ? publishedDateTime(publishedIso, item.publishedAtPrecision) : fullDateTime(publishedIso)}</time>
+            {(!item.publishedAt || item.publishedAtPrecision === "minute" || item.publishedAtPrecision === "second") && <span suppressHydrationWarning>· {relativeTime(publishedIso)}</span>}
             {item.selected && (
               <span className="ml-1 lg:hidden">
                 <SelectedBadge />

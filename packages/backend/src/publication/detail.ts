@@ -8,6 +8,7 @@ import { ITEM_COLUMNS, ITEM_FROM, selectedCondition, toItemSummary, xView, type 
 import { itemUrl } from "./links.ts";
 import { hasItemPage } from "./rules.ts";
 import { SITE } from "@aihot/industry/site";
+import { publishedAtText } from "@aihot/contracts/time";
 
 interface DetailRow extends ItemRow {
   body_html: string | null;
@@ -160,7 +161,8 @@ export async function exportMarkdown(id: string): Promise<{ filename: string; bo
   lines.push(`# ${row.title}`, "");
   if (row.original_title) lines.push(`> 原标题：${row.original_title}`, "");
   lines.push(`- 来源：${row.source_name}`);
-  lines.push(`- 发布时间：${(row.published_at ?? row.discovered_at).toISOString()}`);
+  const published = row.published_at ?? row.discovered_at;
+  lines.push(`- 发布时间：${row.published_at ? publishedAtText(published, row.published_at_precision) : published.toISOString()}`);
   lines.push(`- ${SITE.name}：${itemUrl(row.id)}`);
   lines.push(`- 原文：${row.url}`, "");
   if (row.summary) lines.push("## 摘要", "", row.summary, "");

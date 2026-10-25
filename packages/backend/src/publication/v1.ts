@@ -27,7 +27,7 @@ export interface V1ItemsResult {
 export function rowToV1(row: ApiItemRow): V1ItemPayload {
   return v1Payload({
     articleId: row.id, title: row.title, originalTitle: row.original_title, summary: row.summary, sourceName: row.source_name,
-    url: row.url, publishedAt: row.published_at, discoveredAt: row.discovered_at, category: row.category,
+    url: row.url, publishedAt: row.published_at, publishedAtPrecision: row.published_at_precision, discoveredAt: row.discovered_at, category: row.category,
     score: row.score === null ? null : Number(row.score), selected: row.selected, reason: row.reason,
   });
 }
@@ -107,7 +107,7 @@ export async function effectiveWatermark(now = new Date()): Promise<number> {
 
 function minimalOf(item: V1ItemPayload) {
   return {
-    id: item.id, title: item.title, source: item.source, publishedAt: item.publishedAt, discoveredAt: item.discoveredAt,
+    id: item.id, title: item.title, source: item.source, publishedAt: item.publishedAt, publishedAtPrecision: item.publishedAtPrecision, discoveredAt: item.discoveredAt,
     category: item.category, score: item.score, selected: item.selected, links: { aihot: item.links.aihot },
   };
 }

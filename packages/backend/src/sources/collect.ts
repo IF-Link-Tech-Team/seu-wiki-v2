@@ -145,6 +145,7 @@ export async function collectSource(sourceId: string, opts: { force?: boolean } 
     for (const c of candidates) {
       // Listing dates the source marks unreliable are dropped; the detail page's rule decides.
       if (d?.publishedAtAuthoritative === true) c.publishedAt = null;
+      if (d?.publishedAtAuthoritative === true) c.publishedAtPrecision = "unknown";
       const stored = known.get(c.url);
       if (stored !== undefined) {
         // The title came from the detail page: the listing's own rendering must not revise it back.
@@ -173,7 +174,10 @@ export async function collectSource(sourceId: string, opts: { force?: boolean } 
           if (!c.media?.length) c.media = got.body.images;
         }
         // A date-only listing value gives way to the detail page's time on the same day.
-        if (got.publishedAt && (!c.publishedAt || Math.abs(got.publishedAt.getTime() - c.publishedAt.getTime()) < DAY_MS)) c.publishedAt = got.publishedAt;
+        if (got.publishedAt && (!c.publishedAt || Math.abs(got.publishedAt.getTime() - c.publishedAt.getTime()) < DAY_MS)) {
+          c.publishedAt = got.publishedAt;
+          c.publishedAtPrecision = got.publishedAtPrecision;
+        }
       } catch {
         // detail is best effort
       }

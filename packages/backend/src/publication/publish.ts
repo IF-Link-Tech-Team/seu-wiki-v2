@@ -3,6 +3,7 @@
 // Rebuilding only re-reads stored results; it never calls a model.
 import { SITE } from "@aihot/industry/site";
 import { toPublicApiCategory } from "@aihot/contracts/taxonomy";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { config } from "../config.ts";
 import { one, sql, type Tx } from "../db.ts";
 import { sha256, stableJson } from "../lib/ids.ts";
@@ -20,6 +21,7 @@ interface ArticleRow {
   title: string;
   language: string | null;
   published_at: Date | null;
+  published_at_precision: PublishedAtPrecision;
   discovered_at: Date;
   timeline_at: Date;
   backfill: boolean;
@@ -59,6 +61,7 @@ interface PublicationRow {
   original_title: string | null;
   summary: string | null;
   reason: string | null;
+  published_at_precision: PublishedAtPrecision;
   category: string | null;
   tags: string[];
   score: number | null;
@@ -80,6 +83,7 @@ export interface V1ItemPayload {
   source: { name: string };
   links: { aihot: string; original: string };
   publishedAt: string | null;
+  publishedAtPrecision: PublishedAtPrecision;
   discoveredAt: string;
   category: string | null;
   score: number | null;
@@ -114,7 +118,7 @@ function round1(n: number | null): number | null {
 
 export function v1Payload(p: {
   articleId: string; title: string; originalTitle: string | null; summary: string | null; sourceName: string; url: string;
-  publishedAt: Date | null; discoveredAt: Date; category: string | null; score: number | null; selected: boolean; reason: string | null;
+  publishedAt: Date | null; publishedAtPrecision: PublishedAtPrecision; discoveredAt: Date; category: string | null; score: number | null; selected: boolean; reason: string | null;
 }): V1ItemPayload {
   const aihot = itemUrl(p.articleId);
   return {
@@ -125,6 +129,7 @@ export function v1Payload(p: {
     source: { name: p.sourceName },
     links: { aihot, original: p.url },
     publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
+    publishedAtPrecision: p.publishedAtPrecision,
     discoveredAt: p.discoveredAt.toISOString(),
     category: toPublicApiCategory(p.category),
     score: p.score === null ? null : Math.round(p.score),
@@ -150,12 +155,12 @@ export async function publishArticle(articleId: string, options: PublishOptions 
 export async function publishArticleTx(tx: Tx, articleId: string, options: PublishOptions = {}): Promise<PublishResult | null> {
   const now = options.now ?? new Date();
   const [article] = await tx<ArticleRow[]>`
-    SELECT id, source_id, url, title, language, published_at, discovered_at, timeline_at, backfill, body_status,
+    SELECT id, source_id, url, title, language, published_at, published_at_precision, discovered_at, timeline_at, backfill, body_status,
            body_text, x_post, grouped_at
     FROM articles WHERE id = ${articleId} FOR UPDATE`;
   if (!article) return null;
   const [source] = await tx<SourceFacts[]>`
-    SELECT id, name, kind, tier, participation_mode, site_fulltext, syndicate_fulltext FROM sources WHERE id = ${article.source_id}`;
+    SELECT id, name, kind, tier, participation_mode, site_fulltext, syndicate_fulltext, config FROM sources WHERE id = ${article.source_id}`;
   if (!source) return null;
   const [analysis] = await tx<AnalysisRow[]>`
     SELECT id, relevance, category, tags, subjects, title_zh, summary_zh, reason_zh, score, selected, campus
@@ -175,8 +180,12 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
   const zhTitle = analysis?.title_zh?.trim() ? analysis.title_zh : null;
   const title = pickString(f.title, zhTitle ?? (isChineseTitle || article.x_post ? collapseWhitespace(article.title) : null));
   const summary = pickString(f.summary, analysis?.summary_zh ?? null);
-  const category = pickString(f.category, analysis?.category ?? null);
-  const tags = Array.isArray(f.tags) ? (f.tags as string[]) : [...new Set([...(analysis?.tags ?? []), ...(analysis?.subjects ?? []).map((s) => `entity:${s}`)])];
+  const forcedCategory = typeof source.config?.publicationCategory === "string" ? toPublicApiCategory(source.config.publicationCategory) : null;
+  const category = forcedCategory ?? pickString(f.category, analysis?.category ?? null);
+  const rawTags = Array.isArray(f.tags) ? (f.tags as string[]) : [...new Set([...(analysis?.tags ?? []), ...(analysis?.subjects ?? []).map((s) => `entity:${s}`)])];
+  const tags = forcedCategory === "research-institution"
+    ? ["科研机构", ...rawTags.filter((tag) => !["教务通知", "奖助事务", "竞赛科研", "科研机构", "交流升学", "实习就业", "社团活动", "讲座预告", "生活服务", "结果公示", "校园新闻", "其他"].includes(tag))]
+    : rawTags;
   const score = typeof f.score === "number" ? f.score : analysis?.score ?? null;
   const relevance = typeof f.relevance === "string" ? (f.relevance as string) : analysis?.relevance ?? null;
   const judgedSelected = typeof f.selected === "boolean" ? (f.selected as boolean) : analysis?.selected ?? null;
@@ -231,6 +240,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
 
   const next = {
     visibility, eligible, selected, title: title ?? collapseWhitespace(article.title), original_title: originalTitle, summary, reason,
+    published_at_precision: article.published_at_precision,
     category, tags, score: round1(score), body_mode: bodyMode, story_id: membership?.story_id ?? null, fact_id: membership?.fact_id ?? null,
     indexable,
   };
@@ -239,7 +249,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
     stableJson({ ...next, tags: [...next.tags].sort() }) !==
       stableJson({
         visibility: previous.visibility, eligible: previous.eligible, selected: previous.selected, title: previous.title,
-        original_title: previous.original_title, summary: previous.summary, reason: previous.reason, category: previous.category,
+        original_title: previous.original_title, summary: previous.summary, reason: previous.reason, published_at_precision: previous.published_at_precision, category: previous.category,
         tags: [...previous.tags].sort(), score: previous.score === null ? null : Number(previous.score), body_mode: previous.body_mode,
         story_id: previous.story_id, fact_id: previous.fact_id, indexable: previous.indexable,
       });
@@ -247,18 +257,18 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
 
   await tx`
     INSERT INTO publications (article_id, analysis_id, revision, visibility, eligible, selected, title, original_title, summary,
-      reason, category, tags, score, source_id, channel, url, published_at, discovered_at, timeline_at, backfill,
+      reason, category, tags, score, source_id, channel, url, published_at, published_at_precision, discovered_at, timeline_at, backfill,
       selected_ready_at, visible_after, body_mode, syndicate, indexable, story_id, fact_id, search_text, sort_at, updated_at)
     VALUES (${articleId}, ${analysis?.id ?? null}, ${revision}, ${visibility}, ${eligible}, ${selected}, ${next.title},
       ${originalTitle}, ${summary}, ${reason}, ${category}, ${tags}, ${next.score}, ${source.id}, ${channel},
-      ${article.url}, ${article.published_at}, ${article.discovered_at}, ${article.timeline_at}, ${article.backfill},
+      ${article.url}, ${article.published_at}, ${article.published_at_precision}, ${article.discovered_at}, ${article.timeline_at}, ${article.backfill},
       ${selectedReadyAt}, ${visibleAfter}, ${bodyMode}, ${syndicate}, ${indexable}, ${next.story_id}, ${next.fact_id}, ${searchText}, ${sortAt}, now())
     ON CONFLICT (article_id) DO UPDATE SET
       analysis_id = EXCLUDED.analysis_id, revision = EXCLUDED.revision, visibility = EXCLUDED.visibility,
       eligible = EXCLUDED.eligible, selected = EXCLUDED.selected, title = EXCLUDED.title, original_title = EXCLUDED.original_title,
       summary = EXCLUDED.summary, reason = EXCLUDED.reason, category = EXCLUDED.category, tags = EXCLUDED.tags,
       score = EXCLUDED.score, source_id = EXCLUDED.source_id, channel = EXCLUDED.channel,
-      url = EXCLUDED.url, published_at = EXCLUDED.published_at, discovered_at = EXCLUDED.discovered_at,
+      url = EXCLUDED.url, published_at = EXCLUDED.published_at, published_at_precision = EXCLUDED.published_at_precision, discovered_at = EXCLUDED.discovered_at,
       timeline_at = EXCLUDED.timeline_at, backfill = EXCLUDED.backfill, selected_ready_at = EXCLUDED.selected_ready_at,
       visible_after = EXCLUDED.visible_after, body_mode = EXCLUDED.body_mode, syndicate = EXCLUDED.syndicate,
       indexable = EXCLUDED.indexable, story_id = EXCLUDED.story_id, fact_id = EXCLUDED.fact_id,
@@ -267,7 +277,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
         publications.selected, publications.title, publications.original_title, publications.summary,
         publications.reason, publications.category, publications.tags, publications.score,
         publications.source_id, publications.channel, publications.url,
-        publications.published_at, publications.discovered_at, publications.timeline_at, publications.backfill,
+        publications.published_at, publications.published_at_precision, publications.discovered_at, publications.timeline_at, publications.backfill,
         publications.selected_ready_at, publications.visible_after, publications.body_mode, publications.syndicate,
         publications.indexable, publications.story_id, publications.fact_id, publications.search_text,
         publications.sort_at)
@@ -275,7 +285,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
         EXCLUDED.selected, EXCLUDED.title, EXCLUDED.original_title, EXCLUDED.summary,
         EXCLUDED.reason, EXCLUDED.category, EXCLUDED.tags, EXCLUDED.score,
         EXCLUDED.source_id, EXCLUDED.channel, EXCLUDED.url,
-        EXCLUDED.published_at, EXCLUDED.discovered_at, EXCLUDED.timeline_at, EXCLUDED.backfill,
+        EXCLUDED.published_at, EXCLUDED.published_at_precision, EXCLUDED.discovered_at, EXCLUDED.timeline_at, EXCLUDED.backfill,
         EXCLUDED.selected_ready_at, EXCLUDED.visible_after, EXCLUDED.body_mode, EXCLUDED.syndicate,
         EXCLUDED.indexable, EXCLUDED.story_id, EXCLUDED.fact_id, EXCLUDED.search_text,
         EXCLUDED.sort_at)`;
@@ -311,7 +321,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
   if (inSet) {
     const payload = v1Payload({
       articleId, title: next.title, originalTitle, summary, sourceName: source.name, url: article.url,
-      publishedAt: article.published_at, discoveredAt: article.discovered_at, category, score: next.score, selected: true, reason,
+      publishedAt: article.published_at, publishedAtPrecision: article.published_at_precision, discoveredAt: article.discovered_at, category, score: next.score, selected: true, reason,
     });
     const payloadHash = sha256(stableJson(payload));
     if (!state || !state.in_set || state.payload_hash !== payloadHash) {

@@ -83,6 +83,7 @@ export async function checkMpAccount(sourceId: string, reason: "schedule" | "man
         author: body?.author ?? null,
         language: "zh",
         publishedAt,
+        publishedAtPrecision: publishedAt ? "second" : "unknown",
         excerpt: p.digest ?? body?.desc ?? null,
         bodyHtml: html,
         bodyText: text || null,

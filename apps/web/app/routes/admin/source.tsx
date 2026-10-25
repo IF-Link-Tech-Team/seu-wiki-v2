@@ -1,10 +1,12 @@
 import { SITE } from "@aihot/industry/site";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/source";
 import { adminGet } from "../../lib/admin.server";
 import { useAdminAction } from "../../features/admin/action";
 import { bj, duration, num } from "../../features/admin/format";
+import { publishedDateTime } from "../../lib/format";
 import { HEALTH_LABEL, KIND_LABEL, MODE_LABEL, TIER_LABEL, VISIBILITY_LABEL } from "../../features/admin/labels";
 import { AdminPage, Badge, Button, Card, DataTable, Dot, Empty, Field, healthTone, Input, Json, KV, ReasonDialog, Select, Stat, Textarea, Time } from "../../features/admin/ui";
 
@@ -51,7 +53,7 @@ interface Detail {
 interface Preview {
   ms: number;
   count: number;
-  items: Array<{ title: string; url: string; publishedAt: string | null; excerpt: string }>;
+  items: Array<{ title: string; url: string; publishedAt: string | null; publishedAtPrecision: PublishedAtPrecision; excerpt: string }>;
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -187,7 +189,7 @@ export default function SourceDetail({ loaderData }: Route.ComponentProps) {
               {preview.items.map((i) => (
                 <li key={i.url} className="text-[13px]">
                   <a href={i.url} target="_blank" rel="noreferrer" className="font-medium text-ink hover:text-accent">{i.title}</a>
-                  <div className="text-[12px] text-ink-4">{i.publishedAt ? bj(i.publishedAt, true) : "无发布时间"} · {i.url}</div>
+                  <div className="text-[12px] text-ink-4">{i.publishedAt ? publishedDateTime(i.publishedAt, i.publishedAtPrecision) : "无发布时间"} · {i.url}</div>
                   {i.excerpt && <div className="mt-0.5 line-clamp-2 text-[12.5px] text-ink-3">{i.excerpt}</div>}
                 </li>
               ))}

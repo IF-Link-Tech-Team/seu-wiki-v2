@@ -34,14 +34,15 @@ function arr<T>(v: T | T[] | undefined | null): T[] {
   return Array.isArray(v) ? v : [v];
 }
 
-function parseDate(v: string): Date | null {
+type DatePrecision = "day" | "minute" | "second" | "unknown";
+function parseDate(v: string): { date: Date; precision: DatePrecision } | null {
   if (!v) return null;
   const t = Date.parse(v);
-  if (Number.isFinite(t)) return new Date(t);
+  if (Number.isFinite(t)) return { date: new Date(t), precision: /(?:[T ]\d{1,2}:\d{2}:\d{2})/.test(v) ? "second" : /(?:[T ]\d{1,2}:\d{2})/.test(v) ? "minute" : "day" };
   // RFC 822 variants with Chinese weekday or odd zones
   const cleaned = v.replace(/星期[一二三四五六日天]/, "").replace(/\s+/g, " ").trim();
   const t2 = Date.parse(cleaned);
-  return Number.isFinite(t2) ? new Date(t2) : null;
+  return Number.isFinite(t2) ? { date: new Date(t2), precision: /(?:[T ]\d{1,2}:\d{2}:\d{2})/.test(cleaned) ? "second" : /(?:[T ]\d{1,2}:\d{2})/.test(cleaned) ? "minute" : "day" } : null;
 }
 
 function atomLink(links: unknown): string {
@@ -162,12 +163,14 @@ export async function fetchRss(source: SourceRow, opts: { force?: boolean } = {}
         ...(enclosure ? [{ kind: "image" as const, url: enclosure["@url"]! }] : []),
         ...(bodyHtmlRaw ? imagesFrom(bodyHtmlRaw, link) : []),
       ];
+      const published = parseDate(text(it.pubDate) || text(it["dc:date"]) || text(it.published));
       out.push({
         url: link,
         ...identity(link),
         title,
         author: text(it["dc:creator"]) || text(it.author) || null,
-        publishedAt: parseDate(text(it.pubDate) || text(it["dc:date"]) || text(it.published)),
+        publishedAt: published?.date ?? null,
+        publishedAtPrecision: published?.precision ?? "unknown",
         ...feedText(bodyHtml, description, source),
         media: media.slice(0, 6),
         categories: arr(it.category).map((c) => text(c)).filter(Boolean),
@@ -187,13 +190,16 @@ export async function fetchRss(source: SourceRow, opts: { force?: boolean } = {}
       const summary = text(e.summary);
       const bodyHtml = content ? sanitizeBody(content, link) : null;
       const entryUrl = new URL(link, url).toString();
+      const published = parseDate(text(e.published) || text(e.updated));
+      const updated = parseDate(text(e.updated));
       out.push({
         url: entryUrl,
         ...identity(entryUrl),
         title,
         author: text(arr(e.author)[0]?.name) || null,
-        publishedAt: parseDate(text(e.published) || text(e.updated)),
-        sourceUpdatedAt: parseDate(text(e.updated)),
+        publishedAt: published?.date ?? null,
+        publishedAtPrecision: published?.precision ?? "unknown",
+        sourceUpdatedAt: updated?.date ?? null,
         ...feedText(bodyHtml, summary, source),
         media: content ? imagesFrom(content, link) : [],
         categories: arr(e.category).map((c: any) => c?.["@term"] ?? text(c)).filter(Boolean),

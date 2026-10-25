@@ -2,6 +2,7 @@
 // title/summary prompts for everything else, the output parsing and the deterministic guards. The
 // wording lives in the industry pack (industry/prompts/); a failed guard falls back without a repair call.
 import { IDENTITY_CONTEXT_ALIASES, IDENTITY_LEXICON, PUBLISHER_DOMAINS } from "@aihot/industry/taxonomy";
+import { hasPublishedClock, publishedAtText } from "@aihot/contracts/time";
 import { onlyXArticleLink } from "../sources/x.ts";
 import type { AnalyzeInputArticle } from "./input.ts";
 import { promptText } from "./prompts.ts";
@@ -91,7 +92,7 @@ export function renderContext(a: AnalyzeInputArticle, opts: { annotateQuoted?: b
   const name = a.xPost?.authorName || a.author;
   const handle = a.xPost?.handle;
   if (name || handle) lines.push(`【作者】${[name, handle ? `@${handle}` : null].filter(Boolean).join(" · ")}`);
-  if (a.publishedAt) lines.push(`【发布时间】${a.publishedAt.toISOString()}`);
+  if (a.publishedAt) lines.push(`【发布时间】${publishedAtText(a.publishedAt, a.publishedAtPrecision)}（北京时间${hasPublishedClock(a.publishedAtPrecision ?? "unknown") ? "" : "，只有日期"}）`);
   const media = (a.xPost?.media ?? a.media ?? []) as Array<{ kind?: string }>;
   const images = media.filter((m) => m.kind === "image").length;
   const videos = media.filter((m) => m.kind === "video").length;

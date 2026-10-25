@@ -3,7 +3,7 @@ import type { SourceListResponse } from "@aihot/contracts/site";
 import { sql } from "../db.ts";
 
 /** sources.tags 里的来源组别词（新旧两套口径都认），筛选面板按这个顺序分组；其余落入“其他”。 */
-export const SOURCE_GROUPS = ["学院与书院", "机关与职能部门", "校级媒体与权益服务", "校区与社区空间", "学院", "机关", "校级", "公众号"] as const;
+export const SOURCE_GROUPS = ["学院与书院", "科研机构", "机关与职能部门", "校级媒体与权益服务", "校区与社区空间", "学院", "机关", "校级", "公众号"] as const;
 
 interface SourceRow {
   id: string;

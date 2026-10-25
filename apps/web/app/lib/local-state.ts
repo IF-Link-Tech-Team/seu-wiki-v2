@@ -1,6 +1,7 @@
 // Reader state kept only in this browser; nothing about a reader leaves it. Storage failures degrade
 // silently. Keep the keys and formats once readers have data under them.
 import { useSyncExternalStore } from "react";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 
 export const KEYS = {
   starred: "aihot-starred-items",
@@ -22,6 +23,7 @@ export interface LocalStarredItem {
   sourceName: string;
   savedAt: string;
   publishedAt: string | null;
+  publishedAtPrecision: PublishedAtPrecision;
   score: number | null;
   aiSelected: boolean;
 }
@@ -114,6 +116,7 @@ function normalizeStarred(v: Record<string, unknown>): LocalStarredItem {
     sourceName: typeof v.sourceName === "string" ? v.sourceName : "",
     savedAt: typeof v.savedAt === "string" ? v.savedAt : new Date().toISOString(),
     publishedAt: typeof v.publishedAt === "string" ? v.publishedAt : null,
+    publishedAtPrecision: v.publishedAtPrecision === "day" || v.publishedAtPrecision === "minute" || v.publishedAtPrecision === "second" ? v.publishedAtPrecision : "unknown",
     score: typeof v.score === "number" ? v.score : null,
     aiSelected: v.aiSelected === true,
   };

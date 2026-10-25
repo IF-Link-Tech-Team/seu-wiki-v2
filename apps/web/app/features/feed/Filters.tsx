@@ -80,7 +80,7 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
   const groups: Array<{ label: string; items: SourceOption[] }> = [];
   const q = query.trim().toLowerCase();
   const visible = q ? options.filter((o) => o.name.toLowerCase().includes(q)) : options;
-  for (const g of ["学院与书院", "机关与职能部门", "校级媒体与权益服务", "校区与社区空间", "学院", "机关", "校级", "公众号", null] as const) {
+  for (const g of ["学院与书院", "科研机构", "机关与职能部门", "校级媒体与权益服务", "校区与社区空间", "学院", "机关", "校级", "公众号", null] as const) {
     const items = visible.filter((o) => o.group === g);
     if (items.length) groups.push({ label: g ?? "其他", items });
   }

@@ -1,4 +1,4 @@
-import { beijingDate, beijingTime, beijingWeekday } from "@aihot/contracts/time";
+import { beijingDate, beijingTime, beijingWeekday, hasPublishedClock, type PublishedAtPrecision } from "@aihot/contracts/time";
 
 export { beijingDate, beijingTime, beijingWeekday };
 
@@ -27,6 +27,22 @@ export function relativeTime(iso: string, now = Date.now()): string {
 
 export function fullDateTime(iso: string): string {
   return `${beijingDate(iso)} ${beijingTime(iso)}`;
+}
+
+export function publishedDateTime(iso: string, precision: PublishedAtPrecision = "unknown"): string {
+  return hasPublishedClock(precision) ? fullDateTime(iso) : beijingDate(iso);
+}
+
+export function publishedClock(iso: string, precision: PublishedAtPrecision = "unknown"): string {
+  return hasPublishedClock(precision) ? beijingTime(iso) : "—";
+}
+
+export function publishedMonthDayTime(iso: string, precision: PublishedAtPrecision = "unknown"): string {
+  if (!hasPublishedClock(precision)) {
+    const [, m, d] = beijingDate(iso).split("-").map(Number) as [number, number, number];
+    return `${m}月${d}日`;
+  }
+  return monthDayTime(iso);
 }
 
 /** "9月24日 10:51" (Beijing), for lists that span days. */
