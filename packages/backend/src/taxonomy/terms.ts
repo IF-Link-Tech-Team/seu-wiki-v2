@@ -22,15 +22,22 @@ export interface TaxonomyTerm {
   examples: string[];
 }
 
-/** 种子导入（启动时跑，幂等）：TOPIC_GROUPS 落为 active 词。 */
+/** 种子导入（启动时跑，幂等）：TOPIC_GROUPS 落为 active 词；不在新树里的旧种子词就地退役（保留行，不删）。 */
 export async function seedTaxonomyTerms(db: Db = sql): Promise<number> {
   let n = 0;
+  const names: string[] = [];
   for (const g of TOPIC_GROUPS) {
     for (const name of g.terms) {
+      names.push(name);
       const r = await db`INSERT INTO taxonomy_terms (grp, name, status, source) VALUES (${g.label}, ${name}, 'active', 'seed') ON CONFLICT (name) DO NOTHING`;
       n += r.count;
     }
   }
+  // 词表换代（v2）：旧种子词若已不在新树里，置为 rejected 留档，避免模型继续命中过期标签。
+  // 生产系统不删除旧标签，需要时按 name 恢复即可（同名词不会再进候选池）。
+  await db`UPDATE taxonomy_terms
+    SET status = 'rejected', reviewed_by = 'seed-sync', reviewed_at = now(), updated_at = now()
+    WHERE status = 'active' AND source = 'seed' AND NOT (name = ANY(${names}::text[]))`;
   return n;
 }
 
