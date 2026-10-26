@@ -1460,16 +1460,6 @@
       "note": "模板N2 · 8/8 · 2026-09"
     },
     {
-      "catalogId": "S222",
-      "name": "成贤学院·新闻动态",
-      "kind": "web_list",
-      "url": "http://cxxy.seu.edu.cn/65/list.htm",
-      "wxid": null,
-      "category": "学院与书院",
-      "official": true,
-      "note": "模板K · 20/20 · 09-30；仅HTTP不可https"
-    },
-    {
       "catalogId": "S223",
       "name": "学生处·学生管理",
       "kind": "web_list",
