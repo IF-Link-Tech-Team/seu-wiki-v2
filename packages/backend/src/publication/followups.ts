@@ -5,5 +5,14 @@ import { loadDevelopments } from "./groups.ts";
 export async function loadStoryFollowups(storyPublicId: string): Promise<StoryFollowupsResponse | null> {
   const result = await loadDevelopments({ storyPublicId, channel: "all", category: null, tag: null, topicTags: null, cursor: null, revision: null, take: 8 });
   if (result.kind !== "ok") return null;
-  return { items: result.body.developments.map(({ factId, representative: r }) => ({ factId, representative: { id: r.id, title: r.title, source: { name: r.source.name }, timelineAt: r.timelineAt } })), more: !!result.body.nextCursor };
+  return {
+    items: result.body.developments.map(({ factId, representative: r }) => ({
+      factId,
+      representative: {
+        id: r.id, title: r.title, source: { name: r.source.name }, timelineAt: r.timelineAt,
+        publishedAt: r.publishedAt, publishedAtPrecision: r.publishedAtPrecision,
+      },
+    })),
+    more: !!result.body.nextCursor,
+  };
 }

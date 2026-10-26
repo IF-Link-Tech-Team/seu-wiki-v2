@@ -2,7 +2,7 @@
 // stated explicitly. v1 `digest` and `latest` read the same stored version.
 import { z } from "zod";
 import { modelFor } from "../editorial/models.ts";
-import { beijingDate, beijingTime } from "@aihot/contracts/time";
+import { publishedAtText, type PublishedAtPrecision } from "@aihot/contracts/time";
 import { sql } from "../db.ts";
 import { chatJson } from "../providers/llm.ts";
 import { completeReceipt } from "../providers/receipts.ts";
@@ -32,9 +32,9 @@ export async function composeStoryDigest(storyId: number, opts: { afterCorrectio
   const [story] = await sql<{ id: number; title: string; digest: string | null; version: number; origin: string }[]>`
     SELECT id, title, digest, version, origin FROM stories WHERE id = ${storyId} AND merged_into IS NULL`;
   if (!story) return { updated: false };
-  const reports = await sql<{ id: string; title: string; summary: string | null; source_name: string; at: Date }[]>`
+  const reports = await sql<{ id: string; title: string; summary: string | null; source_name: string; at: Date; published_at_precision: PublishedAtPrecision }[]>`
     SELECT DISTINCT ON (p.article_id) p.article_id AS id, p.title, p.summary, s.name AS source_name,
-      coalesce(p.published_at, p.discovered_at) AS at
+      coalesce(p.published_at, p.discovered_at) AS at, p.published_at_precision
     FROM facts f JOIN fact_articles fa ON fa.fact_id = f.id JOIN publications p ON p.article_id = fa.article_id
     JOIN sources s ON s.id = p.source_id
     WHERE f.story_id = ${storyId} AND p.visibility = 'public' AND p.eligible
@@ -54,7 +54,7 @@ export async function composeStoryDigest(storyId: number, opts: { afterCorrectio
   const corrected = sameReports;
   const known = new Set(last?.article_ids ?? []);
 
-  const lines = reports.slice(-40).map((r) => `${corrected || known.has(r.id) ? "" : "【新】"}${beijingDate(r.at)} ${beijingTime(r.at)}｜${r.source_name}｜${r.title}｜${(r.summary ?? "").slice(0, 220)}`);
+  const lines = reports.slice(-40).map((r) => `${corrected || known.has(r.id) ? "" : "【新】"}${publishedAtText(r.at, r.published_at_precision)}｜${r.source_name}｜${r.title}｜${(r.summary ?? "").slice(0, 220)}`);
   const user = corrected
     ? `事件当前标题：${story.title}\n\n报道内容经过编辑更正。请只依据下面这些报道的当前内容重写综述，不要沿用以前版本的说法。\n报道（按时间）：\n${lines.join("\n")}`
     : `事件当前标题：${story.title}\n${story.digest ? `上一版综述：${story.digest}\n` : ""}\n报道（按时间，标【新】的是上一版之后的新报道）：\n${lines.join("\n")}`;

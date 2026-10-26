@@ -4,6 +4,7 @@ import { sql, type Db } from "../db.ts";
 import { newArticleId, sha256 } from "../lib/ids.ts";
 import { identityKeyForUrl } from "../lib/url.ts";
 import { collapseWhitespace } from "../lib/text.ts";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 
 export interface MediaItem {
   kind: "image" | "video";
@@ -34,6 +35,7 @@ export interface MaterialInput {
   author?: string | null;
   language?: string | null;
   publishedAt?: Date | null;
+  publishedAtPrecision?: PublishedAtPrecision;
   sourceUpdatedAt?: Date | null;
   excerpt?: string | null;
   bodyHtml?: string | null;
@@ -137,12 +139,13 @@ async function upsertIn(db: Db, m: MaterialInput): Promise<MaterialResult> {
   const t = decideTimeline(m.publishedAt, discoveredAt, m.backfill);
   const newId = m.id ?? newArticleId();
   const hash = contentHash({ title, bodyText: m.bodyText, excerpt: m.excerpt });
+  const publishedAtPrecision = t.publishedAt ? (m.publishedAtPrecision ?? "unknown") : "unknown";
   const [inserted] = await db<{ id: string }[]>`
-    INSERT INTO articles (id, source_id, identity_key, url, title, author, language, published_at, published_at_claim,
+    INSERT INTO articles (id, source_id, identity_key, url, title, author, language, published_at, published_at_claim, published_at_precision,
       discovered_at, source_updated_at, timeline_at, backfill, backfill_reason, revision, content_hash, excerpt,
       body_text, body_html, body_status, media, x_post, raw)
     VALUES (${newId}, ${m.sourceId}, ${identityKey}, ${m.url}, ${title}, ${m.author ?? null}, ${m.language ?? null},
-      ${t.publishedAt}, ${m.publishedAt ?? null}, ${discoveredAt}, ${m.sourceUpdatedAt ?? null}, ${t.timelineAt},
+      ${t.publishedAt}, ${m.publishedAt ?? null}, ${publishedAtPrecision}, ${discoveredAt}, ${m.sourceUpdatedAt ?? null}, ${t.timelineAt},
       ${t.backfill}, ${t.backfillReason}, 1, ${hash}, ${m.excerpt ?? null}, ${m.bodyText ?? null}, ${m.bodyHtml ?? null},
       ${m.bodyStatus ?? (m.bodyText ? "ok" : "pending")}, ${db.json((m.media ?? []) as never)},
       ${m.xPost ? db.json(m.xPost as never) : null}, ${m.raw === undefined ? null : db.json(m.raw as never)})
@@ -191,6 +194,7 @@ async function upsertIn(db: Db, m: MaterialInput): Promise<MaterialResult> {
   const [row] = await db<{ revision: number }[]>`
     UPDATE articles SET
       title = ${title}, author = coalesce(${m.author ?? null}, author), language = coalesce(${m.language ?? null}, language),
+      published_at_precision = coalesce(${m.publishedAtPrecision ?? null}, published_at_precision),
       source_updated_at = ${m.sourceUpdatedAt ?? null}, excerpt = coalesce(${m.excerpt ?? null}, excerpt),
       body_text = coalesce(${m.bodyText ?? null}, body_text), body_html = coalesce(${m.bodyHtml ?? null}, body_html),
       body_status = CASE WHEN ${m.bodyText ?? null}::text IS NULL THEN body_status ELSE ${m.bodyStatus ?? "ok"} END,

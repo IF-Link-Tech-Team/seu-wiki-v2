@@ -1,6 +1,7 @@
 // First-party site API (/api/site/*). Not a public API: it may evolve with the website,
 // but it is served from the same public read layer as v1, RSS and MCP.
 import type { CategoryKey, ChannelKey } from "./taxonomy.ts";
+import type { PublishedAtPrecision } from "./time.ts";
 
 export type SourceKind = "rss" | "web_list" | "json_list" | "x_search" | "mp_account" | "external";
 
@@ -49,6 +50,7 @@ export interface ItemSummary {
   source: SourceRef;
   links: { aihot: string; original: string };
   publishedAt: string | null;
+  publishedAtPrecision: PublishedAtPrecision;
   discoveredAt: string;
   timelineAt: string;
   category: CategoryKey | null;
@@ -61,7 +63,7 @@ export interface ItemSummary {
 }
 
 /** The fields rendered by a site feed card; full original text lives in the item detail. */
-export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "publishedAt" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
+export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "publishedAt" | "publishedAtPrecision" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
   source: Pick<SourceRef, "name">;
   x: (Pick<XPostView, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet" | "media"> & {
     quoted: Omit<NonNullable<XPostView["quoted"]>, "url"> | null;
@@ -78,7 +80,7 @@ export interface GroupInfo {
   /** Facts of the group (the card's own included) with at least one selected item under the current filters. */
   developmentCount: number;
   /** The newest development when it is not the card's own fact: why the card sits where it does. */
-  latestDevelopment?: { factId: string; title: string; at: string } | null;
+  latestDevelopment?: { factId: string; title: string; at: string; precision?: PublishedAtPrecision } | null;
 }
 
 export interface TimelineCard {
@@ -367,6 +369,7 @@ export interface StoryReportView {
   summary: string | null;
   source: SourceRef;
   publishedAt: string;
+  publishedAtPrecision: PublishedAtPrecision;
   originalUrl: string;
   selected: boolean;
   factId: string;
@@ -438,6 +441,6 @@ export interface SiteItemDetail extends Omit<ItemDetail, "x"> {
 
 export interface StoryFollowup {
   factId: string;
-  representative: { id: string; title: string; source: { name: string }; timelineAt: string };
+  representative: { id: string; title: string; source: { name: string }; timelineAt: string; publishedAt: string | null; publishedAtPrecision: PublishedAtPrecision };
 }
 export interface StoryFollowupsResponse { items: StoryFollowup[]; more: boolean }

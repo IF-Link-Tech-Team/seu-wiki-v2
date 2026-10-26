@@ -2,6 +2,18 @@
 
 const OFFSET_MS = 8 * 3600 * 1000;
 
+export const PUBLISHED_AT_PRECISIONS = ["day", "minute", "second", "unknown"] as const;
+export type PublishedAtPrecision = (typeof PUBLISHED_AT_PRECISIONS)[number];
+
+export function hasPublishedClock(precision: PublishedAtPrecision): boolean {
+  return precision === "minute" || precision === "second";
+}
+
+/** Human-readable source time. Unknown precision is deliberately date-only. */
+export function publishedAtText(instant: Date | string | number, precision: PublishedAtPrecision = "unknown"): string {
+  return hasPublishedClock(precision) ? `${beijingDate(instant)} ${beijingTime(instant)}` : beijingDate(instant);
+}
+
 /** YYYY-MM-DD of the instant in Beijing time. */
 export function beijingDate(instant: Date | string | number): string {
   const d = new Date(new Date(instant).getTime() + OFFSET_MS);

@@ -4,7 +4,7 @@
 // waiting behind an unreleased item leaves new snapshots at once, and snapshots answer conditional requests.
 import { config } from "@aihot/backend/config";
 import { CATEGORY_LABELS } from "@aihot/contracts/taxonomy";
-import { beijingDate } from "@aihot/contracts/time";
+import { beijingDate, publishedAtText } from "@aihot/contracts/time";
 import { ogEtag } from "../apps/api/src/og/render.ts";
 import { posterEtag } from "../apps/api/src/og/poster.ts";
 import { tag } from "./setup.ts";
@@ -41,10 +41,10 @@ after(async () => {
 
 let n = 0;
 /** A selected article with full text and a summary. */
-async function article(): Promise<string> {
+async function article(publishedAtPrecision: "day" | "minute" | "second" | "unknown" = "second", publishedAt = new Date()): Promise<string> {
   n += 1;
   const { articleId } = await upsertMaterial({
-    sourceId: SOURCE, url: `https://example.com/${T}-${n}`, title: `Test ${n}`, bodyText: BODY, bodyHtml: `<p>${BODY}</p>`, bodyStatus: "ok", via: "fetch", publishedAt: new Date(),
+    sourceId: SOURCE, url: `https://example.com/${T}-${n}`, title: `Test ${n}`, bodyText: BODY, bodyHtml: `<p>${BODY}</p>`, bodyStatus: "ok", via: "fetch", publishedAt, publishedAtPrecision,
   });
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, reason_zh, score, selected)
             VALUES (${articleId}, 1, 'rule', 'pass', 'academic', ${`标题${n}-${T}`}, ${`SUMMARY-${n}-${T}`}, '理由', 90, true)`;
@@ -66,6 +66,19 @@ async function get(url: string, headers: Record<string, string> = {}) {
   const res = await app.inject({ method: "GET", url, headers });
   return { status: res.statusCode, body: res.body, etag: res.headers.etag as string | undefined };
 }
+
+test("published date precision is copied to the public projection and stays date-only for humans", async () => {
+  const id = await article("day", new Date("2026-10-23T00:00:00+08:00"));
+  await publishArticle(id, released());
+  const [a] = await sql<{ published_at_precision: string }[]>`SELECT published_at_precision FROM articles WHERE id = ${id}`;
+  const [p] = await sql<{ published_at_precision: string }[]>`SELECT published_at_precision FROM publications WHERE article_id = ${id}`;
+  assert.equal(a!.published_at_precision, "day");
+  assert.equal(p!.published_at_precision, "day");
+  assert.equal(publishedAtText(new Date("2026-10-22T16:00:00.000Z"), "day"), "2026-10-23");
+  const item = JSON.parse((await get(`/api/site/items/${id}`)).body);
+  assert.equal(item.publishedAtPrecision, "day");
+  assert.equal(item.publishedAt, "2026-10-22T16:00:00.000Z");
+});
 
 test("site reading sends one language while exports retain both, including after withdrawal", async () => {
   const id = await article();
@@ -256,7 +269,7 @@ test("v1 story retains website content and fallback ordering without the website
     firstReportAt: site.firstReportAt, latestAt: site.latestAt, digest: site.digest, digestUpdatedAt: site.digestUpdatedAt });
   assert.equal(v1.latest, 'Latest development fallback');
   assert.deepEqual(v1.reports, site.timeline.slice(0, 50).map((r: any) => ({ id: r.id, title: r.title, summary: r.summary,
-    source: { name: r.source.name }, publishedAt: r.publishedAt,
+    source: { name: r.source.name }, publishedAt: r.publishedAt, publishedAtPrecision: r.publishedAtPrecision,
     links: { aihot: `${config.siteUrl}/items/${r.id}`, original: r.originalUrl } })));
   await sql`UPDATE publications SET visible_after = now() + interval '1 day' WHERE article_id = ${second}`;
   const gated = JSON.parse((await get(`/api/v1/stories/${publicId}`)).body).story;
@@ -324,7 +337,7 @@ test("minimal sync projection preserves snapshot fields, pagination bindings and
   await publishArticle(await article(), released());
   const full = JSON.parse((await get('/api/v1/selected/snapshot?fields=default&limit=1000')).body);
   const minimal = JSON.parse((await get('/api/v1/selected/snapshot?fields=minimal&limit=1000')).body);
-  const project = (i: any) => ({ id: i.id, title: i.title, source: i.source, publishedAt: i.publishedAt,
+  const project = (i: any) => ({ id: i.id, title: i.title, source: i.source, publishedAt: i.publishedAt, publishedAtPrecision: i.publishedAtPrecision,
     discoveredAt: i.discoveredAt, category: i.category, score: i.score, selected: i.selected, links: { aihot: i.links.aihot } });
   assert.deepEqual(minimal.items, full.items.map(project));
   assert.ok(minimal.items.some((i: any) => i.id === id));

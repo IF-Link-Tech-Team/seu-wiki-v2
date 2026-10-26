@@ -12,6 +12,7 @@
 import { z } from "zod";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import type { CampusAudience } from "@aihot/contracts/site";
+import { beijingDate, hasPublishedClock, type PublishedAtPrecision } from "@aihot/contracts/time";
 import { CATEGORIES } from "@aihot/industry/taxonomy";
 import { COLLEGES } from "@aihot/industry/colleges";
 import { SELECTION } from "@aihot/industry/selection";
@@ -79,7 +80,8 @@ const SCORE_TIME = new Intl.DateTimeFormat("sv-SE", {
 });
 
 /** The score input's time: Beijing time, ISO 8601 with +08:00 (the form the prompt was tuned on). */
-export function scoreInputTime(at: Date): string {
+export function scoreInputTime(at: Date, precision: PublishedAtPrecision = "second"): string {
+  if (!hasPublishedClock(precision)) return `${beijingDate(at)}（只有日期）`;
   const ms = at.getTime() % 1000;
   return `${SCORE_TIME.format(at).replace(" ", "T")}${ms ? `.${String(ms).padStart(3, "0")}` : ""}+08:00`;
 }
@@ -100,7 +102,7 @@ export function buildScoreInput(a: AnalyzeInputArticle): string {
   const at = a.publishedAt ?? a.discoveredAt ?? null;
   return [
     "请按系统规则评估以下单篇材料所代表的事件。只输出 attentionScore。",
-    `【发布时间（北京时间）】\n${at ? scoreInputTime(at) : ""}`,
+    `【发布时间（北京时间）】\n${at ? scoreInputTime(at, a.publishedAtPrecision) : ""}`,
     `【标题】\n${a.title.trim()}`,
     `【完整正文】\n${body.length > MAX_BODY_CHARS ? body.slice(0, MAX_BODY_CHARS) : body}`,
   ].join("\n\n");

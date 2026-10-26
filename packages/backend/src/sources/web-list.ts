@@ -6,46 +6,69 @@ import { readable, type ExtractedBody } from "../content/extract.ts";
 import { sanitizeBody } from "../content/sanitize.ts";
 import { jinaRead } from "../providers/jina.ts";
 import { FetchError, type Candidate, type SourceRow } from "./types.ts";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 
 const JINA_PREFIX = "https://r.jina.ai/";
 
 /** A parsed date must sit in a sane range: lenient Date.parse accepts "242026/09" as year 242026. */
 const SANE = (d: Date) => { const y = d.getUTCFullYear(); return y >= 1990 && y <= 2100; };
 
-export function parseLooseDate(value: string | null | undefined, utcOffset = "+08:00"): Date | null {
+export interface ParsedDate {
+  date: Date;
+  precision: PublishedAtPrecision;
+}
+
+function precisionOf(value: string): PublishedAtPrecision {
+  if (/(?:[T ]\d{1,2}:\d{2}:\d{2})/.test(value)) return "second";
+  if (/(?:[T ]\d{1,2}:\d{2})/.test(value)) return "minute";
+  return "day";
+}
+
+function parsed(date: Date, value: string): ParsedDate | null {
+  return SANE(date) ? { date, precision: precisionOf(value) } : null;
+}
+
+function validCalendarDate(year: string, month: string, day: string): boolean {
+  const y = Number(year);
+  const m = Number(month);
+  const d = Number(day);
+  if (!Number.isInteger(y) || !Number.isInteger(m) || !Number.isInteger(d) || m < 1 || m > 12 || d < 1) return false;
+  return new Date(Date.UTC(y, m, 0)).getUTCDate() >= d;
+}
+
+export function parseLooseDateValue(value: string | null | undefined, utcOffset = "+08:00"): ParsedDate | null {
   if (!value) return null;
   const v = value.trim();
   if (!v) return null;
-  // Date-only strings ("2026-09-30") parse as UTC midnight via Date.parse; they belong to the
-  // source's own zone, so only strings carrying a time or an explicit zone take this shortcut.
+  const dateParts = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/.exec(v);
+  if (dateParts && !validCalendarDate(dateParts[1]!, dateParts[2]!, dateParts[3]!)) return null;
+  // Date-only strings must be interpreted in the source's zone instead of as UTC midnight.
   const direct = Date.parse(v);
-  if (Number.isFinite(direct) && /\d{4}/.test(v) && /(?:[T ]\d{1,2}:\d{2}|[zZ]|[+-]\d{2}:?\d{2}$)/.test(v)) {
-    const d = new Date(direct);
-    return SANE(d) ? d : null;
+  if (Number.isFinite(direct) && /\d{4}/.test(v) && /(?:[zZ]|[+-]\d{2}:?\d{2})$/.test(v)) {
+    return parsed(new Date(direct), v);
   }
-  // 2026-09-26 / 2026/09/26 / 2026年9月26日 (+ optional time), interpreted in the given offset.
-  const m = /(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})日?(?:\s*(\d{1,2}):(\d{2})(?::(\d{2}))?)?/.exec(v);
+  const m = /(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})日?(?:[T\s]*(\d{1,2}):(\d{2})(?::(\d{2}))?)?/.exec(v);
   if (m) {
     const [, y, mo, d, h = "00", mi = "00", s = "00"] = m;
+    if (!validCalendarDate(y!, mo!, d!)) return null;
     const iso = `${y}-${mo!.padStart(2, "0")}-${d!.padStart(2, "0")}T${h.padStart(2, "0")}:${mi}:${s}${utcOffset}`;
     const t = Date.parse(iso);
-    return Number.isFinite(t) ? new Date(t) : null;
+    return Number.isFinite(t) ? parsed(new Date(t), v) : null;
   }
-  // Year and month-day split by whitespace, in either order: "2026 09.29" or "09.24 2026".
   const sc = /(?:(\d{4})\s+(\d{1,2})[-/.](\d{1,2})|(\d{1,2})[-/.](\d{1,2})\s+(\d{4}))/.exec(v);
   if (sc) {
     const [y, mo, d] = sc[1] ? [sc[1], sc[2], sc[3]] : [sc[6], sc[4], sc[5]];
+    if (!validCalendarDate(y!, mo!, d!)) return null;
     const iso = `${y}-${mo!.padStart(2, "0")}-${d!.padStart(2, "0")}T00:00:00${utcOffset}`;
     const t = Date.parse(iso);
-    return Number.isFinite(t) ? new Date(t) : null;
+    return Number.isFinite(t) ? parsed(new Date(t), v) : null;
   }
-  // "Sep 26, 2026"
   const en = Date.parse(v.replace(/(\d)(st|nd|rd|th)/, "$1"));
-  if (Number.isFinite(en)) {
-    const d = new Date(en);
-    return SANE(d) ? d : null;
-  }
-  return null;
+  return Number.isFinite(en) ? parsed(new Date(en), v) : null;
+}
+
+export function parseLooseDate(value: string | null | undefined, utcOffset = "+08:00"): Date | null {
+  return parseLooseDateValue(value, utcOffset)?.date ?? null;
 }
 
 /** The datePublished of the page's structured data (JSON-LD, also inside @graph or embedded app state). */
@@ -174,20 +197,25 @@ export function fromHtml(html: string, base: string, source: SourceRow): Candida
     const title = collapseWhitespace(titleEl.text() || linkEl.attr("title") || "");
     if (!title) continue;
     let publishedAt: Date | null = null;
+    let publishedAtPrecision: PublishedAtPrecision = "unknown";
     if (c.publishedAtSelector) {
       const dateEl = el.find(c.publishedAtSelector).first();
       // Some themes split the date into day + year-month spans ("24" + "2026/09"): compose them first.
-      const day = dateEl.find(".day, .news_day").first().text().trim();
-      const ym = dateEl.find(".year, .news_year").first().text().trim();
+      const day = dateEl.find(".day, .news_day").first().text().trim() || dateEl.find("span").first().text().trim();
+      const ym = dateEl.find(".year, .news_year").first().text().trim() || dateEl.find("p").first().text().trim();
       const composed = day && ym ? `${ym.replace(/[/.]/g, "-")}-${day}` : null;
-      publishedAt = parseLooseDate(composed ?? dateEl.attr("datetime") ?? dateEl.attr("title") ?? dateEl.text(), c.publishedAtUtcOffset);
+      const parsedDate = parseLooseDateValue(composed ?? dateEl.attr("datetime") ?? dateEl.attr("title") ?? dateEl.text(), c.publishedAtUtcOffset);
+      publishedAt = parsedDate?.date ?? null;
+      publishedAtPrecision = parsedDate?.precision ?? "unknown";
     }
     if (!publishedAt && c.publishedAtRegex) {
       const m = new RegExp(c.publishedAtRegex).exec($.html(el));
-      publishedAt = parseLooseDate(m?.[1], c.publishedAtUtcOffset);
+      const parsedDate = parseLooseDateValue(m?.[1], c.publishedAtUtcOffset);
+      publishedAt = parsedDate?.date ?? null;
+      publishedAtPrecision = parsedDate?.precision ?? "unknown";
     }
     seen.add(url);
-    out.push({ url, title, publishedAt });
+    out.push({ url, title, publishedAt, publishedAtPrecision });
   }
   return out;
 }
@@ -232,6 +260,7 @@ function fromDocusaurusChangelog(html: string, base: string, source: SourceRow):
       identityKey: `url:${url}`,
       title,
       publishedAt: parseLooseDate(title) ?? sectionDate ?? parseLooseDate(stripTags(bodyHtml).slice(0, 80)),
+      publishedAtPrecision: parseLooseDateValue(title)?.precision ?? (sectionDate ? "day" : parseLooseDateValue(stripTags(bodyHtml).slice(0, 80))?.precision ?? "unknown"),
       bodyHtml,
       bodyText: stripTags(bodyHtml),
       bodyStatus: "ok",
@@ -336,7 +365,7 @@ export interface DetailNeed {
  * text ("Published Time: …", "# Heading"), so that paid rendering is bought only when such a rule is
  * needed; selectors and page metadata read the page's own HTML.
  */
-export async function fetchDetail(url: string, source: SourceRow, need: DetailNeed): Promise<{ publishedAt: Date | null; title: string | null; summary: string | null; body: ExtractedBody | null }> {
+export async function fetchDetail(url: string, source: SourceRow, need: DetailNeed): Promise<{ publishedAt: Date | null; publishedAtPrecision: PublishedAtPrecision; title: string | null; summary: string | null; body: ExtractedBody | null }> {
   const d = source.config.detail ?? {};
   const jinaListing = String(source.config.url ?? "").startsWith(JINA_PREFIX);
   const dateInJina = need.date && jinaListing && !!d.publishedAtRegex;
@@ -357,19 +386,28 @@ export async function fetchDetail(url: string, source: SourceRow, need: DetailNe
   const $ = html === null ? null : cheerio.load(html);
 
   let publishedAt: Date | null = null;
+  let publishedAtPrecision: PublishedAtPrecision = "unknown";
   const dateText = dateInJina ? jina : html;
   if (need.date && dateText !== null) {
     if ($ && !dateInJina && d.publishedAtSelector) {
       const el = $(d.publishedAtSelector).first();
-      publishedAt = parseLooseDate(el.attr("datetime") ?? el.attr("title") ?? el.text(), d.publishedAtUtcOffset);
+      const parsedDate = parseLooseDateValue(el.attr("datetime") ?? el.attr("title") ?? el.text(), d.publishedAtUtcOffset);
+      publishedAt = parsedDate?.date ?? null;
+      publishedAtPrecision = parsedDate?.precision ?? "unknown";
     }
-    if (!publishedAt && d.publishedAtRegex) publishedAt = parseLooseDate(new RegExp(d.publishedAtRegex).exec(dateText)?.[1], d.publishedAtUtcOffset);
+    if (!publishedAt && d.publishedAtRegex) {
+      const parsedDate = parseLooseDateValue(new RegExp(d.publishedAtRegex).exec(dateText)?.[1], d.publishedAtUtcOffset);
+      publishedAt = parsedDate?.date ?? null;
+      publishedAtPrecision = parsedDate?.precision ?? "unknown";
+    }
     // An authoritative rule is the only source of the date: when its byline is missing, no other
     // timestamp on the page (an update time, a related post) stands in for it.
     const authoritative = d.publishedAtAuthoritative === true && !!(d.publishedAtSelector || d.publishedAtRegex);
     if (!publishedAt && $ && !dateInJina && !authoritative) {
       const meta = $('meta[property="article:published_time"], meta[name="pubdate"], meta[itemprop="datePublished"]').attr("content");
-      publishedAt = parseLooseDate(meta) ?? parseLooseDate(jsonLdPublished($, html!)) ?? parseLooseDate($("time[datetime]").first().attr("datetime"));
+      const fallback = parseLooseDateValue(meta) ?? parseLooseDateValue(jsonLdPublished($, html!)) ?? parseLooseDateValue($("time[datetime]").first().attr("datetime"));
+      publishedAt = fallback?.date ?? null;
+      publishedAtPrecision = fallback?.precision ?? "unknown";
     }
   }
 
@@ -385,5 +423,5 @@ export async function fetchDetail(url: string, source: SourceRow, need: DetailNe
     const el = $(d.summarySelector).first();
     summary = collapseWhitespace(el.attr("content") ?? el.text()) || null;
   }
-  return { publishedAt, title, summary, body };
+  return { publishedAt, publishedAtPrecision, title, summary, body };
 }
