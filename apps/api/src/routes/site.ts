@@ -21,6 +21,8 @@ import { loadSiteStats } from "@aihot/backend/site/stats";
 import { itemAvailability } from "@aihot/backend/publication/availability";
 import { listTopicSummaries, loadTopicPage } from "@aihot/backend/publication/topics";
 import { registerFeedback } from "./feedback.ts";
+import { SUBSCRIPTION_TAXONOMY } from "@aihot/industry/subscription-v2";
+import { loadSubscription } from "@aihot/backend/publication/subscription";
 
 import { loadHot, loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
 import { loadSiteCodexResetPage, loadSiteCodexResetDay } from "@aihot/backend/publication/monitor";
@@ -91,6 +93,22 @@ export async function parseFilters(q: Record<string, string>): Promise<FilterPar
 }
 
 export function registerSite(app: FastifyInstance) {
+  // Local v2 trial only. POST keeps profile fields out of URLs and browser history.
+  app.post("/api/site/subscription-preview", { bodyLimit: 32768 }, siteHandler(async (req, reply) => {
+    reply.header("Cache-Control", "private, no-store");
+    if (process.env.NODE_ENV === "production") return reply.code(404).send({ error: "local_preview_only" });
+    const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
+    const asOf = typeof body.asOf === "string" ? body.asOf : new Date(Date.now()+8*3600000).toISOString().slice(0,10);
+    if (!/^20\d{2}-\d{2}-\d{2}$/.test(asOf) || !Number.isFinite(Date.parse(asOf)) || new Date(asOf).toISOString().slice(0,10) !== asOf) throw new BadRequest("invalid date");
+    const lane = body.lane === "possible" || body.lane === "excluded" || body.lane === "matched" ? body.lane : "feed";
+    const page = Math.max(1,Math.min(200,Math.floor(Number(body.page)||1)));
+    return reply.send(await loadSubscription({ profile: body.profile, asOf, lane, page, q: typeof body.q === "string" ? body.q.slice(0,100) : "" }));
+  }));
+  app.get("/api/site/subscription-taxonomy", siteHandler(async (_req, reply) => {
+    reply.header("Cache-Control", "private, no-store");
+    if (process.env.NODE_ENV === "production") return reply.code(404).send({ error: "local_preview_only" });
+    return reply.send(SUBSCRIPTION_TAXONOMY);
+  }));
   app.get("/api/site/meta", siteHandler(async (req, reply) => {
     return sendJsonWithEtag(req, reply, siteMeta(), { etagPrefix: "meta", cacheControl: "public, max-age=60, s-maxage=60" });
   }));

@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>SEU Wiki · 用户画像与订阅设置</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #24463f;
+      --muted: #60736b;
+      --green: #246c59;
+      --green-soft: #e7f3ec;
+      --line: rgba(37, 79, 67, .13);
+      --white: rgba(255, 255, 255, .82);
+      --shadow: 0 18px 55px rgba(31, 74, 60, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #f6f7f2; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: 3px solid #247e6e;
+      outline-offset: 3px;
+    }
+    button:disabled { cursor: default; opacity: .45; }
+    [hidden] { display: none !important; }
+
+    .page { max-width: 920px; margin: 0 auto; padding: 14px 18px 42px; }
+    .prototype-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 10px 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .shell {
+      --accent: #97601c;
+      --surface: #fff7df;
+      --surface-2: #fff0cb;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #eae1c6;
+      border-radius: 28px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      transition: background .28s ease, border-color .28s ease;
+    }
+    .shell[data-step="2"] {
+      --accent: #985b62;
+      --surface: #fcf0ef;
+      --surface-2: #f9e1e3;
+      border-color: #ecd9d8;
+    }
+    .shell[data-step="3"] {
+      --accent: #246c59;
+      --surface: #e9f4ee;
+      --surface-2: #dceee4;
+      border-color: #d4e5dc;
+    }
+    .shell::before, .shell::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      background: rgba(255, 255, 255, .34);
+    }
+    .shell::before { width: 190px; height: 190px; right: -68px; top: 104px; }
+    .shell::after { width: 105px; height: 105px; left: -34px; top: 330px; }
+
+    .topline {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 24px 34px 18px;
+      font-size: 13px;
+    }
+    .wordmark { display: flex; align-items: center; gap: 8px; font-weight: 760; }
+    .wordmark .mark { color: #3d806b; font-size: 25px; }
+    .wordmark small { margin-left: 6px; color: var(--muted); font-weight: 400; }
+    .counter { color: var(--muted); font-size: 11px; letter-spacing: .12em; white-space: nowrap; }
+
+    .progress {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 34px;
+    }
+    .progress button {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      font-size: 11px;
+    }
+    .progress-line {
+      display: block;
+      height: 3px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      background: rgba(37, 75, 59, .1);
+    }
+    .progress button[aria-current="step"] { color: var(--accent); font-weight: 760; }
+    .progress button[aria-current="step"] .progress-line,
+    .progress button[data-done="true"] .progress-line { background: var(--accent); }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      height: 160px;
+      max-width: 650px;
+      margin: 12px auto 0;
+    }
+    .hero .sun, .hero .bubble, .hero .sheet { position: absolute; }
+    .hero .sun { width: 68px; height: 68px; top: 6px; right: 70px; border-radius: 50%; background: #f4bc50; opacity: .9; }
+    .hero .bubble { border-radius: 50%; background: rgba(255,255,255,.72); box-shadow: 0 8px 20px rgba(91, 76, 36, .08); }
+    .hero .bubble.one { width: 92px; height: 92px; left: 90px; top: 38px; }
+    .hero .bubble.two { width: 122px; height: 122px; left: calc(50% - 61px); top: 4px; background: var(--surface-2); }
+    .hero .bubble.three { width: 80px; height: 80px; right: 112px; top: 60px; }
+    .hero .sheet {
+      width: 158px;
+      height: 112px;
+      left: calc(50% - 79px);
+      top: 22px;
+      border-radius: 15px;
+      background: rgba(255,255,255,.88);
+      transform: rotate(-4deg);
+      box-shadow: 0 10px 28px rgba(68, 78, 61, .08);
+    }
+    .hero .sheet::before {
+      content: "✓";
+      position: absolute;
+      left: 24px;
+      top: 20px;
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: var(--green);
+      background: #dae9df;
+      font-weight: 800;
+    }
+    .hero .sheet::after {
+      content: "";
+      position: absolute;
+      left: 68px;
+      top: 26px;
+      width: 62px;
+      height: 45px;
+      border-top: 7px solid #d5dfd8;
+      border-bottom: 7px solid #d5dfd8;
+      box-shadow: 0 19px 0 -1px #d5dfd8;
+    }
+
+    .content { position: relative; z-index: 1; padding: 6px 42px 26px; }
+    .scene { display: block; width: 100%; max-width: 600px; height: auto; max-height: 222px; margin: 12px auto 0; color: var(--ink); }
+    .shell[data-step="1"] { --accent: #246c59; --surface: #e9f4ee; --surface-2: #dceee4; border-color: #d4e5dc; }
+    .shell[data-step="2"] { --accent: #936020; --surface: #fff7df; --surface-2: #ffedbd; border-color: #eae1c6; }
+    .shell[data-step="3"] { --accent: #905861; --surface: #fcf0ef; --surface-2: #f9e1e3; border-color: #ecd9d8; }
+    .eyebrow { margin: 0 0 9px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .19em; }
+    h1 { margin: 0; font-size: clamp(25px, 4vw, 34px); line-height: 1.35; letter-spacing: -.025em; }
+    .intro { max-width: 720px; margin: 12px 0 26px; color: var(--muted); font-size: 13px; line-height: 1.9; }
+    h2 { margin: 0 0 9px; font-size: 18px; }
+    h3 { margin: 0; font-size: 14px; }
+    .section-card {
+      margin: 18px 0;
+      padding: 21px;
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: 18px;
+      background: rgba(255,255,255,.53);
+    }
+    .section-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 17px; }
+    .section-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .badge { flex: none; border-radius: 999px; padding: 5px 9px; color: var(--accent); background: var(--surface-2); font-size: 10px; font-weight: 720; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .field { display: block; min-width: 0; color: var(--ink); font-size: 13px; font-weight: 680; }
+    .optional { margin-left: 7px; color: var(--muted); font-size: 10px; font-weight: 450; }
+    .field input, .field select, .search-box input {
+      width: 100%;
+      min-height: 45px;
+      margin-top: 8px;
+      border: 1px solid rgba(43, 94, 66, .14);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: rgba(255,255,255,.86);
+      font-size: 13px;
+      font-weight: 400;
+    }
+    .hint { display: block; margin: 8px 0 0; color: var(--muted); font-size: 11px; font-weight: 400; line-height: 1.75; }
+    .choice-row, .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+    .choice, .chip {
+      border: 1px solid rgba(41, 70, 52, .13);
+      border-radius: 999px;
+      padding: 9px 14px;
+      color: var(--ink);
+      background: rgba(255,255,255,.72);
+      font-size: 12px;
+    }
+    .choice[aria-pressed="true"], .chip[aria-pressed="true"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #fff;
+      box-shadow: 0 2px 7px rgba(0,0,0,.04);
+    }
+    .degree-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+    .degree-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-height: 106px;
+      border: 1.5px solid rgba(255,255,255,.7);
+      border-radius: 18px;
+      padding: 17px 8px;
+      color: var(--ink);
+      background: rgba(255,255,255,.67);
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .degree-card[aria-pressed="true"] { border-color: #3b846b; background: #fff; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(39, 107, 84, .08); }
+    .degree-card .symbol { color: #3d806b; font-size: 26px; }
+    .degree-card small { color: var(--muted); font-size: 10px; }
+    .degree-grid[aria-invalid="true"] { outline: 2px solid #b5515e; outline-offset: 5px; border-radius: 18px; }
+    .field-error { margin: 13px 0 0; color: #a03846; font-size: 12px; line-height: 1.7; }
+    .field-error:empty { display: none; }
+
+    .split-note { display: grid; grid-template-columns: 24px 1fr; gap: 10px; margin-top: 16px; border-radius: 14px; padding: 14px; background: rgba(255,255,255,.5); font-size: 12px; line-height: 1.72; }
+    .split-note .icon { color: var(--accent); font-size: 18px; }
+    .split-note strong { display: block; margin-bottom: 3px; }
+    .follow-college { margin-top: 15px; }
+    .checkline { display: flex; align-items: flex-start; gap: 10px; color: var(--ink); font-size: 12px; line-height: 1.7; }
+    .checkline input { flex: none; width: 17px; height: 17px; margin-top: 2px; accent-color: var(--green); }
+    .checkline small { display: block; margin-top: 3px; color: var(--muted); }
+
+    .search-box { position: relative; margin-bottom: 14px; }
+    .search-box input { margin: 0; padding-left: 39px; }
+    .search-box::before { content: "⌕"; position: absolute; left: 14px; top: 8px; color: var(--accent); font-size: 22px; }
+    .topic-guide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+    .topic-guide div { border-radius: 12px; padding: 10px 12px; background: rgba(255,255,255,.48); color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .topic-guide b { display: block; color: var(--ink); font-size: 12px; }
+    .selected-review { margin: 14px 0 18px; border-radius: 15px; padding: 14px; background: rgba(255,255,255,.51); }
+    .selected-review-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; font-size: 12px; }
+    .selected-review-head span { color: var(--muted); font-size: 11px; }
+    .selected-chips { display: flex; flex-wrap: wrap; gap: 7px; min-height: 30px; }
+    .selected-chip { border: 1px solid #d9b372; border-radius: 999px; padding: 6px 10px; color: #8e5c1f; background: #fff9ed; font-size: 11px; }
+    .selected-chip.group { border-color: #b7747b; color: #8a4d56; background: #fff4f5; }
+    .empty-copy { color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .topic-tree { display: grid; gap: 10px; }
+    .topic-group { border: 1px solid rgba(152, 91, 98, .14); border-radius: 16px; background: rgba(255,255,255,.5); overflow: hidden; }
+    .topic-group > summary { display: flex; align-items: center; gap: 11px; padding: 14px 16px; cursor: pointer; list-style: none; }
+    .topic-group > summary::-webkit-details-marker { display: none; }
+    .topic-icon { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); color: var(--accent); font-size: 17px; }
+    .topic-title { flex: 1; font-size: 13px; font-weight: 740; }
+    .topic-title small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; font-weight: 430; }
+    .group-action { border: 0; border-bottom: 1px solid currentColor; padding: 3px 1px; color: var(--accent); background: transparent; font-size: 11px; }
+    .topic-body { padding: 0 15px 15px; }
+    .subgroup { margin-top: 9px; border-radius: 13px; padding: 12px; background: rgba(255,255,255,.58); }
+    .subgroup-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .subgroup-head span { color: var(--muted); font-size: 10px; }
+    .leaf-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .leaf {
+      min-width: 72px;
+      min-height: 42px;
+      border: 1.5px solid transparent;
+      border-radius: 50%;
+      padding: 8px 13px;
+      color: #4b5048;
+      background: #fffef9;
+      box-shadow: 0 4px 10px rgba(167, 140, 67, .09);
+      font-size: 11px;
+      transition: transform .16s ease, border-color .16s ease;
+    }
+    .leaf:hover { transform: translateY(-2px); }
+    .leaf[aria-pressed="true"] { border-color: #d29b45; color: #a1681d; background: #fff; }
+    .search-results { display: grid; gap: 8px; }
+    .bubble-help { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: #806f54; font-size: 12px; line-height: 1.8; margin: 14px 0; }
+    .bubble-help button { border: 1px solid #d9c59a; border-radius: 99px; background: #ffffffa6; color: #775a2c; padding: 6px 11px; font-size: 11px; }
+    .bubble-field { position: relative; width: 100%; margin: 10px 0 22px; touch-action: pan-y; overflow-anchor: none; }
+    .topic-bubble { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid transparent; padding: 9px; text-align: center; line-height: 1.5; color: #383a34; background: #fff; box-shadow: 0 7px 18px #af8a3e14; transition: color .18s, border-color .18s, box-shadow .18s; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: pan-y; }
+    .topic-bubble:hover { box-shadow: 0 9px 22px #a5783828; }
+    .topic-bubble:not(.leaf-bubble) { background: var(--group-color, #fffdf6); color: var(--group-ink, #735626); font-weight: 650; }
+    .topic-bubble.leaf-bubble { background: var(--leaf-color, #fff); color: var(--group-ink, #383a34); }
+    .topic-bubble[aria-expanded="true"] { border-color: var(--leaf-color, #fffbef); }
+    .topic-bubble .bubble-label { font-size: 15px; overflow-wrap: anywhere; }
+    .topic-bubble .expand-mark { position: absolute; top: 10px; left: 0; right: 0; font-size: 16px; line-height: 1; color: #b69451; font-weight: 400; }
+    .topic-bubble[aria-pressed="true"], .topic-bubble.is-subscribed { border-color: #df982e; box-shadow: 0 0 0 3px #f5be5a22, 0 5px 15px #c28b3420; }
+    .topic-bubble .selection-tick { position: absolute; top: 5px; right: 10px; color: #b96807; font-size: 12px; }
+    .topic-bubble:focus-visible { outline: 3px solid #247e6e; outline-offset: 3px; z-index: 2; }
+    .bulk-topics { margin-top: 16px; border-top: 1px solid #c5aa7029; padding-top: 12px; }
+    .bulk-topics h2 { color: #655b45; font-size: 15px; margin: 0; }
+    .bulk-topics .chip { background: var(--leaf-color, #fff); color: var(--group-ink, #383a34); }
+    .bulk-topics .chips { margin-top: 12px; }
+    .shell[data-step="2"] .selected-review { background: #ffffff80; padding: 12px 14px; }
+    .search-result { display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid rgba(152, 91, 98, .14); border-radius: 13px; padding: 11px 13px; background: rgba(255,255,255,.62); }
+    .search-result small { display: block; margin-top: 3px; color: var(--muted); }
+
+    .mode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .mode-card { position: relative; display: block; border: 1.5px solid rgba(36,108,89,.13); border-radius: 15px; padding: 15px; background: rgba(255,255,255,.62); cursor: pointer; }
+    .mode-card:has(input:checked) { border-color: var(--accent); background: #fff; box-shadow: 0 5px 14px rgba(36,108,89,.07); }
+    .mode-card input { position: absolute; top: 14px; right: 14px; accent-color: var(--green); }
+    .mode-card strong { display: block; margin-right: 24px; font-size: 13px; }
+    .mode-card small { display: block; margin-top: 7px; color: var(--muted); font-size: 10px; line-height: 1.65; }
+    .logic-box { margin: 15px 0; border-left: 4px solid var(--accent); border-radius: 10px; padding: 13px 15px; background: rgba(255,255,255,.55); font-size: 12px; line-height: 1.75; }
+    .logic-box code { border-radius: 4px; padding: 2px 5px; color: var(--accent); background: rgba(255,255,255,.8); font-family: inherit; font-weight: 760; }
+    .publishers { display: grid; gap: 10px; }
+    .publishers details { border-radius: 13px; padding: 11px 13px; background: rgba(255,255,255,.48); }
+    .publishers summary { cursor: pointer; font-size: 12px; font-weight: 700; }
+    .publishers .chips { margin-top: 12px; }
+    .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .filter-box { border-radius: 14px; padding: 14px; background: rgba(255,255,255,.48); }
+    .filter-box p { margin: 5px 0 12px; color: var(--muted); font-size: 10px; line-height: 1.65; }
+    .confirmed-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .confirmed-topics span { border-radius: 99px; padding: 7px 12px; color: #386452; background: #e6f1e9; font-size: 12px; }
+    .optional-settings { border-top: 1px solid var(--line); margin-top: 17px; padding-top: 14px; }
+    .optional-settings > summary { cursor: pointer; font-size: 12px; font-weight: 650; line-height: 1.8; }
+    .optional-settings > .hint { margin-bottom: 13px; }
+    .optional-settings .checkline { margin-top: 14px; }
+    .exclusion-chip[aria-pressed="true"] { color: #923c49; background: #fbe7eb; border-color: #b66876; }
+    .exclusion-status { margin: 14px 0 0; color: #7c4c55; font-size: 12px; line-height: 1.8; }
+
+    .preview-list { display: grid; gap: 12px; }
+    .message-card { border: 1px solid rgba(36,108,89,.12); border-radius: 16px; padding: 16px; background: rgba(255,255,255,.67); }
+    .message-top { display: flex; justify-content: space-between; gap: 13px; }
+    .message-top h3 { font-size: 13px; }
+    .message-meta { margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .status { flex: none; align-self: flex-start; border-radius: 999px; padding: 5px 9px; font-size: 10px; font-weight: 750; }
+    .status.yes { color: #17654c; background: #dff3e8; }
+    .status.no { color: #8b4d4d; background: #f8e1e1; }
+    .decision-trace { display: grid; gap: 6px; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--line); }
+    .decision { display: grid; grid-template-columns: 22px 1fr; gap: 8px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .decision b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--green-soft); color: var(--green); font-size: 10px; }
+    .decision.fail b { color: #914d4d; background: #f8e1e1; }
+
+    .review { margin-top: 20px; border: 1px solid #fff; border-radius: 18px; padding: 20px; background: rgba(255,255,255,.7); }
+    .review dl { margin: 0; font-size: 12px; line-height: 1.7; }
+    .review dl > div { display: grid; grid-template-columns: 145px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(60, 88, 71, .08); }
+    .review dl > div:last-child { border-bottom: 0; }
+    .review dt { color: var(--muted); }
+    .review dd { margin: 0; overflow-wrap: anywhere; }
+    .review .category { margin-top: 14px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+    .privacy { margin: 18px 0 0; color: var(--muted); font-size: 10px; line-height: 1.75; }
+
+    .footer {
+      position: sticky;
+      z-index: 3;
+      bottom: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 34px max(16px, env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(49, 88, 63, .08);
+      border-radius: 0 0 28px 28px;
+      background: rgba(250,255,248,.91);
+      backdrop-filter: blur(14px);
+    }
+    .footer-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    .back, .secondary { border: 0; padding: 10px; color: var(--muted); background: transparent; font-size: 12px; }
+    .next, .download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 20px;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 4px 12px rgba(37,79,67,.12);
+      font-size: 12px;
+    }
+    .completion { padding: 34px; }
+    .completion h1 { font-size: 28px; }
+    .completion .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+    .toast { min-height: 20px; color: var(--green); font-size: 11px; }
+
+    @media (max-width: 700px) {
+      .page { padding: 7px 8px 24px; }
+      .shell { border-radius: 22px; }
+      .topline { padding: 19px 19px 14px; }
+      .wordmark small { display: none; }
+      .progress { gap: 8px; padding: 0 20px; }
+      .hero { height: 128px; transform: scale(.88); transform-origin: center top; }
+      .content { padding: 0 20px 22px; }
+      .field-grid, .filter-grid, .mode-grid { grid-template-columns: 1fr; }
+      .degree-grid { gap: 7px; }
+      .degree-card { min-height: 96px; padding: 14px 5px; }
+      .topic-guide { grid-template-columns: 1fr; }
+      .review dl > div { grid-template-columns: 1fr; gap: 2px; }
+      .footer { padding: 13px 16px max(13px, env(safe-area-inset-bottom)); border-radius: 0 0 22px 22px; }
+      .next { gap: 10px; padding: 11px 16px; }
+      .completion { padding: 24px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  
+    /* Embedded locally: isolate the supplied design and keep controls within its viewport. */
+    html { background: transparent; }
+    .page { padding: 0 0 12px; }
+    .prototype-note { display: none; }
+    .shell { overflow: clip; box-shadow: none; }
+    .bridge-error { color: #a33436; font-size: 13px; padding: 12px 20px; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="prototype-note"><span>SEU Wiki · 用户画像体验</span><span>本地订阅设置</span></p>
+    <section class="shell" id="app" data-step="1" aria-label="用户画像与订阅设置"></section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const colleges = [
+        "机械工程学院", "仪器科学与工程学院", "生物科学与医学工程学院", "自动化学院", "电气工程学院",
+        "信息科学与工程学院", "电子科学与工程学院", "集成电路学院", "计算机科学与工程学院", "软件学院",
+        "人工智能学院", "网络空间安全学院", "建筑学院", "土木工程学院", "交通学院", "能源与环境学院",
+        "材料科学与工程学院", "化学化工学院", "数学学院", "物理学院", "统计与数据科学学院",
+        "生命科学与技术学院", "医学院", "公共卫生学院", "人文学院", "外国语学院", "马克思主义学院",
+        "艺术学院", "体育系", "经济管理学院", "法学院", "吴健雄学院", "未来技术学院",
+        "国家卓越工程师学院", "海外教育学院", "雷恩研究生学院", "蒙纳士大学国际学院", "新生学院", "成贤学院"
+      ];
+
+      const topicGroups = [
+        { id: "study", label: "学业与教务", icon: "▤", subgroups: [
+          { label: "本科教学", tags: ["选课", "GPA", "期末考试", "教材", "学籍注册", "辅修", "重修"] },
+          { label: "研究生培养", tags: ["考博", "硕博连读", "研究生教务", "科研奖励", "中期考核", "开题", "资格考", "学位论文", "导师选择"] },
+          { label: "实践教学", tags: ["课外研学", "实习实践", "SRTP", "大创", "创新创业"] }
+        ]},
+        { id: "further", label: "升学与深造", icon: "↗", subgroups: [
+          { label: "升学路径", tags: ["保研", "考研", "留学", "双学位"] },
+          { label: "交流培养", tags: ["联合培养", "中外合作办学", "交换", "暑期学校", "访学", "国家留学基金"] }
+        ]},
+        { id: "career", label: "求职与就业", icon: "▣", subgroups: [
+          { label: "校园招聘", tags: ["秋招春招", "宣讲会", "双选会", "网申", "实习", "事业单位", "选调", "企业参访"] },
+          { label: "就业服务", tags: ["就业手续", "职业规划", "创业"] },
+          { label: "行业方向", tags: ["互联网", "国企央企", "汽车", "芯片半导体", "金融", "建筑地产"] }
+        ]},
+        { id: "research", label: "科研与创新", icon: "✧", subgroups: [
+          { label: "科研训练", tags: ["实验室", "项目申报", "成果转化", "科研助理", "创新创业"] },
+          { label: "学科竞赛", tags: ["学科竞赛", "机器人", "互联网+"] },
+          { label: "学术研究", tags: ["科研成果", "论文", "学术会议", "学术报告", "国自然", "社科基金", "AI/机器学习"] }
+        ]},
+        { id: "community", label: "社团与组织", icon: "♫", subgroups: [
+          { label: "学生组织", tags: ["学生会", "研究生会", "班团建设", "校科协"] },
+          { label: "社团活动", tags: ["社团活动", "社团招新", "百团大战", "社团文化节"] },
+          { label: "艺术与体育", tags: ["演出", "迎新晚会", "体育赛事", "运动会", "阳光体育", "电子竞技"] },
+          { label: "志愿与公益", tags: ["志愿服务", "社会实践", "公益", "支教", "献血"] }
+        ]},
+        { id: "campus", label: "校园生活", icon: "☀", subgroups: [
+          { label: "安全与服务", tags: ["防诈骗", "总务后勤"] },
+          { label: "讲座与文化", tags: ["讲座", "六朝松大师讲堂", "吴健雄大讲堂", "文化素质教育", "展览"] }
+        ]},
+        { id: "awards", label: "奖助与评优", icon: "☆", subgroups: [
+          { label: "奖学金", tags: ["国家奖学金", "国家励志奖学金", "学业奖学金", "社会奖学金", "至善/校长奖学金"] },
+          { label: "资助", tags: ["助学金", "困难补助"] },
+          { label: "评优评先", tags: ["评优评先", "优秀毕业生", "三好学生"] }
+        ]},
+        { id: "global", label: "国际与交流", icon: "◎", subgroups: [
+          { label: "国际交流", tags: ["来华留学", "港澳台交流", "国际会议", "国际组织"] }
+        ]},
+        { id: "alumni", label: "毕业与校友", icon: "⚑", subgroups: [
+          { label: "毕业与校友", tags: ["校友", "校友会", "校友活动", "档案户口", "捐赠"] }
+        ]},
+        { id: "governance", label: "校务与公告", icon: "▥", subgroups: [
+          { label: "校务与组织", tags: ["规章制度", "入党", "理论学习", "青马工程", "主题团日", "人文东大"] }
+        ]}
+      ];
+
+      const bubblePalette = [
+        ["#cde9dd", "#edf7f1", "#335f50"],
+        ["#cedff1", "#eef4fb", "#3e5d7d"],
+        ["#f5d8c5", "#fff2e8", "#80573d"],
+        ["#ddd4ef", "#f4f0fb", "#65517f"],
+        ["#f1d0dd", "#fceef4", "#80566a"],
+        ["#dde8be", "#f3f7e7", "#5f6e3d"],
+        ["#f0e0ac", "#fcf6e2", "#78642e"],
+        ["#bfe5e5", "#eaf8f7", "#3e6a6a"],
+        ["#e8cfc6", "#faf0eb", "#795b50"],
+        ["#d5dfeb", "#f0f4f8", "#536479"]
+      ];
+      function bubbleColors(group) {
+        const colors = bubblePalette[topicGroups.indexOf(group)];
+        return `--group-color:${colors[0]};--leaf-color:${colors[1]};--group-ink:${colors[2]}`;
+      }
+
+      const publisherGroups = [
+        { label: "学院与院系", values: colleges },
+        { label: "教学与学生服务", values: ["教务处", "研究生院", "学生处（党委学工部）", "就业指导中心", "校团委", "心理健康中心"] },
+        { label: "科研与国际", values: ["科研院", "社会科学处", "实验室与设备管理处", "国际合作处"] },
+        { label: "校园保障", values: ["总务处", "网络与信息中心", "图书馆", "校医院", "保卫处", "财务处"] },
+        { label: "资讯与校友", values: ["信息公开网", "东大新闻网", "校友服务与基金事务处"] }
+      ];
+
+      const contentTypes = ["事务通知", "活动预告", "机会招募", "结果公示", "指南说明", "新闻报道"];
+      const locations = ["九龙湖校区", "四牌楼校区", "丁家桥校区"];
+      const examples = [
+        { title: "本科生选课调整通知", audience: ["本科生"], topic: "选课", publisher: "教务处", type: "事务通知", format: "online", location: "" },
+        { title: "AI 与机器学习学术报告", audience: ["全校"], topic: "AI/机器学习", publisher: "计算机科学与工程学院", type: "活动预告", format: "offline", location: "九龙湖校区" },
+        { title: "研究生奖学金评选说明", audience: ["硕士生", "博士生"], topic: "国家奖学金", publisher: "研究生院", type: "事务通知", format: "offline", location: "四牌楼校区" }
+      ];
+
+      const emptyProfile = () => ({
+        userIdentity: { degree: "", college: "", enrollmentYear: "" },
+        subscriptionPreferences: {
+          mode: "interest",
+          followOwnCollege: true,
+          topicGroups: [],
+          topics: [],
+          publishers: [],
+          excludedContentTypes: [],
+          excludedLocations: []
+        }
+      });
+
+      let profile = emptyProfile();
+      let step = 1;
+      let completed = false;
+      let topicQuery = "";
+      let expandedTopicGroups = new Set();
+      let bubbleObserver;
+      let bubblePositions = new Map();
+      let pendingSplitGroup = "";
+      let bubbleMotion;
+      let motionEnabled = true;
+      let toast = "";
+      let degreeError = "";
+      let thirdStepPanels = new Set();
+      const app = document.getElementById("app");
+
+      const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
+      const unique = values => [...new Set(values)];
+      const toggleValue = (array, value) => array.includes(value) ? array.filter(item => item !== value) : [...array, value];
+      const groupTags = group => unique(group.subgroups.flatMap(subgroup => subgroup.tags));
+      const degreeAudience = { "本科生": "本科生", "硕士生": "硕士生", "博士生": "博士生" };
+
+      function hero() {
+        const scenes = ["<svg class=\"scene\" viewBox=\"0 0 600 230\" aria-hidden=\"true\"><ellipse cx=\"300\" cy=\"219\" rx=\"238\" ry=\"9\" fill=\"currentColor\" opacity=\".06\"></ellipse><circle cx=\"115\" cy=\"59\" r=\"34\" fill=\"#f9d98a\"></circle><path d=\"M57 116h71m-51-10h51M451 97h82m-62-11h61\" stroke=\"#fff\" stroke-width=\"10\" stroke-linecap=\"round\"></path><path d=\"M184 106h232v109H184z\" fill=\"#f8f5de\"></path><path d=\"M161 108l139-69 139 69z\" fill=\"#237264\"></path><path d=\"M192 101h216M183 115h234\" stroke=\"#164e48\" stroke-width=\"6\"></path><g><path d=\"M201 125h16v90h-16z\" fill=\"#e6d9b9\"></path><path d=\"M198 124h22M198 213h22\" stroke=\"#b3a689\" stroke-width=\"4\"></path></g><g><path d=\"M247 125h16v90h-16z\" fill=\"#e6d9b9\"></path><path d=\"M244 124h22M244 213h22\" stroke=\"#b3a689\" stroke-width=\"4\"></path></g><g><path d=\"M337 125h16v90h-16z\" fill=\"#e6d9b9\"></path><path d=\"M334 124h22M334 213h22\" stroke=\"#b3a689\" stroke-width=\"4\"></path></g><g><path d=\"M383 125h16v90h-16z\" fill=\"#e6d9b9\"></path><path d=\"M380 124h22M380 213h22\" stroke=\"#b3a689\" stroke-width=\"4\"></path></g><path d=\"M279 215v-62a21 21 0 0142 0v62\" fill=\"#388576\"></path><circle cx=\"300\" cy=\"80\" r=\"13\" fill=\"#ffdf87\"></circle><path d=\"M294 80h12m-6-6v12\" stroke=\"#237264\" stroke-width=\"2\"></path><path d=\"M98 213v-49m0 20l-14-13m14 4l13-15M488 214v-54m0 29l-16-11m16-2l12-14\" stroke=\"#347c66\" stroke-width=\"5\"></path><circle cx=\"98\" cy=\"146\" r=\"30\" fill=\"#69aa81\"></circle><circle cx=\"486\" cy=\"141\" r=\"35\" fill=\"#94bd85\"></circle><path d=\"M125 214l12-47 23 2 11 45\" fill=\"#f1a05d\"></path><circle cx=\"149\" cy=\"150\" r=\"14\" fill=\"#ecc1a0\"></circle><path d=\"M136 147q1-25 23-11l5 15-15-6\" fill=\"#234d53\"></path><path d=\"M138 215l-2 13m24-13 3 13\" stroke=\"#214b52\" stroke-width=\"8\" stroke-linecap=\"round\"></path></svg>","<svg class=\"scene\" viewBox=\"0 0 600 230\" aria-hidden=\"true\"><ellipse cx=\"300\" cy=\"219\" rx=\"238\" ry=\"9\" fill=\"currentColor\" opacity=\".06\"></ellipse><circle cx=\"477\" cy=\"59\" r=\"34\" fill=\"#f4bc50\"></circle><path d=\"M57 116h71m-51-10h51M451 97h82m-62-11h61\" stroke=\"#fff\" stroke-width=\"10\" stroke-linecap=\"round\"></path><path d=\"M111 190q39-26 69 1l2 28q-35-17-71 0z\" fill=\"#81baa5\"></path><path d=\"M182 191q40-27 78-1v29q-43-15-78 0\" fill=\"#b6d6ba\"></path><path d=\"M183 191v31\" stroke=\"#397568\" stroke-width=\"3\"></path><ellipse cx=\"477\" cy=\"66\" rx=\"57\" ry=\"13\" fill=\"none\" stroke=\"#db9648\" stroke-width=\"3\" transform=\"rotate(-25 477 66)\"></ellipse><path d=\"M271 206l-5-77 37-13 42 18-6 72\" fill=\"#fffdf3\"></path><path d=\"M273 137l-52-48-32-43m150 94 42-50 22-41\" fill=\"none\" stroke=\"#f6c7a8\" stroke-width=\"19\" stroke-linecap=\"round\"></path><path d=\"M271 140l-32-31m101 32 27-34\" stroke=\"#fffdf3\" stroke-width=\"24\"></path><path d=\"M275 204q29-12 64 0l13 22h-90z\" fill=\"#e79658\"></path><circle cx=\"307\" cy=\"94\" r=\"25\" fill=\"#f4c5a8\"></circle><path d=\"M282 98q-13-49 33-40 34 8 15 50l-10-21q-13 16-30 0\" fill=\"#234f52\"></path><path d=\"M190 50l-8-17m12 12-1-18m207 23 8-17m-12 12 1-18\" stroke=\"#f6c7a8\" stroke-width=\"5\" stroke-linecap=\"round\"></path><path d=\"M122 72l13 5-13 5-5 13-5-13-13-5 13-5 5-13zM412 169l10 4-10 4-4 10-4-10-10-4 10-4 4-10z\" fill=\"#e4ad45\"></path><circle cx=\"434\" cy=\"124\" r=\"6\" fill=\"#6ca68f\"></circle><circle cx=\"160\" cy=\"121\" r=\"5\" fill=\"#edab75\"></circle></svg>","<svg class=\"scene\" viewBox=\"0 0 600 230\" aria-hidden=\"true\"><ellipse cx=\"300\" cy=\"219\" rx=\"238\" ry=\"9\" fill=\"currentColor\" opacity=\".06\"></ellipse><circle cx=\"115\" cy=\"59\" r=\"34\" fill=\"#f9d98a\"></circle><path d=\"M57 116h71m-51-10h51M451 97h82m-62-11h61\" stroke=\"#fff\" stroke-width=\"10\" stroke-linecap=\"round\"></path><rect x=\"224\" y=\"48\" width=\"160\" height=\"171\" rx=\"15\" fill=\"#fff9ed\" transform=\"rotate(7 304 133)\"></rect><rect x=\"201\" y=\"40\" width=\"162\" height=\"178\" rx=\"15\" fill=\"#fff\" transform=\"rotate(-5 282 129)\"></rect><circle cx=\"246\" cy=\"88\" r=\"17\" fill=\"#dae9df\"></circle><path d=\"M239 87l5 6 9-12\" fill=\"none\" stroke=\"#267463\" stroke-width=\"4\" stroke-linecap=\"round\"></path><path d=\"M279 81h55m-55 13h39M226 126h100m-100 17h84m-84 17h100\" stroke=\"#d5dfd8\" stroke-width=\"7\" stroke-linecap=\"round\"></path><path d=\"M390 202l-6-49 32-3 12 52\" fill=\"#dc9367\"></path><circle cx=\"399\" cy=\"131\" r=\"17\" fill=\"#f0c0a2\"></circle><path d=\"M381 132q-5-31 24-23 15 3 12 24l-12-13-17 12\" fill=\"#244e52\"></path><path d=\"M392 201l-4 25m26-25 5 25\" stroke=\"#2e6264\" stroke-width=\"9\" stroke-linecap=\"round\"></path><path d=\"M390 162l-28 16-22-7\" stroke=\"#f0c0a2\" stroke-width=\"10\" stroke-linecap=\"round\" fill=\"none\"></path><path d=\"M141 123q-18-19-30-3-12 18 30 43 42-25 30-43-12-16-30 3\" fill=\"#eaa294\"></path><path d=\"M465 171v42m-18-24 18 13 14-22\" stroke=\"#638c71\" stroke-width=\"4\" fill=\"none\"></path><ellipse cx=\"450\" cy=\"178\" rx=\"10\" ry=\"17\" fill=\"#8fb798\" transform=\"rotate(-35 450 178)\"></ellipse><ellipse cx=\"479\" cy=\"172\" rx=\"10\" ry=\"17\" fill=\"#adc6a1\" transform=\"rotate(30 479 172)\"></ellipse></svg>"];
+        return scenes[step - 1];
+      }
+
+      function chrome(content) {
+        const names = ["认识你", "发现兴趣", "确认订阅"];
+        app.dataset.step = String(step);
+        app.innerHTML = `
+          <div class="topline">
+            <span class="wordmark"><span class="mark">✳</span> SEU Wiki <small>与你有关的校园生活</small></span>
+            <span class="counter">0${step} / 03</span>
+          </div>
+          <nav class="progress" aria-label="设置进度">
+            ${names.map((name, index) => {
+              const number = index + 1;
+              return `<button type="button" data-go-step="${number}" ${number > step ? "disabled" : ""} ${number === step ? 'aria-current="step"' : ""} data-done="${number < step}"><span class="progress-line"></span><span>${number < step ? "✓ " : ""}${name}</span></button>`;
+            }).join("")}
+          </nav>
+          ${hero()}
+          <div class="content">${content}</div>
+          <footer class="footer">
+            <div class="footer-actions">${step > 1 ? '<button type="button" class="back" data-action="back">← 上一步</button>' : ""}</div>
+            <button type="button" class="next" data-action="next">${step < 3 ? "下一步" : "保存并查看订阅"}<span aria-hidden="true">→</span></button>
+          </footer>`;
+        bindCommon();
+      }
+
+      function renderStep1() {
+        const identity = profile.userIdentity;
+        const years = Array.from({ length: 12 }, (_, index) => String(new Date().getFullYear() - index));
+        chrome(`
+          <p class="eyebrow">HELLO, SEUER</p>
+          <h1 tabindex="-1" id="step-title">先认识一下你</h1>
+          <p class="intro">先选一下你的培养层次，让通知更合适。学院和入学年份可以留空，不需要姓名、学号或手机号。</p>
+
+          <section class="section-card" aria-labelledby="identity-heading">
+            <div class="section-head"><div><h2 id="identity-heading">你目前的培养层次</h2><p>请选择一项，帮我们判断哪些信息适合你。</p></div><span class="badge">必选</span></div>
+            <div class="degree-grid" id="degree-options" role="group" aria-label="培养层次，必选" aria-describedby="degree-error" aria-invalid="${Boolean(degreeError)}">
+              ${["本科生", "硕士生", "博士生"].map((value, index) => `<button type="button" class="degree-card" data-degree="${value}" aria-pressed="${identity.degree === value}"><span class="symbol">${["▤", "✧", "◎"][index]}</span><strong>${value}</strong><small>${["探索与成长", "深入与发现", "求索与创新"][index]}</small></button>`).join("")}
+            </div>
+            <p class="field-error" id="degree-error" role="alert" tabindex="-1">${degreeError}</p>
+            <div class="field-grid" style="margin-top:20px">
+              <label class="field">你所在的学院 <span class="optional">可选</span>
+                <input id="college-search" list="college-options" value="${esc(identity.college)}" placeholder="输入关键词，如“计算机”" autocomplete="off">
+                <datalist id="college-options">${colleges.map(college => `<option value="${esc(college)}"></option>`).join("")}</datalist>
+                <span class="hint">用于识别学院身份和匹配与你所在学院有关的信息。</span>
+              </label>
+              <label class="field">哪一年入学？ <span class="optional">可选</span>
+                <select id="enrollment-year"><option value="">暂不填写</option>${years.map(year => `<option value="${year}" ${identity.enrollmentYear === year ? "selected" : ""}>${year} 级</option>`).join("")}</select>
+                <span class="hint">填写入学年份，不是预计毕业年份。</span>
+              </label>
+            </div>
+          </section>
+
+          <p class="privacy">设置会保存在当前浏览器，提交后由本机服务核对订阅条件。选择学院后默认关注本学院信息；明确的身份限制仍然生效。</p>`);
+
+        document.querySelectorAll("[data-degree]").forEach(button => button.addEventListener("click", () => {
+          identity.degree = button.dataset.degree;
+          degreeError = "";
+          render();
+          document.querySelector(`[data-degree="${identity.degree}"]`)?.focus({ preventScroll: true });
+        }));
+        document.getElementById("college-search").addEventListener("change", event => {
+          identity.college = event.target.value.trim();
+          render();
+        });
+        document.getElementById("college-search").addEventListener("input", event => { identity.college = event.target.value; });
+        document.getElementById("enrollment-year").addEventListener("change", event => { identity.enrollmentYear = event.target.value; });
+      }
+
+      function selectedTopicChips() {
+        const preferences = profile.subscriptionPreferences;
+        const groups = preferences.topicGroups.map(id => topicGroups.find(group => group.id === id)).filter(Boolean);
+        const items = [
+          ...groups.map(group => ({ type: "group", value: group.id, label: `${group.label}（整组）` })),
+          ...preferences.topics.map(topic => ({ type: "topic", value: topic, label: topic }))
+        ];
+        if (!items.length) return '<span class="empty-copy">还没有选择。可以订阅整组，也可以只选具体标签。</span>';
+        return items.map(item => `<button type="button" class="selected-chip ${item.type === "group" ? "group" : ""}" data-remove-${item.type}="${esc(item.value)}" aria-label="移除 ${esc(item.label)}">${esc(item.label)} ×</button>`).join("");
+      }
+
+      function topicTreeMarkup() {
+        const preferences = profile.subscriptionPreferences;
+        if (topicQuery.trim()) {
+          const query = topicQuery.trim().toLowerCase();
+          const results = [];
+          topicGroups.forEach(group => group.subgroups.forEach(subgroup => subgroup.tags.forEach(tag => {
+            if (`${tag}${tag === "AI/机器学习" ? "人工智能" : ""}`.toLowerCase().includes(query) && !results.some(item => item.tag === tag)) results.push({ tag, group: group.label, subgroup: subgroup.label });
+          })));
+          if (!results.length) return '<p class="empty-copy">没有找到相关标签，试试“保研”“AI”或“实习”。</p>';
+          return `<div class="search-results">${results.map(item => `<div class="search-result"><span><strong>${esc(item.tag)}</strong><small>${esc(item.group)} › ${esc(item.subgroup)}</small></span><button type="button" class="chip" data-topic="${esc(item.tag)}" aria-pressed="${preferences.topics.includes(item.tag)}">${preferences.topics.includes(item.tag) ? "已选择 ✓" : "选择"}</button></div>`).join("")}</div>`;
+        }
+        const renderedTags = new Set();
+        return `<div class="bubble-field" aria-label="主题气泡选择">${topicGroups.map(group => {
+          const subscribed = preferences.topicGroups.includes(group.id);
+          const expanded = expandedTopicGroups.has(group.id);
+          const root = `<button type="button" class="topic-bubble ${subscribed ? "is-subscribed" : ""}" data-bubble-key="group:${group.id}" data-diameter="124" data-open-group="${group.id}" style="${bubbleColors(group)}" aria-expanded="${expanded}" aria-label="${group.label}，${expanded ? "收起兴趣标签" : "展开兴趣标签"}"><span class="expand-mark" aria-hidden="true">${expanded ? "−" : "+"}</span><span class="bubble-label">${group.label}</span></button>`;
+          if (!expanded) return root;
+          return root + group.subgroups.map(subgroup => subgroup.tags.filter(tag => {
+            if (renderedTags.has(tag)) return false;
+            renderedTags.add(tag);
+            return true;
+          }).map(tag => `<button type="button" class="topic-bubble leaf-bubble" data-bubble-key="topic:${esc(tag)}" data-diameter="${tag.length > 8 ? 120 : tag.length > 5 ? 104 : tag.length > 3 ? 92 : 82}" data-topic="${esc(tag)}" data-topic-owner="${group.id}" style="${bubbleColors(group)}" aria-pressed="${preferences.topics.includes(tag)}" title="${esc(`${group.label} › ${subgroup.label}`)}" aria-label="${esc(`${group.label} › ${subgroup.label} › ${tag}`)}"><span class="bubble-label">${esc(tag)}</span>${preferences.topics.includes(tag) ? '<span class="selection-tick" aria-hidden="true">✓</span>' : ""}</button>`).join("")).join("");
+        }).join("")}</div>`;
+      }
+
+      function packBubbleTargets(items, width) {
+        const placed = [];
+        const buckets = new Map();
+        const cell = 140;
+        const margin = 10;
+        const xCache = new Map();
+        for (const item of items) {
+          const radius = Math.min(item.diameter / 2, (width - margin * 2) / 2);
+          if (!xCache.has(radius)) {
+            const xs = [];
+            for (let x = margin + radius; x <= width - margin - radius; x += 8) xs.push(x);
+            xs.push(width - margin - radius);
+            xs.sort((a, b) => Math.abs(a - width / 2) - Math.abs(b - width / 2));
+            xCache.set(radius, xs);
+          }
+          let point;
+          for (let y = margin + radius; !point; y += 8) {
+            for (const x of xCache.get(radius)) {
+              const bx = Math.floor(x / cell), by = Math.floor(y / cell);
+              let clear = true;
+              for (let dx = -1; dx <= 1 && clear; dx++) for (let dy = -1; dy <= 1 && clear; dy++) {
+                for (const other of buckets.get(`${bx + dx}:${by + dy}`) || []) {
+                  if (Math.hypot(x - other.x, y - other.y) < radius + other.radius + 12) { clear = false; break; }
+                }
+              }
+              if (clear) { point = { key: item.key, x, y, radius }; break; }
+            }
+          }
+          placed.push(point);
+          const key = `${Math.floor(point.x / cell)}:${Math.floor(point.y / cell)}`;
+          if (!buckets.has(key)) buckets.set(key, []);
+          buckets.get(key).push(point);
+        }
+        return { points: placed, height: Math.max(0, ...placed.map(point => point.y + point.radius)) + margin };
+      }
+
+      function advanceBubblePhysics(nodes, bounds, heldKey = "") {
+        // Soft springs keep reading positions stable; collisions transfer momentum.
+        for (const node of nodes) {
+          if (node.key === heldKey) { node.vx = 0; node.vy = 0; continue; }
+          node.vx = Math.max(-2.2, Math.min(2.2, (node.vx + (node.tx - node.x) * .014) * .88));
+          node.vy = Math.max(-2.2, Math.min(2.2, (node.vy + (node.ty - node.y) * .014) * .88));
+          node.x += node.vx;
+          node.y += node.vy;
+        }
+        for (let pass = 0; pass < 4; pass++) {
+          for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i], b = nodes[j];
+            let dx = b.x - a.x, dy = b.y - a.y;
+            const minimum = a.radius + b.radius + 3;
+            if (Math.abs(dx) >= minimum || Math.abs(dy) >= minimum) continue;
+            let distance = Math.hypot(dx, dy);
+            if (distance >= minimum) continue;
+            if (distance < .001) { dx = 1; dy = 0; distance = 1; }
+            const nx = dx / distance, ny = dy / distance;
+            const wa = a.key === heldKey ? 0 : 1, wb = b.key === heldKey ? 0 : 1;
+            const total = wa + wb;
+            if (!total) continue;
+            const overlap = minimum - distance;
+            a.x -= nx * overlap * wa / total; a.y -= ny * overlap * wa / total;
+            b.x += nx * overlap * wb / total; b.y += ny * overlap * wb / total;
+            const approach = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+            if (approach < 0) {
+              const impulse = -1.45 * approach / total;
+              a.vx -= impulse * nx * wa; a.vy -= impulse * ny * wa;
+              b.vx += impulse * nx * wb; b.vy += impulse * ny * wb;
+            }
+          }
+          for (const node of nodes) {
+            const left = node.radius + 6, right = bounds.width - node.radius - 6;
+            const top = node.radius + 6, bottom = bounds.height - node.radius - 6;
+            if (node.x < left || node.x > right) { node.x = Math.max(left, Math.min(right, node.x)); node.vx *= -.4; }
+            if (node.y < top || node.y > bottom) { node.y = Math.max(top, Math.min(bottom, node.y)); node.vy *= -.4; }
+          }
+        }
+        return Math.max(0, ...nodes.map(node => Math.abs(node.vx) + Math.abs(node.vy) + .04 * Math.hypot(node.tx - node.x, node.ty - node.y)));
+      }
+
+      function stopBubbleMotion() {
+        if (!bubbleMotion) return;
+        cancelAnimationFrame(bubbleMotion.frame);
+        bubbleMotion.abort.abort();
+        for (const animation of bubbleMotion.animations || []) animation.cancel();
+        for (const node of bubbleMotion.nodes) bubblePositions.set(node.key, { x: node.x, y: node.y, tx: node.tx, ty: node.ty, vx: node.vx, vy: node.vy });
+        bubbleMotion = null;
+      }
+
+      function paintBubbles(nodes) {
+        for (const node of nodes) node.button.style.transform = `translate3d(${(node.x - node.radius).toFixed(2)}px, ${(node.y - node.radius).toFixed(2)}px, 0)`;
+      }
+
+      function startBubbleMotion(field, nodes, width, height) {
+        const motion = { field, nodes, width, height, frame: 0, heldKey: "", hoverKey: "", animations: [], lastTime: 0, abort: new AbortController() };
+        bubbleMotion = motion;
+        const wake = () => {
+          if (!motion.frame && !document.hidden && bubbleMotion === motion) motion.frame = requestAnimationFrame(tick);
+        };
+        const tick = time => {
+          motion.frame = 0;
+          if (bubbleMotion !== motion || !field.isConnected || document.hidden) return;
+          if (motion.lastTime && time - motion.lastTime < 14) { wake(); return; }
+          const steps = motion.lastTime ? Math.min(3, Math.max(1, Math.round((time - motion.lastTime) / 16.67))) : 1;
+          motion.lastTime = time;
+          let energy = 0;
+          for (let i = 0; i < steps; i++) energy = advanceBubblePhysics(nodes, motion, motion.heldKey || motion.hoverKey);
+          paintBubbles(nodes);
+          if (energy > .035) wake();
+          else motion.lastTime = 0;
+        };
+        const push = (event, strength) => {
+          const rect = field.getBoundingClientRect();
+          const x = event.clientX - rect.left, y = event.clientY - rect.top;
+          for (const node of nodes) {
+            if (node.key === motion.heldKey || node.key === motion.hoverKey || (document.activeElement === node.button && node.button.matches(":focus-visible"))) continue;
+            const dx = node.x - x, dy = node.y - y, distance = Math.hypot(dx, dy);
+            const reach = node.radius + 70;
+            if (distance > reach) continue;
+            const force = (1 - distance / reach) * strength;
+            node.vx += (distance < 1 ? .6 : dx / distance) * force;
+            node.vy += (distance < 1 ? -.8 : dy / distance) * force;
+          }
+          wake();
+        };
+        const options = { passive: true, signal: motion.abort.signal };
+        field.addEventListener("pointermove", event => {
+          motion.hoverKey = event.pointerType === "touch" ? "" : event.target.closest("[data-bubble-key]")?.dataset.bubbleKey || "";
+          push(event, event.pointerType === "touch" ? .5 : .24);
+        }, options);
+        field.addEventListener("pointerleave", () => { motion.hoverKey = ""; wake(); }, options);
+        field.addEventListener("pointerdown", event => {
+          motion.heldKey = event.target.closest("[data-bubble-key]")?.dataset.bubbleKey || "";
+          push(event, .75);
+        }, options);
+        window.addEventListener("pointerup", event => {
+          if (!motion.heldKey) return;
+          motion.heldKey = "";
+          push(event, .75);
+        }, options);
+        window.addEventListener("pointercancel", () => { motion.heldKey = ""; wake(); }, options);
+        field.addEventListener("wheel", event => push(event, .35), options);
+        field.addEventListener("focusin", event => {
+          const node = nodes.find(node => node.button === event.target);
+          if (node) { node.vx = 0; node.vy = 0; }
+        }, options);
+        document.addEventListener("visibilitychange", () => {
+          motion.lastTime = 0;
+          if (document.hidden) { cancelAnimationFrame(motion.frame); motion.frame = 0; }
+          else wake();
+        }, options);
+        wake();
+      }
+
+      function layoutBubbles(animate = false) {
+        stopBubbleMotion();
+        const splitGroup = pendingSplitGroup;
+        pendingSplitGroup = "";
+        const field = document.querySelector(".bubble-field");
+        if (!field) return;
+        const width = Math.max(180, field.clientWidth);
+        const buttons = [...field.querySelectorAll("[data-bubble-key]")];
+        const layout = packBubbleTargets(buttons.map(button => ({ key: button.dataset.bubbleKey, diameter: Number(button.dataset.diameter) })), width);
+        const dynamic = motionEnabled && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        // Repacking starts from clear positions; selection-only updates preserve momentum.
+        const canResume = dynamic && layout.points.every(point => {
+          const previous = bubblePositions.get(point.key);
+          return previous?.tx === point.x && previous?.ty === point.y;
+        });
+        const nodes = layout.points.map((point, index) => {
+          const button = buttons[index], previous = canResume ? bubblePositions.get(point.key) : null;
+          button.style.width = `${point.radius * 2}px`;
+          button.style.height = `${point.radius * 2}px`;
+          return { ...point, button, tx: point.x, ty: point.y,
+            x: dynamic && previous ? Math.max(point.radius + 6, Math.min(width - point.radius - 6, previous.x)) : point.x,
+            y: dynamic && previous ? Math.max(point.radius + 6, Math.min(layout.height - point.radius - 6, previous.y)) : point.y,
+            vx: dynamic ? previous?.vx || 0 : 0,
+            vy: dynamic ? previous?.vy || (animate && !previous ? -1.5 : 0) : 0 };
+        });
+        field.style.height = `${layout.height}px`;
+        paintBubbles(nodes);
+        if (dynamic) {
+          startBubbleMotion(field, nodes, width, layout.height);
+          if (splitGroup && animate) animateBubbleSplit(nodes, splitGroup);
+        }
+        else for (const node of nodes) bubblePositions.set(node.key, { x: node.x, y: node.y, tx: node.tx, ty: node.ty, vx: 0, vy: 0 });
+      }
+
+      function animateBubbleSplit(nodes, groupId) {
+        const parent = nodes.find(node => node.key === `group:${groupId}`);
+        if (!parent || !parent.button.animate) return;
+        const origin = bubblePositions.get(parent.key) || parent;
+        const children = nodes.filter(node => node.button.dataset.topicOwner === groupId);
+        children.forEach((node, index) => {
+          const from = `translate3d(${origin.x - node.radius}px, ${origin.y - node.radius}px, 0) scale(.16)`;
+          const to = `translate3d(${node.x - node.radius}px, ${node.y - node.radius}px, 0) scale(1)`;
+          const animation = node.button.animate([
+            { transform: from, opacity: 0 },
+            { transform: from, opacity: .6, offset: .08 },
+            { transform: to, opacity: 1 }
+          ], { duration: 780, delay: Math.min(index * 18, 180), easing: "cubic-bezier(.22,.7,.25,1)", fill: "backwards" });
+          bubbleMotion.animations.push(animation);
+        });
+        bubbleMotion.animations.push(parent.button.animate([
+          { transform: `translate3d(${origin.x - parent.radius}px, ${origin.y - parent.radius}px, 0) scale(1)` },
+          { transform: `translate3d(${origin.x - parent.radius}px, ${origin.y - parent.radius}px, 0) scale(1.08)`, offset: .22 },
+          { transform: parent.button.style.transform }
+        ], { duration: 780, easing: "ease-out" }));
+      }
+
+      function refreshTopicChoices() {
+        stopBubbleMotion();
+        document.getElementById("topic-content").innerHTML = topicTreeMarkup();
+        const review = document.querySelector(".selected-review");
+        review.querySelector(".selected-chips").innerHTML = selectedTopicChips();
+        review.querySelector(".selected-review-head span").textContent = `${profile.subscriptionPreferences.topicGroups.length} 个整组 · ${profile.subscriptionPreferences.topics.length} 个具体标签`;
+        document.querySelector(".bulk-topics .chips").innerHTML = groupSubscriptionMarkup();
+        layoutBubbles(true);
+      }
+
+      function groupSubscriptionMarkup() {
+        return topicGroups.map(group => `<button type="button" class="chip" style="${bubbleColors(group)}" data-topic-group="${group.id}" aria-pressed="${profile.subscriptionPreferences.topicGroups.includes(group.id)}">${profile.subscriptionPreferences.topicGroups.includes(group.id) ? "✓ " : ""}${group.label}</button>`).join("");
+      }
+
+      function toggleTopicGroup(id) {
+        if (!topicGroups.some(group => group.id === id)) return false;
+        if (expandedTopicGroups.has(id)) {
+          expandedTopicGroups.delete(id);
+          pendingSplitGroup = "";
+        } else {
+          expandedTopicGroups.add(id);
+          pendingSplitGroup = id;
+        }
+        return true;
+      }
+
+      function renderStep2() {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        chrome(`
+          <p class="eyebrow">FOLLOW YOUR CURIOSITY</p>
+          <h1 tabindex="-1" id="step-title">哪些事情，你不想错过？</h1>
+          <p class="intro">点开一颗大气泡，发现更具体的兴趣。选中喜欢的，让校园生活多一点可能。</p>
+
+          <label class="search-box"><span class="optional">搜索全部具体标签</span><input id="topic-search" value="${esc(topicQuery)}" placeholder="搜索兴趣，如保研、人工智能、实习" aria-label="搜索兴趣标签"></label>
+          <div class="selected-review">
+            <div class="selected-review-head"><strong>已选主题偏好</strong><span>${profile.subscriptionPreferences.topicGroups.length} 个整组 · ${profile.subscriptionPreferences.topics.length} 个具体标签</span></div>
+            <div class="selected-chips" aria-live="polite">${selectedTopicChips()}</div>
+          </div>
+          <div class="bubble-help"><span>同色是一家。大球点一下展开，再点一下收起；已选兴趣会保留。</span><button type="button" id="toggle-motion" aria-pressed="${motionEnabled && !reducedMotion}" ${reducedMotion ? "disabled" : ""}>${reducedMotion ? "已跟随系统减少动态" : motionEnabled ? "关闭动效" : "开启动效"}</button></div>
+          <div id="topic-content">${topicTreeMarkup()}</div>
+          <section class="bulk-topics" aria-labelledby="bulk-title"><h2 id="bulk-title">想一次关注整个类别？</h2><p class="hint">整组订阅涵盖该类别的全部标签；单独点选的小球也会保留在已选列表中。</p><div class="chips">${groupSubscriptionMarkup()}</div></section>
+          <p class="privacy">选好就可以继续。下一步会沿用这些兴趣，你也可以顺手排除不想看的内容。</p>`);
+
+        const search = document.getElementById("topic-search");
+        search.addEventListener("input", event => {
+          topicQuery = event.target.value;
+          refreshTopicChoices();
+        });
+        bindTopicActions();
+        layoutBubbles(true);
+        document.getElementById("toggle-motion").addEventListener("click", event => {
+          motionEnabled = !motionEnabled;
+          event.currentTarget.textContent = motionEnabled ? "关闭动效" : "开启动效";
+          event.currentTarget.setAttribute("aria-pressed", String(motionEnabled));
+          layoutBubbles(false);
+        });
+        if (bubbleObserver) bubbleObserver.disconnect();
+        if (typeof ResizeObserver !== "undefined") {
+          let lastWidth = document.getElementById("topic-content").clientWidth;
+          bubbleObserver = new ResizeObserver(entries => {
+            const width = entries[0].contentRect.width;
+            if (Math.abs(width - lastWidth) < 1) return;
+            lastWidth = width;
+            layoutBubbles(false);
+          });
+          bubbleObserver.observe(document.getElementById("topic-content"));
+        }
+      }
+
+      function bindTopicActions() {
+        const handle = event => {
+          const button = event.target.closest("button");
+          if (!button) return;
+          const data = button.dataset;
+          const preferences = profile.subscriptionPreferences;
+          if ("openGroup" in data) { if (!toggleTopicGroup(data.openGroup)) return; }
+          else if ("topic" in data) preferences.topics = toggleValue(preferences.topics, data.topic);
+          else if ("topicGroup" in data) preferences.topicGroups = toggleValue(preferences.topicGroups, data.topicGroup);
+          else if ("removeTopic" in data) preferences.topics = preferences.topics.filter(value => value !== data.removeTopic);
+          else if ("removeGroup" in data) preferences.topicGroups = preferences.topicGroups.filter(value => value !== data.removeGroup);
+          else return;
+          refreshTopicChoices();
+          const key = ["openGroup", "topic", "topicGroup", "removeTopic", "removeGroup"].find(key => key in data);
+          const replacement = [...document.querySelectorAll("#topic-content button, .selected-chips button, .bulk-topics button")].find(candidate => candidate.dataset[key] === data[key]);
+          if (replacement) replacement.focus({ preventScroll: true });
+        };
+        document.getElementById("topic-content").addEventListener("click", handle);
+        document.querySelector(".selected-review").addEventListener("click", handle);
+        document.querySelector(".bulk-topics").addEventListener("click", handle);
+      }
+
+      function matchesGroup(topic) {
+        return profile.subscriptionPreferences.topicGroups.some(id => {
+          const group = topicGroups.find(item => item.id === id);
+          return group ? groupTags(group).includes(topic) : false;
+        });
+      }
+
+      function evaluateMessage(message) {
+        const identity = profile.userIdentity;
+        const preferences = profile.subscriptionPreferences;
+        const audience = degreeAudience[identity.degree];
+        let eligible = message.audience.includes("全校") || (audience && message.audience.includes(audience));
+        let eligibilityReason;
+        if (message.audience.includes("全校")) eligibilityReason = "面向全校，身份资格通过。";
+        else if (!audience) eligibilityReason = `需要 ${message.audience.join("/ ")} 身份；你尚未填写培养层次，无法确认资格。`;
+        else eligibilityReason = eligible ? `面向 ${message.audience.join("/ ")}，与你的“${identity.degree}”身份一致。` : `面向 ${message.audience.join("/ ")}，与你的“${identity.degree}”身份不一致。`;
+
+        if (!eligible) return { matched: false, steps: [{ ok: false, text: eligibilityReason }, { ok: false, text: "身份资格未通过，后续偏好与过滤条件不再计算。" }] };
+
+        const effectivePublishers = unique([...preferences.publishers, ...(preferences.followOwnCollege && identity.college ? [identity.college] : [])]);
+        const topicMatch = preferences.topics.includes(message.topic) || matchesGroup(message.topic);
+        const publisherMatch = effectivePublishers.includes(message.publisher);
+        const coreMatch = preferences.mode === "identity_all" || topicMatch || publisherMatch;
+        let coreReason = preferences.mode === "identity_all"
+          ? "模式为“全部身份可接收信息”，身份通过后无需再命中主题或机构。"
+          : `偏好按 OR：${topicMatch ? `主题“${message.topic}”命中` : "主题未命中"}；${publisherMatch ? `机构“${message.publisher}”命中` : "机构未命中"}。`;
+
+        if (!coreMatch) return { matched: false, steps: [{ ok: true, text: eligibilityReason }, { ok: false, text: coreReason }, { ok: false, text: "没有进入候选集，因此不再应用类型与地点过滤。" }] };
+
+        const typePass = !preferences.excludedContentTypes.includes(message.type);
+        const isOnline = message.format === "online";
+        const locationPass = isOnline || !preferences.excludedLocations.includes(message.location);
+        const filterPass = typePass && locationPass;
+        const filterReason = `${typePass ? `未排除“${message.type}”` : `你选择了不看“${message.type}”`}；${isOnline ? "线上信息不受校区排除影响" : !message.location ? "未标注校区，不因校区排除" : locationPass ? `未排除“${message.location}”的线下信息` : `你选择了不看“${message.location}”的线下信息`}。`;
+        return { matched: filterPass, steps: [{ ok: true, text: eligibilityReason }, { ok: true, text: coreReason }, { ok: filterPass, text: filterReason }] };
+      }
+
+      function previewMarkup() {
+        return examples.map(message => {
+          const result = evaluateMessage(message);
+          return `<article class="message-card"><div class="message-top"><div><h3>${message.title}</h3><p class="message-meta">${message.publisher} · ${message.topic} · ${message.type} · ${message.format === "online" ? "线上" : message.location || "校区未标注"}</p></div><span class="status ${result.matched ? "yes" : "no"}">${result.matched ? "会进入订阅流" : "不会进入"}</span></div><div class="decision-trace">${result.steps.map((item, index) => `<div class="decision ${item.ok ? "" : "fail"}"><b>${index + 1}</b><span>${esc(item.text)}</span></div>`).join("")}</div></article>`;
+        }).join("");
+      }
+
+      function chipButtons(values, selected, key) {
+        return values.map(value => `<button type="button" class="chip" data-toggle-list="${key}" data-value="${esc(value)}" aria-pressed="${selected.includes(value)}">${selected.includes(value) ? "✓ " : ""}${esc(value)}</button>`).join("");
+      }
+
+      function exclusionButtons(values, selected, key) {
+        return values.map(value => `<button type="button" class="chip exclusion-chip" data-toggle-list="${key}" data-value="${esc(value)}" aria-pressed="${selected.includes(value)}" aria-label="${selected.includes(value) ? "取消排除" : "不看"}${esc(value)}">${selected.includes(value) ? "− 不看 · " : ""}${esc(value)}</button>`).join("");
+      }
+
+      function exclusionSummary() {
+        const preferences = profile.subscriptionPreferences;
+        const excluded = [...preferences.excludedContentTypes, ...preferences.excludedLocations.map(location => `${location}（线下）`)];
+        return excluded.length ? `已排除：${excluded.join("、")}。再次点击即可恢复。` : "目前没有排除任何内容。";
+      }
+
+      function summaryMarkup() {
+        const identity = profile.userIdentity;
+        const preferences = profile.subscriptionPreferences;
+        const modeLabels = { interest: "按兴趣订阅", identity_all: "全部身份可接收信息" };
+        return `<div class="review"><p class="eyebrow">STRUCTURED PREVIEW</p><h2>设置摘要</h2>
+          <p class="category">用户身份</p><dl>
+            <div><dt>培养层次与入学年</dt><dd>${[identity.degree, identity.enrollmentYear && `${identity.enrollmentYear} 级`].filter(Boolean).join(" · ") || "暂未填写"}</dd></div>
+            <div><dt>所在学院</dt><dd>${esc(identity.college) || "暂未填写"}</dd></div>
+          </dl><p class="category">订阅偏好</p><dl>
+            <div><dt>订阅模式</dt><dd>${modeLabels[preferences.mode]}</dd></div>
+            <div><dt>主题偏好（OR）</dt><dd>${[...preferences.topicGroups.map(id => `${topicGroups.find(group => group.id === id)?.label || id}（整组）`), ...preferences.topics].join("、") || "未选择"}</dd></div>
+            <div><dt>另外关注的机构（OR）</dt><dd>${preferences.publishers.join("、") || "未另外关注"}</dd></div>
+            <div><dt>不看的内容类型</dt><dd>${preferences.excludedContentTypes.join("、") || "未排除"}</dd></div>
+            <div><dt>不看的线下校区</dt><dd>${preferences.excludedLocations.join("、") || "未排除"}；线上信息不受校区排除影响</dd></div>
+          </dl></div>`;
+      }
+
+      function renderStep3() {
+        const preferences = profile.subscriptionPreferences;
+        const ownCollege = profile.userIdentity.college;
+        const selectedTopics = [...preferences.topicGroups.map(id => `${topicGroups.find(group => group.id === id)?.label || id}（整组）`), ...preferences.topics];
+        const expanded = id => thirdStepPanels.has(id) ? "open" : "";
+        chrome(`
+          <p class="eyebrow">MADE FOR YOU</p>
+          <h1 tabindex="-1" id="step-title">让好消息，找到你</h1>
+          <p class="intro">兴趣已经记下啦。看看消息预览，有不想看的再排除；没有要调整的，直接完成就好。</p>
+
+          <section class="section-card" aria-labelledby="mode-heading">
+            <div class="section-head"><div><h2 id="mode-heading">${selectedTopics.length ? "你的兴趣，已经记好了" : "还没想好兴趣？没关系"}</h2><p>${preferences.mode === "identity_all" ? "当前接收身份范围内的全部信息，下面的兴趣会保留，供以后切回使用。" : selectedTopics.length ? "沿用上一步的选择，接下来会按这些兴趣为你匹配。" : ownCollege || preferences.publishers.length ? "先按本学院和已关注机构匹配，也可以返回挑几个兴趣。" : "目前还没有匹配范围。可以返回挑选兴趣，或在下方展开更多接收设置。"}</p></div><button type="button" class="group-action" id="edit-interests">${selectedTopics.length ? "修改兴趣" : "去选兴趣"}</button></div>
+            ${selectedTopics.length ? `<div class="confirmed-topics" aria-label="已选择的兴趣">${selectedTopics.map(topic => `<span>${esc(topic)}</span>`).join("")}</div>` : ""}
+            <details class="optional-settings" data-panel="publishers" ${expanded("publishers")}>
+              <summary>还想关注特定部门或学院？ <span class="optional">可选${preferences.publishers.length ? ` · 已关注 ${preferences.publishers.length} 个` : ""}</span></summary>
+              <p class="hint">关注后，该机构发布且适合你身份的信息也会进入订阅流，无需同时命中兴趣。你排除的内容仍然不显示。</p>
+            <div class="publishers">${publisherGroups.map((group, index) => {
+              const visibleValues = group.values.filter(value => value !== ownCollege);
+              return `<details data-panel="publisher-${index}" ${expanded(`publisher-${index}`)}><summary>${group.label} · 已选 ${visibleValues.filter(value => preferences.publishers.includes(value)).length}</summary><div class="chips">${chipButtons(visibleValues, preferences.publishers, "publishers")}</div></details>`;
+            }).join("")}</div>
+            </details>
+            <details class="optional-settings" data-panel="scope" ${expanded("scope")}>
+              <summary>更多接收设置${preferences.mode === "identity_all" ? " · 已开启全部接收" : ""}</summary>
+              <label class="checkline"><input type="checkbox" id="receive-all" ${preferences.mode === "identity_all" ? "checked" : ""}><span><strong>也接收兴趣之外、符合我身份的信息</strong><small>开启后接收范围会扩大；关闭后恢复按已选兴趣和关注机构匹配。下方“不想看”的设置始终有效。</small></span></label>
+            </details>
+          </section>
+
+          <section class="section-card" aria-labelledby="filter-heading">
+            <div class="section-head"><div><h2 id="filter-heading">有没有不想看的？</h2><p>点选的内容会被排除；不点就保留。随时可以再次点击恢复。</p></div><span class="badge">可选</span></div>
+            <div class="filter-grid">
+              <div class="filter-box"><h3>不看这些内容类型</h3><p>例如点选“新闻报道”，就不再显示这类消息。</p><div class="chips">${exclusionButtons(contentTypes, preferences.excludedContentTypes, "excludedContentTypes")}</div></div>
+              <div class="filter-box"><h3>不看这些校区的线下信息</h3><p>只排除所选校区的线下信息。线上信息始终不受校区限制。</p><div class="chips">${exclusionButtons(locations, preferences.excludedLocations, "excludedLocations")}</div></div>
+            </div>
+            <p class="exclusion-status" role="status">${esc(exclusionSummary())}${preferences.excludedContentTypes.length === contentTypes.length ? " 你已排除全部内容类型，当前示例都不会进入订阅流。" : ""}</p>
+          </section>
+
+          <section class="section-card" aria-labelledby="preview-heading">
+            <div class="section-head"><div><h2 id="preview-heading">示例消息预览</h2><p>以下为演示消息，仅解释匹配顺序。完成后将展示本地历史样本；真实消息条件不明确时，会标为待确认。</p></div><span class="badge">LIVE PREVIEW</span></div>
+            <div class="preview-list" id="preview-list">${previewMarkup()}</div>
+          </section>
+          ${summaryMarkup()}
+          <p class="privacy">完成后会保存设置并进入订阅流。你可以随时修改订阅；重新体验不会删除此前的消息反馈。</p>`);
+
+        document.getElementById("edit-interests").addEventListener("click", () => { step = 2; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+        const refreshOptions = () => {
+          thirdStepPanels = new Set([...document.querySelectorAll("details[data-panel]")].filter(panel => panel.open).map(panel => panel.dataset.panel));
+          renderStep3();
+        };
+        document.getElementById("receive-all").addEventListener("change", event => {
+          preferences.mode = event.target.checked ? "identity_all" : "interest";
+          refreshOptions();
+          document.getElementById("receive-all").focus({ preventScroll: true });
+        });
+        document.querySelectorAll("[data-toggle-list]").forEach(button => button.addEventListener("click", () => {
+          const key = button.dataset.toggleList;
+          const value = button.dataset.value;
+          preferences[key] = toggleValue(preferences[key], value);
+          refreshOptions();
+          const replacement = [...document.querySelectorAll("[data-toggle-list]")].find(candidate => candidate.dataset.toggleList === key && candidate.dataset.value === value);
+          replacement?.focus({ preventScroll: true });
+        }));
+      }
+
+      function exportPayload() {
+        return {
+          artifactType: "seu-user-profile-subscription-prototype",
+          schemaVersion: "2026-10-26-prototype-v8",
+          prototypeOnly: true,
+          exportedAt: new Date().toISOString(),
+          userIdentity: structuredClone(profile.userIdentity),
+          subscriptionPreferences: structuredClone(profile.subscriptionPreferences),
+          matchingExplanation: {
+            evaluationOrder: ["identityEligibility", "subscriptionMode", "topicOrPublisherPreference", "excludedContentTypesAndOfflineLocations"],
+            preferenceLogic: "topic OR publisher",
+            filterLogic: "exclude if content type is excluded OR (format is not online AND location is excluded)",
+            onlineLocationPolicy: "online information bypasses location exclusions; identity, subscription scope and content-type exclusions still apply",
+            identityCollegePublisherDefault: true
+          }
+        };
+      }
+
+      function downloadJson() {
+        const blob = new Blob([JSON.stringify(exportPayload(), null, 2)], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "SEU用户身份与订阅设置.json";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast = "已生成 JSON 文件，请在浏览器下载列表中查看。";
+        renderCompletion();
+      }
+
+      function renderCompletion() {
+        completed = true;
+        app.dataset.step = "3";
+        app.innerHTML = `<section class="completion"><p class="eyebrow">NICE TO MEET YOU</p><h1>你的设置已整理好</h1><p class="intro">这是独立前端原型：不会发送到服务器，也不表示后端字段或匹配服务已经上线。</p>${summaryMarkup()}<div class="actions"><button type="button" class="download" id="download-json">导出设置 JSON ↓</button><button type="button" class="secondary" id="edit-profile">修改设置</button><button type="button" class="secondary" id="restart">重新体验</button></div><p class="toast" role="status">${toast}</p><p class="privacy">关闭页面后填写内容不会保留。下载的 JSON 可用于评审字段结构，但不应视为生产接口契约。</p></section>`;
+        document.getElementById("download-json").addEventListener("click", downloadJson);
+        document.getElementById("edit-profile").addEventListener("click", () => { completed = false; step = 3; toast = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+        document.getElementById("restart").addEventListener("click", () => { profile = emptyProfile(); step = 1; completed = false; topicQuery = ""; expandedTopicGroups = new Set(); bubblePositions.clear(); toast = ""; degreeError = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+      }
+
+      function validateRequiredIdentity() {
+        const college = profile.userIdentity.college.trim();
+        if (college && !colleges.includes(college)) {
+          const matches = colleges.filter(name => name.includes(college));
+          if (matches.length === 1) profile.userIdentity.college = matches[0];
+          else {
+            if (step !== 1) { step = 1; render(); }
+            showBridgeError("请从学院列表选择完整名称，或清空学院后继续。");
+            document.getElementById("college-search").focus();
+            return false;
+          }
+        }
+        if (["本科生", "硕士生", "博士生"].includes(profile.userIdentity.degree)) return true;
+        degreeError = "请先选择你的培养层次：本科生、硕士生或博士生，再进入下一步。";
+        if (step !== 1) { step = 1; render(); }
+        document.getElementById("degree-error").textContent = degreeError;
+        document.getElementById("degree-options").setAttribute("aria-invalid", "true");
+        document.getElementById("degree-error").focus();
+        return false;
+      }
+
+      function bindCommon() {
+        document.querySelectorAll("[data-go-step]").forEach(button => button.addEventListener("click", () => {
+          const target = Number(button.dataset.goStep);
+          if (target <= step) { step = target; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+        }));
+        const back = document.querySelector('[data-action="back"]');
+        if (back) back.addEventListener("click", () => { step -= 1; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+        document.querySelector('[data-action="next"]').addEventListener("click", () => {
+          if (!validateRequiredIdentity()) return;
+          if (step < 3) { step += 1; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+          else submitToSubscription();
+        });
+      }
+
+      function render() {
+        stopBubbleMotion();
+        if (bubbleObserver) bubbleObserver.disconnect();
+        if (completed) return renderCompletion();
+        if (step === 1) renderStep1();
+        else if (step === 2) renderStep2();
+        else renderStep3();
+      }
+
+
+      const bridgeChannel = "seu-optimized-onboarding-v1";
+      let bridgeToken = "";
+      let bridgeOrigin = "";
+      let bridgeSubmitting = false;
+      function showBridgeError(message) {
+        let error = document.getElementById("bridge-error");
+        if (!error) { error = document.createElement("p"); error.id = "bridge-error"; error.className = "bridge-error"; error.setAttribute("role", "alert"); app.prepend(error); }
+        error.textContent = message;
+        error.scrollIntoView({ block: "nearest" });
+      }
+      function submitToSubscription() {
+        if (!bridgeToken || bridgeSubmitting) return;
+        stopBubbleMotion();
+        bridgeSubmitting = true;
+        const next = document.querySelector('[data-action="next"]');
+        next.disabled = true;
+        next.textContent = "正在保存…";
+        window.parent.postMessage({ channel: bridgeChannel, type: "complete", token: bridgeToken, profile: structuredClone(profile) }, bridgeOrigin);
+      }
+      window.addEventListener("message", event => {
+        if (event.source !== window.parent || !event.data || event.data.channel !== bridgeChannel) return;
+        const message = event.data;
+        if (message.type === "init" && !bridgeToken && typeof message.token === "string") {
+          bridgeToken = message.token; bridgeOrigin = event.origin;
+          if (message.profile) profile = structuredClone(message.profile);
+          // Keep previously saved interests available even when the optimized demo omitted them.
+          for (const extra of message.extraTopics || []) {
+            const group = topicGroups.find(g => g.id === extra.groupId);
+            if (group && Array.isArray(extra.tags) && extra.tags.length) group.subgroups.push({ label: "已保存的其他兴趣", tags: extra.tags });
+          }
+          render();
+        } else if (message.type === "error" && message.token === bridgeToken) {
+          bridgeSubmitting = false; render(); showBridgeError(String(message.message));
+        }
+      });
+      if (window.parent !== window) window.parent.postMessage({ channel: bridgeChannel, type: "ready" }, "*");
+
+      render();
+    })();
+  </script>
+</body>
+</html>
