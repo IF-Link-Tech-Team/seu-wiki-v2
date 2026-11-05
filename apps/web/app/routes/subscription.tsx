@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useRevalidator } from "react-router";
+import { apiGet, ApiError } from "../lib/api.server";
 import { EmptyState } from "../components/ui/Page";
 import type { SubscriptionItem, SubscriptionProfile, SubscriptionResponse } from "@aihot/contracts/subscription";
 import { SUBSCRIPTION_TAXONOMY as TAX } from "@aihot/industry/subscription-v2";
@@ -8,8 +9,6 @@ import { OPTIMIZED_TOPIC_GROUPS } from "@aihot/industry/subscription-onboarding"
 import { CategoryTabs } from "../features/feed/Filters";
 import { pageMeta } from "../lib/seo";
 
-const PROFILE_KEY = "seuwiki.subscription.v2.profile";
-const FEEDBACK_KEY = "seuwiki.subscription.v2.feedback";
 const emptyProfile = (): SubscriptionProfile => ({ degree: "", college: "", enrollmentYear: "", international: "", interests: [], publishers: [], types: [], identityNotices: true });
 const DEFAULT_REPLAY_DAY = "2026-10-25";
 const tags = TAX.tags as readonly { id: string; label: string; dimension: string; reserved: boolean }[];
@@ -21,21 +20,42 @@ type Feedback = { id: string; title: string; verdict: string; note: string; prof
 
 export function meta() { return pageMeta({ title: "我的订阅 · 本地测试", path: "/subscription", noindex: true }); }
 export function headers() { return { "Cache-Control": "private, no-store" }; }
-export function loader() { return { localTrial: process.env.NODE_ENV !== "production" }; }
-
-export default function Subscription() {
-  const { localTrial } = useLoaderData<typeof loader>();
-  if (!localTrial) return <div className="pb-6">
-    <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">订阅</h1>
-    <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
-    <EmptyState title="订阅尚未开放" action={<Link to="/" className="font-medium text-accent hover:text-accent-ink">返回精选</Link>}>
-      个性化规则仍在设计中，后续将提供与你相关的内容。
-    </EmptyState>
-  </div>;
-  return <SubscriptionTrial />;
+export async function loader({ request }: { request: Request }) {
+  try {
+    const { member } = await apiGet<{ member: { id: string } }>("/api/member/me", { signal: request.signal, headers: { cookie: request.headers.get("cookie") ?? "" } });
+    return { memberId: member.id, unavailable: false, configured: true };
+  } catch (error) {
+    if (request.signal.aborted) throw error;
+    const anonymous = error instanceof ApiError && error.status === 401;
+    const unconfigured = error instanceof ApiError && error.code === "member_auth_unavailable";
+    return { memberId: null, unavailable: !anonymous && !unconfigured, configured: !unconfigured };
+  }
 }
 
-function SubscriptionTrial() {
+export default function Subscription() {
+  const { memberId, configured, unavailable } = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
+  useEffect(() => {
+    const refresh = () => { void revalidator.revalidate(); };
+    window.addEventListener("focus", refresh);
+    window.addEventListener("pageshow", refresh);
+    return () => { window.removeEventListener("focus", refresh); window.removeEventListener("pageshow", refresh); };
+  }, [revalidator.revalidate]);
+  if (!memberId) return <div className="pb-6">
+    <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">订阅</h1>
+    <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
+    <EmptyState title="订阅功能登录后可解锁" action={configured ? <a href="/api/logto/sign-in?redirect=%2Fsubscription" className="font-medium text-accent hover:text-accent-ink">登录 IF.Link 账号</a> : <button disabled className="text-ink-4">登录暂未启用</button>}>
+      登录后，选择你的身份和兴趣，开启专属订阅。
+      {!configured && <span className="mt-3 block">本地尚未配置 IF.Link 统一账户，配置完成后即可登录。</span>}
+      {unavailable && <span role="alert" className="mt-3 block">暂时无法确认登录状态，请稍后刷新重试。</span>}
+    </EmptyState>
+  </div>;
+  return <SubscriptionTrial key={memberId} memberId={memberId} />;
+}
+
+function SubscriptionTrial({ memberId }: { memberId: string }) {
+  const PROFILE_KEY = `seuwiki.subscription.v2.profile:${memberId}`;
+  const FEEDBACK_KEY = `seuwiki.subscription.v2.feedback:${memberId}`;
   const [ready,setReady] = useState(false);
   const [profile,setProfile] = useState<SubscriptionProfile|null>(null);
   const [editing,setEditing] = useState(true);
@@ -67,7 +87,11 @@ function SubscriptionTrial() {
     const controller=new AbortController();const id=++requestId.current;
     setLoading(true);setError("");setData(null);
     fetch("/api/site/subscription-preview",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({profile,asOf,lane,page,q:query}),signal:controller.signal})
-      .then(async res=>{if(!res.ok)throw new Error(res.status===404?"这是本地测试功能，请从本地开发网站打开。":"订阅加载失败，请确认本地服务运行正常，并检查回放日期。");return res.json() as Promise<SubscriptionResponse>;})
+      .then(async res=>{
+        if(res.status===401){window.location.reload();throw new Error("登录已失效，请重新登录。");}
+        if(!res.ok)throw new Error("订阅加载失败，请确认服务运行正常，并检查回放日期。");
+        return res.json() as Promise<SubscriptionResponse>;
+      })
       .then(result=>{if(id===requestId.current)setData(result);})
       .catch(e=>{if(!controller.signal.aborted)setError(String(e.message??e));})
       .finally(()=>{if(id===requestId.current)setLoading(false);});

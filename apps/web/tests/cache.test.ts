@@ -12,8 +12,16 @@ import { releaseBoundCache } from "../app/lib/api.server.ts";
 let web: ChildProcess;
 let origin: string;
 let logs = "";
+test("authenticated subscription renders setup privately", async () => {
+  const res=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=test-member"}});
+  assert.equal(res.status,200);
+  assert.match(res.headers.get("cache-control")??"",/private.*no-store/);
+  const html=await res.text();
+  assert.ok(html.includes("正在准备订阅设置"));
+  assert.ok(!html.includes("订阅功能登录后可解锁"));
+});
 
-test("production keeps the subscription placeholder without collecting a profile", async () => {
+test("production gates anonymous subscription without collecting a profile", async () => {
   const production = spawn(process.execPath, [fileURLToPath(new URL("../server.ts", import.meta.url))], {
     env: { ...process.env, NODE_ENV: "production", WEB_PORT: "0", TRUST_PROXY: "false", API_BASE_URL: `http://127.0.0.1:${(api.address() as AddressInfo).port}` },
     stdio: ["ignore", "pipe", "pipe"],
@@ -34,8 +42,8 @@ test("production keeps the subscription placeholder without collecting a profile
     const response = await fetch(`http://127.0.0.1:${port}/subscription`);
     assert.equal(response.status, 200);
     const html = await response.text();
-    assert.ok(html.includes("订阅尚未开放"));
-    assert.ok(html.includes("个性化规则仍在设计中"));
+    assert.ok(html.includes("订阅功能登录后可解锁"));
+    assert.ok(html.includes("登录后，选择你的身份和兴趣"));
     assert.doesNotMatch(html, /<iframe|正在准备订阅设置|本地试验/);
   } finally {
     if (production.exitCode === null) {
@@ -51,7 +59,7 @@ test("subscription setup is private and retired reports are gone", async () => {
   assert.equal(subscription.status, 200);
   const html = await subscription.text();
   assert.ok(html.includes("我的订阅"));
-  assert.ok(html.includes("本地试验"));
+  assert.ok(html.includes("订阅功能登录后可解锁"));
   assert.match(subscription.headers.get("cache-control") ?? "", /private.*no-store/);
   assert.doesNotMatch(html, /href="[^\"]*(?:channel=firstParty|\/daily|\/weekly|\/monthly)/);
   for (const path of ["/daily", "/daily/archive", "/daily/2026-10-01", "/weekly", "/monthly/2026-10"]) {
@@ -66,8 +74,12 @@ let metaDelayMs = 0;
 const apiCookies: Array<string | undefined> = [];
 const api = createServer((req, res) => {
   const url = new URL(req.url!, "http://api.local");
-  apiCookies.push(req.headers.cookie);
+  if (url.pathname !== "/api/member/me") apiCookies.push(req.headers.cookie);
   res.setHeader("Content-Type", "application/json");
+  if (url.pathname === "/api/member/me") {
+    if(req.headers.cookie === "seuwiki_member=test-member") return res.end(JSON.stringify({member:{id:"test-member"}}));
+    res.statusCode=401;return res.end(JSON.stringify({code:"unauthorized"}));
+  }
   if (url.pathname === "/api/site/meta") {
     const respond = () => res.end(JSON.stringify({ changelogVersion: "2026-09-28T12:00" }));
     return metaDelayMs ? setTimeout(respond, metaDelayMs) : respond();

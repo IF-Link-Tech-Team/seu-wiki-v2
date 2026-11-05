@@ -10,6 +10,8 @@ export default [
   route("experience/*", "routes/experience.$.tsx"),
   route("experience-forum", "routes/experience-forum.tsx"),
   route("handbook", "routes/handbook.tsx"),
+  route("handbook/v2", "routes/handbook.v2.tsx"),
+  route("handbook/v2/:id", "routes/handbook.v2.$id.tsx"),
   route("handbook/article/:id", "routes/handbook.article.$id.tsx"),
   route("handbook/:slug", "routes/handbook.$slug.tsx"),
   route("all", "routes/all.tsx"),

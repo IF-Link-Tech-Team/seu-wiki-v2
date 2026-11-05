@@ -156,6 +156,17 @@ async function loginFlow(returnPath: string): Promise<Jar> {
   return Object.assign(jar, { lastStatus: r3.statusCode, lastBody: r3.body });
 }
 
+test("subscription login returns to subscription and unlocks its API", async () => {
+  let jar=await pendingFlow("/subscription");
+  const complete=await app_.inject({method:"GET",url:"/api/logto/bootstrap-complete",headers:{cookie:cookieHeader(jar)}});
+  assert.equal(complete.statusCode,302);
+  assert.equal(complete.headers.location,"/subscription");
+  jar=merge(jar,jarOf(complete.headers["set-cookie"]));
+  const taxonomy=await app_.inject({method:"GET",url:"/api/site/subscription-taxonomy",headers:{cookie:cookieHeader(jar)}});
+  assert.equal(taxonomy.statusCode,200);
+  assert.equal(taxonomy.headers["cache-control"],"private, no-store");
+});
+
 test("pending identity is consumed once, including concurrent bootstrap requests", async () => {
   rolesForUser = ["community_admin"];
   try {

@@ -10,6 +10,7 @@ import { listPublicSources } from "@aihot/backend/publication/sources";
 import { loadTimeline } from "@aihot/backend/publication/timeline";
 import { loadForYou, parseForYouProfile } from "@aihot/backend/publication/foryou";
 import { loadDoc, loadExperienceIndex, loadSurvivalIndex, resolveDocRedirect } from "@aihot/backend/publication/docs";
+import { guide2Article, guide2Full, guide2Index } from "@aihot/backend/publication/guide-2";
 import { getTaxonomyTerms } from "@aihot/backend/taxonomy/terms";
 import { loadStoryFollowups } from "@aihot/backend/publication/followups";
 import { loadDevelopments, loadGroupReports } from "@aihot/backend/publication/groups";
@@ -23,6 +24,7 @@ import { listTopicSummaries, loadTopicPage } from "@aihot/backend/publication/to
 import { registerFeedback } from "./feedback.ts";
 import { SUBSCRIPTION_TAXONOMY } from "@aihot/industry/subscription-v2";
 import { loadSubscription } from "@aihot/backend/publication/subscription";
+import { memberPrincipal } from "@aihot/backend/member/auth";
 
 import { loadHot, loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
 import { loadSiteCodexResetPage, loadSiteCodexResetDay } from "@aihot/backend/publication/monitor";
@@ -93,10 +95,11 @@ export async function parseFilters(q: Record<string, string>): Promise<FilterPar
 }
 
 export function registerSite(app: FastifyInstance) {
-  // Local v2 trial only. POST keeps profile fields out of URLs and browser history.
+  // Subscription trial requires a member session. POST keeps profile fields out of URLs and history.
   app.post("/api/site/subscription-preview", { bodyLimit: 32768 }, siteHandler(async (req, reply) => {
     reply.header("Cache-Control", "private, no-store");
-    if (process.env.NODE_ENV === "production") return reply.code(404).send({ error: "local_preview_only" });
+    reply.header("Vary", "Cookie");
+    if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
     const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
     const asOf = typeof body.asOf === "string" ? body.asOf : new Date(Date.now()+8*3600000).toISOString().slice(0,10);
     if (!/^20\d{2}-\d{2}-\d{2}$/.test(asOf) || !Number.isFinite(Date.parse(asOf)) || new Date(asOf).toISOString().slice(0,10) !== asOf) throw new BadRequest("invalid date");
@@ -104,10 +107,19 @@ export function registerSite(app: FastifyInstance) {
     const page = Math.max(1,Math.min(200,Math.floor(Number(body.page)||1)));
     return reply.send(await loadSubscription({ profile: body.profile, asOf, lane, page, q: typeof body.q === "string" ? body.q.slice(0,100) : "" }));
   }));
-  app.get("/api/site/subscription-taxonomy", siteHandler(async (_req, reply) => {
+  app.get("/api/site/subscription-taxonomy", siteHandler(async (req, reply) => {
     reply.header("Cache-Control", "private, no-store");
-    if (process.env.NODE_ENV === "production") return reply.code(404).send({ error: "local_preview_only" });
+    reply.header("Vary", "Cookie");
+    if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
     return reply.send(SUBSCRIPTION_TAXONOMY);
+  }));
+  app.get("/api/site/guide/2", siteHandler(async (_req, reply) => reply.send({ articles: guide2Index() })));
+  app.get("/api/site/guide/2/full", siteHandler(async (_req, reply) => reply.send({ articles: guide2Full() })));
+  app.get<{ Params: { slug: string } }>("/api/site/guide/2/:slug", siteHandler(async (req, reply) => {
+    const { slug } = req.params as { slug: string };
+    const article = guide2Article(slug);
+    if (!article) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Article not found." });
+    return reply.send({ article });
   }));
   app.get("/api/site/meta", siteHandler(async (req, reply) => {
     return sendJsonWithEtag(req, reply, siteMeta(), { etagPrefix: "meta", cacheControl: "public, max-age=60, s-maxage=60" });
