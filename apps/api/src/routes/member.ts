@@ -10,6 +10,7 @@ import { cookie, createAdminSessionForIdentity, endSession, parseCookies, SESSIO
 import { forwardRevocation, resolveAccountsUuid } from "@aihot/backend/member/accounts";
 import { createMemberSession, endMemberSession, MEMBER_SESSION_COOKIE, MEMBER_SESSION_DAYS, memberPrincipal, updateMemberProfile, upsertMember } from "@aihot/backend/member/auth";
 import { memberAuthConfig, type MemberAuthConfig } from "@aihot/backend/member/config";
+import { deleteSubscriptionProfile, parseSubscriptionProfile, readSubscriptionProfile, saveSubscriptionProfile, SubscriptionProfileConflict, subscriptionExperimentEnabled } from "@aihot/backend/member/subscription-profile";
 import { beginSignIn, completeSignIn, consumePendingIdentity, OIDC_PENDING_COOKIE, OIDC_PENDING_MAX_AGE, OIDC_STATE_COOKIE, OIDC_STATE_MAX_AGE, OidcError, readPendingIdentity, verifyLogoutToken } from "@aihot/backend/member/oidc";
 import { sendProblem } from "../http/respond.ts";
 
@@ -169,5 +170,60 @@ export function registerMember(app: FastifyInstance) {
       interests: Array.isArray(b.interests) ? (b.interests as string[]) : [],
     });
     return reply.send({ ok: true });
+  });
+
+  const experimentUnavailable = (req: FastifyRequest, reply: FastifyReply) =>
+    sendProblem(req, reply, { status: 404, code: "not_found", detail: "Not found.", cacheControl: "private, no-store" });
+
+  app.get("/api/member/subscription-profile", async (req, reply) => {
+    authHeaders(reply);
+    if (!subscriptionExperimentEnabled()) return experimentUnavailable(req, reply);
+    if (!memberAuthConfig()) return unavailable(req, reply);
+    const member = await memberPrincipal(req.headers.cookie);
+    if (!member) return sendProblem(req, reply, { status: 401, code: "unauthorized", detail: "未登录", cacheControl: "private, no-store, max-age=0" });
+    const stored = await readSubscriptionProfile(member.memberId);
+    return reply.send({ member: { id: member.memberId }, profile: stored?.profile ?? null, revision: stored?.revision ?? 0, taxonomyVersion: stored?.taxonomyVersion ?? null, updatedAt: stored?.updatedAt ?? null, csrf: member.csrf });
+  });
+
+  app.put("/api/member/subscription-profile", { bodyLimit: 32768 }, async (req, reply) => {
+    authHeaders(reply);
+    if (!subscriptionExperimentEnabled()) return experimentUnavailable(req, reply);
+    const cfg = memberAuthConfig();
+    if (!cfg) return unavailable(req, reply);
+    const member = await memberPrincipal(req.headers.cookie);
+    if (!member) return sendProblem(req, reply, { status: 401, code: "unauthorized", detail: "未登录", cacheControl: "private, no-store, max-age=0" });
+    if (req.headers["x-csrf-token"] !== member.csrf) return sendProblem(req, reply, { status: 403, code: "forbidden", detail: "Missing or stale CSRF token." });
+    if (!originMatches(req, cfg.baseUrl)) return sendProblem(req, reply, { status: 403, code: "forbidden", detail: "Origin mismatch." });
+    const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
+    if (!Number.isInteger(body.revision) || Number(body.revision) < 0) return sendProblem(req, reply, { status: 400, code: "invalid_request", detail: "修订号无效" });
+    let profile;
+    try { profile = parseSubscriptionProfile(body.profile); }
+    catch (error) { return sendProblem(req, reply, { status: 400, code: "invalid_profile", detail: error instanceof Error ? error.message : "画像无效" }); }
+    try {
+      return reply.send(await saveSubscriptionProfile(member.memberId, profile, Number(body.revision)));
+    } catch (error) {
+      if (error instanceof SubscriptionProfileConflict) return sendProblem(req, reply, { status: 409, code: "revision_conflict", detail: "画像已在另一页面更新，请重新读取后修改。" });
+      throw error;
+    }
+  });
+
+  app.delete("/api/member/subscription-profile", { bodyLimit: 4096 }, async (req, reply) => {
+    authHeaders(reply);
+    if (!subscriptionExperimentEnabled()) return experimentUnavailable(req, reply);
+    const cfg = memberAuthConfig();
+    if (!cfg) return unavailable(req, reply);
+    const member = await memberPrincipal(req.headers.cookie);
+    if (!member) return sendProblem(req, reply, { status: 401, code: "unauthorized", detail: "未登录", cacheControl: "private, no-store, max-age=0" });
+    if (req.headers["x-csrf-token"] !== member.csrf) return sendProblem(req, reply, { status: 403, code: "forbidden", detail: "Missing or stale CSRF token." });
+    if (!originMatches(req, cfg.baseUrl)) return sendProblem(req, reply, { status: 403, code: "forbidden", detail: "Origin mismatch." });
+    const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
+    if (!Number.isInteger(body.revision) || Number(body.revision) < 0) return sendProblem(req, reply, { status: 400, code: "invalid_request", detail: "修订号无效" });
+    try {
+      await deleteSubscriptionProfile(member.memberId, Number(body.revision));
+      return reply.code(204).send();
+    } catch (error) {
+      if (error instanceof SubscriptionProfileConflict) return sendProblem(req, reply, { status: 409, code: "revision_conflict", detail: "画像已在另一页面更新，请重新读取后修改。" });
+      throw error;
+    }
   });
 }

@@ -42,8 +42,8 @@ test("production gates anonymous subscription without collecting a profile", asy
     const response = await fetch(`http://127.0.0.1:${port}/subscription`);
     assert.equal(response.status, 200);
     const html = await response.text();
-    assert.ok(html.includes("订阅功能登录后可解锁"));
-    assert.ok(html.includes("登录后，选择你的身份和兴趣"));
+    assert.ok(html.includes("订阅尚未开放"));
+    assert.ok(html.includes("小范围试验"));
     assert.doesNotMatch(html, /<iframe|正在准备订阅设置|本地试验/);
   } finally {
     if (production.exitCode === null) {
@@ -74,8 +74,12 @@ let metaDelayMs = 0;
 const apiCookies: Array<string | undefined> = [];
 const api = createServer((req, res) => {
   const url = new URL(req.url!, "http://api.local");
-  if (url.pathname !== "/api/member/me") apiCookies.push(req.headers.cookie);
+  if (!url.pathname.startsWith("/api/member/")) apiCookies.push(req.headers.cookie);
   res.setHeader("Content-Type", "application/json");
+  if (url.pathname === "/api/member/subscription-profile") {
+    if(req.headers.cookie === "seuwiki_member=test-member") return res.end(JSON.stringify({member:{id:"test-member"},profile:null,revision:0,csrf:"test-csrf"}));
+    res.statusCode=401;return res.end(JSON.stringify({code:"unauthorized"}));
+  }
   if (url.pathname === "/api/member/me") {
     if(req.headers.cookie === "seuwiki_member=test-member") return res.end(JSON.stringify({member:{id:"test-member"}}));
     res.statusCode=401;return res.end(JSON.stringify({code:"unauthorized"}));
@@ -113,7 +117,7 @@ before(async () => {
   api.listen(0, "127.0.0.1");
   await once(api, "listening");
   web = spawn(process.execPath, [fileURLToPath(new URL("../server.ts", import.meta.url))], {
-    env: { ...process.env, NODE_ENV: "development", WEB_PORT: "0", TRUST_PROXY: "false", API_BASE_URL: `http://127.0.0.1:${(api.address() as AddressInfo).port}` },
+    env: { ...process.env, NODE_ENV: "development", SUBSCRIPTION_EXPERIMENT_ENABLED: "true", WEB_PORT: "0", TRUST_PROXY: "false", API_BASE_URL: `http://127.0.0.1:${(api.address() as AddressInfo).port}` },
     stdio: ["ignore", "pipe", "pipe"],
   });
   await new Promise<void>((resolve, reject) => {

@@ -90,12 +90,18 @@ export function annotateSubscription(input: { title: string; summary: string | n
 
   // Capture only a contiguous explicit audience clause. Mentions elsewhere, publishers and
   // historical news about students never become eligibility constraints.
-  const clauses = [...text.matchAll(/(?<!不|非)(?:仅限|面向|(?:适用|参加|申报|申请|报名|资助)对象(?:\s*[：:]\s*|为|是|包括)?)([^。；;，,\n]{1,100})/g)].map(m => m[1]);
+  // Commas often join parallel audiences ("本科生，硕士生和博士生"). Stop only at
+  // an actual sentence boundary so a partial first item never becomes a hard restriction.
+  const clauses = [...text.matchAll(/(?<!不|非)(?:仅限|面向|(?:适用|参加|申报|申请|报名|资助)对象(?:\s*[：:]\s*|为|是|包括)?)([^。！？；;\n]{1,180})/g)].map(m => m[1]);
   const degrees: string[] = [], colleges: string[] = [], years: string[] = [];
   let schoolwide = false, internationalOnly = false, staffOnly = false;
   for (const clause of clauses) {
     // Ambiguous negation / alternatives require review rather than exclusion.
-    if (/不含|除|不限|或.*条件|非.*生|20\d{2}[至—-]/.test(clause) || /学院.*本科.*学院.*硕士|学院.*硕士.*学院.*本科/.test(clause)) { warnings.push("受众条件含例外或组合，请核对原文"); continue; }
+    if (/不含|不包括|不接受|不得|除外|除|不限|或.*条件|非.*生|20\d{2}[至—-]/.test(clause)
+      || /学院.*本科.*学院.*硕士|学院.*硕士.*学院.*本科/.test(clause)
+      || /(?:，|,|、|和|及|与|或)\s*$/.test(clause)) {
+      warnings.push("受众条件含例外、组合或不完整对象句，请核对原文"); continue;
+    }
     let found = false;
     if (/(?:任课老师|任课教师|教职工|辅导员|各位教师)/.test(clause) && !/学生|同学|师生/.test(clause.replace(/研究生/g,""))) {
       staffOnly = true; evidence.push({ tag: "教职工对象", field: "明确对象句", quote: clause }); continue;

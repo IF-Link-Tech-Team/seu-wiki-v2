@@ -25,6 +25,7 @@ import { registerFeedback } from "./feedback.ts";
 import { SUBSCRIPTION_TAXONOMY } from "@aihot/industry/subscription-v2";
 import { loadSubscription } from "@aihot/backend/publication/subscription";
 import { memberPrincipal } from "@aihot/backend/member/auth";
+import { subscriptionExperimentEnabled } from "@aihot/backend/member/subscription-profile";
 
 import { loadHot, loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
 import { loadSiteCodexResetPage, loadSiteCodexResetDay } from "@aihot/backend/publication/monitor";
@@ -99,6 +100,7 @@ export function registerSite(app: FastifyInstance) {
   app.post("/api/site/subscription-preview", { bodyLimit: 32768 }, siteHandler(async (req, reply) => {
     reply.header("Cache-Control", "private, no-store");
     reply.header("Vary", "Cookie");
+    if (!subscriptionExperimentEnabled()) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Not found.", cacheControl: "private, no-store" });
     if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
     const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
     const asOf = typeof body.asOf === "string" ? body.asOf : new Date(Date.now()+8*3600000).toISOString().slice(0,10);
@@ -110,6 +112,7 @@ export function registerSite(app: FastifyInstance) {
   app.get("/api/site/subscription-taxonomy", siteHandler(async (req, reply) => {
     reply.header("Cache-Control", "private, no-store");
     reply.header("Vary", "Cookie");
+    if (!subscriptionExperimentEnabled()) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Not found.", cacheControl: "private, no-store" });
     if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
     return reply.send(SUBSCRIPTION_TAXONOMY);
   }));

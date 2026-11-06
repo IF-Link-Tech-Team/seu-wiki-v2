@@ -610,7 +610,7 @@
             </div>
           </section>
 
-          <p class="privacy">设置会保存在当前浏览器，提交后由本机服务核对订阅条件。选择学院后默认关注本学院信息；明确的身份限制仍然生效。</p>`);
+          <p class="privacy">${bridgeToken ? "提交后，身份、兴趣和接收偏好将发送至 SEU Wiki 服务器，保存在 Wiki 数据库并与统一账号关联，用于订阅匹配。可随时修改或清除。历史测试反馈仍保存在当前浏览器。" : "这是离线演示，填写内容不会发送到服务器；关闭页面后不会保留，可在完成页导出 JSON。"} 选择学院后默认关注本学院信息；明确的身份限制仍然生效。</p>`);
 
         document.querySelectorAll("[data-degree]").forEach(button => button.addEventListener("click", () => {
           identity.degree = button.dataset.degree;
@@ -1216,6 +1216,8 @@
             if (group && Array.isArray(extra.tags) && extra.tags.length) group.subgroups.push({ label: "已保存的其他兴趣", tags: extra.tags });
           }
           render();
+        } else if (message.type === "saved" && message.token === bridgeToken) {
+          bridgeSubmitting = false; completed = true; render();
         } else if (message.type === "error" && message.token === bridgeToken) {
           bridgeSubmitting = false; render(); showBridgeError(String(message.message));
         }

@@ -36,6 +36,23 @@ test("explicit incompatible degree overrides even matching interest and publishe
   const a=item("仅限硕士研究生。欢迎报名。");
   const r=match(a,profile({...p,publishers:["publisher:自动化学院"]}),day);assert.equal(r.lane,"excluded");assert.match(r.reasons.join(" "),/培养层次/);
 });
+test("parallel degree audiences survive Chinese and English commas without false exclusion",()=>{
+  for(const separator of ["，", ", "]){
+    const a=item(`面向本科生${separator}硕士生和博士生均可参加。`);
+    assert.deepEqual(a.audience.degrees,["本科生","硕士生","博士生"]);
+    for(const degree of ["本科生","硕士生","博士生"]){
+      assert.notEqual(match(a,profile({...p,degree}),day).lane,"excluded",degree);
+    }
+  }
+});
+test("incomplete or negative audience clauses stay reviewable instead of becoming hard degree filters",()=>{
+  for(const summary of ["面向本科生，", "面向本科生，不接受硕士生。", "面向计算机科学与工程学院本科生，自动化学院硕士生。"]){
+    const a=item(summary);
+    assert.deepEqual(a.audience.degrees,[]);
+    assert.equal(match(a,p,day).lane,"possible");
+    assert.ok(a.warnings.some(w=>w.includes("核对原文")));
+  }
+});
 test("explicit college and intake restrictions are conjunctive; multi degrees are OR",()=>{
   const a=item("面向自动化学院2024级本科生及硕士生。欢迎参与。");
   assert.equal(match(a,p,day).lane,"excluded");

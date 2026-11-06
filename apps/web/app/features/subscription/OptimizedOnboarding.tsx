@@ -8,7 +8,7 @@ const CHANNEL = "seu-optimized-onboarding-v1";
 /** Retains the supplied HTML's layout and physics in a script-only sandbox. */
 export function OptimizedOnboarding({ initialProfile, onComplete, onCancel }: {
   initialProfile?: SubscriptionProfile | null;
-  onComplete: (profile: SubscriptionProfile) => void;
+  onComplete: (profile: SubscriptionProfile) => Promise<void>;
   onCancel?: () => void;
 }) {
   const frame = useRef<HTMLIFrameElement>(null);
@@ -27,12 +27,15 @@ export function OptimizedOnboarding({ initialProfile, onComplete, onCancel }: {
       if (event.source !== frame.current?.contentWindow || event.origin !== "null" || event.data?.channel !== CHANNEL) return;
       if (event.data.type === "ready") { setReady(true); initialize(); return; }
       if (event.data.type !== "complete" || !token.current || event.data.token !== token.current || completed.current) return;
-      try {
+      completed.current = true;
+      void (async () => { try {
         const profile = fromOptimizedProfile(event.data.profile, callbacks.current.initialProfile);
-        callbacks.current.onComplete(profile); completed.current = true;
+        await callbacks.current.onComplete(profile);
+        frame.current?.contentWindow?.postMessage({ channel: CHANNEL, type: "saved", token: token.current }, "*");
       } catch (error) {
+        completed.current = false;
         frame.current?.contentWindow?.postMessage({ channel: CHANNEL, type: "error", token: token.current, message: error instanceof Error ? error.message : "设置未能保存，请重试。" }, "*");
-      }
+      } })();
     }
     window.addEventListener("message", receive);
     return () => window.removeEventListener("message", receive);

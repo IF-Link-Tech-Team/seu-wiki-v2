@@ -14,6 +14,7 @@ const key=tag();const source=`test-subscription-${key}`;const app=await buildApp
 const day=new Date(Date.now()+8*3600000).toISOString().slice(0,10);
 const ids:string[]=[];
 before(async()=>{
+  process.env.SUBSCRIPTION_EXPERIMENT_ENABLED="true";
   const id=await upsertMember({uuid:randomUUID(),sub:`sub-${key}`,email:null,name:"Test"});
   sessionCookie=`seuwiki_member=${await createMemberSession(id,{sub:`sub-${key}`,sid:null,iat:null},undefined)}`;
   const expiredId=await upsertMember({uuid:randomUUID(),sub:`expired-${key}`,email:null,name:"Expired"});
@@ -31,7 +32,7 @@ before(async()=>{
   await sql`UPDATE publications SET visible_after=${new Date(Date.now()+86400000)} WHERE article_id=${ids[2]}`;
   await sql`UPDATE publications SET eligible=false WHERE article_id=${ids[3]}`;
 });
-after(async()=>{await app.close();await closeDb();});
+after(async()=>{delete process.env.SUBSCRIPTION_EXPERIMENT_ENABLED;await app.close();await closeDb();});
 
 test("subscription POST respects publication visibility, eligibility and release, without leaking bodies",async()=>{
   const res=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:['topic:AI/机器学习']},asOf:day,lane:'matched',q:key}});
