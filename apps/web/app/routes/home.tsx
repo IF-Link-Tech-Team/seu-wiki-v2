@@ -8,7 +8,6 @@ import { loadOr404, queryString, releaseBoundCache } from "../lib/api.server";
 import { listPath, organizationLd, pageMeta } from "../lib/seo";
 import { Wordmark } from "../components/Logo";
 import { Timeline } from "../features/feed/Timeline";
-import { HotTopics } from "../features/feed/HotTopics";
 import { CategoryTabs, SearchField, SearchIconLink, SelectedSourceChips, SourceFilter } from "../features/feed/Filters";
 import { DayList, Pagination } from "../features/feed/DayList";
 import { EmptyState } from "../components/ui/Page";
@@ -97,7 +96,7 @@ export default function Home() {
 
   return (
     <div className="pb-6">
-      {/* Phones: brand bar, today's hot topics, then the feed under its title. */}
+      {/* Phones: brand bar, then the feed under its title. */}
       <div className="flex h-14 items-center justify-between lg:hidden">
         <Wordmark size={20} className="text-ink" />
         <TodayLabel />
@@ -113,8 +112,6 @@ export default function Home() {
         </div>
         <SelectedSourceChips options={sourceOptions} selected={selectedSources} />
       </div>
-
-      {mode === "timeline" && timeline?.hot && <HotTopics entries={timeline.hot} />}
 
       <h2 className="mt-6 text-[20px] font-bold text-ink lg:hidden">{filters.tag ? title : mode === "timeline" ? "最新精选" : title}</h2>
       <div className="-mx-4 mt-3 flex items-center gap-2 pl-4 pr-2 lg:hidden">

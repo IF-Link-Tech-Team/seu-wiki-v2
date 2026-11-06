@@ -81,7 +81,10 @@ async function store(sourceId: string, candidates: Candidate[], backfill: string
   return { created, revised };
 }
 
-export async function collectSource(sourceId: string, opts: { force?: boolean } = {}): Promise<CollectResult> {
+export async function collectSource(sourceId: string, opts: { force?: boolean; maxItems?: number } = {}): Promise<CollectResult> {
+  if (opts.maxItems !== undefined && (!Number.isInteger(opts.maxItems) || opts.maxItems < 0 || opts.maxItems > MAX_ITEMS_PER_RUN)) {
+    throw new Error("maxItems must be an integer from 0 to 60");
+  }
   const source = await loadSource(sourceId);
   if (!source) return { sourceId, status: "skipped", found: 0, created: 0, revised: 0, error: "missing" };
   if (!source.enabled && !opts.force) return { sourceId, status: "skipped", found: 0, created: 0, revised: 0, error: "paused" };
@@ -137,6 +140,8 @@ export async function collectSource(sourceId: string, opts: { force?: boolean } 
       candidates = candidates.slice(0, MAX_ITEMS_PER_RUN);
     }
 
+    // A manual batch can impose a smaller one-run cap without changing saved source configuration.
+    if (opts.maxItems !== undefined) candidates = candidates.slice(0, opts.maxItems);
     // Detail pages only for material we have not seen (bounded per run), and only for what the listing lacks.
     const d = source.config.detail;
     const known = await storedTitles(candidates.map((c) => c.url));

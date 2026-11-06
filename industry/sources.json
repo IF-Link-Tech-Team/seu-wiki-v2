@@ -43,15 +43,16 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/xjgl/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "#wp_news_w8 tr",
-        "linkSelector": "a[title]",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
         "publishedAtRegex": "(20\\d{2}-\\d{2}-\\d{2})",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
-        }
+        },
+        "publishedAtSelector": ".news-item-date-ym"
       },
       "site_fulltext": true
     },
@@ -197,17 +198,18 @@
       "kind": "mp_account",
       "tier": "T1",
       "participation_mode": "editorial",
-      "interval_minutes": 60,
+      "interval_minutes": 1440,
       "tags": [
         "公众号",
         "校级"
       ],
-      "enabled": false,
+      "enabled": true,
       "config": {
-        "nickname": "东南大学",
-        "wxid": "seu_dndx"
+        "ghid": "gh_cd4d75783b0d",
+        "nickname": "东南大学"
       },
-      "site_fulltext": true
+      "site_fulltext": false,
+      "syndicate_fulltext": false
     },
     {
       "id": "mp-seu-jwc",
@@ -216,34 +218,37 @@
       "tier": "T1",
       "owner_entity_id": "jwc",
       "participation_mode": "editorial",
-      "interval_minutes": 60,
+      "interval_minutes": 1440,
       "tags": [
         "公众号",
-        "教务处"
+        "校级"
       ],
-      "enabled": false,
+      "enabled": true,
       "config": {
+        "ghid": "gh_3074ca908d94",
         "nickname": "东南大学教务处"
       },
-      "site_fulltext": true
+      "site_fulltext": false,
+      "syndicate_fulltext": false
     },
     {
       "id": "mp-seu-jyzd",
-      "name": "公众号·就业指导中心",
+      "name": "公众号·东南大学就业指导中心",
       "kind": "mp_account",
       "tier": "T1",
       "participation_mode": "editorial",
-      "interval_minutes": 60,
+      "interval_minutes": 1440,
       "tags": [
         "公众号",
-        "就业"
+        "校级"
       ],
-      "enabled": false,
+      "enabled": true,
       "config": {
-        "nickname": "东南大学就业指导中心",
-        "wxid": "jyzdzxseu"
+        "ghid": "gh_ff87f01756e8",
+        "nickname": "东南大学就业指导中心"
       },
-      "site_fulltext": true
+      "site_fulltext": false,
+      "syndicate_fulltext": false
     },
     {
       "kind": "web_list",
@@ -1819,12 +1824,10 @@
       "config": {
         "url": "https://arch.seu.edu.cn/jz_en/2022InternationalOnlineSchool/list.htm",
         "baseUrl": "https://arch.seu.edu.cn",
-        "itemSelector": "li.news",
+        "itemSelector": ".wp_articlecontent .arti_title a[href]",
         "linkSelector": "a[href]",
-        "titleSelector": "div.news_title",
-        "publishedAtSelector": "div.news_time",
         "allowUrlPrefixes": [
-          "https://arch.seu.edu.cn/2"
+          "https://arch.seu.edu.cn/jz_en/2"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -5064,7 +5067,9 @@
         "linkSelector": ".news_title a",
         "publishedAtSelector": ".news_meta",
         "allowUrlPrefixes": [
-          "https://math.seu.edu.cn/2"
+          "https://math.seu.edu.cn/2",
+          "https://mp.weixin.qq.com/s/",
+          "https://mp.weixin.qq.com/s?"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -6226,7 +6231,10 @@
         "linkSelector": "[class^=\"news_title\"] a",
         "publishedAtSelector": "[class^=\"news_meta\"]",
         "allowUrlPrefixes": [
-          "https://sfl.seu.edu.cn/2"
+          "https://sfl.seu.edu.cn/2",
+          "https://mp.weixin.qq.com/s/",
+          "https://mp.weixin.qq.com/s?",
+          "https://sfl.seu.edu.cn/_redirect?siteId=35&columnId=9876&articleId="
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -7747,7 +7755,10 @@
         "linkSelector": ".news_title a",
         "publishedAtSelector": ".news_meta",
         "allowUrlPrefixes": [
-          "https://med.seu.edu.cn/2"
+          "https://med.seu.edu.cn/2",
+          "https://mp.weixin.qq.com/s/",
+          "https://mp.weixin.qq.com/s?",
+          "https://med.seu.edu.cn/_redirect?siteId=27&columnId=34359&articleId="
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -7828,7 +7839,8 @@
         "linkSelector": ".news_title a",
         "publishedAtSelector": ".news_meta",
         "allowUrlPrefixes": [
-          "https://bme.seu.edu.cn/2"
+          "https://bme.seu.edu.cn/2",
+          "https://bme.seu.edu.cn/_upload/article/files/"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -9214,7 +9226,8 @@
         "linkSelector": ".news_title a",
         "publishedAtSelector": ".news_meta",
         "allowUrlPrefixes": [
-          "https://rcb.seu.edu.cn/2"
+          "https://rcb.seu.edu.cn/2",
+          "https://news.seu.edu.cn/2"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -9376,7 +9389,10 @@
         "linkSelector": ".news_title a",
         "publishedAtSelector": ".news_meta",
         "allowUrlPrefixes": [
-          "https://dwxc.seu.edu.cn/2"
+          "https://dwxc.seu.edu.cn/2",
+          "https://www.ccdi.gov.cn/",
+          "https://www.news.cn/",
+          "https://dwxc.seu.edu.cn/_redirect?siteId=438&columnId=28379&articleId="
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -10345,9 +10361,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/jwxx/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10372,9 +10388,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/sjjx/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10399,9 +10415,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/jxyj/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10426,9 +10442,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/gjjl/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10453,9 +10469,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/jfzx/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10480,9 +10496,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/jwglgd/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10507,11 +10523,12 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/sjglgd/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
-          "https://jwc.seu.edu.cn/2"
+          "https://jwc.seu.edu.cn/2",
+          "https://jwc.seu.edu.cn/_upload/article/files/"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -10534,11 +10551,12 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/sxsj/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
-          "https://jwc.seu.edu.cn/2"
+          "https://jwc.seu.edu.cn/2",
+          "https://jwc.seu.edu.cn/_upload/article/files/"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -10561,9 +10579,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/gjjlgd/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10588,9 +10606,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/jwgl/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10615,9 +10633,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/sjjx_23346/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10642,11 +10660,12 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/cgjl/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
-          "https://jwc.seu.edu.cn/2"
+          "https://jwc.seu.edu.cn/2",
+          "https://jwc.seu.edu.cn/_upload/article/files/"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -10669,11 +10688,12 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/jwk/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
-          "https://jwc.seu.edu.cn/2"
+          "https://jwc.seu.edu.cn/2",
+          "https://jwc.seu.edu.cn/_upload/article/files/"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -10696,9 +10716,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/sjk/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -10723,11 +10743,12 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/gjjl_21697/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
-          "https://jwc.seu.edu.cn/2"
+          "https://jwc.seu.edu.cn/2",
+          "https://jwc.seu.edu.cn/_upload/article/files/"
         ],
         "_aihot": {
           "initialBackfillLimit": 5
@@ -16236,9 +16257,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/cbxx/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -16263,9 +16284,9 @@
       "config": {
         "url": "https://jwc.seu.edu.cn/lcsdjt/list.htm",
         "baseUrl": "https://jwc.seu.edu.cn",
-        "itemSelector": "[id^=wp_news_w] table tr",
-        "linkSelector": "td a[title]",
-        "publishedAtSelector": "td div",
+        "itemSelector": ".news-list-item",
+        "linkSelector": ".news-item-title a[href]",
+        "publishedAtSelector": ".news-item-date-ym",
         "allowUrlPrefixes": [
           "https://jwc.seu.edu.cn/2"
         ],
@@ -17357,14 +17378,24 @@
         "linkSelector": ".news_title a",
         "titleSelector": "div.news_title",
         "publishedAtSelector": "div.news_meta",
-        "detail": { "maxFetches": 10, "publishedAtSelector": "span.arti_update" },
-        "allowUrlPrefixes": ["https://sph.seu.edu.cn/2"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "publishedAtSelector": "span.arti_update"
+        },
+        "allowUrlPrefixes": [
+          "https://sph.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["学院与书院", "公共卫生学院"],
+      "tags": [
+        "学院与书院",
+        "公共卫生学院"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17380,14 +17411,24 @@
         "linkSelector": ".news_title a",
         "titleSelector": "div.news_title",
         "publishedAtSelector": "div.news_meta",
-        "detail": { "maxFetches": 10, "publishedAtSelector": "span.arti_update" },
-        "allowUrlPrefixes": ["https://sph.seu.edu.cn/2"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "publishedAtSelector": "span.arti_update"
+        },
+        "allowUrlPrefixes": [
+          "https://sph.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["学院与书院", "公共卫生学院"],
+      "tags": [
+        "学院与书院",
+        "公共卫生学院"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17403,14 +17444,24 @@
         "linkSelector": ".news_title a",
         "titleSelector": "div.news_title",
         "publishedAtSelector": "div.news_meta",
-        "detail": { "maxFetches": 10, "publishedAtSelector": "span.arti_update" },
-        "allowUrlPrefixes": ["https://youth.seu.edu.cn/2"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "publishedAtSelector": "span.arti_update"
+        },
+        "allowUrlPrefixes": [
+          "https://youth.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["机关与职能部门", "校团委"],
+      "tags": [
+        "机关与职能部门",
+        "校团委"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17426,14 +17477,24 @@
         "linkSelector": ".news_title a",
         "titleSelector": "div.news_title",
         "publishedAtSelector": "div.news_meta",
-        "detail": { "maxFetches": 10, "publishedAtSelector": "span.arti_update" },
-        "allowUrlPrefixes": ["https://youth.seu.edu.cn/2"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "publishedAtSelector": "span.arti_update"
+        },
+        "allowUrlPrefixes": [
+          "https://youth.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["机关与职能部门", "校团委"],
+      "tags": [
+        "机关与职能部门",
+        "校团委"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17449,14 +17510,24 @@
         "linkSelector": ".news_title a",
         "titleSelector": "div.news_title",
         "publishedAtSelector": "div.news_meta",
-        "detail": { "maxFetches": 10, "publishedAtSelector": "span.arti_update" },
-        "allowUrlPrefixes": ["https://youth.seu.edu.cn/2"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "publishedAtSelector": "span.arti_update"
+        },
+        "allowUrlPrefixes": [
+          "https://youth.seu.edu.cn/2"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["机关与职能部门", "校团委"],
+      "tags": [
+        "机关与职能部门",
+        "校团委"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17472,14 +17543,25 @@
         "linkSelector": "a[href]",
         "titleSelector": "h3",
         "publishedAtSelector": ".text-ldata",
-        "detail": { "maxFetches": 10, "titleSelector": ".art-tit h3", "publishedAtSelector": ".art-tit p" },
-        "allowUrlPrefixes": ["https://nic.seu.edu.cn/info/"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "titleSelector": ".art-tit h3",
+          "publishedAtSelector": ".art-tit p"
+        },
+        "allowUrlPrefixes": [
+          "https://nic.seu.edu.cn/info/"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["机关与职能部门", "网络与信息中心"],
+      "tags": [
+        "机关与职能部门",
+        "网络与信息中心"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17495,14 +17577,25 @@
         "linkSelector": "a[href]",
         "titleSelector": "h3",
         "publishedAtSelector": ".text-ldata",
-        "detail": { "maxFetches": 10, "titleSelector": ".art-tit h3", "publishedAtSelector": ".art-tit p" },
-        "allowUrlPrefixes": ["https://nic.seu.edu.cn/info/"],
-        "_aihot": { "initialBackfillLimit": 5 }
+        "detail": {
+          "maxFetches": 10,
+          "titleSelector": ".art-tit h3",
+          "publishedAtSelector": ".art-tit p"
+        },
+        "allowUrlPrefixes": [
+          "https://nic.seu.edu.cn/info/"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["机关与职能部门", "网络与信息中心"],
+      "tags": [
+        "机关与职能部门",
+        "网络与信息中心"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17518,14 +17611,20 @@
         "linkSelector": "a[title]",
         "titleSelector": "span.Article_Title",
         "publishedAtSelector": "span.Article_PublishDate",
-        "allowUrlPrefixes": ["https://itscenter.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://itscenter.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17541,14 +17640,20 @@
         "linkSelector": "a[title]",
         "titleSelector": "span.Article_Title",
         "publishedAtSelector": "span.Article_PublishDate",
-        "allowUrlPrefixes": ["https://idscc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://idscc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17564,14 +17669,20 @@
         "linkSelector": "a[title]",
         "titleSelector": "a[title]",
         "publishedAtSelector": "td[align=\"left\"]",
-        "allowUrlPrefixes": ["https://kluahc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://kluahc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17587,14 +17698,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "td div",
-        "allowUrlPrefixes": ["https://ncrl.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://ncrl.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17610,14 +17727,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://cse.seu.edu.cn/edulab/2"],
+        "allowUrlPrefixes": [
+          "https://cse.seu.edu.cn/edulab/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17633,14 +17756,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://cse.seu.edu.cn/edulab/2"],
+        "allowUrlPrefixes": [
+          "https://cse.seu.edu.cn/edulab/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17656,14 +17785,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://mems.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://mems.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17679,14 +17814,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://bme.seu.edu.cn/cdls/2"],
+        "allowUrlPrefixes": [
+          "https://bme.seu.edu.cn/cdls/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17702,14 +17843,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://bme.seu.edu.cn/cdls/2"],
+        "allowUrlPrefixes": [
+          "https://bme.seu.edu.cn/cdls/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17725,14 +17872,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "td div",
-        "allowUrlPrefixes": ["https://etcc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://etcc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17748,14 +17901,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "td div",
-        "allowUrlPrefixes": ["https://etcc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://etcc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17771,14 +17930,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "span",
-        "allowUrlPrefixes": ["https://nci.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://nci.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17794,14 +17959,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://photontech.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://photontech.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17817,14 +17988,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://yauc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://yauc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17840,14 +18017,20 @@
         "linkSelector": "span.Article_Title a[title]",
         "titleSelector": "span.Article_Title",
         "publishedAtSelector": "span.Article_PublishDate",
-        "allowUrlPrefixes": ["https://atc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://atc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17863,14 +18046,20 @@
         "linkSelector": "span.Article_Title a[title]",
         "titleSelector": "span.Article_Title",
         "publishedAtSelector": "span.Article_PublishDate",
-        "allowUrlPrefixes": ["https://atc.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://atc.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17886,14 +18075,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://digimed.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://digimed.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17909,14 +18104,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://digimed.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://digimed.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17932,14 +18133,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "td div",
-        "allowUrlPrefixes": ["https://iiuse.seu.edu.cn/bf_center/2"],
+        "allowUrlPrefixes": [
+          "https://iiuse.seu.edu.cn/bf_center/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17955,14 +18162,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://civil.seu.edu.cn/sdpmi/2"],
+        "allowUrlPrefixes": [
+          "https://civil.seu.edu.cn/sdpmi/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -17978,14 +18191,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://civil.seu.edu.cn/sdpmi/2"],
+        "allowUrlPrefixes": [
+          "https://civil.seu.edu.cn/sdpmi/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18001,14 +18220,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://rqyjy.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://rqyjy.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18024,14 +18249,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://aiia.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://aiia.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18047,14 +18278,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "td div",
-        "allowUrlPrefixes": ["https://mps.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://mps.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18070,14 +18307,20 @@
         "linkSelector": "a[href]",
         "titleSelector": "a[href]",
         "publishedAtSelector": "td div",
-        "allowUrlPrefixes": ["https://mps.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://mps.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18093,14 +18336,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://iirs.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://iirs.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18116,14 +18365,20 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://iirs.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://iirs.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
@@ -18139,14 +18394,1559 @@
         "linkSelector": ".news_title a",
         "titleSelector": ".news_title",
         "publishedAtSelector": ".news_meta",
-        "allowUrlPrefixes": ["https://gaoyanyuan.seu.edu.cn/2"],
+        "allowUrlPrefixes": [
+          "https://gaoyanyuan.seu.edu.cn/2"
+        ],
         "publicationCategory": "research-institution",
-        "_aihot": { "initialBackfillLimit": 5 }
+        "_aihot": {
+          "initialBackfillLimit": 5
+        }
       },
       "tier": "T1",
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["科研机构"],
+      "tags": [
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a02",
+      "name": "公众号·东大发布",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2b842a713d7d",
+        "nickname": "东大发布"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a03",
+      "name": "公众号·Southeast University",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c6d2c4b60f3f",
+        "nickname": "Southeast University"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a05",
+      "name": "公众号·东南学工家",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5da9af550e5f",
+        "nickname": "东南学工家"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a06",
+      "name": "公众号·东南大学研究生",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6bd85119f543",
+        "nickname": "东南大学研究生"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a07",
+      "name": "公众号·东南大学研招",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0ef7034b51e9",
+        "nickname": "东南大学研招"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a08",
+      "name": "公众号·东南大学本科招生",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_7dc9bf3a69e1",
+        "nickname": "东南大学本科招生"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a10",
+      "name": "公众号·东南大学图书馆",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c626a488a5f3",
+        "nickname": "东南大学图书馆"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a11",
+      "name": "公众号·东南大学文化素质教育中心",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ea927089ee46",
+        "nickname": "东南大学文化素质教育中心"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a12",
+      "name": "公众号·东南大学体育系",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f1330a35ea94",
+        "nickname": "东南大学体育系"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a13",
+      "name": "公众号·东大财务",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_522898f7bd30",
+        "nickname": "东大财务"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a14",
+      "name": "公众号·东大信息化",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_7accfaa7a3a1",
+        "nickname": "东大信息化"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a15",
+      "name": "公众号·东大印象总务",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e82d67d9fca8",
+        "nickname": "东大印象总务"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a17",
+      "name": "公众号·东南大学医院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_56e606188bca",
+        "nickname": "东南大学医院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a18",
+      "name": "公众号·东南大学档案馆",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_060f0ee9c3c3",
+        "nickname": "东南大学档案馆"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a19",
+      "name": "公众号·东南教师",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d073e2f083ea",
+        "nickname": "东南教师"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a20",
+      "name": "公众号·东大科研",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e0a84d780e73",
+        "nickname": "东大科研"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a21",
+      "name": "公众号·东大文科",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d09be765dff8",
+        "nickname": "东大文科"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a22",
+      "name": "公众号·东大设备",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_bde36886f016",
+        "nickname": "东大设备"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a23",
+      "name": "公众号·东南大学校友服务",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_731001e1c143",
+        "nickname": "东南大学校友服务"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a25",
+      "name": "公众号·东南大学无锡校区",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9bce19d0c69a",
+        "nickname": "东南大学无锡校区"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a26",
+      "name": "公众号·青声锡语话东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_357b3822ad7a",
+        "nickname": "青声锡语话东南"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a27",
+      "name": "公众号·小东在苏州",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_446fd79bec10",
+        "nickname": "小东在苏州"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-b01",
+      "name": "公众号·青年东大说",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_424f2597fbaf",
+        "nickname": "青年东大说"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-b02",
+      "name": "公众号·东南大学学生会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9f9f3c46e5ff",
+        "nickname": "东南大学学生会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-b03",
+      "name": "公众号·VolunteerSEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_fb2ca2f3a2b8",
+        "nickname": "VolunteerSEU"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-b05",
+      "name": "公众号·风雅颂东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4392bd59ce54",
+        "nickname": "风雅颂东南"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c01",
+      "name": "公众号·中大院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_87a32531bb12",
+        "nickname": "中大院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c02",
+      "name": "公众号·东大建院团学联",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_cdc5fb4c36d7",
+        "nickname": "东大建院团学联"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c03",
+      "name": "公众号·东大建院学习站",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_aa9d2910ed60",
+        "nickname": "东大建院学习站"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c04",
+      "name": "公众号·东南大学机械工程学院MESEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2a9093251a28",
+        "nickname": "东南大学机械工程学院MESEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c09",
+      "name": "公众号·砼行工作站",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d5357d171d59",
+        "nickname": "砼行工作站"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c10",
+      "name": "公众号·东大电子",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5e3750f8b79e",
+        "nickname": "东大电子"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c11",
+      "name": "公众号·东南大学数学学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c670d8780ab0",
+        "nickname": "东南大学数学学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c12",
+      "name": "公众号·东大计软智",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5890e0cdb810",
+        "nickname": "东大计软智"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c13",
+      "name": "公众号·牛顿的四维口袋",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ce0e89adbbf2",
+        "nickname": "牛顿的四维口袋"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c14",
+      "name": "公众号·东南大学生医学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6687eea7da50",
+        "nickname": "东南大学生医学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c15",
+      "name": "公众号·东南大学材料学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0e40d407adb1",
+        "nickname": "东南大学材料学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c16",
+      "name": "公众号·东南文苑",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_898942b7de71",
+        "nickname": "东南文苑"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c17",
+      "name": "公众号·东南大学经济管理学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f79207a0576e",
+        "nickname": "东南大学经济管理学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c20",
+      "name": "公众号·东南大学外国语学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c5fd3a61e94a",
+        "nickname": "东南大学外国语学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c21",
+      "name": "公众号·东南大学化学化工学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_72c9e74d949c",
+        "nickname": "东南大学化学化工学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c22",
+      "name": "公众号·东南大学交通学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b1e177ddff95",
+        "nickname": "东南大学交通学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c23",
+      "name": "公众号·东大仪科",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0bd2b0f2acf2",
+        "nickname": "东大仪科"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c24",
+      "name": "公众号·艺东南SEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_085661974fec",
+        "nickname": "艺东南SEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c25",
+      "name": "公众号·东南法学",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5f8a21e16dae",
+        "nickname": "东南法学"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c26",
+      "name": "公众号·东南大学医学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_13f8b5ebc735",
+        "nickname": "东南大学医学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c28",
+      "name": "公众号·东南大学公共卫生学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_bdac560a495d",
+        "nickname": "东南大学公共卫生学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c29",
+      "name": "公众号·东南大学吴健雄学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_967094da6817",
+        "nickname": "东南大学吴健雄学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c30",
+      "name": "公众号·东南大学生科学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d680ea21a217",
+        "nickname": "东南大学生科学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-future",
+      "name": "公众号·东南大学未来技术学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_862608ea932a",
+        "nickname": "东南大学未来技术学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c32",
+      "name": "公众号·东大统计学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_26cd672ffc27",
+        "nickname": "东大统计学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c33",
+      "name": "公众号·东南大学继续教育学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ed3975cc49c5",
+        "nickname": "东南大学继续教育学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d03",
+      "name": "公众号·SEU辩协",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_48e5f80fab9e",
+        "nickname": "SEU辩协"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d06",
+      "name": "公众号·东大SCDA",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_99a749d31612",
+        "nickname": "东大SCDA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f01",
+      "name": "公众号·东南大学校友会南京联络处",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_81c07d7a013b",
+        "nickname": "东南大学校友会南京联络处"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f02",
+      "name": "公众号·东大常州校友通讯",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_73e800078922",
+        "nickname": "东大常州校友通讯"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f03",
+      "name": "公众号·东南大学苏州校友会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2b720a3b6a57",
+        "nickname": "东南大学苏州校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f04",
+      "name": "公众号·东南大学硅谷校友会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_064de6a672fc",
+        "nickname": "东南大学硅谷校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f05",
+      "name": "公众号·东大多伦多校友会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_65b46dc78827",
+        "nickname": "东大多伦多校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f06",
+      "name": "公众号·深圳市东南大学校友会官微",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ca70e7b19dd2",
+        "nickname": "深圳市东南大学校友会官微"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f07",
+      "name": "公众号·彩云东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ec5e38dca101",
+        "nickname": "彩云东南"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f08",
+      "name": "公众号·东南大学厦门校友会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d39f4aca6078",
+        "nickname": "东南大学厦门校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-f09",
+      "name": "公众号·广东省东南大学校友会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8db4ec9a7783",
+        "nickname": "广东省东南大学校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g01",
+      "name": "公众号·深度东大新材料",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0e705e0c5774",
+        "nickname": "深度东大新材料"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g03",
+      "name": "公众号·王春林课题组",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_156805259a67",
+        "nickname": "王春林课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g04",
+      "name": "公众号·王骞智建管课题组",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_887447b49159",
+        "nickname": "王骞智建管课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g05",
+      "name": "公众号·靳慧课题组",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_117707754afa",
+        "nickname": "靳慧课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g06",
+      "name": "公众号·东大电磁空间",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_cd7fbab47ed6",
+        "nickname": "东大电磁空间"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g07",
+      "name": "公众号·东大长大桥国重 桥梁中心",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2f9ae5db012a",
+        "nickname": "东大长大桥国重 桥梁中心"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g08",
+      "name": "公众号·nano2D Lab",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_1d42865d7605",
+        "nickname": "nano2D Lab"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g09",
+      "name": "公众号·组织行为研究",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ee38ef5bb61c",
+        "nickname": "组织行为研究"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g10",
+      "name": "公众号·数说司法",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3594c37ba6a6",
+        "nickname": "数说司法"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g11",
+      "name": "公众号·人体器官芯片",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b3ddbc34f082",
+        "nickname": "人体器官芯片"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g12",
+      "name": "公众号·东南法苑",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_37d236067b12",
+        "nickname": "东南法苑"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g13",
+      "name": "公众号·中外刑事法前沿",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8cb19ea17311",
+        "nickname": "中外刑事法前沿"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g14-1",
+      "name": "公众号·医事法+",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b5e5d5d04040",
+        "nickname": "医事法+"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g14-2",
+      "name": "公众号·私法理论与实践",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_02f15b73c9a6",
+        "nickname": "私法理论与实践"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g15",
+      "name": "公众号·东南大学丘成桐中心",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_a4c85dafd0b3",
+        "nickname": "东南大学丘成桐中心"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g16",
+      "name": "公众号·东南大学苏州医疗器械研究院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3d1127b076fc",
+        "nickname": "东南大学苏州医疗器械研究院"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-g17",
+      "name": "公众号·CDPE计算机系统综合设计实践教学",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c63bc6298ca3",
+        "nickname": "CDPE计算机系统综合设计实践教学"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-iflinkcommunity",
+      "name": "公众号·IF.Link Community",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5aff0536d4d5",
+        "nickname": "IF.Link Community"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "IF.Link"
+      ],
+      "interval_minutes": 1440,
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true

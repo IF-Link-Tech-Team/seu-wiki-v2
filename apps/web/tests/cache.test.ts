@@ -71,6 +71,7 @@ test("subscription setup is private and retired reports are gone", async () => {
 let deadline: number;
 let refreshAt: string;
 let metaDelayMs = 0;
+let feedFixture = false;
 const apiCookies: Array<string | undefined> = [];
 const api = createServer((req, res) => {
   const url = new URL(req.url!, "http://api.local");
@@ -92,7 +93,12 @@ const api = createServer((req, res) => {
     const filters = { channel: "all", category: url.searchParams.get("category"), tag: null, topic: null };
     res.setHeader("X-Accel-Expires", `@${deadline}`);
     res.setHeader("Cache-Control", "public, max-age=30, s-maxage=30");
-    return res.end(JSON.stringify({ filters, cards: [], nextCursor: null, refreshAt, dayCounts: [], hot: null, generatedAt: "2026-09-28T00:00:00Z" }));
+    const at = "2026-10-30T08:00:00Z";
+    const item = { id: "sample", title: "奖学金公示标题", summary: "不应显示的摘要内容", reason: "不应显示的推荐理由", source: { name: "研究生院" }, publishedAt: at, publishedAtPrecision: "day", timelineAt: at, category: null, tags: [], score: 77, selected: true, channel: "news", x: null };
+    const group = { factId: "fact", story: { publicId: "story", title: "事件" }, additionalSourceCount: 0, reportCount: 2, developmentCount: 2, latestDevelopment: { factId: "new", title: "公示最新进展", at, precision: "day" } };
+    const cards = feedFixture ? [{ key: "sample", anchorAt: at, item, group }] : [];
+    const hot = feedFixture ? [{ rank: 1, title: "热点标题", heat: 100, trend: "up", storyPublicId: "story", itemId: null, participants: [], participantCount: 0 }] : null;
+    return res.end(JSON.stringify({ filters, cards, nextCursor: null, refreshAt, dayCounts: {}, hot, generatedAt: "2026-09-28T00:00:00Z" }));
   }
   if (url.pathname === "/api/site/hot") return res.end(JSON.stringify({ entries: [] }));
   if (url.pathname === "/api/site/sources") return res.end(JSON.stringify({ sources: [] }));
@@ -178,6 +184,24 @@ test("HTML and navigation share freshness; cookies do not personalize public res
   assert.equal(signedIn.headers.get("Set-Cookie"), null);
   assert.equal(await signedIn.text(), await plain.text());
   assert.ok(apiCookies.every((cookie) => !cookie));
+});
+
+test("home renders titles and developments without the hot strip, card summaries or reasons", async () => {
+  feedFixture = true;
+  try {
+    const response = await fetch(`${origin}/`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
+    assert.doesNotMatch(visible, /当前热点|热点标题|不应显示的摘要内容|推荐理由/);
+    assert.match(visible, /奖学金公示标题/);
+    assert.match(visible, /href="\/items\/sample"/);
+    assert.match(visible, /AI 评分/);
+    assert.match(visible, /最新进展/);
+    assert.match(visible, /公示最新进展/);
+  } finally {
+    feedFixture = false;
+  }
 });
 
 test("missing routes cannot be hidden by a root-only request; errors and redirects stay uncached", async () => {
