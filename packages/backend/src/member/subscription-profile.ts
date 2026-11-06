@@ -1,5 +1,5 @@
 import type { SubscriptionProfile } from "@aihot/contracts/subscription";
-import { OPTIMIZED_TOPIC_GROUPS } from "@aihot/industry/subscription-onboarding";
+import { OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES } from "@aihot/industry/subscription-onboarding";
 import { SUBSCRIPTION_TAXONOMY as TAX } from "@aihot/industry/subscription-v2";
 import { sql } from "../db.ts";
 
@@ -22,9 +22,9 @@ export function subscriptionExperimentEnabled(): boolean {
   return process.env.SUBSCRIPTION_EXPERIMENT_ENABLED === "true";
 }
 
-const tags = TAX.tags as readonly { id: string; dimension: string; reserved: boolean }[];
+const tags = TAX.tags as readonly { id: string; label: string; dimension: string; reserved: boolean }[];
 const allowedByDimension = (dimension: string) => new Set(tags.filter((tag) => tag.dimension === dimension && !tag.reserved).map((tag) => tag.id));
-const topicIds = allowedByDimension("topic");
+const topicIds = new Set(tags.filter((tag) => tag.dimension === "topic" && (!tag.reserved || OPTIMIZED_TOPIC_NAMES.has(tag.label))).map((tag) => tag.id));
 const publisherIds = allowedByDimension("publisher");
 const typeIds = allowedByDimension("type");
 const locationIds = allowedByDimension("location");

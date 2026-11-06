@@ -169,6 +169,15 @@ test("subscription login returns to subscription and unlocks its API", async () 
   assert.equal(taxonomy.headers["cache-control"],"private, no-store");
 });
 
+test("global login return preserves search query and article path", async () => {
+  for (const target of ["/all?q=%E4%BF%9D%E7%A0%94&page=2", "/items/example-article"]) {
+    const jar = await pendingFlow(target);
+    const complete = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
+    assert.equal(complete.statusCode, 302);
+    assert.equal(complete.headers.location, target);
+  }
+});
+
 test("pending identity is consumed once, including concurrent bootstrap requests", async () => {
   rolesForUser = ["community_admin"];
   try {

@@ -17,8 +17,17 @@ test("authenticated subscription renders setup privately", async () => {
   assert.equal(res.status,200);
   assert.match(res.headers.get("cache-control")??"",/private.*no-store/);
   const html=await res.text();
-  assert.ok(html.includes("正在准备订阅设置"));
+  assert.ok(html.includes("首次使用设置"));
+  assert.ok(html.includes("<iframe"));
   assert.ok(!html.includes("订阅功能登录后可解锁"));
+});
+
+test("profile database failure is not rendered as first use", async () => {
+  const res=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=db-down"}});
+  assert.equal(res.status,200);
+  const html=await res.text();
+  assert.ok(html.includes("暂时无法载入订阅设置"));
+  assert.doesNotMatch(html, /<iframe|订阅功能登录后可解锁/);
 });
 
 test("production gates anonymous subscription without collecting a profile", async () => {
@@ -79,6 +88,7 @@ const api = createServer((req, res) => {
   res.setHeader("Content-Type", "application/json");
   if (url.pathname === "/api/member/subscription-profile") {
     if(req.headers.cookie === "seuwiki_member=test-member") return res.end(JSON.stringify({member:{id:"test-member"},profile:null,revision:0,csrf:"test-csrf"}));
+    if(req.headers.cookie === "seuwiki_member=db-down"){res.statusCode=503;return res.end(JSON.stringify({code:"temporarily_unavailable"}));}
     res.statusCode=401;return res.end(JSON.stringify({code:"unauthorized"}));
   }
   if (url.pathname === "/api/member/me") {

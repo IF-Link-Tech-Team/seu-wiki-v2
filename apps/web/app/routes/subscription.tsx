@@ -127,6 +127,11 @@ function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf }: 
       window.scrollTo({ top: 0, behavior: "auto" });
     } finally {setSaving(false);}
   }
+  async function importLegacy() {
+    if(!legacyProfile)return;
+    try {await save(legacyProfile);}
+    catch(e){setStorageNotice(e instanceof Error?`旧画像未能导入：${e.message}`:"旧画像未能导入，请重新填写。");}
+  }
   async function reset() {
     if(saving)return;
     setSaving(true);setError("");
@@ -155,7 +160,7 @@ function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf }: 
     <p className="my-5 text-sm leading-6 text-ink-3">从你的身份与兴趣出发，找到与你相关的校园信息。本次回放截至 2026-10-25 的历史消息，不是实时通知；标题、摘要不能说明的条件会标为待确认。</p>
     {storageNotice && <p role="status" className="mb-4 rounded-xl border border-line p-3 text-sm">{storageNotice}</p>}
     {editing ? <>
-      {!profile && legacyProfile && <section className="mb-4 rounded-2xl border border-line bg-surface p-4 text-sm leading-6"><strong>发现此浏览器中保存的旧画像</strong><p className="mt-1 text-ink-3">旧画像不会自动上传。你可以明确选择导入到当前账号，或继续重新填写。</p><div className="mt-3 flex gap-2"><button className={primary} disabled={saving} onClick={()=>void save(legacyProfile)}>导入旧画像</button><button className={button} onClick={()=>setLegacyProfile(null)}>暂不导入</button></div></section>}
+      {!profile && legacyProfile && <section className="mb-4 rounded-2xl border border-line bg-surface p-4 text-sm leading-6"><strong>发现此浏览器中保存的旧画像</strong><p className="mt-1 text-ink-3">旧画像不会自动上传。你可以明确选择导入到当前账号，或继续重新填写。</p><div className="mt-3 flex gap-2"><button className={primary} disabled={saving} onClick={()=>void importLegacy()}>导入旧画像</button><button className={button} onClick={()=>setLegacyProfile(null)}>暂不导入</button></div></section>}
       <OptimizedOnboarding initialProfile={profile} onComplete={save} onCancel={profile ? () => setEditing(false) : undefined} />
     </> : <>
       <section className="rounded-2xl border border-line bg-surface p-4">
