@@ -42,6 +42,10 @@ test("subscription POST respects publication visibility, eligibility and release
   const feed=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:['topic:AI/机器学习']},asOf:day,lane:'feed',q:key}});
   assert.equal(feed.statusCode,200);assert.deepEqual(feed.json().items.map((x:{id:string})=>x.id),[ids[0]]);
 });
+test("subscription defaults to today's live window when the client does not choose a replay date",async()=>{
+  const res=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:['topic:AI/机器学习']},lane:'feed',q:key}});
+  assert.equal(res.statusCode,200);assert.equal(res.json().asOf,day);assert.deepEqual(res.json().items.map((x:{id:string})=>x.id),[ids[0]]);
+});
 test("subscription validates date and normalizes untrusted profile arrays",async()=>{
   const bad=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{asOf:'2026-02-30'}});assert.equal(bad.statusCode,400);
   const res=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:[null,{},'evil'],college:'evil'},asOf:day,lane:'excluded',q:key,page:-8}});

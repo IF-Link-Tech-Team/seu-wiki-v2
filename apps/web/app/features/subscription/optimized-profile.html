@@ -610,7 +610,7 @@
             </div>
           </section>
 
-          <p class="privacy">${bridgeToken ? "提交后，身份、兴趣和接收偏好将发送至 SEU Wiki 服务器，保存在 Wiki 数据库并与统一账号关联，用于订阅匹配。可随时修改或清除。历史测试反馈仍保存在当前浏览器。" : "这是离线演示，填写内容不会发送到服务器；关闭页面后不会保留，可在完成页导出 JSON。"} 选择学院后默认关注本学院信息；明确的身份限制仍然生效。</p>`);
+          <p class="privacy">${bridgeToken ? "提交后，身份、兴趣和接收偏好将发送至 SEU Wiki 服务器，保存在 Wiki 数据库并与统一账号关联，用于订阅匹配。可随时修改或清除。" : "这是离线演示，填写内容不会发送到服务器；关闭页面后不会保留，可在完成页导出 JSON。"} 选择学院后默认关注本学院信息；明确的身份限制仍然生效。</p>`);
 
         document.querySelectorAll("[data-degree]").forEach(button => button.addEventListener("click", () => {
           identity.degree = button.dataset.degree;
@@ -1073,7 +1073,7 @@
           </section>
 
           <section class="section-card" aria-labelledby="preview-heading">
-            <div class="section-head"><div><h2 id="preview-heading">示例消息预览</h2><p>以下为演示消息，仅解释匹配顺序。完成后将展示本地历史样本；真实消息条件不明确时，会标为待确认。</p></div><span class="badge">LIVE PREVIEW</span></div>
+            <div class="section-head"><div><h2 id="preview-heading">订阅匹配预览</h2><p>以下内容用于解释匹配顺序。完成后将展示最近 30 天的最新校园信息；消息条件不明确时，会标为待确认。</p></div><span class="badge">预览</span></div>
             <div class="preview-list" id="preview-list">${previewMarkup()}</div>
           </section>
           ${summaryMarkup()}
@@ -1134,7 +1134,7 @@
       function renderCompletion() {
         completed = true;
         app.dataset.step = "3";
-        app.innerHTML = `<section class="completion"><p class="eyebrow">NICE TO MEET YOU</p><h1>你的设置已整理好</h1><p class="intro">${bridgeToken ? "画像已保存到 SEU Wiki 数据库并与当前统一账号关联。" : "这是独立前端原型：不会发送到服务器，也不表示后端字段或匹配服务已经上线。"}</p>${summaryMarkup()}<div class="actions"><button type="button" class="download" id="download-json">导出设置 JSON ↓</button><button type="button" class="secondary" id="edit-profile">修改设置</button><button type="button" class="secondary" id="restart">重新体验</button></div><p class="toast" role="status">${toast}</p><p class="privacy">${bridgeToken ? "可在订阅页随时修改或清除画像；历史测试反馈仍保存在当前浏览器。" : "关闭页面后填写内容不会保留。下载的 JSON 可用于评审字段结构，但不应视为生产接口契约。"}</p></section>`;
+        app.innerHTML = `<section class="completion"><p class="eyebrow">NICE TO MEET YOU</p><h1>你的设置已整理好</h1><p class="intro">${bridgeToken ? "画像已保存到 SEU Wiki 数据库并与当前统一账号关联。" : "这是独立前端原型：不会发送到服务器，也不表示后端字段或匹配服务已经上线。"}</p>${summaryMarkup()}<div class="actions"><button type="button" class="download" id="download-json">导出设置 JSON ↓</button><button type="button" class="secondary" id="edit-profile">修改设置</button><button type="button" class="secondary" id="restart">重新体验</button></div><p class="toast" role="status">${toast}</p><p class="privacy">${bridgeToken ? "可在订阅页随时修改或清除画像。" : "关闭页面后填写内容不会保留。下载的 JSON 可用于评审字段结构，但不应视为生产接口契约。"}</p></section>`;
         document.getElementById("download-json").addEventListener("click", downloadJson);
         document.getElementById("edit-profile").addEventListener("click", () => { completed = false; step = 3; toast = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
         document.getElementById("restart").addEventListener("click", () => { profile = emptyProfile(); step = 1; completed = false; topicQuery = ""; expandedTopicGroups = new Set(); bubblePositions.clear(); toast = ""; degreeError = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
@@ -1196,7 +1196,12 @@
         error.scrollIntoView({ block: "nearest" });
       }
       function submitToSubscription() {
-        if (!bridgeToken || bridgeSubmitting) return;
+        if (bridgeSubmitting) return;
+        if (!bridgeToken) {
+          showBridgeError("订阅页面尚未连接，请稍候再试；若持续无法保存，请刷新页面。");
+          window.parent.postMessage({ channel: bridgeChannel, type: "ready" }, "*");
+          return;
+        }
         stopBubbleMotion();
         bridgeSubmitting = true;
         const next = document.querySelector('[data-action="next"]');
@@ -1207,7 +1212,12 @@
       window.addEventListener("message", event => {
         if (event.source !== window.parent || !event.data || event.data.channel !== bridgeChannel) return;
         const message = event.data;
-        if (message.type === "init" && !bridgeToken && typeof message.token === "string") {
+        if (message.type === "init" && typeof message.token === "string" && message.token) {
+          // Retries acknowledge the same connection without overwriting in-progress edits.
+          if (bridgeToken) {
+            if (message.token === bridgeToken && event.origin === bridgeOrigin) window.parent.postMessage({ channel: bridgeChannel, type: "initialized", token: bridgeToken }, bridgeOrigin);
+            return;
+          }
           bridgeToken = message.token; bridgeOrigin = event.origin;
           if (message.profile) profile = structuredClone(message.profile);
           // Keep previously saved interests available even when the optimized demo omitted them.
@@ -1216,6 +1226,7 @@
             if (group && Array.isArray(extra.tags) && extra.tags.length) group.subgroups.push({ label: "已保存的其他兴趣", tags: extra.tags });
           }
           render();
+          window.parent.postMessage({ channel: bridgeChannel, type: "initialized", token: bridgeToken }, bridgeOrigin);
         } else if (message.type === "saved" && message.token === bridgeToken) {
           bridgeSubmitting = false; completed = true; render();
         } else if (message.type === "error" && message.token === bridgeToken) {
