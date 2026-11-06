@@ -18869,25 +18869,6 @@
       "enabled": true
     },
     {
-      "id": "mp-b03",
-      "name": "公众号·VolunteerSEU",
-      "kind": "mp_account",
-      "config": {
-        "ghid": "gh_fb2ca2f3a2b8",
-        "nickname": "VolunteerSEU"
-      },
-      "tier": "T1_5",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号",
-        "校级"
-      ],
-      "interval_minutes": 1440,
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": true
-    },
-    {
       "id": "mp-b05",
       "name": "公众号·风雅颂东南",
       "kind": "mp_account",
@@ -19945,6 +19926,606 @@
       "tags": [
         "公众号",
         "IF.Link"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c05",
+      "name": "公众号·东大能环",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_aa2dce4dca2e",
+        "nickname": "东大能环"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "能源与环境学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-c06",
+      "name": "公众号·东大信息",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d4f7bbd13fa3",
+        "nickname": "东大信息"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-automation",
+      "name": "公众号·东南大学自动化学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3214d6244e4f",
+        "nickname": "东南大学自动化学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "自动化学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-zikong-seu",
+      "name": "公众号·自控东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_af62611c081e",
+        "nickname": "自控东南"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "自动化学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-electrical",
+      "name": "公众号·东南大学电气工程学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9538abe27a7f",
+        "nickname": "东南大学电气工程学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "电气工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-overseas",
+      "name": "公众号·留学东南Study at SEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ffbed6b13f9d",
+        "nickname": "留学东南Study at SEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "海外教育学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-ic",
+      "name": "公众号·东南大学集成电路学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0d76ebdce07a",
+        "nickname": "东南大学集成电路学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "集成电路学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-marxism",
+      "name": "公众号·东南大学马院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_26e4dfc0777b",
+        "nickname": "东南大学马院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "马克思主义学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-cyber",
+      "name": "公众号·东南大学网络空间安全学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_205dce5e60a5",
+        "nickname": "东南大学网络空间安全学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "网络空间安全学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-engineer",
+      "name": "公众号·东南大学国家卓越工程师学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8edef16f9de4",
+        "nickname": "东南大学国家卓越工程师学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "国家卓越工程师学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-freshman",
+      "name": "公众号·东南大学新生学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e5ab43d1abba",
+        "nickname": "东南大学新生学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "新生学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-yuexiu-seu",
+      "name": "公众号·粤秀东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2712c88ac2df",
+        "nickname": "粤秀东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友",
+        "校友相关"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-academic-committee",
+      "name": "公众号·东南大学学术委员会秘书处",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8e02d68b3eba",
+        "nickname": "东南大学学术委员会秘书处"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学术委员会秘书处"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d05",
+      "name": "公众号·东奔南走",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ae0fe9eb649e",
+        "nickname": "东奔南走"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-rongyao-seu",
+      "name": "公众号·戎耀东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f3a4cfed51a9",
+        "nickname": "戎耀东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d11",
+      "name": "公众号·唐仲英爱心社至善唐爱",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3cf84577dac3",
+        "nickname": "唐仲英爱心社至善唐爱"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "唐仲英爱心社"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-rowing",
+      "name": "公众号·东大赛艇队",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4f176bfdd75e",
+        "nickname": "东大赛艇队"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "赛艇队"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-roboclub",
+      "name": "公众号·Roboclub",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_1bad6a41fc2f",
+        "nickname": "Roboclub"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "机器人俱乐部"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-alumni-association",
+      "name": "公众号·东南大学校友总会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_250bcbd05460",
+        "nickname": "东南大学校友总会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友",
+        "校友总会"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-zhangxiaosong-lab",
+      "name": "公众号·张小松课题组",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b65609a70a54",
+        "nickname": "张小松课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "教师课题组"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-life-health",
+      "name": "公众号·东南大学生命健康高等研究院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4f14eaca90f5",
+        "nickname": "东南大学生命健康高等研究院"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "生命健康高等研究院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-leads",
+      "name": "公众号·LEADS动态",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_07cc24856677",
+        "nickname": "LEADS动态"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "用户指定科研账号"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-ase",
+      "name": "公众号·东大创协ASE",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_718a7415b3a0",
+        "nickname": "东大创协ASE"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-fia",
+      "name": "公众号·东大投协FIA",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_72666d7228e9",
+        "nickname": "东大投协FIA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-flexible-intelligent-lab",
+      "name": "公众号·Flexible Intelligent Lab",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_07b2b514e253",
+        "nickname": "Flexible Intelligent Lab"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "用户指定实验室"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-awitec",
+      "name": "公众号·AWiTec 先进无线技术实验室",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5afc5646e80e",
+        "nickname": "AWiTec 先进无线技术实验室"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "先进无线技术实验室"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-host",
+      "name": "公众号·东南主持小话筒",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_43cff666d19b",
+        "nickname": "东南主持小话筒"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-dianzizhiguang",
+      "name": "公众号·电子之光",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9878e4a99247",
+        "nickname": "电子之光"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "电子科学与工程学院相关"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-kechuang-seu",
+      "name": "公众号·科创东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_06640dff0033",
+        "nickname": "科创东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定科创账号"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-zhishan-volunteers",
+      "name": "公众号·至善青协",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_066e11aeb76c",
+        "nickname": "至善青协"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定志愿组织"
       ],
       "interval_minutes": 1440,
       "site_fulltext": false,
