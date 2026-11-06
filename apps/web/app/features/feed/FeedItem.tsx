@@ -6,7 +6,6 @@ import { IntentLink } from "../../components/ui/IntentLink";
 import type { GroupInfo, FeedItemSummary, TimelineFilters } from "@aihot/contracts/site";
 import { CATEGORY_LABELS } from "@aihot/contracts/taxonomy";
 import { SelectedBadge } from "../../components/ui/Badge";
-import { ScoreLabel } from "../../components/ui/Score";
 import { MediaThumbs, SourceLine, StarButton } from "./parts";
 import { GroupDevelopments, GroupSources, LatestDevelopment } from "./ReadingGroup";
 import { QuotedLine } from "../item/QuotedPost";
@@ -39,16 +38,8 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
             <SelectedBadge />
           </span>
         )}
-        <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2">
-          <span className="hidden lg:inline-flex">
-            <ScoreLabel score={item.score} />
-          </span>
-          <span className="lg:hidden">
-            <ScoreLabel score={item.score} compact />
-          </span>
-          <span className="-my-1 hidden lg:inline-flex">
-            <StarButton item={item} />
-          </span>
+        <span className="-my-1 ml-auto hidden shrink-0 pl-2 lg:inline-flex">
+          <StarButton item={item} />
         </span>
       </header>
 

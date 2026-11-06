@@ -73,9 +73,9 @@ export interface FilterParams {
   sources: string[] | null;
 }
 
-/** 信源筛选参数：?sources=id1,id2，id 白名单字符，最多 20 个。 */
+/** 信源筛选参数：?sources=id1,id2，id 白名单字符，最多 50 个。 */
 function parseSources(value: string | undefined): string[] | null {
-  const ids = (value ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+  const ids = (value ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 50);
   if (ids.some((id) => !/^[a-zA-Z0-9_-]{1,80}$/.test(id))) throw new BadRequest("invalid sources");
   return ids.length ? ids : null;
 }

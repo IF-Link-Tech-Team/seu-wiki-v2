@@ -33,10 +33,6 @@ export function publishedDateTime(iso: string, precision: PublishedAtPrecision =
   return hasPublishedClock(precision) ? fullDateTime(iso) : beijingDate(iso);
 }
 
-export function publishedClock(iso: string, precision: PublishedAtPrecision = "unknown"): string {
-  return hasPublishedClock(precision) ? beijingTime(iso) : "—";
-}
-
 export function publishedMonthDayTime(iso: string, precision: PublishedAtPrecision = "unknown"): string {
   if (!hasPublishedClock(precision)) {
     const [, m, d] = beijingDate(iso).split("-").map(Number) as [number, number, number];

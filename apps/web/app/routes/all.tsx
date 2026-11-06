@@ -12,7 +12,7 @@ import { EmptyState } from "../components/ui/Page";
 import { RingMark } from "../components/Logo";
 
 function parseSourcesParam(url: URL): string[] | null {
-  const ids = (url.searchParams.get("sources") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+  const ids = (url.searchParams.get("sources") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 50);
   return ids.length ? ids : null;
 }
 

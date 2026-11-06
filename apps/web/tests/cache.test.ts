@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { spawn, type ChildProcess } from "node:child_process";
 import { once } from "node:events";
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
 import type { AddressInfo } from "node:net";
 import { after, before, test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -99,12 +100,13 @@ const api = createServer((req, res) => {
     const respond = () => res.end(JSON.stringify({ changelogVersion: "2026-09-28T12:00" }));
     return metaDelayMs ? setTimeout(respond, metaDelayMs) : respond();
   }
+  if (url.pathname === "/api/site/changelog") return res.end(readFileSync(new URL("../../../industry/changelog.json", import.meta.url), "utf8"));
   if (url.pathname === "/api/site/timeline") {
     const filters = { channel: "all", category: url.searchParams.get("category"), tag: null, topic: null };
     res.setHeader("X-Accel-Expires", `@${deadline}`);
     res.setHeader("Cache-Control", "public, max-age=30, s-maxage=30");
     const at = "2026-10-30T08:00:00Z";
-    const item = { id: "sample", title: "奖学金公示标题", summary: "不应显示的摘要内容", reason: "不应显示的推荐理由", source: { name: "研究生院" }, publishedAt: at, publishedAtPrecision: "day", timelineAt: at, category: null, tags: [], score: 77, selected: true, channel: "news", x: null };
+    const item = { id: "sample", title: "奖学金公示标题", summary: "不应显示的摘要内容", reason: "不应显示的推荐理由", source: { name: "研究生院" }, publishedAt: at, publishedAtPrecision: "minute", timelineAt: at, category: null, tags: [], score: 77, selected: true, channel: "news", x: null };
     const group = { factId: "fact", story: { publicId: "story", title: "事件" }, additionalSourceCount: 0, reportCount: 2, developmentCount: 2, latestDevelopment: { factId: "new", title: "公示最新进展", at, precision: "day" } };
     const cards = feedFixture ? [{ key: "sample", anchorAt: at, item, group }] : [];
     const hot = feedFixture ? [{ rank: 1, title: "热点标题", heat: 100, trend: "up", storyPublicId: "story", itemId: null, participants: [], participantCount: 0 }] : null;
@@ -205,13 +207,24 @@ test("home renders titles and developments without the hot strip, card summaries
     const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
     assert.doesNotMatch(visible, /当前热点|热点标题|不应显示的摘要内容|推荐理由/);
     assert.match(visible, /奖学金公示标题/);
+    assert.doesNotMatch(visible, /<time dateTime="2026-10-30T08:00:00Z"/);
     assert.match(visible, /href="\/items\/sample"/);
-    assert.match(visible, /AI 评分/);
+    assert.doesNotMatch(visible, /AI 评分/);
+    assert.match(visible, /aria-label="收藏"/);
     assert.match(visible, /最新进展/);
     assert.match(visible, /公示最新进展/);
   } finally {
     feedFixture = false;
   }
+});
+
+test("changelog renders the latest release", async () => {
+  const response = await fetch(`${origin}/changelog`);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /扩充校园信源，优化信息流和生存手册/);
+  assert.match(html, /接入 84 个已核准的校园公众号/);
+  assert.match(html, /移除消息列表中的 AI 评分和左侧时间点/);
 });
 
 test("missing routes cannot be hidden by a root-only request; errors and redirects stay uncached", async () => {

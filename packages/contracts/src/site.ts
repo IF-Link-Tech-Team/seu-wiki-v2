@@ -144,8 +144,12 @@ export interface PoolResponse {
 export interface SourceOption {
   id: string;
   name: string;
-  /** 来源分组（sources.tags 里的组别词），如 学院与书院 / 机关与职能部门；未分组为 null。 */
+  /** 来源分组，如 学院与书院 / 机关与职能部门；未分组为 null。 */
   group: string | null;
+  /** 所属单位（筛选面板一级），如 交通学院；简称已并到全称下。 */
+  org: string;
+  /** 单位下的栏目名（筛选面板二级），如 院务公告。 */
+  label: string;
 }
 
 export interface SourceListResponse {
