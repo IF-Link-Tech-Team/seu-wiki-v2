@@ -13,7 +13,6 @@ export const PUBLIC_API_CORS: Record<string, string> = {
 /** Cache-Control per v1 operation. */
 export const V1_CACHE_CONTROL = {
   items: "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
-  codexResets: "public, max-age=60, s-maxage=60, stale-while-revalidate=60",
   hotTopics: "public, max-age=60, s-maxage=60, stale-while-revalidate=60",
   storyByPublicId: "public, max-age=60, s-maxage=60, stale-while-revalidate=60",
   selectedSnapshot: "public, max-age=300, s-maxage=300, stale-while-revalidate=900",
@@ -38,7 +37,7 @@ export interface RedirectRule {
 export const REDIRECTS: RedirectRule[] = [
   {
     match: "regex",
-    path: "^/(all|about|agent|changelog|codex-reset|feedback|starred|more|privacy|terms|survival|experience)/+$",
+    path: "^/(all|about|agent|changelog|feedback|starred|more|privacy|terms|survival|experience)/+$",
     status: 301,
     location: "/$1",
     keepQuery: true,
@@ -51,9 +50,6 @@ export const REDIRECTS: RedirectRule[] = [
     keepQuery: true,
     why: "RSS reader aliases",
   },
-  { match: "exact", path: "/leaderboard/methodology", status: 308, location: "/leaderboard/sources" },
-  { match: "regex", path: "^/leaderboard/category/(aesthetics|writing)$", status: 307, location: "/leaderboard", why: "data-layer categories not yet public" },
-  { match: "exact", path: "/leaderboard/category/overall", status: 404, why: "the overall board lives at /leaderboard" },
   { match: "prefix", path: "/sources", status: 302, location: "/admin/sources*", why: "admin bookmarks" },
   // 旧站（seu.wiki）入口：信息聚合 → /all，共建 → /feedback。
   { match: "prefix", path: "/news", status: 301, location: "/all", why: "legacy seu-wiki entry" },
@@ -116,7 +112,7 @@ export const API_OWNED_PATTERNS: RegExp[] = [
   /^\/sitemaps\//,
   /^\/\.well-known\//,
   /^\/(favicon\.ico|icon\.png|icon-192\.png|apple-icon\.png|logo\.svg)$/,
-  /^\/(model-providers|leaderboard-sources|og|contact)\//,
+  /^\/(og|contact)\//,
   /^\/seuwiki-skill(\/.*)?$/,
   /^\/[0-9a-f]{32}\.txt$/,
   /^\/items\/[^/]+\/markdown$/,

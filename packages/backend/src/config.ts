@@ -43,6 +43,8 @@ export const config = {
   selectedVisibleAfterSeconds: int("SELECTED_VISIBLE_AFTER_SECONDS", 180),
   egressProxyUrl: env.EGRESS_PROXY_URL || null,
   allowPrivateNetworkFetch: bool("ALLOW_PRIVATE_NETWORK_FETCH", false),
+  /** Whole host names that may be a self-hosted service on a private address (PRIVATE_FEED_HOSTS). */
+  privateFeedHosts: (env.PRIVATE_FEED_HOSTS || "").split(",").map((v) => v.trim().toLowerCase()).filter(Boolean),
   feishuContentPushEnabled: bool("FEISHU_CONTENT_PUSH_ENABLED", false),
   indexNowSubmitEnabled: bool("INDEXNOW_SUBMIT_ENABLED", false),
   /** IndexNow key (32 hex characters); without one nothing is submitted and no key file is served. */

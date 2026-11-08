@@ -1,16 +1,15 @@
 // Discovery and static files: sitemap, llms.txt, robots, security.txt, the web manifest, the OpenAPI
-// document, icons, the IndexNow key, leaderboard logos and the about page's contact codes.
+// document, icons, the IndexNow key and the about page's contact codes.
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SITE } from "@aihot/industry/site";
-import { FEATURES } from "@aihot/industry/features";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import { REPO_ROOT, config } from "@aihot/backend/config";
 import { applyPublicHeaders, sendTextWithEtag } from "../http/respond.ts";
 import { sitemapXml } from "@aihot/backend/publication/sitemap";
-import { llmsTxt, loadLlmsAvailability } from "@aihot/backend/publication/llms";
+import { llmsTxt } from "@aihot/backend/publication/llms";
 
 const REF = path.join(REPO_ROOT, "reference");
 const ASSETS = path.join(REPO_ROOT, "assets");
@@ -108,7 +107,6 @@ async function openApiJson(): Promise<string> {
     for (const v of Object.values(o)) walk(v);
   };
   walk(doc);
-  if (!FEATURES.codexResetMonitor) for (const p of Object.keys(doc.paths)) if (p.startsWith("/api/v1/codex-resets")) delete doc.paths[p];
   openApi = JSON.stringify(doc, null, 2);
   return openApi;
 }
@@ -125,7 +123,7 @@ export function registerStatic(app: FastifyInstance) {
   });
 
   app.get("/llms.txt", async (req, reply) => {
-    const text = llmsTxt(await loadLlmsAvailability());
+    const text = llmsTxt();
     applyPublicHeaders(reply, { cors: false });
     return sendTextWithEtag(req, reply, text, { etagPrefix: "llms", cacheControl: "public, s-maxage=3600, stale-while-revalidate=86400", contentType: "text/plain; charset=utf-8" });
   });
@@ -155,16 +153,6 @@ export function registerStatic(app: FastifyInstance) {
   // Icons from the industry pack (industry/brand/).
   for (const icon of ["favicon.ico", "icon.png", "icon-192.png", "apple-icon.png", "logo.svg"]) {
     app.get(`/${icon}`, (req, reply) => sendFile(req, reply, path.join(BRAND, icon), { cacheControl: "public, max-age=86400, stale-while-revalidate=604800" }));
-  }
-
-  if (FEATURES.leaderboard) {
-    for (const dir of ["model-providers", "leaderboard-sources"]) {
-      app.get(`/${dir}/:file`, (req, reply) => {
-        const file = (req.params as { file: string }).file;
-        if (!/^[a-z0-9-]+\.(svg|png)$/.test(file)) return reply.code(404).send();
-        return sendFile(req, reply, path.join(ASSETS, dir, file), { cacheControl: "public, max-age=604800" });
-      });
-    }
   }
 
   // Contact codes on the about page: uploaded in the admin (content-hashed names), or shipped in the pack.

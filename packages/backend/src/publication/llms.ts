@@ -1,24 +1,15 @@
 // /llms.txt — generated from the site's own configuration; only real, available resources are listed.
-import { SITE, withSubject } from "@aihot/industry/site";
-import { FEATURES } from "@aihot/industry/features";
+import { SITE } from "@aihot/industry/site";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import { siteUrl } from "./links.ts";
-import { sql } from "../db.ts";
 import { MCP_TOOLS } from "@aihot/contracts/mcp";
-
-/** Discovery only needs to know whether an entry exists, not count its entire history. */
-export async function loadLlmsAvailability() {
-  const [row] = await sql<{ hasLeaderboard: boolean }[]>`
-    SELECT EXISTS (SELECT 1 FROM lb_runs WHERE status = 'published') AS "hasLeaderboard"`;
-  return row!;
-}
 
 export const PUBLIC_VERSIONS = {
   mcp: "2.0.0",
   v1OpenApi: "2.0.0",
 };
 
-export function llmsTxt(opts: { hasLeaderboard: boolean }): string {
+export function llmsTxt(): string {
   const u = siteUrl;
   const lines: string[] = [];
   lines.push(`# ${SITE.name}`, "");
@@ -34,10 +25,6 @@ export function llmsTxt(opts: { hasLeaderboard: boolean }): string {
   lines.push(`- [公开 API v1 · 最近资讯](${u("/api/v1/items")}): JSON，支持 mode=selected/all、window=24h/7d、by=timeline/published、category、q、limit 与 cursor`);
   lines.push(`- [公开 API v1 · 当前热点](${u("/api/v1/hot-topics")}): 热点榜 Top 10；每条含从 1 开始的 rank，links.story 指向事件页`);
   lines.push(`- [公开 API v1 · 事件详情](${u("/api/v1/stories/{publicId}")}): 事件报道时间线与随演化更新的综述；publicId 只来自 hot-topics 的 links.story，不要猜测`);
-  if (FEATURES.codexResetMonitor) {
-    lines.push(`- [公开 API v1 · Codex 重置监控（轮询用）](${u("/api/v1/codex-resets/recent")}): 最近 7 天与尚未落地的预告，结构与完整快照相同；建议每 5 分钟带 If-None-Match 轮询`);
-    lines.push(`- [公开 API v1 · Codex 重置监控（完整历史）](${u("/api/v1/codex-resets")}): 全部重置与发卡记录的日历快照`);
-  }
   lines.push(`- [公开 API v1 · 当前全部精选](${u("/api/v1/selected/snapshot")}): 首次完整快照；后续使用响应 cursor 调 selected/changes`);
   lines.push(`- [公开 API v1 · 精选增量](${u("/api/v1/selected/changes")}): 只返回新增、修改和撤选`);
   lines.push(`- [OpenAPI v1 规范](${u("/openapi-v1.json")}): 上述 API 的机器可读规范`);
@@ -49,10 +36,6 @@ export function llmsTxt(opts: { hasLeaderboard: boolean }): string {
   lines.push(`- [热点榜](${u("/hot")}): 过去 48 小时内被多个独立信源共同讨论的事件`);
   lines.push(`- [全部动态](${u("/all")}): 全部公开资讯，可按分类筛选`);
   lines.push(`- [主题](${u("/topics")}): 按公司、方向、内容形态聚合的主题页`);
-  if (FEATURES.leaderboard && opts.hasLeaderboard) {
-    lines.push(`- [模型榜](${u("/leaderboard")}): 汇总多家公开模型评测榜单的共识排名`);
-    lines.push(`- [模型榜算法规则](${u("/leaderboard/rules")}): 模型身份统一、共同参评比较、缺失评测处理和共识指数计算方式`);
-  }
   lines.push("", "## 使用说明", "");
   lines.push("- 内容为第三方原文的聚合摘要与编辑策展，原文版权归各来源所有；重要事实请回原文核对。");
   lines.push("- API v1 区分原文发布时间 publishedAt 与本站首次收到时间 discoveredAt；links.aihot 回到站内阅读页，links.original 指向第三方原文。");
