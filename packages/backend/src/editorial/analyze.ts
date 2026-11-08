@@ -229,7 +229,7 @@ async function structureSystem(): Promise<string> {
 async function understandSystem(): Promise<string> {
   const tax = await getTaxonomyTerms();
   warmTagVocabulary(tax);
-  return promptText("understand", { topicTags: tax.active.join("、"), entityTags: ENTITY_TAGS.join("、") });
+  return promptText("understand", { categoryTags: CATEGORY_TAGS.join("、"), topicTags: tax.active.join("、"), entityTags: ENTITY_TAGS.join("、") });
 }
 
 export interface AnalysisRun {
