@@ -48,10 +48,10 @@ export function OptimizedOnboarding({ initialProfile, onComplete, onCancel }: {
     retry = setInterval(initialize, 1000);
     return () => { clearInterval(retry); window.removeEventListener("message", receive); };
   }, [initialize]);
-  return <section aria-label="首次使用设置" className="my-5">
+  return <section aria-label="首次使用设置">
     {onCancel && <div className="mb-3 text-right"><button type="button" className="rounded-xl border border-line px-4 py-2 text-sm" onClick={onCancel}>取消修改，返回订阅流</button></div>}
-    {!ready && <p role="status" className="mb-3 text-sm text-ink-3">正在准备用户画像调查…</p>}
+    {!ready && <p role="status" className="px-5 py-2 text-sm text-ink-3">正在准备订阅设置…</p>}
     <iframe ref={frame} title="用户画像与订阅设置 · 优化版" srcDoc={html} sandbox="allow-scripts" onLoad={initialize}
-      className="block w-full rounded-2xl border-0" style={{ height: "max(620px, calc(100dvh - 190px))", maxHeight: 1100 }} />
+      className="block w-full border-0" style={{ height: "calc(100dvh - 125px)", maxHeight: 850, minHeight: 280 }} />
   </section>;
 }

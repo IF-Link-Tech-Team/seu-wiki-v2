@@ -14,12 +14,18 @@ let web: ChildProcess;
 let origin: string;
 let logs = "";
 test("authenticated subscription renders setup privately", async () => {
+  const entry=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=test-member"},redirect:"manual"});
+  assert.equal(entry.status,302);
+  assert.equal(entry.headers.get("location"),"/welcome");
   const res=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=test-member"}});
   assert.equal(res.status,200);
   assert.match(res.headers.get("cache-control")??"",/private.*no-store/);
   const html=await res.text();
   assert.ok(html.includes("首次使用设置"));
   assert.ok(html.includes("<iframe"));
+  assert.ok(html.includes("<dialog"));
+  assert.ok(html.includes("欢迎回来"));
+  assert.ok(!html.includes("取消修改"));
   assert.ok(!html.includes("订阅功能登录后可解锁"));
 });
 

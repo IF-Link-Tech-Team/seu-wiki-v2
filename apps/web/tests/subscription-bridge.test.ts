@@ -113,7 +113,82 @@ test("iframe reports missing initialization and repeated init never resets edite
 
 test("production subscription asks the server for the current live window and exposes no trial UI", () => {
   const source = readFileSync(new URL("../app/routes/subscription.tsx", import.meta.url), "utf8");
-  assert.doesNotMatch(source, /2026-10-25|DEFAULT_REPLAY_DAY|本地测试|本地试验|回放截止日|导出测试反馈|测试方式与遗漏检查/);
+  assert.doesNotMatch(source, /2026-10-25|DEFAULT_REPLAY_DAY|我的订阅 · 本地测试|本地试验|回放截止日|导出测试反馈|测试方式与遗漏检查/);
   assert.match(source, /JSON\.stringify\(\{profile,lane,page,q:query\}\)/);
-  assert.match(source, /最近 30 天与你相关的最新校园信息/);
+  assert.match(source, /消息范围/);
+  assert.doesNotMatch(source, /查看匹配依据|item\.reasons\.map|data\.quality|条件明确/);
+});
+
+test("topic bubbles distinguish whole-group selection from expansion and retain quick selections when advancing", () => {
+  const html = readFileSync(new URL("../app/features/subscription/optimized-profile.html", import.meta.url), "utf8");
+  const gestures = html.slice(html.indexOf("      const pendingGroupSelections"), html.indexOf("      function matchesGroup"));
+  const navigation = html.slice(html.indexOf("      function bindCommon"), html.indexOf("      function render()"));
+  const timers = new Map<number, () => void>();
+  const listeners = new Map<string, (event?: unknown) => void>();
+  const preferences = { topicGroups: [] as string[], topics: [] as string[] };
+  const expanded = new Set<string>();
+  const repacks: boolean[] = [];
+  const scrollBehaviors: string[] = [];
+  let bubbleTop = 940;
+  const viewport = {
+    scrollY: 900,
+    innerHeight: 700,
+    scrollTo({ top, behavior }: { top: number; behavior: string }) {
+      scrollBehaviors.push(behavior);
+      this.scrollY = top;
+    },
+  };
+  const bubble = {
+    dataset: { selectGroup: "further" },
+    getBoundingClientRect: () => ({ top: bubbleTop - viewport.scrollY, bottom: bubbleTop - viewport.scrollY + 120 }),
+  };
+  let sequence = 0;
+  const element = (selector: string) => ({
+    addEventListener: (_type: string, listener: (event?: unknown) => void) => listeners.set(selector, listener),
+  });
+  runInNewContext(gestures + navigation + "\nbindTopicActions(); bindCommon();", {
+    step: 2,
+    profile: { subscriptionPreferences: preferences },
+    document: {
+      getElementById: element,
+      querySelector: element,
+      querySelectorAll: (selector: string) => selector.startsWith("#topic-content") ? [bubble] : [],
+    },
+    setTimeout: (callback: () => void) => { timers.set(++sequence, callback); return sequence; },
+    clearTimeout: (timer: number) => timers.delete(timer),
+    toggleValue: (values: string[], value: string) => values.includes(value) ? values.filter(v => v !== value) : [...values, value],
+    toggleTopicGroup: (id: string) => { if (!expanded.delete(id)) expanded.add(id); return true; },
+    refreshTopicChoices(repack: boolean) {
+      repacks.push(repack);
+      bubbleTop += 50;
+      if (repack) viewport.scrollY = 0; // A layout rebuild can temporarily clamp the scroll position.
+    },
+    validateRequiredIdentity: () => true, render() {}, window: viewport,
+  });
+  const click = (dataset: Record<string, string>, detail = 1) =>
+    listeners.get("topic-content")!({ detail, target: { closest: () => ({ dataset }) } });
+  const settle = () => { for (const [id, callback] of timers) { timers.delete(id); callback(); } };
+  click({ selectGroup: "further" });
+  settle();
+  assert.deepEqual([...preferences.topicGroups], ["further"]);
+  assert.deepEqual(repacks, [false]);
+  assert.equal(bubble.getBoundingClientRect().top, 40);
+  click({ selectGroup: "further" });
+  click({ selectGroup: "further" }, 2);
+  settle();
+  assert.equal(expanded.has("further"), true);
+  assert.deepEqual([...preferences.topicGroups], ["further"]);
+  assert.deepEqual(repacks, [false, true]);
+  assert.equal(bubble.getBoundingClientRect().top, 40);
+  assert.deepEqual(scrollBehaviors, ["instant", "instant"]);
+  click({ topic: "保研" });
+  click({ selectGroup: "further" });
+  settle();
+  assert.deepEqual([...preferences.topicGroups], []);
+  assert.deepEqual([...preferences.topics], ["保研"]);
+  click({ selectGroup: "further" });
+  listeners.get('[data-action="next"]')!();
+  assert.deepEqual([...preferences.topicGroups], ["further"]);
+  assert.equal(timers.size, 0);
+  assert.equal(scrollBehaviors.at(-1), "smooth");
 });

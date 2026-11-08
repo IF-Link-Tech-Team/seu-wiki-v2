@@ -69,7 +69,7 @@ export function registerMember(app: FastifyInstance) {
   });
 
   // 固定完成地址：Accounts 建档后回跳这里。解析 UUID → 建/更新 member → 签会话 →
-  // 读并删 return cookie 302 回原页面；cookie 缺失/非法回 /。
+  // 消费 return cookie。启用订阅时普通登录先完成画像，后台/机构仍回原页面。
   app.get("/api/logto/bootstrap-complete", async (req, reply) => {
     reply.header("Cache-Control", "no-store");
     const cfg = memberAuthConfig();
@@ -105,7 +105,7 @@ export function registerMember(app: FastifyInstance) {
         setCookies.push(cookie(ADMIN_SESSION_COOKIE, admin.token, ADMIN_SESSION_DAYS * 86400, secure(cfg)));
       }
       reply.header("Set-Cookie", setCookies);
-      return reply.redirect(target, 302);
+      return reply.redirect(subscriptionExperimentEnabled() && !wantsAdmin && !/^\/org(?:\/|\?|$)/.test(target) ? "/welcome" : target, 302);
     } catch (error) {
       req.log.error({ err: error }, "bootstrap-complete failed");
       return sendProblem(req, reply, { status: 503, code: "accounts_unavailable", detail: "账号服务暂时不可用，请重试", cacheControl: "no-store" });
