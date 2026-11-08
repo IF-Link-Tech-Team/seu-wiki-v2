@@ -44,7 +44,7 @@ export function MediaThumbs({ media, className = "" }: { media: MediaView[]; cla
 }
 
 /** Bookmark toggle kept in this browser (收藏). */
-export function StarButton({ item, size = 26, className = "" }: { item: Pick<FeedItemSummary, "id" | "title" | "summary" | "source" | "publishedAt" | "publishedAtPrecision" | "score" | "selected">; size?: number; className?: string }) {
+export function StarButton({ item, size = 26, className = "", label = false }: { item: Pick<FeedItemSummary, "id" | "title" | "summary" | "source" | "publishedAt" | "publishedAtPrecision" | "score" | "selected">; size?: number; className?: string; label?: boolean }) {
   const starred = useIsStarred(item.id);
   const [pulse, setPulse] = useState(0);
   const on = starred;
@@ -63,12 +63,13 @@ export function StarButton({ item, size = 26, className = "" }: { item: Pick<Fee
         });
         if (added) setPulse((p) => p + 1);
       }}
-      style={{ width: size, height: size }}
-      className={`relative z-10 inline-flex shrink-0 items-center justify-center rounded-control transition-colors duration-150 ${on ? "text-accent" : "text-ink-4 hover:bg-bg-sunk hover:text-ink-2"} ${className}`}
+      style={label ? { height: size } : { width: size, height: size }}
+      className={`relative z-10 inline-flex shrink-0 items-center justify-center rounded-control transition-colors duration-150 ${label ? "gap-1.5 px-3 text-[13px] font-medium" : ""} ${on ? "text-accent" : label ? "text-ink-2 hover:bg-bg-sunk hover:text-ink" : "text-ink-4 hover:bg-bg-sunk hover:text-ink-2"} ${className}`}
     >
       <span key={pulse} className={`flex ${pulse ? "anim-bump" : ""}`}>
-        <IconBookmark size={Math.round(size * 0.6)} filled={on} />
+        <IconBookmark size={label ? 16 : Math.round(size * 0.6)} filled={on} />
       </span>
+      {label && (on ? "已收藏" : "收藏")}
     </button>
   );
 }

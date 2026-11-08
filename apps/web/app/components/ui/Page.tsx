@@ -28,7 +28,7 @@ export function ReadingLayout({ children, aside, footer, className = "", asideCl
  */
 export function ArticleLayout({ children, left, right, railTop = "top-6" }: { children: ReactNode; left?: ReactNode; right?: ReactNode; railTop?: string }) {
   return (
-    <div className="mx-auto grid max-w-[var(--page-max-reading)] grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-x-12 2xl:grid-cols-[minmax(200px,1fr)_minmax(0,760px)_minmax(200px,1fr)] 2xl:gap-x-12">
+    <div className="mx-auto grid max-w-[var(--page-max-reading)] grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-x-12 2xl:grid-cols-[minmax(200px,1fr)_minmax(0,760px)_minmax(200px,1fr)] 2xl:gap-x-12">
       <aside className="hidden 2xl:block">
         <div className={`sticky ${railTop} max-w-[260px] space-y-8`}>{left}</div>
       </aside>
@@ -36,7 +36,7 @@ export function ArticleLayout({ children, left, right, railTop = "top-6" }: { ch
         <div className="mx-auto max-w-[760px]">{children}</div>
       </div>
       <aside className="hidden lg:block">
-        <div className={`sticky ${railTop} ml-auto max-w-[260px] space-y-8`}>{right}</div>
+        <div className={`sticky ${railTop} ml-auto max-h-[calc(100dvh-3rem)] max-w-[260px] space-y-8 overflow-y-auto overscroll-contain pb-6 scrollbar-thin 2xl:max-w-[300px]`}>{right}</div>
       </aside>
     </div>
   );
