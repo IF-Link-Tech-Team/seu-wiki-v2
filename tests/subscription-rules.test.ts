@@ -6,17 +6,18 @@ import { annotateSubscription as annotate, matchSubscription as match, normalize
 const day="2026-10-25";
 const p=profile({degree:"本科生",college:"计算机科学与工程学院",enrollmentYear:"2023",international:"no",interests:["topic:AI/机器学习"],identityNotices:true});
 const item=(summary:string|null,title="人工智能讲座预告",source="自动化学院")=>annotate({title,summary,source});
-test("v2 dictionary preserves leaves, deduplicates shared terms, separates navigation and format",()=>{
-  const ids=tax.tags.map(t=>t.id);assert.equal(new Set(ids).size,ids.length);assert.equal(ids.length,227);
-  assert.ok(ids.includes("location:丁家桥"));assert.ok(ids.includes("location:江北校区"));assert.ok(ids.includes("topic:入党"));
-  assert.ok(ids.includes("format:线上"));assert.equal(ids.filter(id=>id==="topic:创新创业").length,1);
+test("merged dictionary keeps one home per topic and separates navigation and format",()=>{
+  const ids=tax.tags.map(t=>t.id);assert.equal(new Set(ids).size,ids.length);assert.equal(ids.length,146);
+  assert.ok(ids.includes("location:丁家桥"));assert.ok(ids.includes("location:江北校区"));assert.ok(ids.includes("topic:党团学习"));
+  assert.ok(ids.includes("format:线上"));assert.equal(ids.filter(id=>id==="topic:科研训练与大创").length,1);
 });
 test("navigation selection expands without inferring undergraduate eligibility",()=>{
-  const q=profile({interests:["group:1.1 本科教学"]});assert.ok(q.interests.includes("topic:选课"));assert.equal(q.degree,"");
-  assert.ok(profile({interests:["topic:评优评先"]}).interests.includes("topic:优秀毕业生"));
+  const q=profile({interests:["group:1"]});assert.ok(q.interests.includes("topic:选课与成绩"));assert.equal(q.degree,"");
+  // 旧细叶词读取时归一到聚合词：优秀毕业生→评优评先，百团大战→社团活动
+  assert.deepEqual(profile({interests:["topic:优秀毕业生","topic:百团大战"]}).interests,["topic:评优评先","topic:社团活动"]);
 });
 test("reject unknown IDs, wrong dimensions, reserved terms and duplicate selections",()=>{
-  const q=profile({degree:"教授",interests:["unknown","publisher:教务处","topic:社团招新","topic:保研","topic:保研"]});
+  const q=profile({degree:"教授",interests:["unknown","publisher:教务处","topic:不存在的词","topic:保研","topic:保研"]});
   assert.deepEqual(q.interests,["topic:保研"]);assert.equal(q.degree,"");assert.deepEqual(profile(null).interests,[]);
 });
 test("schoolwide AI lecture matches any college; publisher is not audience",()=>{
@@ -99,7 +100,7 @@ test("missing summary and unknown type remain uncertain, and sources are indepen
 });
 test("topic evidence records exact source text and English abbreviations respect boundaries",()=>{
   const a=item("面向全校学生。介绍深度学习方法。");assert.ok(a.evidence.some(e=>e.tag==="AI/机器学习"&&e.quote.includes("人工智能")));
-  assert.ok(!item("介绍 XSRTPX。","技术分享").topics.includes("SRTP"));
+  assert.ok(!item("介绍 XSRTPX。","技术分享").topics.includes("科研训练与大创"));
 });
 test("real snapshot regression: course teachers are not the graduate students they teach",()=>{
   const a=item("艺术学院面向研究生任课老师发布提醒，公共课即将开课。","研究生课表开课提醒","艺术学院");
@@ -130,7 +131,7 @@ test("user feedback: English AI maps to machine learning without matching unrela
 });
 test("user feedback: subsidy eligibility statement recognizes graduate students and preserves undergraduate exclusion",()=>{
   const a=item("资助对象为受地震影响导致家庭经济出现暂时困难的全日制研究生。","东南大学研究生院开展西藏那曲地震受灾家庭研究生临时困难资助","研究生院·公告");
-  assert.deepEqual(a.audience.degrees,["硕士生","博士生"]);assert.ok(a.topics.includes("困难补助"));assert.deepEqual(a.types,["事务通知"]);
-  const r=match(a,profile({...p,interests:["topic:困难补助"]}),day);assert.equal(r.lane,"excluded");assert.ok(r.reasons.some(x=>x.includes("培养层次不符合")));
-  assert.equal(match(a,profile({...p,degree:"硕士生",interests:["topic:困难补助"]}),day).lane,"possible");
+  assert.deepEqual(a.audience.degrees,["硕士生","博士生"]);assert.ok(a.topics.includes("助学补助"));assert.deepEqual(a.types,["事务通知"]);
+  const r=match(a,profile({...p,interests:["topic:助学补助"]}),day);assert.equal(r.lane,"excluded");assert.ok(r.reasons.some(x=>x.includes("培养层次不符合")));
+  assert.equal(match(a,profile({...p,degree:"硕士生",interests:["topic:助学补助"]}),day).lane,"possible");
 });

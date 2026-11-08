@@ -1,130 +1,29 @@
 // User-approved taxonomy. Navigation groups never imply audience restrictions.
+// 2026-10-27-v3：主题维度按读者订阅目的聚合为 42 个标签（9 组）；细词经 TAG_SYNONYMS 归一，旧 ID 读取时迁移。
 export const SUBSCRIPTION_TAXONOMY = {
-  "version": "2026-10-25-v2",
+  "version": "2026-10-27-v3",
   "tags": [
     {
-      "id": "topic:选课",
-      "label": "选课",
+      "id": "topic:选课与成绩",
+      "label": "选课与成绩",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:GPA",
-      "label": "GPA",
+      "id": "topic:学籍与辅修",
+      "label": "学籍与辅修",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:期末考试",
-      "label": "期末考试",
+      "id": "topic:研究生培养",
+      "label": "研究生培养",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:教材",
-      "label": "教材",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:学籍注册",
-      "label": "学籍注册",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:辅修",
-      "label": "辅修",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:重修",
-      "label": "重修",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:考博",
-      "label": "考博",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:硕博连读",
-      "label": "硕博连读",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:研究生教务",
-      "label": "研究生教务",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:科研奖励",
-      "label": "科研奖励",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:中期考核",
-      "label": "中期考核",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:开题",
-      "label": "开题",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:资格考",
-      "label": "资格考",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:学位论文",
-      "label": "学位论文",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:导师选择",
-      "label": "导师选择",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:课外研学",
-      "label": "课外研学",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:实习实践",
-      "label": "实习实践",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:SRTP",
-      "label": "SRTP",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:大创",
-      "label": "大创",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:创新创业",
-      "label": "创新创业",
+      "id": "topic:毕业与学位",
+      "label": "毕业与学位",
       "dimension": "topic",
       "reserved": false
     },
@@ -147,68 +46,14 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:联合培养",
-      "label": "联合培养",
+      "id": "topic:访学与交流",
+      "label": "访学与交流",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:中外合作办学",
-      "label": "中外合作办学",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:交换",
-      "label": "交换",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:暑期学校",
-      "label": "暑期学校",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:双学位",
-      "label": "双学位",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:访学",
-      "label": "访学",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:国家留学基金",
-      "label": "国家留学基金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:秋招春招",
-      "label": "秋招春招",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:宣讲会",
-      "label": "宣讲会",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:双选会",
-      "label": "双选会",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:网申",
-      "label": "网申",
+      "id": "topic:校园招聘",
+      "label": "校园招聘",
       "dimension": "topic",
       "reserved": false
     },
@@ -219,98 +64,62 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:事业单位",
-      "label": "事业单位",
+      "id": "topic:选调与公职",
+      "label": "选调与公职",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:选调",
-      "label": "选调",
+      "id": "topic:就业服务",
+      "label": "就业服务",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:企业参访",
-      "label": "企业参访",
+      "id": "topic:互联网与芯片",
+      "label": "互联网与芯片",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:就业手续",
-      "label": "就业手续",
+      "id": "topic:国企与制造",
+      "label": "国企与制造",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:职业规划",
-      "label": "职业规划",
+      "id": "topic:金融与地产",
+      "label": "金融与地产",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:创业",
-      "label": "创业",
+      "id": "topic:科研训练与大创",
+      "label": "科研训练与大创",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:互联网",
-      "label": "互联网",
+      "id": "topic:实验室与科研助理",
+      "label": "实验室与科研助理",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:国企央企",
-      "label": "国企央企",
+      "id": "topic:项目申报与基金",
+      "label": "项目申报与基金",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:汽车",
-      "label": "汽车",
+      "id": "topic:论文与成果转化",
+      "label": "论文与成果转化",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:芯片半导体",
-      "label": "芯片半导体",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:金融",
-      "label": "金融",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:建筑地产",
-      "label": "建筑地产",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:实验室",
-      "label": "实验室",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:项目申报",
-      "label": "项目申报",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:成果转化",
-      "label": "成果转化",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:科研助理",
-      "label": "科研助理",
+      "id": "topic:学术会议与报告",
+      "label": "学术会议与报告",
       "dimension": "topic",
       "reserved": false
     },
@@ -321,314 +130,20 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:机器人",
-      "label": "机器人",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:互联网+",
-      "label": "互联网+",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:科研成果",
-      "label": "科研成果",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:论文",
-      "label": "论文",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:学术会议",
-      "label": "学术会议",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:学术报告",
-      "label": "学术报告",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:国自然",
-      "label": "国自然",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:社科基金",
-      "label": "社科基金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
       "id": "topic:AI/机器学习",
       "label": "AI/机器学习",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:学生会",
-      "label": "学生会",
+      "id": "topic:奖学金",
+      "label": "奖学金",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:研究生会",
-      "label": "研究生会",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:班团建设",
-      "label": "班团建设",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:校科协",
-      "label": "校科协",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:社团联合会",
-      "label": "社团联合会",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:社团活动",
-      "label": "社团活动",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:社团招新",
-      "label": "社团招新",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:百团大战",
-      "label": "百团大战",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:十佳社团",
-      "label": "十佳社团",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:社团文化节",
-      "label": "社团文化节",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:演出",
-      "label": "演出",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:迎新晚会",
-      "label": "迎新晚会",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:艺术团",
-      "label": "艺术团",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:合唱团",
-      "label": "合唱团",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:舞蹈团",
-      "label": "舞蹈团",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:话剧社",
-      "label": "话剧社",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:体育赛事",
-      "label": "体育赛事",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:运动会",
-      "label": "运动会",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:阳光体育",
-      "label": "阳光体育",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:篮球队",
-      "label": "篮球队",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:电子竞技",
-      "label": "电子竞技",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:志愿服务",
-      "label": "志愿服务",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:社会实践",
-      "label": "社会实践",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:公益",
-      "label": "公益",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:支教",
-      "label": "支教",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:献血",
-      "label": "献血",
-      "dimension": "topic",
-      "reserved": true
-    },
-    {
-      "id": "topic:防诈骗",
-      "label": "防诈骗",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:讲座",
-      "label": "讲座",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:六朝松大师讲堂",
-      "label": "六朝松大师讲堂",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:吴健雄大讲堂",
-      "label": "吴健雄大讲堂",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:文化素质教育",
-      "label": "文化素质教育",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:展览",
-      "label": "展览",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:总务后勤",
-      "label": "总务后勤",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:国家奖学金",
-      "label": "国家奖学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:国家励志奖学金",
-      "label": "国家励志奖学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:学业奖学金",
-      "label": "学业奖学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:社会奖学金",
-      "label": "社会奖学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:教育基金会奖助学金",
-      "label": "教育基金会奖助学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:至善/校长奖学金",
-      "label": "至善/校长奖学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:博士新生奖",
-      "label": "博士新生奖",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:港澳台奖学金",
-      "label": "港澳台奖学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:助学金",
-      "label": "助学金",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:困难补助",
-      "label": "困难补助",
+      "id": "topic:助学补助",
+      "label": "助学补助",
       "dimension": "topic",
       "reserved": false
     },
@@ -639,20 +154,80 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:优秀毕业生",
-      "label": "优秀毕业生",
+      "id": "topic:学生组织",
+      "label": "学生组织",
       "dimension": "topic",
       "reserved": false
     },
     {
-      "id": "topic:三好学生",
-      "label": "三好学生",
+      "id": "topic:社团活动",
+      "label": "社团活动",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:文艺演出",
+      "label": "文艺演出",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:体育运动",
+      "label": "体育运动",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:志愿公益",
+      "label": "志愿公益",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:演讲辩论",
+      "label": "演讲辩论",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:校园服务",
+      "label": "校园服务",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:防诈骗与安全",
+      "label": "防诈骗与安全",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:总务后勤",
+      "label": "总务后勤",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:讲座与文化",
+      "label": "讲座与文化",
       "dimension": "topic",
       "reserved": false
     },
     {
       "id": "topic:规章制度",
       "label": "规章制度",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:党团学习",
+      "label": "党团学习",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:国防与征兵",
+      "label": "国防与征兵",
       "dimension": "topic",
       "reserved": false
     },
@@ -669,74 +244,14 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:国际会议",
-      "label": "国际会议",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:国际组织",
-      "label": "国际组织",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:校友",
-      "label": "校友",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:校友会",
-      "label": "校友会",
+      "id": "topic:国际组织与会议",
+      "label": "国际组织与会议",
       "dimension": "topic",
       "reserved": false
     },
     {
       "id": "topic:校友活动",
       "label": "校友活动",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:档案户口",
-      "label": "档案户口",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:捐赠",
-      "label": "捐赠",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:入党",
-      "label": "入党",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:理论学习",
-      "label": "理论学习",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:青马工程",
-      "label": "青马工程",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:主题团日",
-      "label": "主题团日",
-      "dimension": "topic",
-      "reserved": false
-    },
-    {
-      "id": "topic:人文东大",
-      "label": "人文东大",
       "dimension": "topic",
       "reserved": false
     },
@@ -1368,436 +883,107 @@ export const SUBSCRIPTION_TAXONOMY = {
   "groups": [
     {
       "id": "group:1",
-      "label": "1 学业与教务",
+      "label": "1 学业教务",
       "dimension": "topic",
       "terms": [
-        "topic:选课",
-        "topic:GPA",
-        "topic:期末考试",
-        "topic:教材",
-        "topic:学籍注册",
-        "topic:辅修",
-        "topic:重修",
-        "topic:考博",
-        "topic:硕博连读",
-        "topic:研究生教务",
-        "topic:科研奖励",
-        "topic:中期考核",
-        "topic:开题",
-        "topic:资格考",
-        "topic:学位论文",
-        "topic:导师选择",
-        "topic:课外研学",
-        "topic:实习实践",
-        "topic:SRTP",
-        "topic:大创",
-        "topic:创新创业"
-      ]
-    },
-    {
-      "id": "group:1.1 本科教学",
-      "label": "1.1 本科教学",
-      "dimension": "topic",
-      "terms": [
-        "topic:选课",
-        "topic:GPA",
-        "topic:期末考试",
-        "topic:教材",
-        "topic:学籍注册",
-        "topic:辅修",
-        "topic:重修"
-      ]
-    },
-    {
-      "id": "group:1.2 研究生培养",
-      "label": "1.2 研究生培养",
-      "dimension": "topic",
-      "terms": [
-        "topic:考博",
-        "topic:硕博连读",
-        "topic:研究生教务",
-        "topic:科研奖励",
-        "topic:中期考核",
-        "topic:开题",
-        "topic:资格考",
-        "topic:学位论文",
-        "topic:导师选择"
-      ]
-    },
-    {
-      "id": "group:1.3 实践教学",
-      "label": "1.3 实践教学",
-      "dimension": "topic",
-      "terms": [
-        "topic:课外研学",
-        "topic:实习实践",
-        "topic:SRTP",
-        "topic:大创",
-        "topic:创新创业"
+        "topic:选课与成绩",
+        "topic:学籍与辅修",
+        "topic:研究生培养",
+        "topic:毕业与学位"
       ]
     },
     {
       "id": "group:2",
-      "label": "2 升学与深造",
+      "label": "2 升学深造",
       "dimension": "topic",
       "terms": [
         "topic:保研",
         "topic:考研",
         "topic:留学",
-        "topic:联合培养",
-        "topic:中外合作办学",
-        "topic:交换",
-        "topic:暑期学校",
-        "topic:双学位",
-        "topic:访学",
-        "topic:国家留学基金"
+        "topic:访学与交流"
       ]
     },
     {
       "id": "group:3",
-      "label": "3 求职与就业",
+      "label": "3 求职就业",
       "dimension": "topic",
       "terms": [
-        "topic:秋招春招",
-        "topic:宣讲会",
-        "topic:双选会",
-        "topic:网申",
+        "topic:校园招聘",
         "topic:实习",
-        "topic:事业单位",
-        "topic:选调",
-        "topic:企业参访",
-        "topic:就业手续",
-        "topic:职业规划",
-        "topic:创业",
-        "topic:互联网",
-        "topic:国企央企",
-        "topic:汽车",
-        "topic:芯片半导体",
-        "topic:金融",
-        "topic:建筑地产"
-      ]
-    },
-    {
-      "id": "group:3.1 校园招聘",
-      "label": "3.1 校园招聘",
-      "dimension": "topic",
-      "terms": [
-        "topic:秋招春招",
-        "topic:宣讲会",
-        "topic:双选会",
-        "topic:网申",
-        "topic:实习",
-        "topic:事业单位",
-        "topic:选调",
-        "topic:企业参访"
-      ]
-    },
-    {
-      "id": "group:3.2 就业服务",
-      "label": "3.2 就业服务",
-      "dimension": "topic",
-      "terms": [
-        "topic:就业手续",
-        "topic:职业规划",
-        "topic:创业"
-      ]
-    },
-    {
-      "id": "group:3.3 行业方向",
-      "label": "3.3 行业方向",
-      "dimension": "topic",
-      "terms": [
-        "topic:互联网",
-        "topic:国企央企",
-        "topic:汽车",
-        "topic:芯片半导体",
-        "topic:金融",
-        "topic:建筑地产"
+        "topic:选调与公职",
+        "topic:就业服务",
+        "topic:互联网与芯片",
+        "topic:国企与制造",
+        "topic:金融与地产"
       ]
     },
     {
       "id": "group:4",
-      "label": "4 科研与创新",
+      "label": "4 科研竞赛",
       "dimension": "topic",
       "terms": [
-        "topic:实验室",
-        "topic:项目申报",
-        "topic:成果转化",
-        "topic:科研助理",
-        "topic:创新创业",
+        "topic:科研训练与大创",
+        "topic:实验室与科研助理",
+        "topic:项目申报与基金",
+        "topic:论文与成果转化",
+        "topic:学术会议与报告",
         "topic:学科竞赛",
-        "topic:机器人",
-        "topic:互联网+",
-        "topic:科研成果",
-        "topic:论文",
-        "topic:学术会议",
-        "topic:学术报告",
-        "topic:国自然",
-        "topic:社科基金",
-        "topic:AI/机器学习"
-      ]
-    },
-    {
-      "id": "group:4.1 科研训练",
-      "label": "4.1 科研训练",
-      "dimension": "topic",
-      "terms": [
-        "topic:实验室",
-        "topic:项目申报",
-        "topic:成果转化",
-        "topic:科研助理",
-        "topic:创新创业"
-      ]
-    },
-    {
-      "id": "group:4.2 学科竞赛",
-      "label": "4.2 学科竞赛",
-      "dimension": "topic",
-      "terms": [
-        "topic:学科竞赛",
-        "topic:机器人",
-        "topic:互联网+"
-      ]
-    },
-    {
-      "id": "group:4.3 学术研究",
-      "label": "4.3 学术研究",
-      "dimension": "topic",
-      "terms": [
-        "topic:科研成果",
-        "topic:论文",
-        "topic:学术会议",
-        "topic:学术报告",
-        "topic:国自然",
-        "topic:社科基金",
         "topic:AI/机器学习"
       ]
     },
     {
       "id": "group:5",
-      "label": "5 社团与组织",
+      "label": "5 奖助评优",
       "dimension": "topic",
       "terms": [
-        "topic:学生会",
-        "topic:研究生会",
-        "topic:班团建设",
-        "topic:校科协",
-        "topic:社团联合会",
-        "topic:社团活动",
-        "topic:社团招新",
-        "topic:百团大战",
-        "topic:十佳社团",
-        "topic:社团文化节",
-        "topic:演出",
-        "topic:迎新晚会",
-        "topic:艺术团",
-        "topic:合唱团",
-        "topic:舞蹈团",
-        "topic:话剧社",
-        "topic:体育赛事",
-        "topic:运动会",
-        "topic:阳光体育",
-        "topic:篮球队",
-        "topic:电子竞技",
-        "topic:志愿服务",
-        "topic:社会实践",
-        "topic:公益",
-        "topic:支教",
-        "topic:献血"
-      ]
-    },
-    {
-      "id": "group:5.1 学生组织",
-      "label": "5.1 学生组织",
-      "dimension": "topic",
-      "terms": [
-        "topic:学生会",
-        "topic:研究生会",
-        "topic:班团建设",
-        "topic:校科协",
-        "topic:社团联合会"
-      ]
-    },
-    {
-      "id": "group:5.2 社团活动",
-      "label": "5.2 社团活动",
-      "dimension": "topic",
-      "terms": [
-        "topic:社团活动",
-        "topic:社团招新",
-        "topic:百团大战",
-        "topic:十佳社团",
-        "topic:社团文化节"
-      ]
-    },
-    {
-      "id": "group:5.3 艺术与演出",
-      "label": "5.3 艺术与演出",
-      "dimension": "topic",
-      "terms": [
-        "topic:演出",
-        "topic:迎新晚会",
-        "topic:艺术团",
-        "topic:合唱团",
-        "topic:舞蹈团",
-        "topic:话剧社"
-      ]
-    },
-    {
-      "id": "group:5.4 体育与竞技",
-      "label": "5.4 体育与竞技",
-      "dimension": "topic",
-      "terms": [
-        "topic:体育赛事",
-        "topic:运动会",
-        "topic:阳光体育",
-        "topic:篮球队",
-        "topic:电子竞技"
-      ]
-    },
-    {
-      "id": "group:5.5 志愿与公益",
-      "label": "5.5 志愿与公益",
-      "dimension": "topic",
-      "terms": [
-        "topic:志愿服务",
-        "topic:社会实践",
-        "topic:公益",
-        "topic:支教",
-        "topic:献血"
+        "topic:奖学金",
+        "topic:助学补助",
+        "topic:评优评先"
       ]
     },
     {
       "id": "group:6",
-      "label": "6 校园生活",
+      "label": "6 社团组织",
       "dimension": "topic",
       "terms": [
-        "topic:防诈骗",
-        "topic:讲座",
-        "topic:六朝松大师讲堂",
-        "topic:吴健雄大讲堂",
-        "topic:文化素质教育",
-        "topic:展览",
-        "topic:总务后勤"
-      ]
-    },
-    {
-      "id": "group:6.1 健康与安全",
-      "label": "6.1 健康与安全",
-      "dimension": "topic",
-      "terms": [
-        "topic:防诈骗"
-      ]
-    },
-    {
-      "id": "group:6.2 讲座与文化",
-      "label": "6.2 讲座与文化",
-      "dimension": "topic",
-      "terms": [
-        "topic:讲座",
-        "topic:六朝松大师讲堂",
-        "topic:吴健雄大讲堂",
-        "topic:文化素质教育",
-        "topic:展览"
-      ]
-    },
-    {
-      "id": "group:6.3 后勤保障",
-      "label": "6.3 后勤保障",
-      "dimension": "topic",
-      "terms": [
-        "topic:总务后勤"
+        "topic:学生组织",
+        "topic:社团活动",
+        "topic:文艺演出",
+        "topic:体育运动",
+        "topic:志愿公益",
+        "topic:演讲辩论"
       ]
     },
     {
       "id": "group:7",
-      "label": "7 奖助与评优",
+      "label": "7 校园生活",
       "dimension": "topic",
       "terms": [
-        "topic:国家奖学金",
-        "topic:国家励志奖学金",
-        "topic:学业奖学金",
-        "topic:社会奖学金",
-        "topic:教育基金会奖助学金",
-        "topic:至善/校长奖学金",
-        "topic:博士新生奖",
-        "topic:港澳台奖学金",
-        "topic:助学金",
-        "topic:困难补助",
-        "topic:评优评先",
-        "topic:优秀毕业生",
-        "topic:三好学生",
-        "topic:规章制度"
-      ]
-    },
-    {
-      "id": "group:奖学金",
-      "label": "奖学金",
-      "dimension": "topic",
-      "terms": [
-        "topic:国家奖学金",
-        "topic:国家励志奖学金",
-        "topic:学业奖学金",
-        "topic:社会奖学金",
-        "topic:教育基金会奖助学金",
-        "topic:至善/校长奖学金",
-        "topic:博士新生奖",
-        "topic:港澳台奖学金"
-      ]
-    },
-    {
-      "id": "group:资助",
-      "label": "资助",
-      "dimension": "topic",
-      "terms": [
-        "topic:助学金",
-        "topic:困难补助"
-      ]
-    },
-    {
-      "id": "group:评优评先",
-      "label": "评优评先",
-      "dimension": "topic",
-      "terms": [
-        "topic:评优评先",
-        "topic:优秀毕业生",
-        "topic:三好学生"
+        "topic:校园服务",
+        "topic:防诈骗与安全",
+        "topic:总务后勤",
+        "topic:讲座与文化"
       ]
     },
     {
       "id": "group:8",
-      "label": "8 国际与交流",
+      "label": "8 校务公告",
       "dimension": "topic",
       "terms": [
-        "topic:来华留学",
-        "topic:港澳台交流",
-        "topic:国际会议",
-        "topic:国际组织"
+        "topic:规章制度",
+        "topic:党团学习",
+        "topic:国防与征兵"
       ]
     },
     {
       "id": "group:9",
-      "label": "9 毕业与校友",
+      "label": "9 国际与校友",
       "dimension": "topic",
       "terms": [
-        "topic:校友",
-        "topic:校友会",
-        "topic:校友活动",
-        "topic:档案户口",
-        "topic:捐赠"
-      ]
-    },
-    {
-      "id": "group:10",
-      "label": "10 校务与公告",
-      "dimension": "topic",
-      "terms": [
-        "topic:规章制度",
-        "topic:入党",
-        "topic:理论学习",
-        "topic:青马工程",
-        "topic:主题团日",
-        "topic:人文东大"
+        "topic:来华留学",
+        "topic:港澳台交流",
+        "topic:国际组织与会议",
+        "topic:校友活动"
       ]
     },
     {
@@ -2169,4 +1355,3 @@ export const SUBSCRIPTION_TAXONOMY = {
     }
   ]
 } as const;
-

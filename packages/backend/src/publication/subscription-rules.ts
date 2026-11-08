@@ -1,35 +1,60 @@
 import { SUBSCRIPTION_TAXONOMY as TAX } from "@aihot/industry/subscription-v2";
+import { TAG_SYNONYMS } from "@aihot/industry/taxonomy";
 import type { SubscriptionAnnotation, SubscriptionEvidence, SubscriptionProfile } from "@aihot/contracts/subscription";
-import { OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES } from "@aihot/industry/subscription-onboarding";
+import { LEGACY_TOPIC_GROUP_IDS, OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES } from "@aihot/industry/subscription-onboarding";
 
 const tags = TAX.tags as readonly { id: string; label: string; dimension: string; reserved: boolean }[];
 const groups = TAX.groups as readonly { id: string; label: string; dimension: string; terms: readonly string[] }[];
 const topicNames = new Set(tags.filter(t => t.dimension === "topic").map(t => t.label));
 const collegeNames = groups.find(g => g.id === "group:12")!.terms.map(id => id.slice(id.indexOf(":") + 1));
-const aliases: Record<string, string[]> = {
-  "AI/机器学习": ["人工智能", "机器学习", "深度学习", "AI"], "SRTP": ["大学生科研训练计划"],
-  "大创": ["大学生创新创业训练计划"], "国家留学基金": ["国家留学基金委", "CSC"],
-  "国自然": ["国家自然科学基金"], "社科基金": ["国家社会科学基金"],
-  "秋招春招": ["秋季招聘", "春季招聘", "秋招", "春招"],
-  "防诈骗": ["反诈", "防范电信诈骗"], "至善/校长奖学金": ["至善奖学金", "校长奖学金"],
-  "困难补助": ["临时困难资助", "临时困难补助", "困难补助"],
+
+/** 非主题维度的召回别名（主体、学院、校区）；主题词的旧写法统一由 TAG_SYNONYMS 归一派生。 */
+const EXTRA_ALIASES: Record<string, string[]> = {
   "丁家桥": ["丁家桥校区"], "学生处（党委学工部）": ["学生处", "党委学工部", "学生工作处"],
   "就业指导中心": ["就业中心", "学生就业指导中心"], "网络与信息中心": ["网络信息中心"],
   "经济管理学院": ["经管"], "外国语学院": ["外国语"], "计算机科学与工程学院": ["计算机"],
   "信息科学与工程学院": ["信息学院"], "电子科学与工程学院": ["电子学院"],
   "生物科学与医学工程学院": ["生医"], "仪器科学与工程学院": ["仪科学院"],
   "能源与环境学院": ["能环"], "化学化工学院": ["化工"], "网络空间安全学院": ["网安"],
+  "AI/机器学习": ["AI"], "访学与交流": ["国家留学基金委", "CSC"],
+  "项目申报与基金": ["国家自然科学基金", "国家社会科学基金"], "国企与制造": ["国企", "央企"],
 };
+const aliases: Record<string, string[]> = (() => {
+  const out: Record<string, string[]> = {};
+  for (const [variant, canonical] of Object.entries(TAG_SYNONYMS)) {
+    if (canonical !== variant) (out[canonical] ??= []).push(variant);
+  }
+  for (const [label, words] of Object.entries(EXTRA_ALIASES)) (out[label] ??= []).push(...words);
+  return out;
+})();
+
+/** 旧画像/旧模型词里的主题名归一到聚合词；不认识的原样返回，由校验层处置。 */
+export function canonicalTopicName(name: string): string {
+  return OPTIMIZED_TOPIC_NAMES.has(name) ? name : TAG_SYNONYMS[name] ?? name;
+}
+
+/** 旧订阅画像读取迁移：主题名归一到聚合词，旧组 id（alumni）归一到新组 id。 */
+export function migrateLegacySubscription(profile: SubscriptionProfile): SubscriptionProfile {
+  return {
+    ...profile,
+    interests: [...new Set(profile.interests.map(id => id.startsWith("topic:") ? `topic:${canonicalTopicName(id.slice(6))}` : id))],
+    ...(profile.topicGroups ? { topicGroups: profile.topicGroups.map(id => LEGACY_TOPIC_GROUP_IDS[id] ?? id) } : {}),
+  };
+}
 
 /** Accept only dictionary IDs; groups expand to leaves, never to identity constraints. */
 export function normalizeSubscriptionProfile(raw: unknown): SubscriptionProfile {
   const p = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
   const optimized = p.mode === "interest" || p.mode === "identity_all";
-  const selectedGroups = optimized && Array.isArray(p.topicGroups) ? OPTIMIZED_TOPIC_GROUPS.filter(g => (p.topicGroups as unknown[]).includes(g.id)) : [];
+  const selectedGroups = optimized && Array.isArray(p.topicGroups)
+    ? OPTIMIZED_TOPIC_GROUPS.filter(g => (p.topicGroups as unknown[]).map(id => LEGACY_TOPIC_GROUP_IDS[id as string] ?? id).includes(g.id))
+    : [];
   function list(key: string, dimension: string) {
     const input = Array.isArray(p[key]) ? p[key].filter(x => typeof x === "string").slice(0, 250) as string[] : [];
     if (key === "interests") input.push(...selectedGroups.flatMap(g => g.subgroups.flatMap(s => s.tags.map(t => `topic:${t}`))));
-    const expanded = input.flatMap(id => groups.find(g => g.id === id && g.dimension === dimension)?.terms ?? (id === "topic:评优评先" ? [id, "topic:优秀毕业生", "topic:三好学生"] : [id]));
+    // 旧词读取时归一到聚合词（暑期学校→访学与交流、百团大战→社团活动……），断订不断读。
+    const normalized = dimension === "topic" ? input.map(id => id.startsWith("topic:") ? `topic:${canonicalTopicName(id.slice(6))}` : id) : input;
+    const expanded = normalized.flatMap(id => groups.find(g => g.id === id && g.dimension === dimension)?.terms ?? [id]);
     return [...new Set(expanded)].filter(id => tags.some(t => t.id === id && t.dimension === dimension && (!t.reserved || (optimized && dimension === "topic" && OPTIMIZED_TOPIC_NAMES.has(t.label)))));
   }
   return {
