@@ -336,7 +336,7 @@ test("订阅画像：账号隔离、严格校验、乐观锁、清除与试验�
   const saved = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost", "x-csrf-token": csrf }, payload: { profile, revision: 0 } });
   assert.equal(saved.statusCode, 200);
   assert.equal(saved.json().revision, 1);
-  assert.equal(saved.json().taxonomyVersion, "2026-11-09-v4");
+  assert.equal(saved.json().taxonomyVersion, "2026-11-09-v3");
   const stale = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost", "x-csrf-token": csrf }, payload: { profile, revision: 0 } });
   assert.equal(stale.statusCode, 409);
 

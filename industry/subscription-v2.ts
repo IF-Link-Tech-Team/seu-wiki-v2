@@ -1,7 +1,7 @@
 // User-approved taxonomy. Navigation groups never imply audience restrictions.
-// 2026-11-09-v4：SRTP/大创独立成词；主题按读者订阅目的聚合；细词经 TAG_SYNONYMS 归一，旧 ID 读取时迁移。
+// 2026-11-09-v3：SRTP/大创独立成词、交换与访学/论文发表更贴学生口语，别名覆盖绩点/挂科/调剂/毕设/数模/电赛/内推等高频词。
 export const SUBSCRIPTION_TAXONOMY = {
-  "version": "2026-11-09-v4",
+  "version": "2026-11-09-v3",
   "tags": [
     {
       "id": "topic:选课与成绩",
@@ -46,8 +46,8 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:访学与交流",
-      "label": "访学与交流",
+      "id": "topic:交换与访学",
+      "label": "交换与访学",
       "dimension": "topic",
       "reserved": false
     },
@@ -118,8 +118,8 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:论文与成果转化",
-      "label": "论文与成果转化",
+      "id": "topic:论文发表",
+      "label": "论文发表",
       "dimension": "topic",
       "reserved": false
     },
@@ -906,7 +906,7 @@ export const SUBSCRIPTION_TAXONOMY = {
         "topic:保研",
         "topic:考研",
         "topic:留学",
-        "topic:访学与交流"
+        "topic:交换与访学"
       ]
     },
     {
@@ -932,7 +932,7 @@ export const SUBSCRIPTION_TAXONOMY = {
         "topic:大创",
         "topic:实验室与科研助理",
         "topic:项目申报与基金",
-        "topic:论文与成果转化",
+        "topic:论文发表",
         "topic:学术会议与报告",
         "topic:学科竞赛",
         "topic:AI/机器学习"

@@ -10,14 +10,14 @@ export const OPTIMIZED_TOPIC_GROUPS = [
   ]},
   { id: "further", label: "升学深造", icon: "↗", subgroups: [
     { label: "升学路径", tags: ["保研", "考研", "留学"] },
-    { label: "交流培养", tags: ["访学与交流"] },
+    { label: "交流培养", tags: ["交换与访学"] },
   ]},
   { id: "career", label: "求职就业", icon: "▣", subgroups: [
     { label: "招聘与服务", tags: ["校园招聘", "实习", "选调与公职", "就业服务"] },
     { label: "行业方向", tags: ["互联网与芯片", "国企与制造", "金融与地产"] },
   ]},
   { id: "research", label: "科研竞赛", icon: "✧", subgroups: [
-    { label: "科研与学术", tags: ["SRTP", "大创", "实验室与科研助理", "项目申报与基金", "论文与成果转化", "学术会议与报告"] },
+    { label: "科研与学术", tags: ["SRTP", "大创", "实验室与科研助理", "项目申报与基金", "论文发表", "学术会议与报告"] },
     { label: "竞赛与AI", tags: ["学科竞赛", "AI/机器学习"] },
   ]},
   { id: "awards", label: "奖助评优", icon: "☆", subgroups: [

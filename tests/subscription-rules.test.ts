@@ -16,6 +16,11 @@ test("navigation selection expands without inferring undergraduate eligibility",
   // 旧细叶词读取时归一到聚合词：优秀毕业生→评优评先，百团大战→社团活动
   assert.deepEqual(profile({interests:["topic:优秀毕业生","topic:百团大战"]}).interests,["topic:评优评先","topic:社团活动"]);
   assert.deepEqual(profile({interests:["topic:科研训练与大创"]}).interests,["topic:SRTP","topic:大创"],"换代前的聚合词拆分后两个都保留");
+  assert.deepEqual(profile({interests:["topic:访学与交流","topic:论文与成果转化"]}).interests,["topic:交换与访学","topic:论文发表"],"旧聚合词更名后自动迁移");
+  // 学生口语词经别名命中：搜挂科/调剂/毕设的原文能召回对应聚合词
+  assert.ok(annotate({title:"关于2026年春季学期补考安排的通知",summary:"",source:"教务处"}).topics.includes("选课与成绩"));
+  assert.ok(annotate({title:"2026年硕士研究生调剂系统开通通知",summary:"",source:"研究生院"}).topics.includes("考研"));
+  assert.ok(annotate({title:"关于2026届本科毕业设计（毕设）答辩安排的通知",summary:"",source:"教务处"}).topics.includes("毕业与学位"));
 });
 test("reject unknown IDs, wrong dimensions, reserved terms and duplicate selections",()=>{
   const q=profile({degree:"教授",interests:["unknown","publisher:教务处","topic:不存在的词","topic:保研","topic:保研"]});
