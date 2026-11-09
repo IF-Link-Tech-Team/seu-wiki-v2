@@ -7,14 +7,15 @@ const day="2026-10-25";
 const p=profile({degree:"本科生",college:"计算机科学与工程学院",enrollmentYear:"2023",international:"no",interests:["topic:AI/机器学习"],identityNotices:true});
 const item=(summary:string|null,title="人工智能讲座预告",source="自动化学院")=>annotate({title,summary,source});
 test("merged dictionary keeps one home per topic and separates navigation and format",()=>{
-  const ids=tax.tags.map(t=>t.id);assert.equal(new Set(ids).size,ids.length);assert.equal(ids.length,146);
-  assert.ok(ids.includes("location:丁家桥"));assert.ok(ids.includes("location:江北校区"));assert.ok(ids.includes("topic:党团学习"));
-  assert.ok(ids.includes("format:线上"));assert.equal(ids.filter(id=>id==="topic:科研训练与大创").length,1);
+  const ids=tax.tags.map(t=>t.id);assert.equal(new Set(ids).size,ids.length);assert.equal(ids.length,147);
+  assert.ok(ids.includes("location:丁家桥"));assert.ok(ids.includes("location:江北校区"));assert.ok(ids.includes("topic:入党与党团"));
+  assert.ok(ids.includes("format:线上"));assert.ok(ids.includes("topic:SRTP"));assert.ok(ids.includes("topic:大创"));
 });
 test("navigation selection expands without inferring undergraduate eligibility",()=>{
   const q=profile({interests:["group:1"]});assert.ok(q.interests.includes("topic:选课与成绩"));assert.equal(q.degree,"");
   // 旧细叶词读取时归一到聚合词：优秀毕业生→评优评先，百团大战→社团活动
   assert.deepEqual(profile({interests:["topic:优秀毕业生","topic:百团大战"]}).interests,["topic:评优评先","topic:社团活动"]);
+  assert.deepEqual(profile({interests:["topic:科研训练与大创"]}).interests,["topic:SRTP","topic:大创"],"换代前的聚合词拆分后两个都保留");
 });
 test("reject unknown IDs, wrong dimensions, reserved terms and duplicate selections",()=>{
   const q=profile({degree:"教授",interests:["unknown","publisher:教务处","topic:不存在的词","topic:保研","topic:保研"]});
@@ -100,7 +101,7 @@ test("missing summary and unknown type remain uncertain, and sources are indepen
 });
 test("topic evidence records exact source text and English abbreviations respect boundaries",()=>{
   const a=item("面向全校学生。介绍深度学习方法。");assert.ok(a.evidence.some(e=>e.tag==="AI/机器学习"&&e.quote.includes("人工智能")));
-  assert.ok(!item("介绍 XSRTPX。","技术分享").topics.includes("科研训练与大创"));
+  assert.ok(!item("介绍 XSRTPX。","技术分享").topics.includes("SRTP"));
 });
 test("real snapshot regression: course teachers are not the graduate students they teach",()=>{
   const a=item("艺术学院面向研究生任课老师发布提醒，公共课即将开课。","研究生课表开课提醒","艺术学院");

@@ -1,7 +1,7 @@
 // User-approved taxonomy. Navigation groups never imply audience restrictions.
-// 2026-10-27-v3：主题维度按读者订阅目的聚合为 42 个标签（9 组）；细词经 TAG_SYNONYMS 归一，旧 ID 读取时迁移。
+// 2026-11-09-v4：SRTP/大创独立成词；主题按读者订阅目的聚合；细词经 TAG_SYNONYMS 归一，旧 ID 读取时迁移。
 export const SUBSCRIPTION_TAXONOMY = {
-  "version": "2026-10-27-v3",
+  "version": "2026-11-09-v4",
   "tags": [
     {
       "id": "topic:选课与成绩",
@@ -94,8 +94,14 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:科研训练与大创",
-      "label": "科研训练与大创",
+      "id": "topic:SRTP",
+      "label": "SRTP",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:大创",
+      "label": "大创",
       "dimension": "topic",
       "reserved": false
     },
@@ -220,8 +226,8 @@ export const SUBSCRIPTION_TAXONOMY = {
       "reserved": false
     },
     {
-      "id": "topic:党团学习",
-      "label": "党团学习",
+      "id": "topic:入党与党团",
+      "label": "入党与党团",
       "dimension": "topic",
       "reserved": false
     },
@@ -922,7 +928,8 @@ export const SUBSCRIPTION_TAXONOMY = {
       "label": "4 科研竞赛",
       "dimension": "topic",
       "terms": [
-        "topic:科研训练与大创",
+        "topic:SRTP",
+        "topic:大创",
         "topic:实验室与科研助理",
         "topic:项目申报与基金",
         "topic:论文与成果转化",
@@ -971,7 +978,7 @@ export const SUBSCRIPTION_TAXONOMY = {
       "dimension": "topic",
       "terms": [
         "topic:规章制度",
-        "topic:党团学习",
+        "topic:入党与党团",
         "topic:国防与征兵"
       ]
     },

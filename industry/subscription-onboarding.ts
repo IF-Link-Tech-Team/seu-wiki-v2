@@ -17,7 +17,7 @@ export const OPTIMIZED_TOPIC_GROUPS = [
     { label: "行业方向", tags: ["互联网与芯片", "国企与制造", "金融与地产"] },
   ]},
   { id: "research", label: "科研竞赛", icon: "✧", subgroups: [
-    { label: "科研与学术", tags: ["科研训练与大创", "实验室与科研助理", "项目申报与基金", "论文与成果转化", "学术会议与报告"] },
+    { label: "科研与学术", tags: ["SRTP", "大创", "实验室与科研助理", "项目申报与基金", "论文与成果转化", "学术会议与报告"] },
     { label: "竞赛与AI", tags: ["学科竞赛", "AI/机器学习"] },
   ]},
   { id: "awards", label: "奖助评优", icon: "☆", subgroups: [
@@ -32,7 +32,7 @@ export const OPTIMIZED_TOPIC_GROUPS = [
     { label: "文化与讲座", tags: ["讲座与文化"] },
   ]},
   { id: "governance", label: "校务公告", icon: "▥", subgroups: [
-    { label: "校务与组织", tags: ["规章制度", "党团学习", "国防与征兵"] },
+    { label: "校务与组织", tags: ["规章制度", "入党与党团", "国防与征兵"] },
   ]},
   { id: "global", label: "国际与校友", icon: "◎", subgroups: [
     { label: "国际与校友", tags: ["来华留学", "港澳台交流", "国际组织与会议", "校友活动"] },
