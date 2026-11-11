@@ -1,6 +1,7 @@
 import type { SubscriptionProfile } from "@aihot/contracts/subscription";
 import { OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES } from "@aihot/industry/subscription-onboarding";
 import { SUBSCRIPTION_TAXONOMY as TAX } from "@aihot/industry/subscription-v2";
+import { migrateLegacySubscription } from "../publication/subscription-rules.ts";
 import { sql } from "../db.ts";
 
 export interface StoredSubscriptionProfile {
@@ -74,7 +75,8 @@ export async function readSubscriptionProfile(memberId: string): Promise<StoredS
     SELECT profile, taxonomy_version, revision, updated_at
     FROM member_subscription_profiles
     WHERE member_id = ${memberId}`;
-  return row ? { profile: row.profile, taxonomyVersion: row.taxonomy_version, revision: row.revision, updatedAt: row.updated_at.toISOString() } : null;
+  // 词表换代（2026-10-27-v3）后旧画像仍在库：读取时把细叶词归一到聚合词，下次保存落为新词形。
+  return row ? { profile: migrateLegacySubscription(row.profile), taxonomyVersion: row.taxonomy_version, revision: row.revision, updatedAt: row.updated_at.toISOString() } : null;
 }
 
 export async function saveSubscriptionProfile(memberId: string, profile: SubscriptionProfile, expectedRevision: number): Promise<StoredSubscriptionProfile> {

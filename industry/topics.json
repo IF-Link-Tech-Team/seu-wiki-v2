@@ -23,144 +23,273 @@
       "name": "教务处",
       "group": "org",
       "entityId": "jwc",
-      "tags": ["教务处", "entity:jwc"],
+      "tags": [
+        "教务处",
+        "entity:jwc"
+      ],
       "definition": "教务处的全部通知：选课、考试、学籍、转专业、SRTP、国际交流项目。",
-      "related": ["baoyan", "exchange", "competition"]
+      "related": [
+        "baoyan",
+        "exchange",
+        "competition"
+      ]
     },
     {
       "slug": "xsc",
       "name": "学生处",
       "group": "org",
       "entityId": "xsc",
-      "tags": ["学生处", "entity:xsc"],
+      "tags": [
+        "学生处",
+        "entity:xsc"
+      ],
       "definition": "学生处（学工部）的奖助学金、评优评先、心理健康与学生事务通知。",
-      "related": ["jwc"]
+      "related": [
+        "jwc"
+      ]
     },
     {
       "slug": "tuanwei",
       "name": "校团委",
       "group": "org",
       "entityId": "tw",
-      "tags": ["校团委", "entity:tw"],
+      "tags": [
+        "校团委",
+        "entity:tw"
+      ],
       "definition": "校团委的第二课堂、志愿服务、社会实践与表彰公示。",
-      "related": ["volunteer", "club-activities"]
+      "related": [
+        "volunteer",
+        "club-activities"
+      ]
     },
     {
       "slug": "job-center",
       "name": "就业指导中心",
       "group": "org",
       "entityId": "job",
-      "tags": ["就业指导中心", "entity:job"],
+      "tags": [
+        "就业指导中心",
+        "entity:job"
+      ],
       "definition": "就业指导中心的宣讲会、招聘会、选调与就业手续通知。",
-      "related": ["internship", "campus-recruiting"]
+      "related": [
+        "internship",
+        "campus-recruiting"
+      ]
     },
     {
       "slug": "radio",
       "name": "信息科学与工程学院",
       "group": "college",
       "entityId": "radio",
-      "tags": ["信息科学与工程学院", "entity:radio"],
+      "tags": [
+        "信息科学与工程学院",
+        "entity:radio"
+      ],
       "definition": "信息科学与工程学院的院级通知、讲座、竞赛与学生活动。",
-      "related": ["electronic", "automation"]
+      "related": [
+        "electronic",
+        "automation"
+      ]
     },
     {
       "slug": "electronic",
       "name": "电子科学与工程学院",
       "group": "college",
       "entityId": "electronic",
-      "tags": ["电子科学与工程学院", "entity:electronic"],
+      "tags": [
+        "电子科学与工程学院",
+        "entity:electronic"
+      ],
       "definition": "电子科学与工程学院的院级通知、讲座、竞赛与学生活动。",
-      "related": ["radio", "automation"]
+      "related": [
+        "radio",
+        "automation"
+      ]
     },
     {
       "slug": "automation",
       "name": "自动化学院",
       "group": "college",
       "entityId": "automation",
-      "tags": ["自动化学院", "entity:automation"],
+      "tags": [
+        "自动化学院",
+        "entity:automation"
+      ],
       "definition": "自动化学院的院级通知、讲座、竞赛与学生活动。",
-      "related": ["radio", "electronic"]
+      "related": [
+        "radio",
+        "electronic"
+      ]
     },
     {
       "slug": "bme",
       "name": "生物科学与医学工程学院",
       "group": "college",
       "entityId": "bme",
-      "tags": ["生物科学与医学工程学院", "entity:bme"],
+      "tags": [
+        "生物科学与医学工程学院",
+        "entity:bme"
+      ],
       "definition": "生物科学与医学工程学院的院级通知、讲座、竞赛与学生活动。",
-      "related": ["radio"]
+      "related": [
+        "radio"
+      ]
     },
     {
       "slug": "baoyan",
       "name": "保研",
       "group": "topic",
-      "tags": ["保研"],
+      "tags": [
+        "保研"
+      ],
       "definition": "推荐免试研究生的政策、报名、夏令营、预推免与结果公示。",
-      "related": ["exchange", "jwc"]
+      "related": [
+        "exchange",
+        "jwc"
+      ]
     },
     {
       "slug": "exchange",
       "name": "国际交流",
       "group": "topic",
-      "tags": ["留学", "交流升学"],
+      "tags": [
+        "留学",
+        "交换",
+        "访学",
+        "联合培养",
+        "中外合作办学",
+        "暑期学校",
+        "交换与访学"
+      ],
       "definition": "海外交换、访学项目、联合培养与出国资助的通知与经验。",
-      "related": ["baoyan", "jwc"]
+      "related": [
+        "baoyan",
+        "jwc"
+      ]
     },
     {
       "slug": "competition",
       "name": "学科竞赛",
       "group": "topic",
-      "tags": ["竞赛科研", "数学建模", "电子设计", "AI/机器学习", "机器人"],
+      "tags": [
+        "学科竞赛",
+        "机器人",
+        "互联网+",
+        "AI/机器学习"
+      ],
       "definition": "各类学科竞赛的报名、选拔、培训与获奖公示。",
-      "related": ["research", "baoyan"]
+      "related": [
+        "research",
+        "baoyan"
+      ]
     },
     {
       "slug": "research",
       "name": "科研训练",
       "group": "topic",
-      "tags": ["SRTP", "创新创业"],
+      "tags": [
+        "SRTP",
+        "大创",
+        "创新创业",
+        "课外研学",
+        "科研训练与大创",
+        "实验室与科研助理",
+        "项目申报与基金"
+      ],
       "definition": "SRTP 课外研学、大学生创新创业项目与实验室招募。",
-      "related": ["competition", "baoyan"]
+      "related": [
+        "competition",
+        "baoyan"
+      ]
     },
     {
       "slug": "internship",
       "name": "实习",
       "group": "topic",
-      "tags": ["实习"],
+      "tags": [
+        "实习"
+      ],
       "definition": "实习岗位、企业开放日与暑期实践机会。",
-      "related": ["campus-recruiting", "job-center"]
+      "related": [
+        "campus-recruiting",
+        "job-center"
+      ]
     },
     {
       "slug": "campus-recruiting",
       "name": "秋招春招",
       "group": "topic",
-      "tags": ["秋招春招", "选调", "国企央企", "互联网"],
+      "tags": [
+        "秋招春招",
+        "宣讲会",
+        "双选会",
+        "选调",
+        "国企央企",
+        "互联网",
+        "校园招聘",
+        "选调与公职",
+        "国企与制造",
+        "互联网与芯片"
+      ],
       "definition": "校园招聘、宣讲会、双选会与基层选调信息。",
-      "related": ["internship", "job-center"]
+      "related": [
+        "internship",
+        "job-center"
+      ]
     },
     {
       "slug": "volunteer",
       "name": "志愿服务",
       "group": "topic",
-      "tags": ["志愿服务"],
+      "tags": [
+        "志愿服务",
+        "社会实践",
+        "公益",
+        "志愿公益"
+      ],
       "definition": "志愿活动招募、志愿时长认定与社会实践。",
-      "related": ["tuanwei", "club-activities"]
+      "related": [
+        "tuanwei",
+        "club-activities"
+      ]
     },
     {
       "slug": "club-activities",
       "name": "社团活动",
       "group": "topic",
-      "tags": ["社团", "社团活动", "音乐", "体育", "演出"],
+      "tags": [
+        "社团活动",
+        "演出",
+        "体育赛事",
+        "迎新晚会",
+        "文艺演出",
+        "体育运动"
+      ],
       "definition": "社团招新、校园活动、演出与文体赛事。",
-      "related": ["volunteer", "tuanwei"]
+      "related": [
+        "volunteer",
+        "tuanwei"
+      ]
     },
     {
       "slug": "lecture",
       "name": "讲座",
       "group": "topic",
-      "tags": ["讲座", "讲座预告"],
+      "tags": [
+        "讲座",
+        "六朝松大师讲堂",
+        "吴健雄大讲堂",
+        "文化素质教育",
+        "展览",
+        "讲座与文化"
+      ],
       "definition": "人文讲座、学术报告与名家讲堂预告。",
-      "related": ["club-activities", "research"]
+      "related": [
+        "club-activities",
+        "research"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { fromOptimizedProfile, toOptimizedProfile, legacyTopicExtras } from "@aihot/contracts/subscription-onboarding";
+import { fromOptimizedProfile, toOptimizedProfile } from "@aihot/contracts/subscription-onboarding";
 import { annotateSubscription as annotate, matchSubscription as match, normalizeSubscriptionProfile as normalize } from "@aihot/backend/publication/subscription-rules";
 import { OPTIMIZED_TOPIC_GROUPS } from "@aihot/industry/subscription-onboarding";
 
@@ -15,7 +15,7 @@ test("optimized HTML selections survive conversion and normalization, including 
   for (const topic of value.subscriptionPreferences.topics) assert.ok(profile.interests.includes(`topic:${topic}`), topic);
   assert.deepEqual(toOptimizedProfile(converted), value);
   const recruitment = annotate({ title: "社团招新通知", summary: "面向全校学生，欢迎参加。", source: "校团委" }, true);
-  assert.ok(recruitment.topics.includes("社团招新"));
+  assert.ok(recruitment.topics.includes("社团活动"));
   assert.notEqual(match(recruitment, profile, day).lane, "excluded");
 });
 
@@ -62,15 +62,15 @@ test("type exclusions still apply to online events and all excluded known types 
   assert.equal(match(message("面向全校学生，丁家桥校区组织线上腾讯会议。"), p, day).lane, "excluded");
 });
 
-test("legacy settings remain valid; saved topics missing from the supplied demo remain editable", () => {
+test("legacy settings remain valid and old topic names migrate to merged ones", () => {
   const legacy = normalize({ degree: "本科生", interests: ["topic:校科协"], identityNotices: true, international: "no", types: ["type:事务通知"] });
   assert.equal(legacy.mode, undefined);
+  assert.deepEqual(legacy.interests, ["topic:学生组织"]);
   const converted = fromOptimizedProfile(toOptimizedProfile(legacy), legacy);
   assert.deepEqual(converted.interests, legacy.interests); assert.equal(converted.international, "no");
   assert.ok(!converted.excludedTypes!.includes("type:事务通知"));
   assert.ok(converted.excludedTypes!.includes("type:新闻报道"));
-  const withExtra = toOptimizedProfile({ ...legacy, interests: ["topic:社团联合会"] });
-  assert.ok(legacyTopicExtras(withExtra).some(g => g.tags.includes("社团联合会")));
+  assert.deepEqual(normalize({ interests: ["topic:校科协", "topic:社团联合会"] }).interests, ["topic:学生组织"]);
 });
 
 test("bridge conversion rejects malformed data and missing identity instead of silently losing selections", () => {
