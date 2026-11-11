@@ -13,8 +13,8 @@ import { BudgetExceededError, ProviderRejectedError, completeReceipt } from "../
 import { publishArticle } from "../publication/publish.ts";
 
 const MAX_NEW_PER_CHECK = 8;
-/** Posts older than this on the first check of an account are history, not news. */
-const FIRST_CHECK_WINDOW_MS = 7 * 86400_000;
+/** Apply on every check so later runs cannot buy the history skipped during initialization. */
+const RECENT_POST_WINDOW_MS = 7 * 86400_000;
 /** A body missing for a passing reason is fetched again on later checks: this often, while the post is this recent. */
 const BODY_RETRIES = 3;
 const BODY_RETRY_WINDOW_MS = 3 * 86400_000;
@@ -73,7 +73,7 @@ export async function checkMpAccount(sourceId: string, reason: "schedule" | "man
     for (const p of posts) {
       if (!p.url || !p.title || fetched >= maxNew) continue;
       const publishedAt = p.post_time ? new Date(p.post_time * 1000) : null;
-      if (firstCheck && publishedAt && Date.now() - publishedAt.getTime() > FIRST_CHECK_WINDOW_MS) continue;
+      if (publishedAt && Date.now() - publishedAt.getTime() > RECENT_POST_WINDOW_MS) continue;
       // Same identity rule as every entrance: the long link without tracking parameters. A known post is
       // skipped, unless its body failed for a passing reason: then it is tried again a few times.
       const key = identityKeyForUrl(p.url);
