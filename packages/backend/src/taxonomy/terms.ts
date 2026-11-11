@@ -31,8 +31,10 @@ export async function seedTaxonomyTerms(db: Db = sql): Promise<number> {
       names.push(name);
       // 换代时被 seed-sync 退役、又被新词表重新收编的词在这里复活；人工拒绝（reviewed_by 非 seed-sync）的词不受影响。
       const r = await db`INSERT INTO taxonomy_terms (grp, name, status, source) VALUES (${g.label}, ${name}, 'active', 'seed')
-        ON CONFLICT (name) DO UPDATE SET status = 'active', grp = ${g.label}, reviewed_by = NULL, reviewed_at = NULL, updated_at = now()
-        WHERE taxonomy_terms.status = 'rejected' AND taxonomy_terms.source = 'seed' AND taxonomy_terms.reviewed_by = 'seed-sync'`;
+        ON CONFLICT (name) DO UPDATE SET status = 'active', source = 'seed', grp = ${g.label}, reviewed_by = NULL, reviewed_at = NULL, updated_at = now()
+        WHERE taxonomy_terms.status = 'candidate'
+          OR (taxonomy_terms.status = 'active' AND taxonomy_terms.source = 'seed' AND taxonomy_terms.grp IS DISTINCT FROM ${g.label})
+          OR (taxonomy_terms.status = 'rejected' AND taxonomy_terms.source = 'seed' AND taxonomy_terms.reviewed_by = 'seed-sync')`;
       n += r.count;
     }
   }
