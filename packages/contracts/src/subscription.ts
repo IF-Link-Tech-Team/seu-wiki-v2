@@ -42,9 +42,9 @@ export interface SubscriptionResponse {
   version: string;
   profile: SubscriptionProfile;
   asOf: string;
-  from: string;
+  from: string | null;
+  to: string | null;
   total: number;
-  truncated: boolean;
   counts: Record<SubscriptionItem["lane"], number>;
   items: SubscriptionItem[];
   page: number;

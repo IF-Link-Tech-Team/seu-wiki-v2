@@ -99,10 +99,11 @@ export function registerSite(app: FastifyInstance) {
     if (!subscriptionExperimentEnabled()) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Not found.", cacheControl: "private, no-store" });
     if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
     const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
-    const asOf = typeof body.asOf === "string" ? body.asOf : new Date(Date.now()+8*3600000).toISOString().slice(0,10);
-    if (!/^20\d{2}-\d{2}-\d{2}$/.test(asOf) || !Number.isFinite(Date.parse(asOf)) || new Date(asOf).toISOString().slice(0,10) !== asOf) throw new BadRequest("invalid date");
+    const asOf = typeof body.asOf === "string" ? body.asOf : undefined;
+    if (asOf !== undefined && (!/^20\d{2}-\d{2}-\d{2}$/.test(asOf) || !Number.isFinite(Date.parse(asOf)) || new Date(asOf).toISOString().slice(0,10) !== asOf)) throw new BadRequest("invalid date");
     const lane = body.lane === "possible" || body.lane === "excluded" || body.lane === "matched" ? body.lane : "feed";
-    const page = Math.max(1,Math.min(200,Math.floor(Number(body.page)||1)));
+    const requestedPage = Math.floor(Number(body.page));
+    const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
     return reply.send(await loadSubscription({ profile: body.profile, asOf, lane, page, q: typeof body.q === "string" ? body.q.slice(0,100) : "" }));
   }));
   app.get("/api/site/subscription-taxonomy", siteHandler(async (req, reply) => {

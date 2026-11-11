@@ -3,6 +3,7 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 export default [
   index("routes/home.tsx"),
   route("subscription", "routes/subscription.tsx"),
+  route("welcome", "routes/welcome.tsx"),
   route("for-you", "routes/redirects.tsx", { id: "redirect-for-you" }),
   route("survival", "routes/redirects.tsx", { id: "redirect-survival" }),
   route("survival/*", "routes/survival.$.tsx"),

@@ -38,6 +38,6 @@ ACCOUNTS_M2M_APP_SECRET=<仅服务端保存>
 ## 验收状态
 
 - 自动化桩可验证：站内回跳消毒、Accounts UUID 建档、会话撤销 fail closed、画像账号隔离、CSRF/Origin、并发修订冲突和开关关闭时 404。
-- 待团队提供测试环境后人工验证：真实登录、首次 Accounts 建档回跳、搜索页 query/文章页/订阅页回跳、跨浏览器恢复、切换账号、中心会话撤销。
+- 待团队提供测试环境后人工验证：真实登录、首次 Accounts 建档回跳、开启订阅后的 `/welcome` 画像弹窗及保存后进入订阅、关闭开关时搜索 query/文章页原路径回跳、后台/机构回跳、跨浏览器恢复、切换账号、中心会话撤销。当前产品流程见 [订阅上线验收](subscription-release.md)。
 - 远端 back-channel logout 到 localhost 不作为真实链路验收；必须在团队 HTTPS 测试站补验。
 - 完成产品与隐私评审、真实界面和登录链路验收前，PR 保持 Draft，生产环境保持开关关闭。

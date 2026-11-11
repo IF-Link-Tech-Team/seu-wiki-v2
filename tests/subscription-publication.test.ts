@@ -42,10 +42,51 @@ test("subscription POST respects publication visibility, eligibility and release
   const feed=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:['topic:AI/机器学习']},asOf:day,lane:'feed',q:key}});
   assert.equal(feed.statusCode,200);assert.deepEqual(feed.json().items.map((x:{id:string})=>x.id),[ids[0]]);
 });
+test("subscription includes messages older than 30 days and reports the database date range",async()=>{
+  const oldDate=new Date(Date.now()-90*86400000);
+  const oldDay=new Date(oldDate.getTime()+8*3600000).toISOString().slice(0,10);
+  const marker=`${key}-archive`;
+  const {articleId}=await upsertMaterial({sourceId:source,url:`https://example.com/${marker}`,title:`人工智能讲座${marker}`,bodyText:'Archived item',bodyStatus:'ok',via:'fetch',publishedAt:oldDate});
+  await sql`INSERT INTO analyses (article_id,input_revision,origin,relevance,category,title_zh,summary_zh,score,selected)
+    VALUES (${articleId},1,'rule','pass','academic',${`人工智能讲座${marker}`},'面向全校学生。欢迎参加。',90,true)`;
+  await publishArticle(articleId,{releasedAt:oldDate});
+  try {
+    const res=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:['topic:AI/机器学习']},lane:'feed',q:marker}});
+    assert.equal(res.statusCode,200);
+    const data=res.json();
+    assert.equal(data.asOf,day);
+    assert.equal(data.from,oldDay);
+    assert.equal(data.to,day);
+    assert.deepEqual(data.items.map((item:{id:string})=>item.id),[articleId]);
+  } finally {
+    await sql`UPDATE publications SET visibility='withdrawn' WHERE article_id=${articleId}`;
+  }
+});
 test("subscription validates date and normalizes untrusted profile arrays",async()=>{
   const bad=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{asOf:'2026-02-30'}});assert.equal(bad.statusCode,400);
   const res=await app.inject({method:'POST',headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:[null,{},'evil'],college:'evil'},asOf:day,lane:'excluded',q:key,page:-8}});
   assert.equal(res.statusCode,200);assert.deepEqual(res.json().profile.interests,[]);assert.equal(res.json().page,1);
+});
+
+test("newly published database content appears on the next subscription request without restart",async()=>{
+  const marker=`${key}-fresh`;
+  const request={method:'POST' as const,headers:{cookie:sessionCookie},url:'/api/site/subscription-preview',payload:{profile:{interests:['topic:AI/机器学习']},lane:'feed',q:marker}};
+  const before=await app.inject(request);
+  assert.equal(before.statusCode,200);
+  assert.equal(before.json().items.length,0);
+  const {articleId}=await upsertMaterial({sourceId:source,url:`https://example.com/${marker}`,title:`人工智能讲座${marker}`,bodyText:'PRIVATE BODY',bodyStatus:'ok',via:'fetch',publishedAt:new Date()});
+  await sql`INSERT INTO analyses (article_id,input_revision,origin,relevance,category,title_zh,summary_zh,score,selected)
+    VALUES (${articleId},1,'rule','pass','academic',${`人工智能讲座${marker}`},'面向全校学生。欢迎参加。',90,true)`;
+  await publishArticle(articleId,{releasedAt:new Date(Date.now()-1000)});
+  try {
+    const after=await app.inject(request);
+    assert.equal(after.statusCode,200);
+    assert.equal(after.headers['cache-control'],'private, no-store');
+    assert.deepEqual(after.json().items.map((item:{id:string})=>item.id),[articleId]);
+    await sql`UPDATE publications SET visibility='withdrawn' WHERE article_id=${articleId}`;
+    const withdrawn=await app.inject(request);
+    assert.equal(withdrawn.json().items.length,0);
+  } finally { await sql`UPDATE publications SET visibility='withdrawn' WHERE article_id=${articleId}`; }
 });
 
 test("production rejects anonymous, forged and expired sessions",async()=>{
