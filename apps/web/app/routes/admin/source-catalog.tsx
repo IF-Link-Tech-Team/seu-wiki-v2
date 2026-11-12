@@ -110,7 +110,6 @@ export default function SourceCatalog({ loaderData }: Route.ComponentProps) {
           tier: "T2",
           participation_mode: "editorial",
           interval_minutes: 60,
-          first_party: item.official,
           tags: [item.category],
           site_fulltext: true,
           syndicate_fulltext: false,

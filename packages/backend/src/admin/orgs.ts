@@ -33,7 +33,7 @@ export async function listOrganizations() {
 }
 
 /**
- * 创建组织：同名的 external 信源（first_party、T1_5、enabled=false——它从不被采集，只是内容的
+ * 创建组织：同名的 external 信源（T1_5、enabled=false——它从不被采集，只是内容的
  * 来源身份）和第一任 owner 的令牌。令牌只在这次响应里完整返回。
  */
 export async function createOrganization(input: Record<string, unknown>, actor: string) {
@@ -41,8 +41,8 @@ export async function createOrganization(input: Record<string, unknown>, actor: 
   if (!name) throw new OrgAdminError(400, "组织名称必填");
   const sourceId = `org-${sha256(name).slice(0, 12)}`;
   const org = await sql.begin(async (tx) => {
-    await tx`INSERT INTO sources (id, name, kind, config, tier, first_party, participation_mode, interval_minutes, enabled, health, next_fetch_at, tags)
-             VALUES (${sourceId}, ${name}, 'external', '{}'::jsonb, 'T1_5', true, 'editorial', 1440, false, 'ok', '2100-01-01', ${["org"]})
+    await tx`INSERT INTO sources (id, name, kind, config, tier, participation_mode, interval_minutes, enabled, health, next_fetch_at, tags)
+             VALUES (${sourceId}, ${name}, 'external', '{}'::jsonb, 'T1_5', 'editorial', 1440, false, 'ok', '2100-01-01', ${["org"]})
              ON CONFLICT (id) DO NOTHING`;
     const [row] = await tx<{ id: number }[]>`
       INSERT INTO organizations (name, intro, contact, source_id) VALUES (${name}, ${text(input.intro, 500)}, ${text(input.contact, 120)}, ${sourceId})

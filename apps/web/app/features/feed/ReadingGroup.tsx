@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router";
 import { Collapse } from "../../components/ui/Presence";
 import type { Development, GroupInfo, GroupReport, TimelineFilters } from "@aihot/contracts/site";
 import { IconArrowUpRight, IconChevronDown } from "../../components/icons";
-import { monthDayTime, shortSourceName } from "../../lib/format";
+import { publishedMonthDayTime, shortSourceName } from "../../lib/format";
 import { isReload } from "./restore";
 import { sessionCache } from "./session-cache";
 
@@ -213,7 +213,7 @@ export function GroupDevelopments({ group, filters, parentId }: { group: GroupIn
                 {d.title}
               </Link>
               <div className="mt-0.5 text-[11.5px] text-ink-4">
-                {shortSourceName(d.representative.source.name)} · <span className="num">{monthDayTime(d.representative.timelineAt)}</span>
+                {shortSourceName(d.representative.source.name)} · <span className="num">{publishedMonthDayTime(d.representative.publishedAt ?? d.representative.timelineAt, d.representative.publishedAt ? d.representative.publishedAtPrecision : "unknown")}</span>
                 {d.reportCount > 1 ? ` · ${d.reportCount} 篇报道` : ""}
               </div>
             </li>
@@ -234,7 +234,7 @@ export function LatestDevelopment({ group }: { group: GroupInfo }) {
   return (
     <p className="relative z-10 mt-2.5 flex items-baseline gap-1.5 text-[13px] leading-relaxed">
       <span className="shrink-0 font-medium text-accent">最新进展</span>
-      <span className="num shrink-0 text-ink-4">{monthDayTime(group.latestDevelopment.at)}</span>
+      <span className="num shrink-0 text-ink-4">{publishedMonthDayTime(group.latestDevelopment.at, group.latestDevelopment.precision)}</span>
       <span className="line-clamp-1 text-ink-3">{group.latestDevelopment.title}</span>
     </p>
   );

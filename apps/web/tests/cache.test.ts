@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { spawn, type ChildProcess } from "node:child_process";
 import { once } from "node:events";
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
 import type { AddressInfo } from "node:net";
 import { after, before, test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -12,23 +13,110 @@ import { releaseBoundCache } from "../app/lib/api.server.ts";
 let web: ChildProcess;
 let origin: string;
 let logs = "";
+test("authenticated subscription renders setup privately", async () => {
+  const entry=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=test-member"},redirect:"manual"});
+  assert.equal(entry.status,302);
+  assert.equal(entry.headers.get("location"),"/welcome");
+  const res=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=test-member"}});
+  assert.equal(res.status,200);
+  assert.match(res.headers.get("cache-control")??"",/private.*no-store/);
+  const html=await res.text();
+  assert.ok(html.includes("首次使用设置"));
+  assert.ok(html.includes("<iframe"));
+  assert.ok(html.includes("<dialog"));
+  assert.ok(html.includes("欢迎回来"));
+  assert.ok(!html.includes("取消修改"));
+  assert.ok(!html.includes("订阅功能登录后可解锁"));
+});
+
+test("profile database failure is not rendered as first use", async () => {
+  const res=await fetch(`${origin}/subscription`,{headers:{cookie:"seuwiki_member=db-down"}});
+  assert.equal(res.status,200);
+  const html=await res.text();
+  assert.ok(html.includes("暂时无法载入订阅设置"));
+  assert.doesNotMatch(html, /<iframe|订阅功能登录后可解锁/);
+});
+
+test("production gates anonymous subscription without collecting a profile", async () => {
+  const production = spawn(process.execPath, [fileURLToPath(new URL("../server.ts", import.meta.url))], {
+    env: { ...process.env, NODE_ENV: "production", WEB_PORT: "0", TRUST_PROXY: "false", API_BASE_URL: `http://127.0.0.1:${(api.address() as AddressInfo).port}` },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  let output = "";
+  try {
+    const port = await new Promise<string>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`production web did not start: ${output}`)), 15_000);
+      production.on("error", (error) => { clearTimeout(timer); reject(error); });
+      production.on("exit", () => { clearTimeout(timer); reject(new Error(`production web exited: ${output}`)); });
+      production.stderr!.on("data", chunk => { output += String(chunk); });
+      production.stdout!.on("data", chunk => {
+        output += String(chunk);
+        const match = output.match(/"msg":"web started","port":(\d+)/);
+        if (match) { clearTimeout(timer); resolve(match[1]); }
+      });
+    });
+    const response = await fetch(`http://127.0.0.1:${port}/subscription`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.ok(html.includes("订阅尚未开放"));
+    assert.ok(html.includes("小范围试验"));
+    assert.doesNotMatch(html, /<iframe|正在准备订阅设置|本地试验/);
+  } finally {
+    if (production.exitCode === null) {
+      const exited = once(production, "exit");
+      production.kill("SIGTERM");
+      await exited;
+    }
+  }
+});
+
+test("subscription setup is private and retired reports are gone", async () => {
+  const subscription = await fetch(`${origin}/subscription`);
+  assert.equal(subscription.status, 200);
+  const html = await subscription.text();
+  assert.ok(html.includes("我的订阅"));
+  assert.ok(html.includes("订阅功能登录后可解锁"));
+  assert.match(subscription.headers.get("cache-control") ?? "", /private.*no-store/);
+  assert.doesNotMatch(html, /href="[^\"]*(?:channel=firstParty|\/daily|\/weekly|\/monthly)/);
+  for (const path of ["/daily", "/daily/archive", "/daily/2026-10-01", "/weekly", "/monthly/2026-10"]) {
+    const response = await fetch(`${origin}${path}`);
+    assert.equal(response.status, 410, path);
+    assert.ok((await response.text()).includes("已下线"), path);
+  }
+});
 let deadline: number;
 let refreshAt: string;
 let metaDelayMs = 0;
+let feedFixture = false;
 const apiCookies: Array<string | undefined> = [];
 const api = createServer((req, res) => {
   const url = new URL(req.url!, "http://api.local");
-  apiCookies.push(req.headers.cookie);
+  if (!url.pathname.startsWith("/api/member/")) apiCookies.push(req.headers.cookie);
   res.setHeader("Content-Type", "application/json");
+  if (url.pathname === "/api/member/subscription-profile") {
+    if(req.headers.cookie === "seuwiki_member=test-member") return res.end(JSON.stringify({member:{id:"test-member"},profile:null,revision:0,csrf:"test-csrf"}));
+    if(req.headers.cookie === "seuwiki_member=db-down"){res.statusCode=503;return res.end(JSON.stringify({code:"temporarily_unavailable"}));}
+    res.statusCode=401;return res.end(JSON.stringify({code:"unauthorized"}));
+  }
+  if (url.pathname === "/api/member/me") {
+    if(req.headers.cookie === "seuwiki_member=test-member") return res.end(JSON.stringify({member:{id:"test-member"}}));
+    res.statusCode=401;return res.end(JSON.stringify({code:"unauthorized"}));
+  }
   if (url.pathname === "/api/site/meta") {
     const respond = () => res.end(JSON.stringify({ changelogVersion: "2026-09-28T12:00" }));
     return metaDelayMs ? setTimeout(respond, metaDelayMs) : respond();
   }
+  if (url.pathname === "/api/site/changelog") return res.end(readFileSync(new URL("../../../industry/changelog.json", import.meta.url), "utf8"));
   if (url.pathname === "/api/site/timeline") {
     const filters = { channel: "all", category: url.searchParams.get("category"), tag: null, topic: null };
     res.setHeader("X-Accel-Expires", `@${deadline}`);
     res.setHeader("Cache-Control", "public, max-age=30, s-maxage=30");
-    return res.end(JSON.stringify({ filters, cards: [], nextCursor: null, refreshAt, dayCounts: [], hot: null, generatedAt: "2026-09-28T00:00:00Z" }));
+    const at = "2026-10-30T08:00:00Z";
+    const item = { id: "sample", title: "奖学金公示标题", summary: "不应显示的摘要内容", reason: "不应显示的推荐理由", source: { name: "研究生院" }, publishedAt: at, publishedAtPrecision: "minute", timelineAt: at, category: null, tags: [], score: 77, selected: true, channel: "news", x: null };
+    const group = { factId: "fact", story: { publicId: "story", title: "事件" }, additionalSourceCount: 0, reportCount: 2, developmentCount: 2, latestDevelopment: { factId: "new", title: "公示最新进展", at, precision: "day" } };
+    const cards = feedFixture ? [{ key: "sample", anchorAt: at, item, group }] : [];
+    const hot = feedFixture ? [{ rank: 1, title: "热点标题", heat: 100, trend: "up", storyPublicId: "story", itemId: null, participants: [], participantCount: 0 }] : null;
+    return res.end(JSON.stringify({ filters, cards, nextCursor: null, refreshAt, dayCounts: {}, hot, generatedAt: "2026-09-28T00:00:00Z" }));
   }
   if (url.pathname === "/api/site/hot") return res.end(JSON.stringify({ entries: [] }));
   if (url.pathname === "/api/site/sources") return res.end(JSON.stringify({ sources: [] }));
@@ -53,7 +141,7 @@ before(async () => {
   api.listen(0, "127.0.0.1");
   await once(api, "listening");
   web = spawn(process.execPath, [fileURLToPath(new URL("../server.ts", import.meta.url))], {
-    env: { ...process.env, WEB_PORT: "0", TRUST_PROXY: "false", API_BASE_URL: `http://127.0.0.1:${(api.address() as AddressInfo).port}` },
+    env: { ...process.env, NODE_ENV: "development", SUBSCRIPTION_EXPERIMENT_ENABLED: "true", WEB_PORT: "0", TRUST_PROXY: "false", API_BASE_URL: `http://127.0.0.1:${(api.address() as AddressInfo).port}` },
     stdio: ["ignore", "pipe", "pipe"],
   });
   await new Promise<void>((resolve, reject) => {
@@ -114,6 +202,35 @@ test("HTML and navigation share freshness; cookies do not personalize public res
   assert.equal(signedIn.headers.get("Set-Cookie"), null);
   assert.equal(await signedIn.text(), await plain.text());
   assert.ok(apiCookies.every((cookie) => !cookie));
+});
+
+test("home renders titles and developments without the hot strip, card summaries or reasons", async () => {
+  feedFixture = true;
+  try {
+    const response = await fetch(`${origin}/`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
+    assert.doesNotMatch(visible, /当前热点|热点标题|不应显示的摘要内容|推荐理由/);
+    assert.match(visible, /奖学金公示标题/);
+    assert.doesNotMatch(visible, /<time dateTime="2026-10-30T08:00:00Z"/);
+    assert.match(visible, /href="\/items\/sample"/);
+    assert.doesNotMatch(visible, /AI 评分/);
+    assert.match(visible, /aria-label="收藏"/);
+    assert.match(visible, /最新进展/);
+    assert.match(visible, /公示最新进展/);
+  } finally {
+    feedFixture = false;
+  }
+});
+
+test("changelog renders the latest release", async () => {
+  const response = await fetch(`${origin}/changelog`);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /扩充校园信源，优化信息流和生存手册/);
+  assert.match(html, /接入 84 个已核准的校园公众号/);
+  assert.match(html, /移除消息列表中的 AI 评分和左侧时间点/);
 });
 
 test("missing routes cannot be hidden by a root-only request; errors and redirects stay uncached", async () => {

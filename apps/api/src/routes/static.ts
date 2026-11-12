@@ -1,24 +1,28 @@
 // Discovery and static files: sitemap, llms.txt, robots, security.txt, the web manifest, the OpenAPI
-// document, icons, the IndexNow key, leaderboard logos and the about page's contact codes.
+// document, icons, the IndexNow key and the about page's contact codes.
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SITE } from "@aihot/industry/site";
-import { FEATURES } from "@aihot/industry/features";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import { REPO_ROOT, config } from "@aihot/backend/config";
 import { applyPublicHeaders, sendTextWithEtag } from "../http/respond.ts";
 import { sitemapXml } from "@aihot/backend/publication/sitemap";
-import { llmsTxt, loadLlmsAvailability } from "@aihot/backend/publication/llms";
+import { llmsTxt } from "@aihot/backend/publication/llms";
 
 const REF = path.join(REPO_ROOT, "reference");
 const ASSETS = path.join(REPO_ROOT, "assets");
 const BRAND = path.join(REPO_ROOT, "industry/brand");
+const SKILL = path.join(REPO_ROOT, "industry/skill");
 
 const TYPES: Record<string, string> = {
   ".json": "application/json; charset=UTF-8",
   ".txt": "text/plain; charset=UTF-8",
+  ".md": "text/markdown; charset=UTF-8",
+  ".sh": "text/plain; charset=UTF-8",
+  ".yaml": "text/yaml; charset=UTF-8",
+  ".sha256": "text/plain; charset=UTF-8",
   ".svg": "image/svg+xml",
   ".png": "image/png",
   ".jpg": "image/jpeg",
@@ -103,7 +107,6 @@ async function openApiJson(): Promise<string> {
     for (const v of Object.values(o)) walk(v);
   };
   walk(doc);
-  if (!FEATURES.codexResetMonitor) for (const p of Object.keys(doc.paths)) if (p.startsWith("/api/v1/codex-resets")) delete doc.paths[p];
   openApi = JSON.stringify(doc, null, 2);
   return openApi;
 }
@@ -120,7 +123,7 @@ export function registerStatic(app: FastifyInstance) {
   });
 
   app.get("/llms.txt", async (req, reply) => {
-    const text = llmsTxt(await loadLlmsAvailability());
+    const text = llmsTxt();
     applyPublicHeaders(reply, { cors: false });
     return sendTextWithEtag(req, reply, text, { etagPrefix: "llms", cacheControl: "public, s-maxage=3600, stale-while-revalidate=86400", contentType: "text/plain; charset=utf-8" });
   });
@@ -152,16 +155,6 @@ export function registerStatic(app: FastifyInstance) {
     app.get(`/${icon}`, (req, reply) => sendFile(req, reply, path.join(BRAND, icon), { cacheControl: "public, max-age=86400, stale-while-revalidate=604800" }));
   }
 
-  if (FEATURES.leaderboard) {
-    for (const dir of ["model-providers", "leaderboard-sources"]) {
-      app.get(`/${dir}/:file`, (req, reply) => {
-        const file = (req.params as { file: string }).file;
-        if (!/^[a-z0-9-]+\.(svg|png)$/.test(file)) return reply.code(404).send();
-        return sendFile(req, reply, path.join(ASSETS, dir, file), { cacheControl: "public, max-age=604800" });
-      });
-    }
-  }
-
   // Contact codes on the about page: uploaded in the admin (content-hashed names), or shipped in the pack.
   app.get("/contact/:file", async (req, reply) => {
     const file = (req.params as { file: string }).file;
@@ -171,5 +164,20 @@ export function registerStatic(app: FastifyInstance) {
     const uploaded = path.join(config.dataDir, "uploads", file);
     const target = (await stat(uploaded).then(() => true, () => false)) ? uploaded : path.join(BRAND, "contact", file);
     return sendFile(req, reply, target, { cacheControl });
+  });
+
+  // The Agent Skill package (industry/skill/): exactly these files, nothing else in the directory.
+  const SKILL_FILES = new Set(["SKILL.md", "README.md", "LICENSE", "install.sh", "manifest.sha256", "agents/openai.yaml"]);
+  app.get("/seuwiki-skill", (req, reply) => sendFile(req, reply, path.join(SKILL, "README.md"), { type: TYPES[".md"], cacheControl: "public, max-age=300, stale-while-revalidate=3600" }));
+  app.get("/seuwiki-skill/:file", (req, reply) => {
+    const file = (req.params as { file: string }).file;
+    if (!SKILL_FILES.has(file)) return reply.code(404).type("text/plain; charset=utf-8").send("Not found");
+    return sendFile(req, reply, path.join(SKILL, file), { type: file === "LICENSE" ? "text/plain; charset=UTF-8" : undefined, cacheControl: "public, max-age=300, stale-while-revalidate=3600" });
+  });
+  app.get("/seuwiki-skill/agents/:file", (req, reply) => {
+    const file = (req.params as { file: string }).file;
+    const rel = `agents/${file}`;
+    if (!SKILL_FILES.has(rel)) return reply.code(404).type("text/plain; charset=utf-8").send("Not found");
+    return sendFile(req, reply, path.join(SKILL, rel), { cacheControl: "public, max-age=300, stale-while-revalidate=3600" });
   });
 }

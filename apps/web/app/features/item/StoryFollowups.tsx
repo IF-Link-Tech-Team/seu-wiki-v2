@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { StoryFollowup, StoryFollowupsResponse, StoryRef } from "@aihot/contracts/site";
 import { MoreLink } from "../../components/ui/Page";
-import { relativeTime, shortSourceName } from "../../lib/format";
+import { publishedDateTime, shortSourceName } from "../../lib/format";
 
 /**
  * "事件后续": the other developments of the event this report belongs to, newest first, with a link to
@@ -58,7 +58,7 @@ function Followups({items, more, story}: {items: StoryFollowup[]; more: boolean;
                 <span className="min-w-0 text-[13.5px] leading-snug text-ink-2 group-hover:text-accent sm:truncate">{d.representative.title}</span>
               </span>
               <span className="shrink-0 pl-[46px] text-[12px] text-ink-4 sm:pl-0" suppressHydrationWarning>
-                {shortSourceName(d.representative.source.name)} · {relativeTime(d.representative.timelineAt)}
+                {shortSourceName(d.representative.source.name)} · {publishedDateTime(d.representative.publishedAt ?? d.representative.timelineAt, d.representative.publishedAt ? d.representative.publishedAtPrecision : "unknown")}
               </span>
             </Link>
           </li>

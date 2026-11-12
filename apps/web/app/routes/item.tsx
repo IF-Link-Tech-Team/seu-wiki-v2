@@ -5,19 +5,18 @@ import type { Route } from "./+types/item";
 import type { SiteItemDetail } from "@aihot/contracts/site";
 import { loadOr404 } from "../lib/api.server";
 import { breadcrumbLd, pageMeta, siteUrl, titled } from "../lib/seo";
-import { fullDateTime, relativeTime } from "../lib/format";
+import { fullDateTime, publishedDateTime, relativeTime } from "../lib/format";
 import { markRead } from "../lib/local-state";
 import { SelectedBadge } from "../components/ui/Badge";
 import { ScoreLabel } from "../components/ui/Score";
 import { PillTabs } from "../components/ui/Tabs";
 import { ArticleLayout, RailSection } from "../components/ui/Page";
-import { Menu, MenuItem } from "../components/ui/Menu";
 import { StarButton } from "../features/feed/parts";
 import { GroupSources } from "../features/feed/ReadingGroup";
 import { StoryFollowups } from "../features/item/StoryFollowups";
 import { MediaGallery } from "../features/item/MediaGallery";
 import { QuotedPost } from "../features/item/QuotedPost";
-import { IconArrowLeft, IconCopy, IconDownload, IconExternal, IconImage, IconMenu, IconShare } from "../components/icons";
+import { IconArrowLeft, IconCopy, IconDownload, IconExternal, IconImage, IconShare } from "../components/icons";
 
 const PosterSheet = lazy(() => import("../features/item/PosterSheet"));
 
@@ -138,49 +137,58 @@ export default function ItemPage() {
       <IconArrowLeft size={16} /> 返回
     </button>
   );
-  const moreMenu = (
-    <Menu label="更多操作" trigger={<IconMenu size={17} />}>
-      {(close) => (
-        <>
-          <MenuItem icon={<IconShare size={15} />} onSelect={() => { close(); void share(); }}>分享链接</MenuItem>
-          <MenuItem icon={<IconImage size={15} />} onSelect={() => { close(); openPoster(); }}>生成分享海报</MenuItem>
-          <MenuItem
-            icon={<IconCopy size={15} />}
-            onSelect={async () => {
-              close();
-              try {
-                await navigator.clipboard.writeText(`${siteUrl()}/items/${item.id}`);
-                setToast("链接已复制");
-              } catch {
-                // clipboard unavailable
-              }
-            }}
-          >
-            复制链接
-          </MenuItem>
-          {item.markdownAvailable && (
-            <MenuItem icon={<IconDownload size={15} />} href={`/items/${item.id}/markdown`} download onSelect={close}>
-              导出 Markdown
-            </MenuItem>
-          )}
-        </>
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${siteUrl()}/items/${item.id}`);
+      setToast("链接已复制");
+    } catch {
+      // clipboard unavailable
+    }
+  };
+  // Share actions stay out in the open (rail and article end) rather than behind a menu.
+  const shareActions = [
+    { key: "share", icon: <IconShare size={15} />, label: "分享链接", onClick: () => void share() },
+    { key: "poster", icon: <IconImage size={15} />, label: "分享海报", onClick: openPoster },
+    { key: "copy", icon: <IconCopy size={15} />, label: "复制链接", onClick: () => void copyLink() },
+    ...(item.markdownAvailable ? [{ key: "md", icon: <IconDownload size={15} />, label: "导出 Markdown", short: "Markdown", href: `/items/${item.id}/markdown` }] : []),
+  ];
+  const shareButtonClass = "inline-flex h-9 items-center whitespace-nowrap gap-1.5 rounded-control border border-line bg-surface px-3 text-[13px] text-ink-2 transition-colors hover:border-ink-4 hover:text-ink";
+  const shareRow = (className: string, compact = false) => (
+    <div className={className}>
+      {shareActions.map((a) =>
+        "href" in a ? (
+          <a key={a.key} href={a.href} download className={shareButtonClass}>
+            {a.icon} {compact ? a.short : a.label}
+          </a>
+        ) : (
+          <button key={a.key} type="button" onClick={a.onClick} className={shareButtonClass}>
+            {a.icon} {a.label}
+          </button>
+        ),
       )}
-    </Menu>
-  );
-  // Desktop actions head the right rail, one row as tall as 返回 at the head of the left one.
-  const actions = (
-    <div className="flex items-center gap-1">
-      <a
-        href={item.links.original}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-full border border-line-strong bg-surface px-3.5 text-[12.5px] font-medium text-ink-2 transition-colors hover:border-ink-4 hover:text-ink"
-      >
-        {originalLabel} <IconExternal size={13} />
-      </a>
-      <StarButton item={item} size={32} />
-      {moreMenu}
     </div>
+  );
+  const originalButton = (className = "") => (
+    <a
+      href={item.links.original}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center justify-center gap-1.5 rounded-full bg-accent font-semibold text-accent-contrast shadow-sm transition-opacity hover:opacity-90 ${className}`}
+    >
+      {originalLabel} <IconExternal size={14} />
+    </a>
+  );
+  // Desktop actions head the right rail: the original first, then 收藏, then every share action.
+  const actions = (
+    <div className="space-y-2">
+      {originalButton("h-10 w-full px-4 text-[14px]")}
+      <StarButton item={item} size={40} label className="w-full border border-line-strong bg-surface" />
+    </div>
+  );
+  const shareSection = (
+    <RailSection title="分享">
+      {shareRow("grid grid-cols-2 gap-2 [&>*]:justify-center [&>*:only-child]:col-span-2 [&>*:nth-child(odd):last-child]:col-span-2", true)}
+    </RailSection>
   );
   const verdict = (item.selected || item.score !== null) && (
     <div className="flex items-center gap-2">
@@ -199,11 +207,9 @@ export default function ItemPage() {
       </div>
       <div className="mt-3 text-[12px] text-ink-4">发布时间</div>
       <time dateTime={publishedIso} className="mono mt-0.5 block text-[12.5px] text-ink-2">
-        {fullDateTime(publishedIso)}
+        {item.publishedAt ? publishedDateTime(publishedIso, item.publishedAtPrecision) : fullDateTime(publishedIso)}
       </time>
-      <div className="mt-0.5 text-[12px] text-ink-4" suppressHydrationWarning>
-        {relativeTime(publishedIso)}
-      </div>
+      {(!item.publishedAt || item.publishedAtPrecision === "minute" || item.publishedAtPrecision === "second") && <div className="mt-0.5 text-[12px] text-ink-4" suppressHydrationWarning>{relativeTime(publishedIso)}</div>}
     </RailSection>
   );
   const outline = showOutline && (
@@ -260,7 +266,6 @@ export default function ItemPage() {
         <button type="button" aria-label="分享" onClick={share} className="inline-flex size-8 items-center justify-center rounded-full text-ink-3 hover:text-ink">
           <IconShare size={17} />
         </button>
-        {moreMenu}
       </div>
 
       {/* The text on the page in one column; back and the facts in the left rail, actions and notes in the right. */}
@@ -275,6 +280,8 @@ export default function ItemPage() {
         right={
           <>
             {actions}
+            {shareSection}
+            <div className="2xl:hidden">{facts}</div>
             {notes}
             <div className="space-y-8 2xl:hidden">{outline}</div>
           </>
@@ -287,8 +294,8 @@ export default function ItemPage() {
             {isX && <span>· @{item.x!.handle} · X</span>}
             {item.author && !isX && <span>· {item.author}</span>}
             <span>·</span>
-            <time dateTime={publishedIso} className="mono">{fullDateTime(publishedIso)}</time>
-            <span suppressHydrationWarning>· {relativeTime(publishedIso)}</span>
+            <time dateTime={publishedIso} className="mono">{item.publishedAt ? publishedDateTime(publishedIso, item.publishedAtPrecision) : fullDateTime(publishedIso)}</time>
+            {(!item.publishedAt || item.publishedAtPrecision === "minute" || item.publishedAtPrecision === "second") && <span suppressHydrationWarning>· {relativeTime(publishedIso)}</span>}
             {item.selected && (
               <span className="ml-1 lg:hidden">
                 <SelectedBadge />
@@ -302,6 +309,11 @@ export default function ItemPage() {
           </div>
           {!isX && <h1 className="text-[26px] font-bold leading-[1.38] tracking-[-0.01em] text-ink lg:text-[32px] lg:leading-[1.34] xl:text-[36px] xl:leading-[1.3]">{item.title}</h1>}
           {!isX && item.originalTitle && <p className="mt-2.5 text-[14px] leading-relaxed text-ink-4">{item.originalTitle}</p>}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {originalButton("h-9 px-4 text-[13.5px]")}
+            <StarButton item={item} size={36} label className="border border-line-strong bg-surface" />
+            <span className="truncate text-[12.5px] text-ink-4">{hostOf(item.links.original)}</span>
+          </div>
 
           {item.summary && (
             <section className={isX ? "mt-4" : "mt-7 xl:mt-8"}>
@@ -352,7 +364,16 @@ export default function ItemPage() {
           {isX && item.x!.media.length > 0 && <MediaGallery media={item.x!.media} postUrl={item.links.original} />}
           {isX && item.x!.quoted?.text && <QuotedPost quoted={item.x!.quoted} original={lang === "original"} />}
 
-          <p className="mt-8 text-[13px] text-ink-4">
+          <section id="read-original" aria-label="阅读原文与分享" className="mt-10 scroll-mt-16 rounded-card border border-line bg-bg-sunk/60 p-4 sm:p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              {originalButton("h-10 px-5 text-[14px]")}
+              <StarButton item={item} size={40} label className="border border-line-strong bg-surface" />
+            </div>
+            <div className="mt-4 text-[12px] font-semibold text-ink-3">分享</div>
+            {shareRow("mt-2 flex flex-wrap gap-2")}
+          </section>
+
+          <p className="mt-6 text-[13px] text-ink-4">
             来源：
             <a href={item.links.original} target="_blank" rel="noopener noreferrer" className="text-ink-3 hover:text-accent">
               {isX ? item.x!.authorName : item.source.name}

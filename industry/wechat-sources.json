@@ -1,0 +1,4189 @@
+{
+  "entries": [
+    {
+      "candidateRef": "A01",
+      "name": "公众号·东南大学",
+      "note": "学校官网明确称官方公众号；微信号另有公开记录",
+      "evidence": [
+        "https://www.seu.edu.cn/2026/0614/c124a571475/page.htm",
+        "https://data.xiguaji.com/OriginalRank/56/1/20250402.html"
+      ],
+      "identifier": "seu_dndx",
+      "id": "mp-seu",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_cd4d75783b0d",
+        "nickname": "东南大学"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu",
+        "status": "verified",
+        "actualName": "东南大学",
+        "ghid": "gh_cd4d75783b0d",
+        "receiptId": null
+      }
+    },
+    {
+      "candidateRef": "A02",
+      "name": "公众号·东大发布",
+      "note": "学院官网注明转载自该公众号",
+      "evidence": [
+        "https://gjzygcs.seu.edu.cn/2026/0306/c50326a557240/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a02",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2b842a713d7d",
+        "nickname": "东大发布"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a02",
+        "status": "verified",
+        "actualName": "东大发布",
+        "ghid": "gh_2b842a713d7d",
+        "receiptId": 51
+      }
+    },
+    {
+      "candidateRef": "A03",
+      "name": "公众号·Southeast University",
+      "note": "学校英文公众号；东大政务账号介绍",
+      "evidence": [
+        "https://www.thepaper.cn/newsDetail_forward_32571928"
+      ],
+      "identifier": null,
+      "id": "mp-a03",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c6d2c4b60f3f",
+        "nickname": "Southeast University"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a03",
+        "status": "verified",
+        "actualName": "Southeast University",
+        "ghid": "gh_c6d2c4b60f3f",
+        "receiptId": 52
+      }
+    },
+    {
+      "candidateRef": "A04",
+      "name": "公众号·东南大学教务处",
+      "note": "官方国际交流指南明确列出",
+      "evidence": [
+        "https://rwxy.seu.edu.cn/_upload/article/files/9a/fc/88ae66cb45039a2778d010f6f2aa/a708572b-0273-4d45-86e8-44ff9b6618be.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-seu-jwc",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3074ca908d94",
+        "nickname": "东南大学教务处"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-jwc",
+        "status": "verified",
+        "actualName": "东南大学教务处",
+        "ghid": "gh_3074ca908d94",
+        "receiptId": 53
+      }
+    },
+    {
+      "candidateRef": "A05",
+      "name": "公众号·东南学工家",
+      "note": "学生处官网明确标注官方微信公众号",
+      "evidence": [
+        "https://xsc.seu.edu.cn/"
+      ],
+      "identifier": null,
+      "id": "mp-a05",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5da9af550e5f",
+        "nickname": "东南学工家"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a05",
+        "status": "verified",
+        "actualName": "东南学工家",
+        "ghid": "gh_5da9af550e5f",
+        "receiptId": 54
+      }
+    },
+    {
+      "candidateRef": "A06",
+      "name": "公众号·东南大学研究生",
+      "note": "研究生院报到须知；官方材料中的微信号",
+      "evidence": [
+        "https://seugs.seu.edu.cn/2023/0207/c35045a434426/page.htm",
+        "https://radio.seu.edu.cn/_upload/article/files/f7/16/fc6aeb5b4c4a98f2068cd6e4a2c5/e493d1b5-6bf0-49bf-bba9-e5ea2787e003.pdf"
+      ],
+      "identifier": "seuyanhui",
+      "id": "mp-a06",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6bd85119f543",
+        "nickname": "东南大学研究生"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a06",
+        "status": "verified",
+        "actualName": "东南大学研究生",
+        "ghid": "gh_6bd85119f543",
+        "receiptId": 55
+      }
+    },
+    {
+      "candidateRef": "A07",
+      "name": "公众号·东南大学研招",
+      "note": "研招办官方声明",
+      "evidence": [
+        "https://xxgk.seu.edu.cn/2021/0624/c10807a375829/page.htm"
+      ],
+      "identifier": "seuyzb",
+      "id": "mp-a07",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0ef7034b51e9",
+        "nickname": "东南大学研招"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a07",
+        "status": "verified",
+        "actualName": "东南大学研招",
+        "ghid": "gh_0ef7034b51e9",
+        "receiptId": 56
+      }
+    },
+    {
+      "candidateRef": "A08",
+      "name": "公众号·东南大学本科招生",
+      "note": "学校信息公开页面列明名称和微信号",
+      "evidence": [
+        "https://xxgk.seu.edu.cn/2021/0727/c10820a379356/page.htm"
+      ],
+      "identifier": "zhaoban-seu",
+      "id": "mp-a08",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_7dc9bf3a69e1",
+        "nickname": "东南大学本科招生"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a08",
+        "status": "verified",
+        "actualName": "东南大学本科招生",
+        "ghid": "gh_7dc9bf3a69e1",
+        "receiptId": 57
+      }
+    },
+    {
+      "candidateRef": "A09",
+      "name": "公众号·东南大学就业指导中心",
+      "note": "学校官方材料",
+      "evidence": [
+        "https://me.seu.edu.cn/_upload/article/files/ca/10/e1f6606540168b7127d1710940de/38d36008-386a-413a-b70e-68f1d446b73d.pdf"
+      ],
+      "identifier": "jyzdzxseu",
+      "id": "mp-seu-jyzd",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ff87f01756e8",
+        "nickname": "东南大学就业指导中心"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-jyzd",
+        "status": "verified",
+        "actualName": "东南大学就业指导中心",
+        "ghid": "gh_ff87f01756e8",
+        "receiptId": 58
+      }
+    },
+    {
+      "candidateRef": "A10",
+      "name": "公众号·东南大学图书馆",
+      "note": "图书馆官方说明",
+      "evidence": [
+        "https://lib.seu.edu.cn/bencandy.php?fid=263&id=7966"
+      ],
+      "identifier": null,
+      "id": "mp-a10",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c626a488a5f3",
+        "nickname": "东南大学图书馆"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a10",
+        "status": "verified",
+        "actualName": "东南大学图书馆",
+        "ghid": "gh_c626a488a5f3",
+        "receiptId": 59
+      }
+    },
+    {
+      "candidateRef": "A11",
+      "name": "公众号·东南大学文化素质教育中心",
+      "note": "教务处讲座通知明确列出",
+      "evidence": [
+        "https://jwc.seu.edu.cn/2024/1220/c21677a515371/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a11",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ea927089ee46",
+        "nickname": "东南大学文化素质教育中心"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a11",
+        "status": "verified",
+        "actualName": "东南大学文化素质教育中心",
+        "ghid": "gh_ea927089ee46",
+        "receiptId": 60
+      }
+    },
+    {
+      "candidateRef": "A12",
+      "name": "公众号·东南大学体育系",
+      "note": "教务处官方文件",
+      "evidence": [
+        "https://civil.seu.edu.cn/_upload/article/files/0d/10/b59be2e84081be76e6adaa5d571e/ff6f5e75-55a3-48cf-88f7-0b966cb90723.pdf"
+      ],
+      "identifier": "seutyx",
+      "id": "mp-a12",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f1330a35ea94",
+        "nickname": "东南大学体育系"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a12",
+        "status": "verified",
+        "actualName": "东南大学体育系",
+        "ghid": "gh_f1330a35ea94",
+        "receiptId": 61
+      }
+    },
+    {
+      "candidateRef": "A13",
+      "name": "公众号·东大财务",
+      "note": "2026年本科新生报到须知",
+      "evidence": [
+        "https://yingxin.seu.edu.cn/2026/0806/c27744a578902/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a13",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_522898f7bd30",
+        "nickname": "东大财务"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a13",
+        "status": "verified",
+        "actualName": "东大财务",
+        "ghid": "gh_522898f7bd30",
+        "receiptId": 62
+      }
+    },
+    {
+      "candidateRef": "A14",
+      "name": "公众号·东大信息化",
+      "note": "网信中心2026年服务通知",
+      "evidence": [
+        "https://nic.seu.edu.cn/info/1011/2094.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a14",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_7accfaa7a3a1",
+        "nickname": "东大信息化"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a14",
+        "status": "verified",
+        "actualName": "东大信息化",
+        "ghid": "gh_7accfaa7a3a1",
+        "receiptId": 63
+      }
+    },
+    {
+      "candidateRef": "A15",
+      "name": "公众号·东大印象总务",
+      "note": "学院官网将其列为总务处官方账号；现名是否已调整需核对",
+      "evidence": [
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a15",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e82d67d9fca8",
+        "nickname": "东大印象总务"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a15",
+        "status": "verified",
+        "actualName": "东大印象总务",
+        "ghid": "gh_e82d67d9fca8",
+        "receiptId": 64
+      }
+    },
+    {
+      "candidateRef": "A17",
+      "name": "公众号·东南大学医院",
+      "note": "校医院账号；学院官网介绍",
+      "evidence": [
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a17",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_56e606188bca",
+        "nickname": "东南大学医院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a17",
+        "status": "verified",
+        "actualName": "东南大学医院",
+        "ghid": "gh_56e606188bca",
+        "receiptId": 66
+      }
+    },
+    {
+      "candidateRef": "A18",
+      "name": "公众号·东南大学档案馆",
+      "note": "档案馆官方办事指南",
+      "evidence": [
+        "https://archives.seu.edu.cn/2020/1019/c30521a350299/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a18",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_060f0ee9c3c3",
+        "nickname": "东南大学档案馆"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a18",
+        "status": "verified",
+        "actualName": "东南大学档案馆",
+        "ghid": "gh_060f0ee9c3c3",
+        "receiptId": 67
+      }
+    },
+    {
+      "candidateRef": "A19",
+      "name": "公众号·东南教师",
+      "note": "党委教师工作部官方通知",
+      "evidence": [
+        "https://tc.seu.edu.cn/_upload/article/files/74/3b/7acfad1a4daab39992110eff2914/411df0a8-22d0-4c19-af2e-04adf74ad1fb.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-a19",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d073e2f083ea",
+        "nickname": "东南教师"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a19",
+        "status": "verified",
+        "actualName": "东南教师",
+        "ghid": "gh_d073e2f083ea",
+        "receiptId": 68
+      }
+    },
+    {
+      "candidateRef": "A20",
+      "name": "公众号·东大科研",
+      "note": "学校新教师入职手册明确列为科研院公众号",
+      "evidence": [
+        "https://jsgzb.seu.edu.cn/_upload/article/files/2f/b9/1776da084b4d8cbfcd34e4d42b9f/d88da62c-de26-4480-a469-e5b6b83938d6.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-a20",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e0a84d780e73",
+        "nickname": "东大科研"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a20",
+        "status": "verified",
+        "actualName": "东大科研",
+        "ghid": "gh_e0a84d780e73",
+        "receiptId": 69
+      }
+    },
+    {
+      "candidateRef": "A21",
+      "name": "公众号·东大文科",
+      "note": "社会科学处联系方式页面明确列出",
+      "evidence": [
+        "https://skc.seu.edu.cn/2016/0418/c4968a156065/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a21",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d09be765dff8",
+        "nickname": "东大文科"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a21",
+        "status": "verified",
+        "actualName": "东大文科",
+        "ghid": "gh_d09be765dff8",
+        "receiptId": 70
+      }
+    },
+    {
+      "candidateRef": "A22",
+      "name": "公众号·东大设备",
+      "note": "资产管理处2025年通知",
+      "evidence": [
+        "https://zcc.seu.edu.cn/2025/1015/c22723a542184/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a22",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_bde36886f016",
+        "nickname": "东大设备"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a22",
+        "status": "verified",
+        "actualName": "东大设备",
+        "ghid": "gh_bde36886f016",
+        "receiptId": 71
+      }
+    },
+    {
+      "candidateRef": "A23",
+      "name": "公众号·东南大学校友服务",
+      "note": "校友总会服务指南；微信号记录",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/wdndxxyfwdtwxcx/list.htm",
+        "https://seuaa.seu.edu.cn/_upload/article/05/bf/440b574d4d289b77fa9205efd983/cac5dfa2-616a-499c-99e9-c1dca84c505d.pdf"
+      ],
+      "identifier": "SEUAA0606",
+      "id": "mp-a23",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_731001e1c143",
+        "nickname": "东南大学校友服务"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a23",
+        "status": "verified",
+        "actualName": "东南大学校友服务",
+        "ghid": "gh_731001e1c143",
+        "receiptId": 72
+      }
+    },
+    {
+      "candidateRef": "A25",
+      "name": "公众号·东南大学无锡校区",
+      "note": "无锡校区2026年通知",
+      "evidence": [
+        "https://wx.seu.edu.cn/2026/0410/c40809a567320/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a25",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9bce19d0c69a",
+        "nickname": "东南大学无锡校区"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a25",
+        "status": "verified",
+        "actualName": "东南大学无锡校区",
+        "ghid": "gh_9bce19d0c69a",
+        "receiptId": 74
+      }
+    },
+    {
+      "candidateRef": "A26",
+      "name": "公众号·青声锡语话东南",
+      "note": "无锡校区2026年通知同时列出",
+      "evidence": [
+        "https://wx.seu.edu.cn/2026/0410/c40809a567320/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a26",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_357b3822ad7a",
+        "nickname": "青声锡语话东南"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a26",
+        "status": "verified",
+        "actualName": "青声锡语话东南",
+        "ghid": "gh_357b3822ad7a",
+        "receiptId": 75
+      }
+    },
+    {
+      "candidateRef": "A27",
+      "name": "公众号·小东在苏州",
+      "note": "苏州联合研究生院官方新生材料",
+      "evidence": [
+        "https://yzb.seu.edu.cn/_upload/article/files/56/40/7837e64e4d869f45f4c7465071b8/b4224cc9-f9ce-4c9f-a82f-b830c07d205a.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-a27",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_446fd79bec10",
+        "nickname": "小东在苏州"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a27",
+        "status": "verified",
+        "actualName": "小东在苏州",
+        "ghid": "gh_446fd79bec10",
+        "receiptId": 76
+      }
+    },
+    {
+      "candidateRef": "B01",
+      "name": "公众号·青年东大说",
+      "note": "学校官网明确其官方运营关系",
+      "evidence": [
+        "https://jgdw.seu.edu.cn/2019/0410/c607a269167/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-b01",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_424f2597fbaf",
+        "nickname": "青年东大说"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-b01",
+        "status": "verified",
+        "actualName": "青年东大说",
+        "ghid": "gh_424f2597fbaf",
+        "receiptId": 77
+      }
+    },
+    {
+      "candidateRef": "B02",
+      "name": "公众号·东南大学学生会",
+      "note": "学院官网公众号指南",
+      "evidence": [
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-b02",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9f9f3c46e5ff",
+        "nickname": "东南大学学生会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-b02",
+        "status": "verified",
+        "actualName": "东南大学学生会",
+        "ghid": "gh_9f9f3c46e5ff",
+        "receiptId": 78
+      }
+    },
+    {
+      "candidateRef": "B05",
+      "name": "公众号·风雅颂东南",
+      "note": "学院官网明确为官方账号",
+      "evidence": [
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-b05",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4392bd59ce54",
+        "nickname": "风雅颂东南"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-b05",
+        "status": "verified",
+        "actualName": "风雅颂东南",
+        "ghid": "gh_4392bd59ce54",
+        "receiptId": 80
+      }
+    },
+    {
+      "candidateRef": "C01",
+      "name": "公众号·中大院",
+      "note": "学院官网附件明确提及",
+      "evidence": [
+        "https://arch.seu.edu.cn/_upload/article/files/76/5a/9d12427e48aca7bea6c8991bef52/70ad8339-4431-49ec-a81f-d14f1eff4ad1.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-c01",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_87a32531bb12",
+        "nickname": "中大院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c01",
+        "status": "verified",
+        "actualName": "中大院",
+        "ghid": "gh_87a32531bb12",
+        "receiptId": 81
+      }
+    },
+    {
+      "candidateRef": "C02",
+      "name": "公众号·东大建院团学联",
+      "note": "学院专门介绍页面",
+      "evidence": [
+        "https://arch.seu.edu.cn/16805/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c02",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_cdc5fb4c36d7",
+        "nickname": "东大建院团学联"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c02",
+        "status": "verified",
+        "actualName": "东大建院团学联",
+        "ghid": "gh_cdc5fb4c36d7",
+        "receiptId": 82
+      }
+    },
+    {
+      "candidateRef": "C03",
+      "name": "公众号·东大建院学习站",
+      "note": "学院官网明确为党委领导下的公众号",
+      "evidence": [
+        "https://arch.seu.edu.cn/2023/0705/c23101a450663/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c03",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_aa9d2910ed60",
+        "nickname": "东大建院学习站"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c03",
+        "status": "verified",
+        "actualName": "东大建院学习站",
+        "ghid": "gh_aa9d2910ed60",
+        "receiptId": 83
+      }
+    },
+    {
+      "candidateRef": "C04",
+      "name": "公众号·东南大学机械工程学院MESEU",
+      "note": "2026年学院新闻直接写明账号名",
+      "evidence": [
+        "https://me.seu.edu.cn/2026/0907/c58434a581812/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c04",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2a9093251a28",
+        "nickname": "东南大学机械工程学院MESEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c04",
+        "status": "verified",
+        "actualName": "东南大学机械工程学院MESEU",
+        "ghid": "gh_2a9093251a28",
+        "receiptId": 84
+      }
+    },
+    {
+      "candidateRef": "C09",
+      "name": "公众号·砼行工作站",
+      "note": "教师工作部官网报道",
+      "evidence": [
+        "https://jsgzb.seu.edu.cn/2023/0412/c24231a441471/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c09",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d5357d171d59",
+        "nickname": "砼行工作站"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c09",
+        "status": "verified",
+        "actualName": "砼行工作站",
+        "ghid": "gh_d5357d171d59",
+        "receiptId": 88
+      }
+    },
+    {
+      "candidateRef": "C10",
+      "name": "公众号·东大电子",
+      "note": "学院官网活动报道；历史记录",
+      "evidence": [
+        "https://electronic.seu.edu.cn/2019/0305/c23229a264552/page.psp"
+      ],
+      "identifier": null,
+      "id": "mp-c10",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5e3750f8b79e",
+        "nickname": "东大电子"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c10",
+        "status": "verified",
+        "actualName": "东大电子",
+        "ghid": "gh_5e3750f8b79e",
+        "receiptId": 89
+      }
+    },
+    {
+      "candidateRef": "C11",
+      "name": "公众号·东南大学数学学院",
+      "note": "清华大学发布的会议手册列出该公众号；需核当前账号",
+      "evidence": [
+        "https://ymsc.tsinghua.edu.cn/ICCM2022huiwushouce.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-c11",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c670d8780ab0",
+        "nickname": "东南大学数学学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c11",
+        "status": "verified",
+        "actualName": "东南大学数学学院",
+        "ghid": "gh_c670d8780ab0",
+        "receiptId": 90
+      }
+    },
+    {
+      "candidateRef": "C12",
+      "name": "公众号·东大计软智",
+      "note": "学院官网夏令营通知；当前覆盖单位需复核",
+      "evidence": [
+        "https://cse.seu.edu.cn/2023/0627/c22646a449677/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c12",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5890e0cdb810",
+        "nickname": "东大计软智"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c12",
+        "status": "verified",
+        "actualName": "东大计软智",
+        "ghid": "gh_5890e0cdb810",
+        "receiptId": 91
+      }
+    },
+    {
+      "candidateRef": "C13",
+      "name": "公众号·牛顿的四维口袋",
+      "note": "学院官网明确称官方公众号",
+      "evidence": [
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c13",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ce0e89adbbf2",
+        "nickname": "牛顿的四维口袋"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c13",
+        "status": "verified",
+        "actualName": "牛顿的四维口袋",
+        "ghid": "gh_ce0e89adbbf2",
+        "receiptId": 92
+      }
+    },
+    {
+      "candidateRef": "C14",
+      "name": "公众号·东南大学生医学院",
+      "note": "学院官网标注转载来源",
+      "evidence": [
+        "https://bme.seu.edu.cn/xuchunxiang/2025/1029/c30016a544135/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c14",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6687eea7da50",
+        "nickname": "东南大学生医学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c14",
+        "status": "verified",
+        "actualName": "东南大学生医学院",
+        "ghid": "gh_6687eea7da50",
+        "receiptId": 93
+      }
+    },
+    {
+      "candidateRef": "C15",
+      "name": "公众号·东南大学材料学院",
+      "note": "微信号 SMSE_SEU；学院官网及官方招生资料",
+      "evidence": [
+        "https://smse.seu.edu.cn/",
+        "https://zsb.seu.edu.cn/_upload/article/files/46/67/75253a98410d907190da3335bc85/d985d277-44c0-412c-8a27-8c66bc74cbfb.pdf"
+      ],
+      "identifier": "SMSE_SEU",
+      "id": "mp-c15",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0e40d407adb1",
+        "nickname": "东南大学材料学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c15",
+        "status": "verified",
+        "actualName": "东南大学材料学院",
+        "ghid": "gh_0e40d407adb1",
+        "receiptId": 94
+      }
+    },
+    {
+      "candidateRef": "C16",
+      "name": "公众号·东南文苑",
+      "note": "人文学院官网将其列为书院预约入口",
+      "evidence": [
+        "https://rwxy.seu.edu.cn/2020/1209/c12617a355823/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c16",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_898942b7de71",
+        "nickname": "东南文苑"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c16",
+        "status": "verified",
+        "actualName": "东南文苑",
+        "ghid": "gh_898942b7de71",
+        "receiptId": 95
+      }
+    },
+    {
+      "candidateRef": "C17",
+      "name": "公众号·东南大学经济管理学院",
+      "note": "微信号 seuem14；学院官网记录，2016年证据",
+      "evidence": [
+        "https://em.seu.edu.cn/2016/0324/c9102a153669/page.htm"
+      ],
+      "identifier": "seuem14",
+      "id": "mp-c17",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f79207a0576e",
+        "nickname": "东南大学经济管理学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c17",
+        "status": "verified",
+        "actualName": "东南大学经济管理学院",
+        "ghid": "gh_f79207a0576e",
+        "receiptId": 96
+      }
+    },
+    {
+      "candidateRef": "C20",
+      "name": "公众号·东南大学外国语学院",
+      "note": "原始ID gh_c5fd3a61e94a；学院管理办法明确名称、主体和ID",
+      "evidence": [
+        "https://sfl.seu.edu.cn/_upload/article/files/9d/81/c580a8254cc3b6facf3c95da24fd/e8d138d9-1100-4b71-a9ec-fec77dbf159f.pdf"
+      ],
+      "identifier": "gh_c5fd3a61e94a",
+      "id": "mp-c20",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c5fd3a61e94a",
+        "nickname": "东南大学外国语学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c20",
+        "status": "verified",
+        "actualName": "东南大学外国语学院",
+        "ghid": "gh_c5fd3a61e94a",
+        "receiptId": 98
+      }
+    },
+    {
+      "candidateRef": "C21",
+      "name": "公众号·东南大学化学化工学院",
+      "note": "科研院2026年转载来源明确列出",
+      "evidence": [
+        "https://kjc.seu.edu.cn/ddkx/2026/0603/c51407a569932/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c21",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_72c9e74d949c",
+        "nickname": "东南大学化学化工学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c21",
+        "status": "verified",
+        "actualName": "东南大学化学化工学院",
+        "ghid": "gh_72c9e74d949c",
+        "receiptId": 99
+      }
+    },
+    {
+      "candidateRef": "C22",
+      "name": "公众号·东南大学交通学院",
+      "note": "微信号 seu-tc；学院官网说明官方运营关系",
+      "evidence": [
+        "https://tc.seu.edu.cn/_t2411/2017/0503/c831a188572/page.htm"
+      ],
+      "identifier": "seu-tc",
+      "id": "mp-c22",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b1e177ddff95",
+        "nickname": "东南大学交通学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c22",
+        "status": "verified",
+        "actualName": "东南大学交通学院",
+        "ghid": "gh_b1e177ddff95",
+        "receiptId": 100
+      }
+    },
+    {
+      "candidateRef": "C23",
+      "name": "公众号·东大仪科",
+      "note": "学院官网明确标注来源",
+      "evidence": [
+        "https://ins.seu.edu.cn/2022/0503/c45089a444212/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c23",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0bd2b0f2acf2",
+        "nickname": "东大仪科"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c23",
+        "status": "verified",
+        "actualName": "东大仪科",
+        "ghid": "gh_0bd2b0f2acf2",
+        "receiptId": 101
+      }
+    },
+    {
+      "candidateRef": "C24",
+      "name": "公众号·艺东南SEU",
+      "note": "2025年演出通知转载；另有“艺东南”历史名称，是否改名待核",
+      "evidence": [
+        "https://www.sohu.com/a/893910106_121124733"
+      ],
+      "identifier": null,
+      "id": "mp-c24",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_085661974fec",
+        "nickname": "艺东南SEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c24",
+        "status": "verified",
+        "actualName": "艺东南SEU",
+        "ghid": "gh_085661974fec",
+        "receiptId": 102
+      }
+    },
+    {
+      "candidateRef": "C25",
+      "name": "公众号·东南法学",
+      "note": "学院官网明确称官方微信公众号",
+      "evidence": [
+        "https://law.seu.edu.cn/2020/0831/c9387a344015/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c25",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5f8a21e16dae",
+        "nickname": "东南法学"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c25",
+        "status": "verified",
+        "actualName": "东南法学",
+        "ghid": "gh_5f8a21e16dae",
+        "receiptId": 103
+      }
+    },
+    {
+      "candidateRef": "C26",
+      "name": "公众号·东南大学医学院",
+      "note": "学院官方材料有官方微信二维码；当前显示名待核",
+      "evidence": [
+        "https://med.seu.edu.cn/_upload/article/files/fd/25/7201a18b4afc91392c5882251dbc/8e7353a6-e925-416a-a2c1-5512e405c05d.pdf"
+      ],
+      "identifier": null,
+      "id": "mp-c26",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_13f8b5ebc735",
+        "nickname": "东南大学医学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c26",
+        "status": "verified",
+        "actualName": "东南大学医学院",
+        "ghid": "gh_13f8b5ebc735",
+        "receiptId": 104
+      }
+    },
+    {
+      "candidateRef": "C28",
+      "name": "公众号·东南大学公共卫生学院",
+      "note": "南京市科协官网记载其公众号发文；2020年证据",
+      "evidence": [
+        "https://kx.nanjing.gov.cn/zthd/kjyq/202003/t20200309_2238957.html"
+      ],
+      "identifier": null,
+      "id": "mp-c28",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_bdac560a495d",
+        "nickname": "东南大学公共卫生学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c28",
+        "status": "verified",
+        "actualName": "东南大学公共卫生学院",
+        "ghid": "gh_bdac560a495d",
+        "receiptId": 105
+      }
+    },
+    {
+      "candidateRef": "C29",
+      "name": "公众号·东南大学吴健雄学院",
+      "note": "学院官网2026年公众号运营盘点",
+      "evidence": [
+        "https://wjx.seu.edu.cn/p65590c21084/list8.psp"
+      ],
+      "identifier": null,
+      "id": "mp-c29",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_967094da6817",
+        "nickname": "东南大学吴健雄学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c29",
+        "status": "verified",
+        "actualName": "东南大学吴健雄学院",
+        "ghid": "gh_967094da6817",
+        "receiptId": 106
+      }
+    },
+    {
+      "candidateRef": "C30",
+      "name": "公众号·东南大学生科学院",
+      "note": "科研院2025年转载来源明确列出",
+      "evidence": [
+        "https://kjc.seu.edu.cn/ddkx/2025/0515/c51407a527875/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c30",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d680ea21a217",
+        "nickname": "东南大学生科学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c30",
+        "status": "verified",
+        "actualName": "东南大学生科学院",
+        "ghid": "gh_d680ea21a217",
+        "receiptId": 107
+      }
+    },
+    {
+      "candidateRef": "C31",
+      "name": "公众号·东南大学未来技术学院",
+      "note": "学院官网；本地保存的公众号原文元数据标明发布者",
+      "evidence": [
+        "https://futuretech.seu.edu.cn/",
+        "https://mp.weixin.qq.com/s/nbIPBAIxz2LZz7RML9YcbA"
+      ],
+      "identifier": null,
+      "id": "mp-seu-future",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_862608ea932a",
+        "nickname": "东南大学未来技术学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-future",
+        "status": "verified",
+        "actualName": "东南大学未来技术学院",
+        "ghid": "gh_862608ea932a",
+        "receiptId": null
+      }
+    },
+    {
+      "candidateRef": "C32",
+      "name": "公众号·东大统计学院",
+      "note": "学院2026年夏令营通知明确列出",
+      "evidence": [
+        "https://stat.seu.edu.cn/2026/0701/c61148a575278/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c32",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_26cd672ffc27",
+        "nickname": "东大统计学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c32",
+        "status": "verified",
+        "actualName": "东大统计学院",
+        "ghid": "gh_26cd672ffc27",
+        "receiptId": 108
+      }
+    },
+    {
+      "candidateRef": "C33",
+      "name": "公众号·东南大学继续教育学院",
+      "note": "学院官网明确列出",
+      "evidence": [
+        "https://jxjy.seu.edu.cn/main.psp"
+      ],
+      "identifier": null,
+      "id": "mp-c33",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ed3975cc49c5",
+        "nickname": "东南大学继续教育学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c33",
+        "status": "verified",
+        "actualName": "东南大学继续教育学院",
+        "ghid": "gh_ed3975cc49c5",
+        "receiptId": 109
+      }
+    },
+    {
+      "candidateRef": "D03",
+      "name": "公众号·SEU辩协",
+      "note": "建院团学联历史推文明确给出账号名",
+      "evidence": [
+        "https://www.sohu.com/a/423765925_714110"
+      ],
+      "identifier": null,
+      "id": "mp-d03",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_48e5f80fab9e",
+        "nickname": "SEU辩协"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-d03",
+        "status": "verified",
+        "actualName": "SEU辩协",
+        "ghid": "gh_48e5f80fab9e",
+        "receiptId": 112
+      }
+    },
+    {
+      "candidateRef": "D06",
+      "name": "公众号·东大SCDA",
+      "note": "微信号 seuscda；学院官网历史通知",
+      "evidence": [
+        "https://arch.seu.edu.cn/2015/0521/c42153a239008/page.htm"
+      ],
+      "identifier": "seuscda",
+      "id": "mp-d06",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_99a749d31612",
+        "nickname": "东大SCDA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-d06",
+        "status": "verified",
+        "actualName": "东大SCDA",
+        "ghid": "gh_99a749d31612",
+        "receiptId": 114
+      }
+    },
+    {
+      "candidateRef": "F01",
+      "name": "公众号·东南大学校友会南京联络处",
+      "note": "校友总会官网",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/1636/list.htm"
+      ],
+      "identifier": "DDNJXYH",
+      "id": "mp-f01",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_81c07d7a013b",
+        "nickname": "东南大学校友会南京联络处"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f01",
+        "status": "verified",
+        "actualName": "东南大学校友会南京联络处",
+        "ghid": "gh_81c07d7a013b",
+        "receiptId": 115
+      }
+    },
+    {
+      "candidateRef": "F02",
+      "name": "公众号·东大常州校友通讯",
+      "note": "校友总会官网",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/1636/list.htm"
+      ],
+      "identifier": "seu0519",
+      "id": "mp-f02",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_73e800078922",
+        "nickname": "东大常州校友通讯"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f02",
+        "status": "verified",
+        "actualName": "东大常州校友通讯",
+        "ghid": "gh_73e800078922",
+        "receiptId": 116
+      }
+    },
+    {
+      "candidateRef": "F03",
+      "name": "公众号·东南大学苏州校友会",
+      "note": "校友总会官网",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/1636/list.htm"
+      ],
+      "identifier": "seuszxyh",
+      "id": "mp-f03",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2b720a3b6a57",
+        "nickname": "东南大学苏州校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f03",
+        "status": "verified",
+        "actualName": "东南大学苏州校友会",
+        "ghid": "gh_2b720a3b6a57",
+        "receiptId": 117
+      }
+    },
+    {
+      "candidateRef": "F04",
+      "name": "公众号·东南大学硅谷校友会",
+      "note": "校友总会官网",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/1656/list.htm"
+      ],
+      "identifier": "seuaa-sv",
+      "id": "mp-f04",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_064de6a672fc",
+        "nickname": "东南大学硅谷校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f04",
+        "status": "verified",
+        "actualName": "东南大学硅谷校友会",
+        "ghid": "gh_064de6a672fc",
+        "receiptId": 118
+      }
+    },
+    {
+      "candidateRef": "F05",
+      "name": "公众号·东大多伦多校友会",
+      "note": "2017年官方记录，现状待核",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2017/0310/c2016a185154/pagem.htm"
+      ],
+      "identifier": "seutoronto",
+      "id": "mp-f05",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_65b46dc78827",
+        "nickname": "东大多伦多校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f05",
+        "status": "verified",
+        "actualName": "东大多伦多校友会",
+        "ghid": "gh_65b46dc78827",
+        "receiptId": 119
+      }
+    },
+    {
+      "candidateRef": "F06",
+      "name": "公众号·深圳市东南大学校友会官微",
+      "note": "2014年官方记录，现名与现状待核",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2014/0816/c51457a102291/page.htm"
+      ],
+      "identifier": "sz-seu",
+      "id": "mp-f06",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ca70e7b19dd2",
+        "nickname": "深圳市东南大学校友会官微"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f06",
+        "status": "verified",
+        "actualName": "深圳市东南大学校友会官微",
+        "ghid": "gh_ca70e7b19dd2",
+        "receiptId": 120
+      }
+    },
+    {
+      "candidateRef": "F07",
+      "name": "公众号·彩云东南",
+      "note": "云南校友会，2018年官方记录",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2018/1205/c51457a253528/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-f07",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ec5e38dca101",
+        "nickname": "彩云东南"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f07",
+        "status": "verified",
+        "actualName": "彩云东南",
+        "ghid": "gh_ec5e38dca101",
+        "receiptId": 121
+      }
+    },
+    {
+      "candidateRef": "F08",
+      "name": "公众号·东南大学厦门校友会",
+      "note": "校友总会官网",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/1641/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-f08",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d39f4aca6078",
+        "nickname": "东南大学厦门校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f08",
+        "status": "verified",
+        "actualName": "东南大学厦门校友会",
+        "ghid": "gh_d39f4aca6078",
+        "receiptId": 122
+      }
+    },
+    {
+      "candidateRef": "F09",
+      "name": "公众号·广东省东南大学校友会",
+      "note": "2025年东大官网转载明确标注",
+      "evidence": [
+        "https://gjzygcs.seu.edu.cn/2025/0729/c54018a535908/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-f09",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8db4ec9a7783",
+        "nickname": "广东省东南大学校友会"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-f09",
+        "status": "verified",
+        "actualName": "广东省东南大学校友会",
+        "ghid": "gh_8db4ec9a7783",
+        "receiptId": 123
+      }
+    },
+    {
+      "candidateRef": "G01",
+      "name": "公众号·深度东大新材料",
+      "note": "团队官网明确给出微信名",
+      "evidence": [
+        "https://smse.seu.edu.cn/xuefeng/tdjj/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g01",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0e705e0c5774",
+        "nickname": "深度东大新材料"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g01",
+        "status": "verified",
+        "actualName": "深度东大新材料",
+        "ghid": "gh_0e705e0c5774",
+        "receiptId": 124
+      }
+    },
+    {
+      "candidateRef": "G03",
+      "name": "公众号·王春林课题组",
+      "note": "教师官方主页",
+      "evidence": [
+        "https://civil.seu.edu.cn/wcl/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g03",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_156805259a67",
+        "nickname": "王春林课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g03",
+        "status": "verified",
+        "actualName": "王春林课题组",
+        "ghid": "gh_156805259a67",
+        "receiptId": 126
+      }
+    },
+    {
+      "candidateRef": "G04",
+      "name": "公众号·王骞智建管课题组",
+      "note": "教师官方主页明确给出公众号名",
+      "evidence": [
+        "https://civil.seu.edu.cn/wq2/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g04",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_887447b49159",
+        "nickname": "王骞智建管课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g04",
+        "status": "verified",
+        "actualName": "王骞智建管课题组",
+        "ghid": "gh_887447b49159",
+        "receiptId": 127
+      }
+    },
+    {
+      "candidateRef": "G05",
+      "name": "公众号·靳慧课题组",
+      "note": "教师官方主页",
+      "evidence": [
+        "https://civil.seu.edu.cn/jh/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g05",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_117707754afa",
+        "nickname": "靳慧课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g05",
+        "status": "verified",
+        "actualName": "靳慧课题组",
+        "ghid": "gh_117707754afa",
+        "receiptId": 128
+      }
+    },
+    {
+      "candidateRef": "G06",
+      "name": "公众号·东大电磁空间",
+      "note": "信息学院教师官方介绍",
+      "evidence": [
+        "https://radio.seu.edu.cn/2024/0226/c19950a481431/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g06",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_cd7fbab47ed6",
+        "nickname": "东大电磁空间"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g06",
+        "status": "verified",
+        "actualName": "东大电磁空间",
+        "ghid": "gh_cd7fbab47ed6",
+        "receiptId": 129
+      }
+    },
+    {
+      "candidateRef": "G07",
+      "name": "公众号·东大长大桥国重 桥梁中心",
+      "note": "中心官网",
+      "evidence": [
+        "https://civil.seu.edu.cn/berc/51763/list.htm"
+      ],
+      "identifier": "BRIDGE_SEU",
+      "id": "mp-g07",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2f9ae5db012a",
+        "nickname": "东大长大桥国重 桥梁中心"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g07",
+        "status": "verified",
+        "actualName": "东大长大桥国重 桥梁中心",
+        "ghid": "gh_2f9ae5db012a",
+        "receiptId": 130
+      }
+    },
+    {
+      "candidateRef": "G08",
+      "name": "公众号·nano2D Lab",
+      "note": "学院招生材料",
+      "evidence": [
+        "https://smse.seu.edu.cn/_upload/article/files/99/48/5fd4e6624adb8922f7e57ffe9e88/c0c577b7-b9e5-4791-94b3-630d080d4207.pdf"
+      ],
+      "identifier": "gh_1d42865d7605",
+      "id": "mp-g08",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_1d42865d7605",
+        "nickname": "nano2D Lab"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g08",
+        "status": "verified",
+        "actualName": "nano2D Lab",
+        "ghid": "gh_1d42865d7605",
+        "receiptId": 131
+      }
+    },
+    {
+      "candidateRef": "G09",
+      "name": "公众号·组织行为研究",
+      "note": "教师官方介绍",
+      "evidence": [
+        "https://em.seu.edu.cn/2024/0223/c29343a481239/page2.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g09",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ee38ef5bb61c",
+        "nickname": "组织行为研究"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g09",
+        "status": "verified",
+        "actualName": "组织行为研究",
+        "ghid": "gh_ee38ef5bb61c",
+        "receiptId": 132
+      }
+    },
+    {
+      "candidateRef": "G10",
+      "name": "公众号·数说司法",
+      "note": "本人专栏介绍、本人署名文章，当前账号状态待核",
+      "evidence": [
+        "https://opinion.caixin.com/wanglusheng_shwx/",
+        "https://www.thepaper.cn/newsDetail_forward_2728959"
+      ],
+      "identifier": "justice_data",
+      "id": "mp-g10",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3594c37ba6a6",
+        "nickname": "数说司法"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g10",
+        "status": "verified",
+        "actualName": "数说司法",
+        "ghid": "gh_3594c37ba6a6",
+        "receiptId": 133
+      }
+    },
+    {
+      "candidateRef": "G11",
+      "name": "公众号·人体器官芯片",
+      "note": "2026年学校官方报道",
+      "evidence": [
+        "https://www.seu.edu.cn/2026/0802/c124a578723/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g11",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b3ddbc34f082",
+        "nickname": "人体器官芯片"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g11",
+        "status": "verified",
+        "actualName": "人体器官芯片",
+        "ghid": "gh_b3ddbc34f082",
+        "receiptId": 134
+      }
+    },
+    {
+      "candidateRef": "G12",
+      "name": "公众号·东南法苑",
+      "note": "学院简介明确列出",
+      "evidence": [
+        "https://law.seu.edu.cn/9097/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g12",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_37d236067b12",
+        "nickname": "东南法苑"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g12",
+        "status": "verified",
+        "actualName": "东南法苑",
+        "ghid": "gh_37d236067b12",
+        "receiptId": 135
+      }
+    },
+    {
+      "candidateRef": "G13",
+      "name": "公众号·中外刑事法前沿",
+      "note": "学院简介明确列出",
+      "evidence": [
+        "https://law.seu.edu.cn/9097/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g13",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8cb19ea17311",
+        "nickname": "中外刑事法前沿"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g13",
+        "status": "verified",
+        "actualName": "中外刑事法前沿",
+        "ghid": "gh_8cb19ea17311",
+        "receiptId": 136
+      }
+    },
+    {
+      "candidateRef": "G14",
+      "name": "公众号·医事法+",
+      "note": "法学院官方介绍，历史运营记录，现状待核",
+      "evidence": [
+        "https://law.seu.edu.cn/2020/0831/c9387a344015/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g14-1",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b5e5d5d04040",
+        "nickname": "医事法+"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g14-1",
+        "status": "verified",
+        "actualName": "医事法+",
+        "ghid": "gh_b5e5d5d04040",
+        "receiptId": 137
+      }
+    },
+    {
+      "candidateRef": "G14",
+      "name": "公众号·私法理论与实践",
+      "note": "法学院官方介绍，历史运营记录，现状待核",
+      "evidence": [
+        "https://law.seu.edu.cn/2020/0831/c9387a344015/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g14-2",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_02f15b73c9a6",
+        "nickname": "私法理论与实践"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g14-2",
+        "status": "verified",
+        "actualName": "私法理论与实践",
+        "ghid": "gh_02f15b73c9a6",
+        "receiptId": 138
+      }
+    },
+    {
+      "candidateRef": "G15",
+      "name": "公众号·东南大学丘成桐中心",
+      "note": "中心官方简报；由原 E14 转入纳入范围",
+      "evidence": [
+        "https://yauc.seu.edu.cn/_upload/article/files/be/42/4991542540a0b63a9028fcb969ce/bf02c41f-8001-4347-944b-411fdf3e7c83.pdf"
+      ],
+      "identifier": "SEU-YC",
+      "id": "mp-g15",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_a4c85dafd0b3",
+        "nickname": "东南大学丘成桐中心"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g15",
+        "status": "verified",
+        "actualName": "东南大学丘成桐中心",
+        "ghid": "gh_a4c85dafd0b3",
+        "receiptId": 139
+      }
+    },
+    {
+      "candidateRef": "G16",
+      "name": "公众号·东南大学苏州医疗器械研究院",
+      "note": "学校官网教师介绍；由原 E15 转入纳入范围",
+      "evidence": [
+        "https://iirs.seu.edu.cn/2025/0604/c58381a530605/page.htm"
+      ],
+      "identifier": "ibmd_seu",
+      "id": "mp-g16",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3d1127b076fc",
+        "nickname": "东南大学苏州医疗器械研究院"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g16",
+        "status": "verified",
+        "actualName": "东南大学苏州医疗器械研究院",
+        "ghid": "gh_3d1127b076fc",
+        "receiptId": 140
+      }
+    },
+    {
+      "candidateRef": "G17",
+      "name": "公众号·CDPE计算机系统综合设计实践教学",
+      "note": "学院官网专页；由原 E17 转入纳入范围",
+      "evidence": [
+        "https://cse.seu.edu.cn/carl/wxgzh/list.htm"
+      ],
+      "identifier": "CDPE-SEUCSE",
+      "id": "mp-g17",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c63bc6298ca3",
+        "nickname": "CDPE计算机系统综合设计实践教学"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-g17",
+        "status": "verified",
+        "actualName": "CDPE计算机系统综合设计实践教学",
+        "ghid": "gh_c63bc6298ca3",
+        "receiptId": 141
+      }
+    },
+    {
+      "id": "mp-iflinkcommunity",
+      "name": "公众号·IF.Link Community",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5aff0536d4d5",
+        "nickname": "IF.Link Community"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "IF.Link"
+      ],
+      "interval_minutes": 1440,
+      "enabled": true,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "candidateRef": "E08",
+      "evidence": [
+        "https://mp.weixin.qq.com/s/GaieWCAqrzip0P_d61bteA"
+      ],
+      "resolution": {
+        "actualName": "IF.Link Community",
+        "ghid": "gh_5aff0536d4d5",
+        "receiptId": 689
+      },
+      "note": "用户提供文章链接定位；Iflinkcommunity对应IF.Link Community"
+    },
+    {
+      "id": "mp-c05",
+      "name": "公众号·东大能环",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_aa2dce4dca2e",
+        "nickname": "东大能环"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "能源与环境学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-c05",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://power.seu.edu.cn/2023/0208/c9536a434454/page.psp"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东大能环",
+        "ghid": "gh_aa2dce4dca2e",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-c06",
+      "name": "公众号·东大信息",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d4f7bbd13fa3",
+        "nickname": "东大信息"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-c06",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://radio.seu.edu.cn/2019/0816/c46467a282480/pagem.htm"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东大信息",
+        "ghid": "gh_d4f7bbd13fa3",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-automation",
+      "name": "公众号·东南大学自动化学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3214d6244e4f",
+        "nickname": "东南大学自动化学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "自动化学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-automation",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://automation.seu.edu.cn/2025/0920/c24459a540211/page.htm"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学自动化学院",
+        "ghid": "gh_3214d6244e4f",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-zikong-seu",
+      "name": "公众号·自控东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_af62611c081e",
+        "nickname": "自控东南"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "自动化学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-zikong-seu",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "自控东南",
+        "ghid": "gh_af62611c081e",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-electrical",
+      "name": "公众号·东南大学电气工程学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9538abe27a7f",
+        "nickname": "东南大学电气工程学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "电气工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-electrical",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://ee.seu.edu.cn/wxggh/list.htm"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学电气工程学院",
+        "ghid": "gh_9538abe27a7f",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-overseas",
+      "name": "公众号·留学东南Study at SEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ffbed6b13f9d",
+        "nickname": "留学东南Study at SEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "海外教育学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-overseas",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "留学东南Study at SEU",
+        "ghid": "gh_ffbed6b13f9d",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-ic",
+      "name": "公众号·东南大学集成电路学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0d76ebdce07a",
+        "nickname": "东南大学集成电路学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "集成电路学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-ic",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://www.seu.edu.cn/yxsz/"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学集成电路学院",
+        "ghid": "gh_0d76ebdce07a",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-marxism",
+      "name": "公众号·东南大学马院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_26e4dfc0777b",
+        "nickname": "东南大学马院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "马克思主义学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-marxism",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学马院",
+        "ghid": "gh_26e4dfc0777b",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-cyber",
+      "name": "公众号·东南大学网络空间安全学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_205dce5e60a5",
+        "nickname": "东南大学网络空间安全学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "网络空间安全学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-cyber",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://www.seu.edu.cn/yxsz/"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学网络空间安全学院",
+        "ghid": "gh_205dce5e60a5",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-engineer",
+      "name": "公众号·东南大学国家卓越工程师学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8edef16f9de4",
+        "nickname": "东南大学国家卓越工程师学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "国家卓越工程师学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-engineer",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://gjzygcs.seu.edu.cn/2023/1124/c54580a491562/page.htm"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学国家卓越工程师学院",
+        "ghid": "gh_8edef16f9de4",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-freshman",
+      "name": "公众号·东南大学新生学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e5ab43d1abba",
+        "nickname": "东南大学新生学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "新生学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-freshman",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "https://xsxy.seu.edu.cn/"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学新生学院",
+        "ghid": "gh_e5ab43d1abba",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-yuexiu-seu",
+      "name": "公众号·粤秀东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2712c88ac2df",
+        "nickname": "粤秀东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友",
+        "校友相关"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-yuexiu-seu",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "粤秀东南",
+        "ghid": "gh_2712c88ac2df",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-academic-committee",
+      "name": "公众号·东南大学学术委员会秘书处",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8e02d68b3eba",
+        "nickname": "东南大学学术委员会秘书处"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学术委员会秘书处"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-academic-committee",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学学术委员会秘书处",
+        "ghid": "gh_8e02d68b3eba",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-d05",
+      "name": "公众号·东奔南走",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_ae0fe9eb649e",
+        "nickname": "东奔南走"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-d05",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东奔南走",
+        "ghid": "gh_ae0fe9eb649e",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-rongyao-seu",
+      "name": "公众号·戎耀东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f3a4cfed51a9",
+        "nickname": "戎耀东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-rongyao-seu",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "戎耀东南",
+        "ghid": "gh_f3a4cfed51a9",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-d11",
+      "name": "公众号·唐仲英爱心社至善唐爱",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3cf84577dac3",
+        "nickname": "唐仲英爱心社至善唐爱"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "唐仲英爱心社"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-d11",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "唐仲英爱心社至善唐爱",
+        "ghid": "gh_3cf84577dac3",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-rowing",
+      "name": "公众号·东大赛艇队",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4f176bfdd75e",
+        "nickname": "东大赛艇队"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "赛艇队"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-rowing",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东大赛艇队",
+        "ghid": "gh_4f176bfdd75e",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-roboclub",
+      "name": "公众号·Roboclub",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_1bad6a41fc2f",
+        "nickname": "Roboclub"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "机器人俱乐部"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-roboclub",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "Roboclub",
+        "ghid": "gh_1bad6a41fc2f",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-alumni-association",
+      "name": "公众号·东南大学校友总会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_250bcbd05460",
+        "nickname": "东南大学校友总会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校友",
+        "校友总会"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-alumni-association",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学校友总会",
+        "ghid": "gh_250bcbd05460",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-zhangxiaosong-lab",
+      "name": "公众号·张小松课题组",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_b65609a70a54",
+        "nickname": "张小松课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "教师课题组"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-zhangxiaosong-lab",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "张小松课题组",
+        "ghid": "gh_b65609a70a54",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-life-health",
+      "name": "公众号·东南大学生命健康高等研究院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4f14eaca90f5",
+        "nickname": "东南大学生命健康高等研究院"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "生命健康高等研究院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-life-health",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南大学生命健康高等研究院",
+        "ghid": "gh_4f14eaca90f5",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-leads",
+      "name": "公众号·LEADS动态",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_07cc24856677",
+        "nickname": "LEADS动态"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "用户指定科研账号"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-leads",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "LEADS动态",
+        "ghid": "gh_07cc24856677",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-ase",
+      "name": "公众号·东大创协ASE",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_718a7415b3a0",
+        "nickname": "东大创协ASE"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-ase",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东大创协ASE",
+        "ghid": "gh_718a7415b3a0",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-fia",
+      "name": "公众号·东大投协FIA",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_72666d7228e9",
+        "nickname": "东大投协FIA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-fia",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东大投协FIA",
+        "ghid": "gh_72666d7228e9",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-flexible-intelligent-lab",
+      "name": "公众号·Flexible Intelligent Lab",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_07b2b514e253",
+        "nickname": "Flexible Intelligent Lab"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "用户指定实验室"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-flexible-intelligent-lab",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "Flexible Intelligent Lab",
+        "ghid": "gh_07b2b514e253",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-awitec",
+      "name": "公众号·AWiTec 先进无线技术实验室",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5afc5646e80e",
+        "nickname": "AWiTec 先进无线技术实验室"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "科研机构",
+        "先进无线技术实验室"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-awitec",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "AWiTec 先进无线技术实验室",
+        "ghid": "gh_5afc5646e80e",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-seu-host",
+      "name": "公众号·东南主持小话筒",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_43cff666d19b",
+        "nickname": "东南主持小话筒"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-seu-host",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "东南主持小话筒",
+        "ghid": "gh_43cff666d19b",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-dianzizhiguang",
+      "name": "公众号·电子之光",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9878e4a99247",
+        "nickname": "电子之光"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "电子科学与工程学院相关"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-dianzizhiguang",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户2026-11-06提供名称并明确要求接入"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "电子之光",
+        "ghid": "gh_9878e4a99247",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-kechuang-seu",
+      "name": "公众号·科创东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_06640dff0033",
+        "nickname": "科创东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定科创账号"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-kechuang-seu",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户提供准确名称，归属待核"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "科创东南",
+        "ghid": "gh_06640dff0033",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    },
+    {
+      "id": "mp-zhishan-volunteers",
+      "name": "公众号·至善青协",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_066e11aeb76c",
+        "nickname": "至善青协"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "用户指定志愿组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "candidateRef": "U-mp-zhishan-volunteers",
+      "note": "用户2026-11-06明确指定；极致了返回名称与原始ID已核对，不据名称推断其他别名。",
+      "evidence": [
+        "用户提供准确名称；不与VolunteerSEU合并"
+      ],
+      "resolution": {
+        "status": "verified",
+        "actualName": "至善青协",
+        "ghid": "gh_066e11aeb76c",
+        "verifiedAt": "2026-11-06",
+        "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
+      }
+    }
+  ],
+  "pending": [
+    {
+      "candidateRef": "B06",
+      "name": "小猴偷米",
+      "note": "校学生会历史招新稿称其为下属公益服务组织；当前组织关系需复核",
+      "evidence": [
+        "https://www.sohu.com/a/341218841_694348"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "B07",
+      "name": "社彩东南",
+      "note": "本地既有手册线索；本次未确认当前运营状态",
+      "evidence": [
+        "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\astro\\src\\content\\docs\\1-campus-life\\2.2-info-channels.md"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "B08",
+      "name": "东南SAST",
+      "note": "检索到往届负责人记录提及公众号关闭；当前号名、是否恢复均待核",
+      "evidence": [
+        "https://yijiemiao.github.io/SEU/Diary-SAST.html"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "C27",
+      "name": "医路朝夕同辉",
+      "note": "学院官网记载2015年上线；与 C26 的关系不明",
+      "evidence": [
+        "https://med.seu.edu.cn/8755/list92.psp"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "D07",
+      "name": "机器人俱乐部账号",
+      "note": "赛事主办方页面确认存在公众号及组织归属；准确显示名、ID待核",
+      "evidence": [
+        "https://www.robomaster.com/zh-CN/resource/pages/activities/899"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "D08",
+      "name": "方程式赛车队账号",
+      "note": "赛事官方手册设有该队公众号二维码；油车、电车等账号是否分立待核",
+      "evidence": [
+        "https://img.sae-china.org/web/2024/10/2024FSEC%E7%AB%9E%E8%B5%9B%E6%89%8B%E5%86%8CHandbook.pdf"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "D09",
+      "name": "东南大学微软俱乐部账号",
+      "note": "社团自建网站明确有官方公众号；当前状态、显示名待核",
+      "evidence": [
+        "https://seu-codingtogether.github.io/about/"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "D10",
+      "name": "玉笙寒配音工作室账号",
+      "note": "历史招新介绍确认开设公众号；准确名称、当前状态待核",
+      "evidence": [
+        "https://www.sohu.com/a/194271820_99941458"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "D11",
+      "name": "唐仲英爱心社相关账号",
+      "note": "活动转载提及公众号；名称、主体待核",
+      "evidence": [
+        "https://www.dcdxsw.com/xwzx/gxzx/57935.html"
+      ],
+      "identifier": null,
+      "reason": "身份、别名或当前运营状态仍待核准"
+    },
+    {
+      "candidateRef": "雷恩研究生学院",
+      "name": "雷恩研究生学院",
+      "note": "尚未查明独立账号",
+      "evidence": [],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "药学院",
+      "name": "药学院",
+      "note": "2026年新成立，尚未查明独立账号",
+      "evidence": [
+        "https://www.seu.edu.cn/2026/0727/c124a578227/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "新生学院及八大书院",
+      "name": "八大书院独立账号",
+      "note": "2026-11-06 新生学院主号“东南大学新生学院”已按用户确认接入；三江、南高、东南、中大、南工、南雍、日新、至善八大书院的独立账号仍待核准，不以学院主号代替书院账号。",
+      "evidence": [
+        "https://news.seu.edu.cn/2025/0829/c55945a537635/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "各学院学生会、研究生会、科协、青协",
+      "name": "各学院学生会、研究生会、科协、青协",
+      "note": "上表仅列出已找到的独立名称，尚未覆盖全部学院的二级账号",
+      "evidence": [],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "F10",
+      "name": "北京校友会",
+      "note": "2016年度新闻记录",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2017/0118/c2016a183367/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "F11",
+      "name": "上海校友会信息科学与工程分会",
+      "note": "2017年成立报道",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2017/0525/c2016a190090/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "F12",
+      "name": "青岛校友会",
+      "note": "2019年工作总结",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2019/0122/c2016a262330/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "F13",
+      "name": "墨尔本校友会",
+      "note": "2025年活动报道",
+      "evidence": [
+        "https://seuaa.seu.edu.cn/2025/0808/c22772a536153/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G18",
+      "name": "复杂交通网络研究中心 TLab",
+      "note": "团队官网展示课题组公众号",
+      "evidence": [
+        "https://tc.seu.edu.cn/tn/team/list.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G19",
+      "name": "赵东亮课题组，能源与环境学院",
+      "note": "教师主页展示公众号二维码",
+      "evidence": [
+        "https://power.seu.edu.cn/zdl/list.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G20",
+      "name": "陶骁课题组，材料学院",
+      "note": "官方教师介绍展示课题组公众号",
+      "evidence": [
+        "https://smse.seu.edu.cn/_s43/2023/1130/c2590a473589/page.psp"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G21",
+      "name": "孙正明材料团队",
+      "note": "团队官网展示公众号入口",
+      "evidence": [
+        "https://smse.seu.edu.cn/sun/main.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G22",
+      "name": "高新雷团队，能源与环境学院",
+      "note": "教师主页展示团队公众号",
+      "evidence": [
+        "https://power.seu.edu.cn/gxl/list.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G23",
+      "name": "毫米波全国重点实验室",
+      "note": "2026年招聘涉及公众号维护",
+      "evidence": [
+        "https://mmw.seu.edu.cn/2026/0129/c26729a554691/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G24",
+      "name": "AWiTec 先进无线技术实验室，王承祥团队",
+      "note": "2025年招聘明确涉及课题组公众号",
+      "evidence": [
+        "https://radio.seu.edu.cn/2025/1009/c1588a541460/pagem.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "G25",
+      "name": "道德发展研究院",
+      "note": "官方简报展示公众号二维码",
+      "evidence": [
+        "https://mdi.seu.edu.cn/_upload/article/files/19/cd/f8b1f911452fa4079f981bd4af42/6ed4f9ce-fa6b-4c86-b9f3-48329967b796.pdf"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E01",
+      "name": "东大青协、至善青协、VolunteerSEU",
+      "note": "2026-11-06 用户确认接入“至善青协”（gh_066e11aeb76c），接口身份已核验；“东大青协”与该号是否存在别名关系仍待核，不据名称合并。VolunteerSEU（gh_fb2ca2f3a2b8）已按用户要求移除，不得将其当作至善青协或以别名重新接入。",
+      "evidence": [
+        "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\astro\\src\\content\\docs\\1-campus-life\\2.2-info-channels.md",
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E02",
+      "name": "东大国际 Global SEU",
+      "note": "官网有“东大国际公众号”入口；需核准完整名称和ID，避免同名企业号 | 国际合作处官网",
+      "evidence": [
+        "https://oic.seu.edu.cn/18956/list.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E03",
+      "name": "东南大学学生事务服务中心",
+      "note": "历史校园服务账号；与现有学工账号关系、当前状态待核 | 历史转载来源记录",
+      "evidence": [
+        "https://www.sohu.com/a/316412869_407294"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E04",
+      "name": "心理健康教育中心历史账号",
+      "note": "微信号 SEU_XL525；是否继续独立运营待核 | 学院官网2019年记录",
+      "evidence": [
+        "https://civil.seu.edu.cn/2019/0118/c1246a262230/pagem.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E05",
+      "name": "东大SEIC小助手",
+      "note": "微信号 SEIC0808；2015年宿舍无线报障号，是否已被替代待核 | 网信中心官网历史通知",
+      "evidence": [
+        "https://nic.seu.edu.cn/index/tzgg/12.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E06",
+      "name": "东南大学校园集市／SEU校园集市",
+      "note": "非官方校园社群线索；具体主体及名称关系待核 | 本地项目既有来源清单",
+      "evidence": [
+        "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\docs\\AI+应用创新应用大赛\\项目策划书与设计方案.md"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E07",
+      "name": "东大小宝",
+      "note": "校园资讯账号，尚未核准主体 | 既有迎新原始资料",
+      "evidence": [
+        "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\datapool\\raw\\03-学校官方\\迎新网\\【新生专刊2026】校园卡使用攻略.md"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E09",
+      "name": "东南大学附属中大医院",
+      "note": "与 A17 校医院是不同单位；是否纳入附属医院资讯 | 医院账号服务介绍",
+      "evidence": [
+        "https://www.sohu.com/a/677755612_464361"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E10",
+      "name": "东南大学附属中大医院互联网医院",
+      "note": "医疗服务号，是否有独立资讯采集价值 | 历史开通使用报道",
+      "evidence": [
+        "https://news.sina.cn/2020-05-15/detail-iirczymk1851411.d.html"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E11",
+      "name": "东南大学出版社",
+      "note": "校属出版机构 | 资产经营公司官网明确列出公众号",
+      "evidence": [
+        "https://zcgs.seu.edu.cn/2012/0406/c6896a66804/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E12",
+      "name": "東大院／东大院",
+      "note": "建筑设计研究院公司账号，是否接入企业类信息 | 学校资产经营公司2026年报道",
+      "evidence": [
+        "https://zcgs.seu.edu.cn/2026/0824/c35670a580187/page.htm"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "E13",
+      "name": "东大科技园",
+      "note": "国家大学科技园；微信号历史记录为 sue-sp | 科技园平台活动说明",
+      "evidence": [
+        "https://www.seuiec.com/fbrandActivity/situationDetails/45"
+      ],
+      "reason": "尚未核准账号唯一标识或归属范围"
+    },
+    {
+      "candidateRef": "A16",
+      "name": "东南大学平安校园",
+      "note": "保卫处官方通知",
+      "evidence": [
+        "https://bwc.seu.edu.cn/2023/1120/c24283a472653/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-a16",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "东南大学平安校园"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "A24",
+      "name": "东南大学教育基金会",
+      "note": "基金会官网报道；历史官方材料",
+      "evidence": [
+        "https://seuef.seu.edu.cn/22221/list13.psp",
+        "https://yzb.seu.edu.cn/_upload/article/13/48/b5b19f424a068e5c170701343357/ef364847-4e11-4dbc-b281-72948e0098b6.pdf"
+      ],
+      "identifier": "seu_seuef",
+      "id": "mp-a24",
+      "kind": "mp_account",
+      "config": {
+        "wxid": "seu_seuef",
+        "nickname": "东南大学教育基金会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history: invalid article list"
+    },
+    {
+      "candidateRef": "C07",
+      "name": "東南土木／东南土木",
+      "note": "学院教师页面引用、科研院转载来源；需核准显示名",
+      "evidence": [
+        "https://civil.seu.edu.cn/dzq/list.htm",
+        "https://kjc.seu.edu.cn/ddkx/2024/0617/c51407a494203/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c07",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "东南土木"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "C08",
+      "name": "东大土木团委",
+      "note": "学院官网志愿者章程；历史记录",
+      "evidence": [
+        "https://civil.seu.edu.cn/2016/1011/c1225a171445/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c08",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "东大土木团委"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "C18",
+      "name": "经管小团子SEU",
+      "note": "学院官网通知；历史记录",
+      "evidence": [
+        "https://em.seu.edu.cn/2019/0825/c9119a283207/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c18",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "经管小团子SEU"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "D01",
+      "name": "东南大学公共治理研究会",
+      "note": "学院官网明确介绍其公众号及组织关系",
+      "evidence": [
+        "https://physics.seu.edu.cn/2022/1005/c23177a422325/pagem.htm"
+      ],
+      "identifier": null,
+      "id": "mp-d01",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "东南大学公共治理研究会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "D02",
+      "name": "东大伯藜学社",
+      "note": "学院官网直接要求关注该公众号",
+      "evidence": [
+        "https://automation.seu.edu.cn/2022/1018/c32617a423928/page.psp"
+      ],
+      "identifier": null,
+      "id": "mp-d02",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "东大伯藜学社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "D04",
+      "name": "SEU户外",
+      "note": "学校官网报道明确列为微信公众号",
+      "evidence": [
+        "https://news.seu.edu.cn/2024/0921/c5541a503657/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-d04",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "SEU户外"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    },
+    {
+      "candidateRef": "G02",
+      "name": "低碳能源课题组",
+      "note": "教师官方主页，多位教师共用，不重复计号",
+      "evidence": [
+        "https://power.seu.edu.cn/thj/list.htm"
+      ],
+      "identifier": null,
+      "id": "mp-g02",
+      "kind": "mp_account",
+      "config": {
+        "nickname": "低碳能源课题组"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false,
+      "interval_minutes": 1440,
+      "reason": "dajiala history_by_ghid code 107"
+    }
+  ],
+  "excluded": [
+    "社会实践专号、实践队账号",
+    "成贤学院体系",
+    "既有禁用官网栏目保持禁用",
+    "VolunteerSEU（gh_fb2ca2f3a2b8，原信源 mp-b03）：2026-11-06 用户确认停用并从接入清单移除，不得以至善青协或其他别名恢复接入"
+  ]
+}

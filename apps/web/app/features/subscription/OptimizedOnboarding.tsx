@@ -1,0 +1,57 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { SubscriptionProfile } from "@aihot/contracts/subscription";
+import { fromOptimizedProfile, legacyTopicExtras, toOptimizedProfile } from "@aihot/contracts/subscription-onboarding";
+import html from "./optimized-profile.html?raw";
+
+const CHANNEL = "seu-optimized-onboarding-v1";
+
+/** Retains the supplied HTML's layout and physics in a script-only sandbox. */
+export function OptimizedOnboarding({ initialProfile, onComplete, onCancel }: {
+  initialProfile?: SubscriptionProfile | null;
+  onComplete: (profile: SubscriptionProfile) => Promise<void>;
+  onCancel?: () => void;
+}) {
+  const frame = useRef<HTMLIFrameElement>(null);
+  const token = useRef("");
+  const completed = useRef(false);
+  const callbacks = useRef({ initialProfile, onComplete });
+  callbacks.current = { initialProfile, onComplete };
+  const [ready, setReady] = useState(false);
+  const initialize = useCallback(() => {
+    if (!token.current) token.current = crypto.randomUUID();
+    const profile = toOptimizedProfile(callbacks.current.initialProfile);
+    frame.current?.contentWindow?.postMessage({ channel: CHANNEL, type: "init", token: token.current, profile, extraTopics: legacyTopicExtras(profile) }, "*");
+  }, []);
+  useEffect(() => {
+    let retry: ReturnType<typeof setInterval> | undefined;
+    function receive(event: MessageEvent) {
+      if (event.source !== frame.current?.contentWindow || event.origin !== "null" || event.data?.channel !== CHANNEL) return;
+      if (event.data.type === "ready") { initialize(); return; }
+      if (event.data.type === "initialized" && token.current && event.data.token === token.current) {
+        setReady(true); clearInterval(retry); return;
+      }
+      if (event.data.type !== "complete" || !token.current || event.data.token !== token.current || completed.current) return;
+      completed.current = true;
+      void (async () => { try {
+        const profile = fromOptimizedProfile(event.data.profile, callbacks.current.initialProfile);
+        await callbacks.current.onComplete(profile);
+        frame.current?.contentWindow?.postMessage({ channel: CHANNEL, type: "saved", token: token.current }, "*");
+      } catch (error) {
+        completed.current = false;
+        frame.current?.contentWindow?.postMessage({ channel: CHANNEL, type: "error", token: token.current, message: error instanceof Error ? error.message : "设置未能保存，请重试。" }, "*");
+      } })();
+    }
+    window.addEventListener("message", receive);
+    // SSR can load srcDoc before hydration attaches onLoad/message listeners.
+    // Actively initialize after subscribing, and retry until the child acknowledges.
+    initialize();
+    retry = setInterval(initialize, 1000);
+    return () => { clearInterval(retry); window.removeEventListener("message", receive); };
+  }, [initialize]);
+  return <section aria-label="首次使用设置">
+    {onCancel && <div className="mb-3 text-right"><button type="button" className="rounded-xl border border-line px-4 py-2 text-sm" onClick={onCancel}>取消修改，返回订阅流</button></div>}
+    {!ready && <p role="status" className="px-5 py-2 text-sm text-ink-3">正在准备订阅设置…</p>}
+    <iframe ref={frame} title="用户画像与订阅设置 · 优化版" srcDoc={html} sandbox="allow-scripts" onLoad={initialize}
+      className="block w-full border-0" style={{ height: "calc(100dvh - 125px)", maxHeight: 850, minHeight: 280 }} />
+  </section>;
+}

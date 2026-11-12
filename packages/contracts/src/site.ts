@@ -1,6 +1,7 @@
 // First-party site API (/api/site/*). Not a public API: it may evolve with the website,
 // but it is served from the same public read layer as v1, RSS and MCP.
 import type { CategoryKey, ChannelKey } from "./taxonomy.ts";
+import type { PublishedAtPrecision } from "./time.ts";
 
 export type SourceKind = "rss" | "web_list" | "json_list" | "x_search" | "mp_account" | "external";
 
@@ -8,7 +9,6 @@ export interface SourceRef {
   id: string;
   name: string;
   kind: SourceKind;
-  firstParty: boolean;
   iconUrl: string | null;
   iconSrcSet?: string;
 }
@@ -50,6 +50,7 @@ export interface ItemSummary {
   source: SourceRef;
   links: { aihot: string; original: string };
   publishedAt: string | null;
+  publishedAtPrecision: PublishedAtPrecision;
   discoveredAt: string;
   timelineAt: string;
   category: CategoryKey | null;
@@ -62,7 +63,7 @@ export interface ItemSummary {
 }
 
 /** The fields rendered by a site feed card; full original text lives in the item detail. */
-export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "publishedAt" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
+export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "publishedAt" | "publishedAtPrecision" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
   source: Pick<SourceRef, "name">;
   x: (Pick<XPostView, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet" | "media"> & {
     quoted: Omit<NonNullable<XPostView["quoted"]>, "url"> | null;
@@ -79,7 +80,7 @@ export interface GroupInfo {
   /** Facts of the group (the card's own included) with at least one selected item under the current filters. */
   developmentCount: number;
   /** The newest development when it is not the card's own fact: why the card sits where it does. */
-  latestDevelopment?: { factId: string; title: string; at: string } | null;
+  latestDevelopment?: { factId: string; title: string; at: string; precision?: PublishedAtPrecision } | null;
 }
 
 export interface TimelineCard {
@@ -143,8 +144,12 @@ export interface PoolResponse {
 export interface SourceOption {
   id: string;
   name: string;
-  /** 来源分组（sources.tags 里的组别词），如 学院与书院 / 机关与职能部门；未分组为 null。 */
+  /** 来源分组，如 学院与书院 / 机关与职能部门；未分组为 null。 */
   group: string | null;
+  /** 所属单位（筛选面板一级），如 交通学院；简称已并到全称下。 */
+  org: string;
+  /** 单位下的栏目名（筛选面板二级），如 院务公告。 */
+  label: string;
 }
 
 export interface SourceListResponse {
@@ -368,6 +373,7 @@ export interface StoryReportView {
   summary: string | null;
   source: SourceRef;
   publishedAt: string;
+  publishedAtPrecision: PublishedAtPrecision;
   originalUrl: string;
   selected: boolean;
   factId: string;
@@ -406,68 +412,9 @@ export interface StoryDetail {
     heat: number | null;
   };
   developments: StoryFactView[];
-  officialReports: StoryReportView[];
   timeline: StoryReportView[];
   heat: HeatPoint[];
   related: Array<StoryRef & { relation: "storyline" | "related"; latestAt: string | null }>;
-}
-
-// ---------------------------------------------------------------------------
-// Reports (daily / weekly / monthly)
-// ---------------------------------------------------------------------------
-
-export type ReportKind = "daily" | "weekly" | "monthly";
-
-export interface ReportCitation {
-  itemId: string | null;
-  title: string;
-  summary: string | null;
-  sourceName: string;
-  sourceUrl: string;
-  sourceId: string | null;
-  sourceIconUrl: string | null;
-  sourceIconSrcSet?: string;
-  firstParty: boolean;
-  role: string | null;
-  storyPublicId: string | null;
-  /** When the cited report was published, if it is still in the database. */
-  publishedAt: string | null;
-  /** False once the item was withdrawn; the citation then shows as removed. */
-  available: boolean;
-}
-
-export interface ReportDetail {
-  kind: ReportKind;
-  key: string;
-  title: string;
-  windowStart: string;
-  windowEnd: string;
-  generatedAt: string;
-  revision: number;
-  lead: { title: string; leadParagraph: string } | null;
-  overview: string | null;
-  highlights: ReportCitation[];
-  /** As edited: daily categories, weekly and monthly themes. */
-  sections: Array<{ label: string; summary: string | null; items: ReportCitation[] }>;
-  /** Reading order: every section item once, labelled with its section. */
-  stories: Array<ReportCitation & { label: string }>;
-  flashes: ReportCitation[];
-  /**
-   * The front page's picture: from the lead item (a daily's lead, a weekly or monthly's first highlight),
-   * else from another public report of that event. Captioned with the story when it is not the lead's own.
-   */
-  cover: { url: string; srcSet?: string; width: number | null; height: number | null; caption: string | null } | null;
-  metrics: Record<string, number>;
-  readingMinutes: number;
-  prev: string | null;
-  next: string | null;
-}
-
-export interface ReportIndexEntry {
-  key: string;
-  title: string | null;
-  generatedAt: string;
-  count: number;
 }
 
 /** Figures and samples for the about page (site-only; not part of v1). */
@@ -481,7 +428,6 @@ export interface SiteStats {
   /** Everything collected and not withdrawn, heat-only sources included. */
   items: number;
   selected: number;
-  dailies: number;
   /** The last 24 hours: items found (heat-only sources included), and items that made 精选 (by their place on the timeline). */
   day: { collected: number; selected: number };
   /** Enabled sources in a daily shuffle, for the about page's river: one line per source. */
@@ -499,9 +445,6 @@ export interface SiteItemDetail extends Omit<ItemDetail, "x"> {
 
 export interface StoryFollowup {
   factId: string;
-  representative: { id: string; title: string; source: { name: string }; timelineAt: string };
+  representative: { id: string; title: string; source: { name: string }; timelineAt: string; publishedAt: string | null; publishedAtPrecision: PublishedAtPrecision };
 }
 export interface StoryFollowupsResponse { items: StoryFollowup[]; more: boolean }
-
-/** All issue keys keep numbering and calendars stable; closed daily months omit their titles. */
-export interface ReportNavigationEntry { key: string; title?: string | null; count?: number }

@@ -1,7 +1,7 @@
 // Home timeline: selected items folded into reading groups (reference SELECTED_READING):
 // one card per story, per fact outside a story, or per standalone article. A card sits at its latest
 // development's first appearance, so a new development brings it back up while a representative swap
-// never moves it; the representative is the first-party pick of the story's initiating fact.
+// never moves it; the representative is picked from the story's initiating fact.
 import type { GroupInfo, TimelineCard, TimelineFilters, TimelineResponse } from "@aihot/contracts/site";
 import { beijingDate } from "@aihot/contracts/time";
 import { sql } from "../db.ts";
@@ -31,11 +31,10 @@ function binding(q: TimelineQuery): string {
   return queryBinding({ c: q.channel, k: q.category, t: q.tag, p: q.topic ?? null, s: q.sources ?? null });
 }
 
-/** Representative preference: first-party, full text, higher score, earliest. */
-type RepresentativeRow = Pick<ItemRow, "first_party" | "body_mode" | "score" | "timeline_at">;
+/** Representative preference: full text, higher score, earliest. */
+type RepresentativeRow = Pick<ItemRow, "body_mode" | "score" | "timeline_at">;
 export function pickRepresentative<T extends RepresentativeRow>(rows: T[]): T {
   return [...rows].sort((a, b) => {
-    if (a.first_party !== b.first_party) return a.first_party ? -1 : 1;
     if (a.body_mode !== b.body_mode) return a.body_mode === "full" ? -1 : 1;
     const sa = a.score ?? 0;
     const sb = b.score ?? 0;
@@ -119,11 +118,11 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
   const factIds = page.filter((g) => g.gk.startsWith("f")).map((g) => Number(g.gk.slice(1)));
 
   // Read only ranking fields for the whole group; bodies, media and translations are hydrated for this page's representatives.
-  type Member = RepresentativeRow & Pick<ItemRow, "id" | "sort_at"> & { story_id: number | null; fact_id: number };
+  type Member = RepresentativeRow & Pick<ItemRow, "id" | "sort_at" | "published_at_precision"> & { story_id: number | null; fact_id: number };
   const [members, pool] = await Promise.all([
     storyIds.length || factIds.length
       ? sql<Member[]>`
-        SELECT p.story_id, p.fact_id, p.article_id AS id, p.first_party, p.body_mode, p.score, p.timeline_at, p.sort_at FROM publications p
+        SELECT p.story_id, p.fact_id, p.article_id AS id, p.body_mode, p.score, p.timeline_at, p.sort_at, p.published_at_precision FROM publications p
         WHERE (p.story_id IN ${sql(storyIds.length ? storyIds : [0])} OR (p.story_id IS NULL AND p.fact_id IN ${sql(factIds.length ? factIds : [0])}))
           AND ${selectedCondition(now)} ${filterSql(q)}`
       : Promise.resolve([] as Member[]),
@@ -150,7 +149,7 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
     }
     if (byFact.size === 0) continue;
     const reports = pool.filter((r) => (isStory ? r.story_id === id : r.fact_id === id));
-    // The group stands for its initiating fact, the one first reported; that fact's first-party pick
+    // The group stands for its initiating fact, the one first reported; that fact's representative
     // represents it, or, when it has no selected report, the pick of the earliest fact that has one.
     const firstReport = new Map<number, number>();
     for (const r of reports) firstReport.set(r.fact_id, Math.min(firstReport.get(r.fact_id) ?? Infinity, r.at.getTime()));
@@ -160,6 +159,8 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
     const mainReports = reports.filter((r) => r.fact_id === mainFact);
     const [newestFact, newestRows] = [...byFact.entries()].sort((x, y) => firstSeen(y[1]) - firstSeen(x[1]) || y[0] - x[0])[0]!;
     const newest = newestFact !== mainFact ? factInfo.get(newestFact) : undefined;
+    const newestAt = firstSeen(newestRows);
+    const newestMember = newestRows.find((r) => (r.sort_at ?? r.timeline_at).getTime() === newestAt) ?? newestRows[0]!;
     const group: GroupInfo = {
       factId: factInfo.get(mainFact)?.public_id ?? String(mainFact),
       story: null,
@@ -167,7 +168,7 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
       // Reports of the facts that have a selected report (the developments), counted once each.
       reportCount: new Set(reports.filter((r) => byFact.has(r.fact_id)).map((r) => r.article_id)).size,
       developmentCount: byFact.size,
-      latestDevelopment: newest ? { factId: newest.public_id, title: newest.title, at: new Date(firstSeen(newestRows)).toISOString() } : null,
+      latestDevelopment: newest ? { factId: newest.public_id, title: newest.title, at: new Date(newestAt).toISOString(), precision: newestMember.published_at_precision } : null,
     };
     const showGroup = group.reportCount > 1 || group.developmentCount > 1;
     planned.push({ key: g.gk, anchorAt: g.anchor_at.toISOString(), id: rep.id, group: showGroup ? group : null });

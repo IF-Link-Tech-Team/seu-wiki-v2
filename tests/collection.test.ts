@@ -9,6 +9,7 @@ import { closeDb, sql } from "@aihot/backend/db";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { collectSource } from "@aihot/backend/sources/collect";
 import { checkMpAccount } from "@aihot/backend/sources/mp";
+import { mpHistory, mpArticle } from "@aihot/backend/providers/dajiala";
 
 const T = tag();
 const X_SOURCE = `test-x-${T}`;
@@ -34,12 +35,30 @@ const socialdata = await stub((_hit, req) => {
 const MP_URL = `https://mp.weixin.qq.com/s/test-${T}`;
 let bodyCalls = 0;
 const dajiala = await stub((_hit, req) => {
-  if (req.url.startsWith("/fbmain/monitor/v3/post_history")) {
-    return { code: 0, data: [{ position: 1, url: MP_URL, title: `公众号文章 ${T}`, post_time: Math.floor(Date.now() / 1000) - 3600, digest: "摘要", sn: `sn-${T}` }], remain_money: 100 };
+  if (req.url.startsWith("/fbmain/monitor/v3/history_by_ghid")) {
+    const body = JSON.parse(req.body);
+    const recentUrl = body.ghid.startsWith("gh_old_") ? `${MP_URL}-recent` : MP_URL;
+    const snPrefix = body.ghid.startsWith("gh_limit_") ? "limit-" : body.ghid.startsWith("gh_old_") ? "recent-" : "";
+    assert.equal(body.offset, "");
+    assert.equal(body.verifycode, process.env.DAJIALA_VERIFYCODE ?? "");
+    return { code: 0, cost: 0.14, AccountInfo: { NickName: "测试学院", UserName: body.ghid }, MsgList: { Msg: [
+      { AppMsg: { DetailInfo: Array.from({ length: body.ghid.startsWith("gh_limit_") ? 5 : 1 }, (_, i) => ({
+        ItemIndex: i + 1, ContentUrl: body.ghid.startsWith("gh_limit_") ? `${MP_URL}-limit-${i}` : recentUrl,
+        Title: `公众号文章 ${T}`, send_time: Math.floor(Date.now() / 1000) - 3600,
+        Digest: "摘要 2026-10-01", Sn: `sn-${snPrefix}${T}-${i}`, CoverImgUrl: "https://mmbiz.qpic.cn/cover.png",
+      })) } },
+      ...(body.ghid.startsWith("gh_old_") ? [{ AppMsg: { DetailInfo: [{
+        ItemIndex: 2, ContentUrl: `${MP_URL}-old`, Title: `历史文章 ${T}`,
+        send_time: Math.floor(Date.now() / 1000) - 8 * 86400, Sn: `old-${T}`,
+      }] } }] : []),
+    ] }, remain_money: 100 };
   }
   bodyCalls += 1;
   if (bodyCalls === 1) return new Reply(503, { error: "busy" });
-  return { code: 0, title: `公众号文章 ${T}`, content: `<p>正文第一段 ${T}</p><p>正文第二段</p>`, author: "作者", desc: "描述" };
+  assert.equal(new URL(req.url, "http://stub").searchParams.get("mode"), "2");
+  return { code: 0, cost_money: 0.03, title: `公众号文章 ${T}`, nick_name: "测试学院", user_name: `gh_${T}`,
+    content: `正文第一段 ${T}\n正文第二段`, content_multi_text: `<p>正文第一段 ${T}</p><p>正文第二段<img data-src="https://mmbiz.qpic.cn/body.png"></p><script>alert(1)</script>`,
+    cdn_url: "https://mmbiz.qpic.cn/cover.png", picture_page_info_list: [{ cdn_url: "https://mmbiz.qpic.cn/body.png", width: 640, height: 1000 }], author: "作者", desc: "描述" };
 });
 
 process.env.SOCIALDATA_BASE_URL = socialdata.url;
@@ -104,4 +123,85 @@ test("a WeChat body that failed for a passing reason is fetched on the next chec
 
   await checkMpAccount(MP_SOURCE, "manual");
   assert.equal(bodyCalls, 2, "a body already stored is not bought again");
+  const [stored] = await sql<{ body_html: string; media: Array<{ url: string }>; raw: { dajiala: { articleReceiptId: number } } }[]>`
+    SELECT body_html, media, raw FROM articles WHERE source_id = ${MP_SOURCE}`;
+  assert.match(stored!.body_html, /<img src="https:\/\/mmbiz.qpic.cn\/body.png"/);
+  assert.doesNotMatch(stored!.body_html, /script/);
+  assert.deepEqual(stored!.media.map((m) => m.url), ["https://mmbiz.qpic.cn/cover.png", "https://mmbiz.qpic.cn/body.png"]);
+  assert.ok(stored!.raw.dajiala.articleReceiptId > 0);
+});
+
+test("Dajiala responses are retained and reused; source-name mismatch never buys article details", async () => {
+  const opts = { subject: `mp-provider-${T}`, window: "test", nickname: "测试学院" };
+  const before = dajiala.hits();
+  const first = await mpHistory(`gh_provider_${T}`, opts);
+  const second = await mpHistory(`gh_provider_${T}`, opts);
+  assert.equal(dajiala.hits(), before + 1);
+  assert.equal(second.reused, true);
+  assert.equal(second.receiptId, first.receiptId);
+  const [receipt] = await sql<{ cost: number; response: { AccountInfo: { NickName: string } } }[]>`SELECT cost, response FROM receipts WHERE id = ${first.receiptId}`;
+  assert.equal(Number(receipt!.cost), 0.14);
+  assert.equal(receipt!.response.AccountInfo.NickName, "测试学院");
+  await assert.rejects(mpHistory(`gh_provider_${T}`, { ...opts, nickname: "误匹配" }), /account mismatch/);
+  assert.equal(dajiala.hits(), before + 1, "mismatched name rejects the cached history without another paid call");
+  const articleOpts = { subject: opts.subject, identity: `provider-detail-${T}`, nickname: "测试学院" };
+  const article = await mpArticle(MP_URL, articleOpts);
+  await mpArticle(MP_URL, articleOpts);
+  assert.equal(dajiala.hits(), before + 2, "detail is also reused");
+  assert.equal(article.images.length, 1);
+});
+
+test("a controlled WeChat batch buys at most three new bodies and does not rebuy stored ones", async () => {
+  const id = `mp-limit-${T}`;
+  await sql`INSERT INTO sources (id, name, kind, config, tier, participation_mode, cursor, next_fetch_at)
+    VALUES (${id}, '测试学院', 'mp_account', ${sql.json({ ghid: `gh_limit_${T}`, nickname: "测试学院" })}, 'T1', 'editorial',
+            ${sql.json({ lastCheckedAt: new Date().toISOString() })}, '2100-01-01')`;
+  const before = dajiala.hits();
+  const first = await checkMpAccount(id, "manual", { maxNew: 3 });
+  assert.equal(first.status, "ok");
+  assert.equal(first.created, 3);
+  assert.equal(dajiala.hits(), before + 4, "one list and three new details");
+  const second = await checkMpAccount(id, "manual", { maxNew: 3 });
+  assert.equal(second.created, 2, "only the remaining bodies are bought");
+  assert.equal(dajiala.hits(), before + 6);
+  await checkMpAccount(id, "manual", { maxNew: 3 });
+  assert.equal(dajiala.hits(), before + 6, "no known body or same-window list is bought twice");
+});
+
+test("WeChat checks skip old posts after initialization as well as on the first check", async () => {
+  const id = `mp-old-${T}`;
+  await sql`INSERT INTO sources (id, name, kind, config, tier, participation_mode)
+    VALUES (${id}, '测试学院', 'mp_account', ${sql.json({ ghid: `gh_old_${T}`, nickname: "测试学院" })}, 'T1', 'editorial')`;
+  const before = bodyCalls;
+  const first = await checkMpAccount(id, "manual");
+  assert.equal(first.status, "ok");
+  assert.equal(first.created, 1, "the recent post is collected on the first check");
+  assert.equal(bodyCalls, before + 1, "the first check does not buy the eight-day-old body");
+
+  const second = await checkMpAccount(id, "manual");
+  assert.equal(second.status, "ok");
+  assert.equal(second.created, 0, "initialization must not turn old posts into new material");
+  assert.equal(bodyCalls, before + 1, "later manual checks must not buy old bodies either");
+
+  await sql`UPDATE sources SET last_fetch_at = now() - interval '2 days', next_fetch_at = now() - interval '1 day' WHERE id = ${id}`;
+  const scheduled = await checkMpAccount(id, "schedule");
+  assert.equal(scheduled.status, "ok");
+  assert.equal(scheduled.created, 0);
+  assert.equal(bodyCalls, before + 1, "the next scheduled list must not buy old bodies");
+  const [receipts] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM receipts WHERE service = 'dajiala' AND purpose = 'mp_article' AND subject = ${id}`;
+  assert.equal(receipts!.n, 1, "only the recent article has a paid detail receipt");
+});
+
+test("a short verification code cannot corrupt numeric status or cost while redacting responses", async () => {
+  process.env.DAJIALA_VERIFYCODE = "0";
+  try {
+    const result = await mpHistory(`gh_verify_${T}`, { subject: `mp-verify-${T}`, window: "verify", nickname: "测试学院" });
+    assert.equal(result.posts.length, 1);
+    assert.equal(result.posts[0]!.digest, "摘要 2026-10-01", "short verification code must not replace ordinary content digits");
+    const [receipt] = await sql<{ response: { code: number }; cost: number }[]>`SELECT response, cost FROM receipts WHERE id = ${result.receiptId}`;
+    assert.equal(receipt!.response.code, 0);
+    assert.equal(Number(receipt!.cost), 0.14);
+  } finally {
+    delete process.env.DAJIALA_VERIFYCODE;
+  }
 });

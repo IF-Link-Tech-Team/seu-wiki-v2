@@ -7,7 +7,6 @@ export interface SourceRow {
   config: Record<string, any>;
   tier: string;
   participation_mode: "editorial" | "hot_signal" | "isolated";
-  first_party: boolean;
   interval_minutes: number;
   enabled: boolean;
   cursor: Record<string, any> | null;

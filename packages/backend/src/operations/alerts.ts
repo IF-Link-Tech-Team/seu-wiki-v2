@@ -65,21 +65,6 @@ export async function collectFindings(now = Date.now()): Promise<Finding[]> {
         since: p!.waiting >= 10 && p!.oldest ? p!.oldest : undefined,
       });
     }
-    // The daily report is composed at 08:00 and caught up hourly.
-    if (Number(beijingTime(now).slice(0, 2)) >= 10) {
-      const [r] = await sql`SELECT 1 FROM reports WHERE kind = 'daily' AND key = ${beijingDate(now)}`;
-      if (!r) {
-        out.push({
-          key: "report.daily",
-          level: "now",
-          title: "今天的日报还没生成",
-          impact: "读者看不到今天的日报",
-          heals: "系统每小时补做一次，到现在还没成功",
-          action: "转给 AI 处理",
-          detail: `reports daily ${beijingDate(now)} 不存在；看 reports.daily / reports.catch-up 的运行记录`,
-        });
-      }
-    }
   }
 
   // ---- Money, and things only the owner can do --------------------------------------------------
@@ -101,37 +86,6 @@ export async function collectFindings(now = Date.now()): Promise<Finding[]> {
     });
   }
 
-  // Reset monitor: posts are recognized in order, so one that keeps failing holds up every later one.
-  const [stuck] = await sql<{ url: string; collected_at: Date; failures: { count: number; error?: string } | null }[]>`
-    SELECT p.url, p.collected_at, s.value AS failures FROM monitor_posts p LEFT JOIN monitor_state s ON s.key = 'failures:' || p.id
-    WHERE p.processed_at IS NULL ORDER BY p.published_at, p.id LIMIT 1`;
-  if (stuck && now - stuck.collected_at.getTime() > 60 * 60_000) {
-    out.push({
-      key: "monitor.stuck",
-      level: "today",
-      title: "Codex 重置监控卡住了",
-      impact: "新的重置消息确认不了，内容群收不到重置通知",
-      heals: "暂时没有",
-      action: "转给 AI 处理",
-      detail: `${stuck.url} 等待 ${duration(now - stuck.collected_at.getTime())}${stuck.failures ? `，识别失败 ${stuck.failures.count} 次：${stuck.failures.error ?? ""}` : ""}；后台“Codex 重置 → 帖子与识别 → 待识别”可跳过`,
-      since: stuck.collected_at,
-    });
-  }
-  // Claims held back from a post (a quote not in it, an unsure confirmation) wait for a person.
-  const held = await sql<{ url: string }[]>`
-    SELECT url FROM monitor_posts WHERE processed_at > ${new Date(now - 48 * 3600_000)} AND jsonb_array_length(coalesce(recognition->'held', '[]'::jsonb)) > 0
-      AND (recognition->>'reviewed')::boolean IS NOT TRUE ORDER BY published_at DESC LIMIT 5`;
-  if (held.length) {
-    out.push({
-      key: "monitor.review",
-      level: "today",
-      title: "有 Codex 重置消息需要你确认",
-      impact: "系统对这几条帖子的判断没把握，结论暂时没有生效，也没有推送",
-      heals: "不会",
-      action: "到后台“Codex 重置 → 帖子与识别 → 需复核”看一下；确认后需要的话在群里说明",
-      detail: held.map((h) => h.url).join(" "),
-    });
-  }
 
   if (backupConfigured()) {
     const [b] = await sql<{ value: { at: string; uploaded: boolean; filesError?: string } }[]>`SELECT value FROM settings WHERE key = 'backup.last'`;
@@ -173,24 +127,12 @@ export async function collectFindings(now = Date.now()): Promise<Finding[]> {
     }
   }
 
-  // A leaderboard source keeps its last snapshot while failing.
-  const [lb] = await sql<{ value: { sources?: Record<string, { ok: boolean; lastOkAt: string | null; error?: string }> } }[]>`SELECT value FROM settings WHERE key = 'leaderboard.fetch'`;
-  const stale = Object.entries(lb?.value.sources ?? {}).filter(([, s]) => !s.ok && s.lastOkAt && now - Date.parse(s.lastOkAt) > 26 * 3600_000);
-  if (stale.length) {
-    out.push({
-      key: "leaderboard.fetch",
-      level: "digest",
-      title: `模型榜有 ${stale.length} 个评测来源超过一天没抓到，榜单暂用上一份数据`,
-      detail: stale.slice(0, 6).map(([k, s]) => `${k}：${s.error ?? "失败"}（上次成功 ${beijingStamp(s.lastOkAt!)}）`).join("；"),
-    });
-  }
-
   return out;
 }
 
 const MODEL_STOPS = "用到这家模型的步骤停了（看后台“模型与评测”），新内容可能进不了精选";
 const PROVIDERS: Record<string, { name: string; stops: string; where: string }> = {
-  llm: { name: "默认模型服务", stops: "新文章的精选、摘要、归组和日报停了", where: "模型服务商的控制台" },
+  llm: { name: "默认模型服务", stops: "新文章的精选、摘要和归组停了", where: "模型服务商的控制台" },
   zhipu: { name: "智谱", stops: MODEL_STOPS, where: "智谱开放平台" },
   dashscope: { name: "阿里云百炼", stops: MODEL_STOPS, where: "阿里云百炼控制台" },
   deepseek: { name: "DeepSeek", stops: MODEL_STOPS, where: "DeepSeek 开放平台" },

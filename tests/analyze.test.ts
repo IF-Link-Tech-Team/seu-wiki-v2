@@ -99,7 +99,7 @@ test("a selected item: prefilter, two scores, the content understanding and the 
   assert.deepEqual(calls("CLEAR").sort(), ["prefilter", "score", "score", "structure", "understand"]);
   const r = await row(id);
   assert.deepEqual([r.title_zh, r.reason_zh, r.category, r.receipt_ids.length], ["理解标题 CLEAR", "理由 CLEAR", "academic", 5]);
-  assert.deepEqual(r.tags, ["教务通知", "竞赛科研", "保研", "教务处"], "vocabulary tags (synonyms mapped, unknown dropped) and the subject's tag");
+  assert.deepEqual(r.tags, ["教务通知", "大创", "保研", "教务处"], "vocabulary tags (SRTP/大创 kept as standalone words, unknown dropped) and the subject's tag");
   assert.deepEqual(r.subjects, ["jwc"]);
   assert.deepEqual([r.output.writer, r.output.itemType, r.output.prefilter.label, r.output.fact.title], ["understand", "notice", "PASS", "事实 CLEAR"]);
   const score = requests.find((q) => q.marker === "CLEAR" && q.step === "score")!;

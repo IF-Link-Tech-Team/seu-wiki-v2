@@ -9,7 +9,7 @@ import http from "node:http";
 import { after, test } from "node:test";
 import { config } from "@aihot/backend/config";
 import { sanitizeBody, trimTrailingChrome } from "@aihot/backend/content/sanitize";
-import { fetchDetail, fetchWebList, fromHtml, fromMarkdown, parseLooseDate } from "@aihot/backend/sources/web-list";
+import { fetchDetail, fetchWebList, fromHtml, fromMarkdown, parseLooseDate, parseLooseDateValue } from "@aihot/backend/sources/web-list";
 import { fetchRss } from "@aihot/backend/sources/rss";
 import { fetchJsonList } from "@aihot/backend/sources/json-list";
 import { noiseFiltered } from "@aihot/backend/sources/collect";
@@ -42,6 +42,8 @@ const pages: Record<string, (cdn: string) => string> = {
   "/ld-post": () =>
     `<html><head><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Blog"},` +
     `{"@type":"BlogPosting","headline":"Turn REST APIs into MCP tools","datePublished":"2026-09-24"}]}</script></head><body><p>Post</p></body></html>`,
+  "/day-detail": () => `<html><body><time class="publish">发布时间：2026-10-23</time></body></html>`,
+  "/minute-detail": () => `<html><body><time class="publish">发布时间：2026-10-23 14:30</time></body></html>`,
   "/cdn/static/js/lib-react.a6be410a.js": () => '"use strict";(self.webpackChunk=self.webpackChunk||[]).push([["lib-react"],{}]);',
   "/cdn/static/js/index.c5195ace.js": (cdn) =>
     '(()=>{var e={},a={};function t(d){return a[d]}t.u=e=>"static/js/async/"+e+"."+({6159:"4efb0769",7298:"a1b2c3d4",8557:"2d420be2"})[e]+".js",' +
@@ -224,8 +226,36 @@ test("loose dates stay in the source's zone and reject impossible years", () => 
   assert.equal(parseLooseDate("2026年9月30日")?.toISOString(), "2026-09-29T16:00:00.000Z");
 });
 
+test("date parsing preserves source precision and rejects impossible calendar days", () => {
+  assert.equal(parseLooseDateValue("2026-10-23")?.precision, "day");
+  assert.equal(parseLooseDateValue("2026年10月23日")?.precision, "day");
+  assert.equal(parseLooseDateValue("2026/10/23")?.precision, "day");
+  assert.equal(parseLooseDateValue("2026-10-23 14:30")?.precision, "minute");
+  assert.equal(parseLooseDateValue("2026-10-23T14:30:15+08:00")?.precision, "second");
+  assert.equal(parseLooseDateValue("2026-02-30"), null);
+  assert.equal(parseLooseDateValue("not a date"), null);
+});
+
 test("a split day/year-month date element is composed before parsing", () => {
   const html = `<ul><li class="news"><div class="news_title"><a href="/2026/0924/c1a2/page.htm">一条通知公告的标题</a></div><span class="news_meta"><span class="day">24</span><span class="year">2026/09</span></span></li></ul>`;
   const items = fromHtml(html, "https://zwc.seu.edu.cn", { id: "t", kind: "web_list", config: { url: "https://zwc.seu.edu.cn/60881/list.htm", itemSelector: "li.news", linkSelector: ".news_title a", publishedAtSelector: ".news_meta" } } as never);
   assert.equal(items[0]?.publishedAt?.toISOString(), "2026-09-23T16:00:00.000Z");
+  assert.equal(items[0]?.publishedAtPrecision, "day");
+});
+
+test("a split day/year-month date with bare span and p is composed before parsing", () => {
+  const html = `<ul><li id="line_1"><a href="/info/1011/1.htm"><div class="text-ldata"><div><span>20</span><p>2026-10</p></div></div><h3>一条网络通知</h3></a></li></ul>`;
+  const items = fromHtml(html, "https://nic.seu.edu.cn", { id: "nic", kind: "web_list", config: { url: "https://nic.seu.edu.cn/index/tzgg.htm", itemSelector: "li", linkSelector: "a[href]", titleSelector: "h3", publishedAtSelector: ".text-ldata" } } as never);
+  assert.equal(items[0]?.publishedAt?.toISOString(), "2026-10-19T16:00:00.000Z");
+  assert.equal(items[0]?.publishedAtPrecision, "day");
+});
+
+test("PR #10 style list and detail dates remain day precision", async () => {
+  const html = `<ul><li class="news"><div class="news_title"><a href="${site}/day-detail">吴健雄学院通知</a></div><span class="news_meta">2026-10-23</span></li></ul>`;
+  const items = fromHtml(html, site, source({ url: `${site}/list.htm`, itemSelector: "li.news", linkSelector: ".news_title a", titleSelector: ".news_title", publishedAtSelector: ".news_meta" }));
+  assert.equal(items[0]?.publishedAtPrecision, "day");
+  const detail = await fetchDetail(`${site}/day-detail`, { id: "detail-day", config: { detail: { publishedAtSelector: "time.publish", publishedAtAuthoritative: true } } } as never, { date: true, title: false, summary: false, body: false });
+  assert.equal(detail.publishedAtPrecision, "day");
+  const precise = await fetchDetail(`${site}/minute-detail`, { id: "detail-minute", config: { detail: { publishedAtSelector: "time.publish", publishedAtAuthoritative: true } } } as never, { date: true, title: false, summary: false, body: false });
+  assert.equal(precise.publishedAtPrecision, "minute");
 });

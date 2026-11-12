@@ -39,18 +39,18 @@ export function renderTemplate(template: string, item: unknown): string | null {
   return missing ? null : out;
 }
 
-function toDate(v: unknown, unit: string | undefined): Date | null {
+function toDate(v: unknown, unit: string | undefined): { date: Date; precision: "day" | "minute" | "second" | "unknown" } | null {
   if (v === null || v === undefined || v === "") return null;
-  if (unit === "epoch_ms") return new Date(Number(v));
-  if (unit === "epoch_s") return new Date(Number(v) * 1000);
+  if (unit === "epoch_ms") return { date: new Date(Number(v)), precision: "second" };
+  if (unit === "epoch_s") return { date: new Date(Number(v) * 1000), precision: "second" };
   // 20260922: a calendar day at UTC midnight (some list APIs give dates as yyyymmdd).
   if (unit === "yyyymmdd") {
     const m = /^(\d{4})(\d{2})(\d{2})$/.exec(String(v).trim());
     const d = m ? new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`) : null;
-    return d && Number.isFinite(d.getTime()) && d.toISOString().startsWith(`${m![1]}-${m![2]}-${m![3]}`) ? d : null;
+    return d && Number.isFinite(d.getTime()) && d.toISOString().startsWith(`${m![1]}-${m![2]}-${m![3]}`) ? { date: d, precision: "day" } : null;
   }
   const t = Date.parse(String(v));
-  return Number.isFinite(t) ? new Date(t) : null;
+  return Number.isFinite(t) ? { date: new Date(t), precision: /(?:[T ]\d{1,2}:\d{2}:\d{2})/.test(String(v)) ? "second" : /(?:[T ]\d{1,2}:\d{2})/.test(String(v)) ? "minute" : "day" } : null;
 }
 
 function findKey(obj: unknown, key: string, depth = 0): unknown {
@@ -168,11 +168,13 @@ export async function fetchJsonList(source: SourceRow): Promise<Candidate[]> {
     const raw = item && typeof item === "object" ? { ...(item as Record<string, unknown>) } : { value: item };
     for (const k of c.rawDropKeys ?? []) delete (raw as Record<string, unknown>)[k];
     const summaryIsBody = c.summaryIsBody === true && !!summary;
+    const published = toDate(getPath(item, c.publishedAtPath), c.publishedAtUnit);
     out.push({
       url,
       title: collapseWhitespace(stripTags(title)),
       author: firstString(item, c.authorPaths),
-      publishedAt: toDate(getPath(item, c.publishedAtPath), c.publishedAtUnit),
+      publishedAt: published?.date ?? null,
+      publishedAtPrecision: published?.precision ?? "unknown",
       excerpt: summary ? collapseWhitespace(stripTags(summary)).slice(0, 2000) : null,
       bodyText: summaryIsBody ? stripTags(summary!) : null,
       bodyStatus: summaryIsBody ? "ok" : "pending",

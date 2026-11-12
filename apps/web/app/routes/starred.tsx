@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { Presence } from "../components/ui/Presence";
 import { pageMeta } from "../lib/seo";
 import { exportBundle, importBundle, removeStar, useStarred, type ImportReport } from "../lib/local-state";
-import { fullDateTime, shortSourceName } from "../lib/format";
+import { fullDateTime, publishedDateTime, shortSourceName } from "../lib/format";
 import { IconBookmark, IconDownload, IconClose } from "../components/icons";
 
 /** Shared caches may keep this page for five minutes. */
@@ -112,7 +112,7 @@ export default function StarredPage() {
               <li key={s.id} className={`relative border-b border-line-soft py-4 lg:card lg:px-[18px] lg:py-[15px] ${unavailable ? "opacity-70" : "lg:card-hover"}`}>
                 <div className="flex items-center gap-2 text-[12.5px] text-ink-4">
                   <span className="min-w-0 truncate text-ink-3">{shortSourceName(s.sourceName)}</span>
-                  {s.publishedAt && <span className="num shrink-0">· {fullDateTime(s.publishedAt)}</span>}
+                  {s.publishedAt && <span className="num shrink-0">· {publishedDateTime(s.publishedAt, s.publishedAtPrecision)}</span>}
                   <span className="ml-auto hidden shrink-0 sm:inline">
                     收藏于 <span className="num">{fullDateTime(s.savedAt)}</span>
                   </span>

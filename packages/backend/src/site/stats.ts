@@ -25,7 +25,6 @@ async function querySiteStats(now: Date): Promise<SiteStats> {
              (SELECT count(*) FROM sources WHERE enabled AND participation_mode = 'hot_signal')::int AS "heatOnlySources",
              (SELECT count(*) FROM publications p WHERE p.visibility <> 'withdrawn')::int AS items,
              (SELECT count(*) FROM publications p WHERE ${selectedCondition(now)})::int AS selected,
-             (SELECT count(*) FROM reports WHERE kind = 'daily')::int AS dailies,
              (SELECT count(*) FROM publications p WHERE p.visibility <> 'withdrawn' AND p.discovered_at > ${dayAgo})::int AS collected,
              (SELECT count(*) FROM publications p WHERE ${selectedCondition(now)} AND p.timeline_at > ${dayAgo})::int AS "selectedDay"`,
     sql<{ kind: string; n: number }[]>`SELECT kind, count(*)::int AS n FROM sources WHERE enabled GROUP BY kind`,

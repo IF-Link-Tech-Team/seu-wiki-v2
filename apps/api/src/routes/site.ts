@@ -1,6 +1,5 @@
 // First-party site API (/api/site/*). Not public, not versioned, never called /api/v2.
 // Reads through the same public read layer as v1; no cookies are read or set.
-import { FEATURES } from "@aihot/industry/features";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { isCategoryKey, isChannelKey, type CategoryKey, type ChannelKey } from "@aihot/contracts/taxonomy";
 import { InvalidCursorError } from "@aihot/backend/lib/cursor";
@@ -10,6 +9,7 @@ import { listPublicSources } from "@aihot/backend/publication/sources";
 import { loadTimeline } from "@aihot/backend/publication/timeline";
 import { loadForYou, parseForYouProfile } from "@aihot/backend/publication/foryou";
 import { loadDoc, loadExperienceIndex, loadSurvivalIndex, resolveDocRedirect } from "@aihot/backend/publication/docs";
+import { guide2Article, guide2Full, guide2Index } from "@aihot/backend/publication/guide-2";
 import { getTaxonomyTerms } from "@aihot/backend/taxonomy/terms";
 import { loadStoryFollowups } from "@aihot/backend/publication/followups";
 import { loadDevelopments, loadGroupReports } from "@aihot/backend/publication/groups";
@@ -21,17 +21,17 @@ import { loadSiteStats } from "@aihot/backend/site/stats";
 import { itemAvailability } from "@aihot/backend/publication/availability";
 import { listTopicSummaries, loadTopicPage } from "@aihot/backend/publication/topics";
 import { registerFeedback } from "./feedback.ts";
+import { SUBSCRIPTION_TAXONOMY } from "@aihot/industry/subscription-v2";
+import { loadSubscription } from "@aihot/backend/publication/subscription";
+import { memberPrincipal } from "@aihot/backend/member/auth";
+import { subscriptionExperimentEnabled } from "@aihot/backend/member/subscription-profile";
 
 import { loadHot, loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
-import { listReports, loadReport, reportNavigation, loadReportNavigation, loadReportMonth, type ReportKind } from "@aihot/backend/publication/reports";
-import { loadSiteCodexResetPage, loadSiteCodexResetDay } from "@aihot/backend/publication/monitor";
-import { codexResetVersion } from "@aihot/backend/monitor/read";
 import { cached } from "@aihot/backend/lib/cache";
 import { looseQuery, sendJsonWithEtag, sendProblem } from "../http/respond.ts";
 
 type Handler = (req: FastifyRequest, reply: FastifyReply) => Promise<unknown>;
 
-const codexVersion = cached(() => codexResetVersion(), { freshMs: 5_000, maxStaleMs: 5_000 });
 
 class BadRequest extends Error {}
 
@@ -69,9 +69,9 @@ export interface FilterParams {
   sources: string[] | null;
 }
 
-/** 信源筛选参数：?sources=id1,id2，id 白名单字符，最多 20 个。 */
+/** 信源筛选参数：?sources=id1,id2，id 白名单字符，最多 50 个。 */
 function parseSources(value: string | undefined): string[] | null {
-  const ids = (value ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+  const ids = (value ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 50);
   if (ids.some((id) => !/^[a-zA-Z0-9_-]{1,80}$/.test(id))) throw new BadRequest("invalid sources");
   return ids.length ? ids : null;
 }
@@ -92,11 +92,39 @@ export async function parseFilters(q: Record<string, string>): Promise<FilterPar
 }
 
 export function registerSite(app: FastifyInstance) {
+  // Subscription trial requires a member session. POST keeps profile fields out of URLs and history.
+  app.post("/api/site/subscription-preview", { bodyLimit: 32768 }, siteHandler(async (req, reply) => {
+    reply.header("Cache-Control", "private, no-store");
+    reply.header("Vary", "Cookie");
+    if (!subscriptionExperimentEnabled()) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Not found.", cacheControl: "private, no-store" });
+    if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
+    const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
+    const asOf = typeof body.asOf === "string" ? body.asOf : undefined;
+    if (asOf !== undefined && (!/^20\d{2}-\d{2}-\d{2}$/.test(asOf) || !Number.isFinite(Date.parse(asOf)) || new Date(asOf).toISOString().slice(0,10) !== asOf)) throw new BadRequest("invalid date");
+    const lane = body.lane === "possible" || body.lane === "excluded" || body.lane === "matched" ? body.lane : "feed";
+    const requestedPage = Math.floor(Number(body.page));
+    const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+    return reply.send(await loadSubscription({ profile: body.profile, asOf, lane, page, q: typeof body.q === "string" ? body.q.slice(0,100) : "" }));
+  }));
+  app.get("/api/site/subscription-taxonomy", siteHandler(async (req, reply) => {
+    reply.header("Cache-Control", "private, no-store");
+    reply.header("Vary", "Cookie");
+    if (!subscriptionExperimentEnabled()) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Not found.", cacheControl: "private, no-store" });
+    if (!await memberPrincipal(req.headers.cookie)) return reply.code(401).send({ error: "login_required" });
+    return reply.send(SUBSCRIPTION_TAXONOMY);
+  }));
+  app.get("/api/site/guide/2", siteHandler(async (_req, reply) => reply.send({ articles: guide2Index() })));
+  app.get("/api/site/guide/2/full", siteHandler(async (_req, reply) => reply.send({ articles: guide2Full() })));
+  app.get<{ Params: { slug: string } }>("/api/site/guide/2/:slug", siteHandler(async (req, reply) => {
+    const { slug } = req.params as { slug: string };
+    const article = guide2Article(slug);
+    if (!article) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "Article not found." });
+    return reply.send({ article });
+  }));
   app.get("/api/site/meta", siteHandler(async (req, reply) => {
     return sendJsonWithEtag(req, reply, siteMeta(), { etagPrefix: "meta", cacheControl: "public, max-age=60, s-maxage=60" });
   }));
 
-  if (FEATURES.codexResetMonitor) registerCodexReset(app);
 
   app.get("/api/site/timeline", siteHandler(async (req, reply) => {
     const q = looseQuery(req);
@@ -268,43 +296,15 @@ export function registerSite(app: FastifyInstance) {
     return sendJsonWithEtag(req, reply, data, { etagPrefix: "story", cacheControl: "public, max-age=60, s-maxage=60" });
   }));
 
-  app.get("/api/site/reports/:kind", siteHandler(async (req, reply) => {
-    const kind = (req.params as { kind: string }).kind;
-    if (!["daily", "weekly", "monthly"].includes(kind)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "unknown report kind" });
-    const data = await listReports(kind as ReportKind);
-    return sendJsonWithEtag(req, reply, { kind, items: data }, { etagPrefix: "reports", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/:kind", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  // The latest report page needs its archive selector and the report in one HTTP request.
-  app.get("/api/site/reports/:kind/latest-page", siteHandler(async (req, reply) => {
-    const kind = (req.params as { kind: string }).kind;
-    if (!["daily", "weekly", "monthly"].includes(kind)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "unknown report kind" });
-    const index = await listReports(kind as ReportKind);
-    const report = index[0] ? await loadReport(kind as ReportKind, index[0].key) : null;
-    return sendJsonWithEtag(req, reply, { index: reportNavigation(kind as ReportKind, index, report?.key ?? ""), report }, { etagPrefix: "report-latest", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/:kind/latest-page", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/site/reports/:kind/navigation/:key", siteHandler(async (req, reply) => {
-    const { kind, key } = req.params as { kind: string; key: string };
-    if (!["daily", "weekly", "monthly"].includes(kind) || !/^\d{4}-(\d{2}(-\d{2})?|W\d{2})$/.test(key)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "report not found" });
-    return sendJsonWithEtag(req, reply, { items: await loadReportNavigation(kind as ReportKind, key) }, { etagPrefix: "report-navigation", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/:kind/navigation/:key", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/site/reports/daily/months/:month", siteHandler(async (req, reply) => {
-    const { month } = req.params as { month: string };
-    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "month not found" });
-    return sendJsonWithEtag(req, reply, { items: await loadReportMonth("daily", month) }, { etagPrefix: "report-month", cacheControl: "public, max-age=60, s-maxage=60" });
-  }));
+  app.get("/api/site/reports/daily/months/:month", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/site/reports/:kind/:key", siteHandler(async (req, reply) => {
-    const { kind, key } = req.params as { kind: string; key: string };
-    if (!["daily", "weekly", "monthly"].includes(kind) || !/^\d{4}-(\d{2}(-\d{2})?|W\d{2})$/.test(key)) {
-      return sendProblem(req, reply, { status: 404, code: "not_found", detail: "report not found" });
-    }
-    const data = await loadReport(kind as ReportKind, key);
-    if (!data) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "report not found", cacheControl: "public, max-age=60" });
-    return sendJsonWithEtag(req, reply, data, { etagPrefix: "report", cacheControl: "public, max-age=120, s-maxage=120" });
-  }));
+  app.get("/api/site/reports/:kind/:key", siteHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
   // Markdown export: attachment, 404 when there is nothing to export (same predicate as the button).
   app.get("/items/:id/markdown", siteHandler(async (req, reply) => {
@@ -321,21 +321,3 @@ export function registerSite(app: FastifyInstance) {
   }));
 }
 
-/** The Codex reset monitor's page data (an optional module, industry/features.ts). */
-function registerCodexReset(app: FastifyInstance) {
-  app.get("/api/site/codex-reset", siteHandler(async (req, reply) => {
-    return sendJsonWithEtag(req, reply, await loadSiteCodexResetPage(), { etagPrefix: "codex-page", cacheControl: "public, max-age=30, s-maxage=30" });
-  }));
-
-  app.get("/api/site/codex-reset/days/:date", siteHandler(async (req, reply) => {
-    const { date } = req.params as { date: string };
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "date not found" });
-    return sendJsonWithEtag(req, reply, await loadSiteCodexResetDay(date), { etagPrefix: "codex-day", cacheControl: "no-store" });
-  }));
-
-  // Foreground polling from /codex-reset (every open tab, once a minute): the edge answers the tabs
-  // of the same 15 s, and the process reads the database at most every 5 s.
-  app.get("/api/site/codex-reset/version", siteHandler(async (req, reply) => {
-    return sendJsonWithEtag(req, reply, await codexVersion.get(), { etagPrefix: "codex-version", cacheControl: "public, max-age=0, s-maxage=15" });
-  }));
-}

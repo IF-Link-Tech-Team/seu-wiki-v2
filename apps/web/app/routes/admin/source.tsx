@@ -1,10 +1,12 @@
 import { SITE } from "@aihot/industry/site";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/source";
 import { adminGet } from "../../lib/admin.server";
 import { useAdminAction } from "../../features/admin/action";
 import { bj, duration, num } from "../../features/admin/format";
+import { publishedDateTime } from "../../lib/format";
 import { HEALTH_LABEL, KIND_LABEL, MODE_LABEL, TIER_LABEL, VISIBILITY_LABEL } from "../../features/admin/labels";
 import { AdminPage, Badge, Button, Card, DataTable, Dot, Empty, Field, healthTone, Input, Json, KV, ReasonDialog, Select, Stat, Textarea, Time } from "../../features/admin/ui";
 
@@ -14,7 +16,6 @@ interface Source {
   kind: string;
   config: Record<string, unknown>;
   tags: string[];
-  first_party: boolean;
   owner_entity_id: string | null;
   tier: string;
   participation_mode: string;
@@ -52,7 +53,7 @@ interface Detail {
 interface Preview {
   ms: number;
   count: number;
-  items: Array<{ title: string; url: string; publishedAt: string | null; excerpt: string }>;
+  items: Array<{ title: string; url: string; publishedAt: string | null; publishedAtPrecision: PublishedAtPrecision; excerpt: string }>;
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -61,7 +62,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export const meta: Route.MetaFunction = ({ loaderData }) => [{ title: `${loaderData?.source.name ?? "信源"} · ${SITE.name} 后台` }];
 
-type Draft = Pick<Source, "name" | "interval_minutes" | "tier" | "participation_mode" | "signal_group_id" | "first_party" | "owner_entity_id" | "site_fulltext" | "syndicate_fulltext"> & { tags: string; config: string };
+type Draft = Pick<Source, "name" | "interval_minutes" | "tier" | "participation_mode" | "signal_group_id" | "owner_entity_id" | "site_fulltext" | "syndicate_fulltext"> & { tags: string; config: string };
 
 function draftOf(s: Source): Draft {
   return {
@@ -70,7 +71,6 @@ function draftOf(s: Source): Draft {
     tier: s.tier,
     participation_mode: s.participation_mode,
     signal_group_id: s.signal_group_id,
-    first_party: s.first_party,
     owner_entity_id: s.owner_entity_id,
     site_fulltext: s.site_fulltext,
     syndicate_fulltext: s.syndicate_fulltext,
@@ -189,7 +189,7 @@ export default function SourceDetail({ loaderData }: Route.ComponentProps) {
               {preview.items.map((i) => (
                 <li key={i.url} className="text-[13px]">
                   <a href={i.url} target="_blank" rel="noreferrer" className="font-medium text-ink hover:text-accent">{i.title}</a>
-                  <div className="text-[12px] text-ink-4">{i.publishedAt ? bj(i.publishedAt, true) : "无发布时间"} · {i.url}</div>
+                  <div className="text-[12px] text-ink-4">{i.publishedAt ? publishedDateTime(i.publishedAt, i.publishedAtPrecision) : "无发布时间"} · {i.url}</div>
                   {i.excerpt && <div className="mt-0.5 line-clamp-2 text-[12.5px] text-ink-3">{i.excerpt}</div>}
                 </li>
               ))}
@@ -231,7 +231,6 @@ export default function SourceDetail({ loaderData }: Route.ComponentProps) {
               </Field>
               <div className="flex flex-col justify-end gap-2 text-[13px] text-ink-2">
                 {([
-                  ["first_party", "一手信源（官方账号或官网）"],
                   ["site_fulltext", "站内可展示全文"],
                   ["syndicate_fulltext", "对外接口可带全文"],
                 ] as const).map(([k, label]) => (

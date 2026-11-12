@@ -1,9 +1,10 @@
 // The single entrance for new material from every channel (collectors, external reports, imports).
 // It owns identity, revisions and the timeline rule, so no entrance can bypass them.
 import { sql, type Db } from "../db.ts";
-import { newArticleId, sha256 } from "../lib/ids.ts";
+import { newArticleId, sha256, stableJson } from "../lib/ids.ts";
 import { identityKeyForUrl } from "../lib/url.ts";
 import { collapseWhitespace } from "../lib/text.ts";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 
 export interface MediaItem {
   kind: "image" | "video";
@@ -34,6 +35,7 @@ export interface MaterialInput {
   author?: string | null;
   language?: string | null;
   publishedAt?: Date | null;
+  publishedAtPrecision?: PublishedAtPrecision;
   sourceUpdatedAt?: Date | null;
   excerpt?: string | null;
   bodyHtml?: string | null;
@@ -55,6 +57,8 @@ export interface MaterialResult {
   created: boolean;
   revised: boolean;
   backfill: boolean;
+  /** HTML or media was completed without changing the text used for analysis. */
+  enriched?: boolean;
 }
 
 // Material first discovered more than this long after its source time is archived by source time,
@@ -137,12 +141,13 @@ async function upsertIn(db: Db, m: MaterialInput): Promise<MaterialResult> {
   const t = decideTimeline(m.publishedAt, discoveredAt, m.backfill);
   const newId = m.id ?? newArticleId();
   const hash = contentHash({ title, bodyText: m.bodyText, excerpt: m.excerpt });
+  const publishedAtPrecision = t.publishedAt ? (m.publishedAtPrecision ?? "unknown") : "unknown";
   const [inserted] = await db<{ id: string }[]>`
-    INSERT INTO articles (id, source_id, identity_key, url, title, author, language, published_at, published_at_claim,
+    INSERT INTO articles (id, source_id, identity_key, url, title, author, language, published_at, published_at_claim, published_at_precision,
       discovered_at, source_updated_at, timeline_at, backfill, backfill_reason, revision, content_hash, excerpt,
       body_text, body_html, body_status, media, x_post, raw)
     VALUES (${newId}, ${m.sourceId}, ${identityKey}, ${m.url}, ${title}, ${m.author ?? null}, ${m.language ?? null},
-      ${t.publishedAt}, ${m.publishedAt ?? null}, ${discoveredAt}, ${m.sourceUpdatedAt ?? null}, ${t.timelineAt},
+      ${t.publishedAt}, ${m.publishedAt ?? null}, ${publishedAtPrecision}, ${discoveredAt}, ${m.sourceUpdatedAt ?? null}, ${t.timelineAt},
       ${t.backfill}, ${t.backfillReason}, 1, ${hash}, ${m.excerpt ?? null}, ${m.bodyText ?? null}, ${m.bodyHtml ?? null},
       ${m.bodyStatus ?? (m.bodyText ? "ok" : "pending")}, ${db.json((m.media ?? []) as never)},
       ${m.xPost ? db.json(m.xPost as never) : null}, ${m.raw === undefined ? null : db.json(m.raw as never)})
@@ -155,8 +160,8 @@ async function upsertIn(db: Db, m: MaterialInput): Promise<MaterialResult> {
     return { articleId: newId, created: true, revised: false, backfill: t.backfill };
   }
 
-  const [existing] = await db<{ id: string; source_id: string; revision: number; content_hash: string | null; backfill: boolean; title: string; body_text: string | null; excerpt: string | null }[]>`
-    SELECT id, source_id, revision, content_hash, backfill, title, body_text, excerpt FROM articles WHERE identity_key = ${identityKey} FOR UPDATE`;
+  const [existing] = await db<{ id: string; source_id: string; revision: number; content_hash: string | null; backfill: boolean; title: string; body_text: string | null; excerpt: string | null; body_html: string | null; media: MediaItem[]; raw: unknown }[]>`
+    SELECT id, source_id, revision, content_hash, backfill, title, body_text, excerpt, body_html, media, raw FROM articles WHERE identity_key = ${identityKey} FOR UPDATE`;
   await db`INSERT INTO article_discoveries (article_id, source_id, via, discovered_at)
            VALUES (${existing!.id}, ${m.sourceId}, ${m.via}, ${discoveredAt}) ON CONFLICT DO NOTHING`;
   const unchanged: MaterialResult = { articleId: existing!.id, created: false, revised: false, backfill: existing!.backfill };
@@ -168,7 +173,21 @@ async function upsertIn(db: Db, m: MaterialInput): Promise<MaterialResult> {
   const bodyText = m.bodyText ?? existing!.body_text;
   const excerpt = m.excerpt ?? existing!.excerpt;
   const next = contentHash({ title, bodyText, excerpt });
-  if (existing!.content_hash === next) return unchanged;
+  if (existing!.content_hash === next) {
+    const bodyHtml = m.bodyHtml?.trim() ? m.bodyHtml : existing!.body_html;
+    const media = [...existing!.media];
+    for (const item of m.media ?? []) {
+      const index = media.findIndex((stored) => stored.kind === item.kind && stored.url === item.url);
+      if (index < 0) media.push(item);
+      else media[index] = { ...media[index]!, ...item };
+    }
+    const raw = m.raw === undefined ? existing!.raw
+      : m.raw && existing!.raw && typeof m.raw === "object" && typeof existing!.raw === "object" && !Array.isArray(m.raw) && !Array.isArray(existing!.raw)
+        ? { ...existing!.raw, ...m.raw } : m.raw;
+    if (bodyHtml === existing!.body_html && stableJson(media) === stableJson(existing!.media) && stableJson(raw) === stableJson(existing!.raw)) return unchanged;
+    await db`UPDATE articles SET body_html = ${bodyHtml}, media = ${db.json(media as never)}, raw = ${raw == null ? null : db.json(raw as never)}, updated_at = now() WHERE id = ${existing!.id}`;
+    return { ...unchanged, enriched: true };
+  }
   if (existing!.content_hash === null) {
     // Imported history carries no hash of this form (its collectors normalised differently): the
     // first report here records the baseline instead of a revision, so an import does not send
@@ -191,11 +210,13 @@ async function upsertIn(db: Db, m: MaterialInput): Promise<MaterialResult> {
   const [row] = await db<{ revision: number }[]>`
     UPDATE articles SET
       title = ${title}, author = coalesce(${m.author ?? null}, author), language = coalesce(${m.language ?? null}, language),
+      published_at_precision = coalesce(${m.publishedAtPrecision ?? null}, published_at_precision),
       source_updated_at = ${m.sourceUpdatedAt ?? null}, excerpt = coalesce(${m.excerpt ?? null}, excerpt),
       body_text = coalesce(${m.bodyText ?? null}, body_text), body_html = coalesce(${m.bodyHtml ?? null}, body_html),
       body_status = CASE WHEN ${m.bodyText ?? null}::text IS NULL THEN body_status ELSE ${m.bodyStatus ?? "ok"} END,
       media = CASE WHEN ${m.media ? db.json(m.media as never) : null}::jsonb IS NULL THEN media ELSE ${m.media ? db.json(m.media as never) : null}::jsonb END,
       x_post = coalesce(${m.xPost ? db.json(m.xPost as never) : null}, x_post),
+      raw = CASE WHEN ${m.raw !== undefined} THEN coalesce(raw, '{}'::jsonb) || ${db.json((m.raw ?? {}) as never)}::jsonb ELSE raw END,
       revision = revision + 1, content_hash = ${next}, processing_state = 'new', updated_at = now()
     WHERE id = ${existing!.id}
     RETURNING revision`;

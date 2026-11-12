@@ -1,5 +1,4 @@
 // Public API v1 (long-term). Field shapes follow reference/public-v1.openapi.json 2.0.0 (the paths stay /api/v1).
-import { FEATURES } from "@aihot/industry/features";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { V1_CACHE_CONTROL } from "@aihot/contracts/http-policy";
 import { PUBLIC_API_CATEGORY_KEYS, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
@@ -7,9 +6,6 @@ import { InvalidCursorError } from "@aihot/backend/lib/cursor";
 import { SearchBusyError } from "@aihot/backend/publication/pool";
 import { selectedChanges, selectedSnapshot, SnapshotRequiredError, v1Items } from "@aihot/backend/publication/v1";
 import { resolveStory, v1HotTopics, v1Story } from "@aihot/backend/publication/stories";
-import { v1Dailies, v1Daily } from "@aihot/backend/publication/reports";
-import { codexResetsRecent, codexResetsSnapshot } from "@aihot/backend/monitor/read";
-import { isValidDate } from "@aihot/contracts/time";
 import { applyPublicHeaders, QueryError, sendJsonWithEtag, sendProblem, strictQuery } from "../http/respond.ts";
 
 type Handler = (req: FastifyRequest, reply: FastifyReply) => Promise<unknown>;
@@ -75,7 +71,6 @@ export function registerV1(app: FastifyInstance) {
     return sendJsonWithEtag(req, reply, body, { etagPrefix: "v1-items", cacheControl: V1_CACHE_CONTROL.items });
   }));
 
-  if (FEATURES.codexResetMonitor) registerCodexResets(app);
 
   app.get("/api/v1/hot-topics", publicHandler(async (req, reply) => {
     strictQuery(req, []);
@@ -96,27 +91,11 @@ export function registerV1(app: FastifyInstance) {
     return sendJsonWithEtag(req, reply, body, { etagPrefix: "v1-story", cacheControl: V1_CACHE_CONTROL.storyByPublicId });
   }));
 
-  app.get("/api/v1/dailies", publicHandler(async (req, reply) => {
-    const q = strictQuery(req, ["limit"]);
-    const limit = intParam(q.limit, "limit", 1, 180, 30);
-    return sendJsonWithEtag(req, reply, await v1Dailies(limit), { etagPrefix: "v1-dailies", cacheControl: V1_CACHE_CONTROL.dailies });
-  }));
+  app.get("/api/v1/dailies", publicHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/v1/dailies/latest", publicHandler(async (req, reply) => {
-    strictQuery(req, []);
-    const body = await v1Daily("latest");
-    if (!body) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "No daily report has been published yet." });
-    return sendJsonWithEtag(req, reply, body, { etagPrefix: "v1-daily", cacheControl: V1_CACHE_CONTROL.latestDaily });
-  }));
+  app.get("/api/v1/dailies/latest", publicHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
-  app.get("/api/v1/dailies/:date", publicHandler(async (req, reply) => {
-    strictQuery(req, []);
-    const date = (req.params as { date: string }).date;
-    if (!isValidDate(date)) throw new QueryError("date must be a real YYYY-MM-DD calendar date.");
-    const body = await v1Daily(date);
-    if (!body) return sendProblem(req, reply, { status: 404, code: "not_found", detail: `No daily report exists for ${date}.`, cacheControl: "public, max-age=60" });
-    return sendJsonWithEtag(req, reply, body, { etagPrefix: "v1-daily", cacheControl: V1_CACHE_CONTROL.dailyByDate });
-  }));
+  app.get("/api/v1/dailies/:date", publicHandler(async (req, reply) => sendProblem(req, reply, { status: 410, code: "gone", detail: "日报、周报和月报已下线。" })));
 
   app.get("/api/v1/selected/snapshot", publicHandler(async (req, reply) => {
     const q = strictQuery(req, ["fields", "limit", "page"]);
@@ -161,18 +140,3 @@ export function registerV1Fallbacks(app: FastifyInstance) {
   app.get("/api/v1/*", notFound);
 }
 
-/** The Codex reset monitor's endpoints (an optional module, industry/features.ts). */
-function registerCodexResets(app: FastifyInstance) {
-  app.get("/api/v1/codex-resets", publicHandler(async (req, reply) => {
-    strictQuery(req, []);
-    const body = await codexResetsSnapshot();
-    return sendJsonWithEtag(req, reply, body, { etagPrefix: "v1-codex-resets", cacheControl: V1_CACHE_CONTROL.codexResets });
-  }));
-
-  // The same snapshot limited to the last week and the events still waiting to land: what a poller needs.
-  app.get("/api/v1/codex-resets/recent", publicHandler(async (req, reply) => {
-    strictQuery(req, []);
-    const body = await codexResetsRecent();
-    return sendJsonWithEtag(req, reply, body, { etagPrefix: "v1-codex-resets-recent", cacheControl: V1_CACHE_CONTROL.codexResets });
-  }));
-}

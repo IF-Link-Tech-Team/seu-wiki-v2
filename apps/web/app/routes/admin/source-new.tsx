@@ -1,9 +1,10 @@
 import { SITE } from "@aihot/industry/site";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types/source-new";
 import { useAdminAction } from "../../features/admin/action";
-import { bj } from "../../features/admin/format";
+import { publishedDateTime } from "../../lib/format";
 import { KIND_LABEL, MODE_LABEL, TIER_LABEL } from "../../features/admin/labels";
 import { AdminPage, Button, Card, Empty, Field, Input, Select, Textarea } from "../../features/admin/ui";
 
@@ -21,13 +22,13 @@ const TEMPLATES: Record<string, Record<string, unknown>> = {
 interface Preview {
   ms: number;
   count: number;
-  items: Array<{ title: string; url: string; publishedAt: string | null; excerpt: string }>;
+  items: Array<{ title: string; url: string; publishedAt: string | null; publishedAtPrecision: PublishedAtPrecision; excerpt: string }>;
 }
 
 export default function NewSource() {
   const navigate = useNavigate();
   const { run, pending } = useAdminAction();
-  const [form, setForm] = useState({ id: "", name: "", kind: "rss", tier: "T2", participation_mode: "editorial", interval_minutes: 30, first_party: false, site_fulltext: true, syndicate_fulltext: false, tags: "" });
+  const [form, setForm] = useState({ id: "", name: "", kind: "rss", tier: "T2", participation_mode: "editorial", interval_minutes: 30, site_fulltext: true, syndicate_fulltext: false, tags: "" });
   const [config, setConfig] = useState(JSON.stringify(TEMPLATES.rss, null, 2));
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -44,7 +45,7 @@ export default function NewSource() {
   };
 
   return (
-    <AdminPage title="新建信源" subtitle="先判重、先预览：优先 RSS/JSON 等稳定协议；首抓成功且有真实条目才算接入完成。一手身份要有运营主体或官方交叉链接证据。">
+    <AdminPage title="新建信源" subtitle="先判重、先预览：优先 RSS/JSON 等稳定协议；首抓成功且有真实条目才算接入完成。">
       <div className="grid gap-5 xl:grid-cols-[1fr_420px]">
         <Card title="信源定义">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -84,7 +85,6 @@ export default function NewSource() {
             </Field>
             <div className="flex flex-col justify-end gap-2 text-[13px] text-ink-2">
               {([
-                ["first_party", "一手信源"],
                 ["site_fulltext", "站内可展示全文"],
                 ["syndicate_fulltext", "对外接口可带全文"],
               ] as const).map(([k, label]) => (
@@ -148,7 +148,7 @@ export default function NewSource() {
               {preview.items.map((i) => (
                 <li key={i.url} className="text-[13px]">
                   <a href={i.url} target="_blank" rel="noreferrer" className="font-medium text-ink hover:text-accent">{i.title}</a>
-                  <div className="text-[12px] text-ink-4">{i.publishedAt ? bj(i.publishedAt, true) : "无发布时间"}</div>
+                  <div className="text-[12px] text-ink-4">{i.publishedAt ? publishedDateTime(i.publishedAt, i.publishedAtPrecision) : "无发布时间"}</div>
                   {i.excerpt && <div className="mt-0.5 line-clamp-2 text-[12.5px] text-ink-3">{i.excerpt}</div>}
                 </li>
               ))}

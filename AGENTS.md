@@ -1,12 +1,12 @@
 # 给 Agent 的说明
 
-这是一个行业热点网站的框架：采集信源、用模型筛选和写作、归组事件、出日报，并通过网站、RSS、公开 API 和 MCP 对外提供。默认配置是一个 AI 行业的示例站。先读 README，再按任务读 `docs/` 里对应的文档。
+这是 SEU Wiki（seu.wiki）的仓库：面向东南大学同学的校园信息聚合站——采集校园信源、用模型筛选和写作、归组事件，并通过网站、RSS、公开 API 和 MCP 对外提供。代码基于 AIHOT 开源框架。先读 README，再按任务读 `docs/` 里对应的文档。
 
-## 最常见的任务：改成另一个行业
+## 行业相关的一切都在 `industry/`
 
-按 `docs/customize.md` 的顺序做。行业相关的一切都在 `industry/`：站名文案（`site.ts`）、分类标签（`taxonomy.ts`）、主题（`topics.json`）、示范信源（`sources.json`）、提示词（`prompts/`）、门槛（`selection.ts`）、模块开关（`features.ts`）、品牌（`brand/`）、条款页（`pages/`）。通常不需要改 `apps/` 和 `packages/`。
+站名文案（`site.ts`）、分类标签（`taxonomy.ts`）、主题（`topics.json`）、示范信源（`sources.json`）、提示词（`prompts/`）、门槛（`selection.ts`）、模块开关（`features.ts`）、品牌（`brand/`）、条款页（`pages/`）。日常改动大多只需要动 `industry/` 和 `apps/`。要把框架改成另一个行业，按 `docs/customize.md`（上游框架的通用定制指南）做。
 
-这些事要问使用者本人，不要替他决定：站名；要盯哪些信源；什么消息重要、什么是噪声；分类怎么分；条款和隐私说明的内容（`industry/pages/` 是模板，上线前需要他本人确认）。
+这些事要问使用者本人，不要替他决定：站名；要盯哪些信源；什么消息重要、什么是噪声；分类怎么分；条款和隐私说明的内容（`industry/pages/`，改动前需要他本人确认）。
 
 改评分标准时保留原有结构（内容类型、五个维度加权、噪声压制、安全边界），替换的是“什么算重要”“什么算噪声”的例子。门槛要用使用者标注的样本重新校准（`docs/selection.md`），不要凭感觉改数字。
 
@@ -21,7 +21,7 @@
   npm run build -w @aihot/web && node --test apps/web/tests/*.test.ts
   node scripts/smoke.ts --base http://localhost:3000             # 站点跑起来以后
   ```
-- `tests/` 里部分测试用的是示例行业的分类、标签和公司，改了 `industry/taxonomy.ts` 后把这些例子换成新行业的对应项。
+- `tests/` 里部分测试用的是当前行业包（东大校园）的分类、标签和机构，改了 `industry/taxonomy.ts` 后把这些例子换成新的对应项。
 
 ## 要守住的规则
 
@@ -35,6 +35,12 @@
 - 数据库迁移只做向后兼容的增量，新迁移按编号加在 `database/migrations/` 末尾。
 - 不要提交 `.env`、密钥和 `.data/`。
 - 不要使用 AIHOT 的名字和 Logo。
+
+## 当前产品范围
+
+- 一手栏目、标识、筛选和排序优先逻辑已移除；T1/T1_5/T2 分级与评分门槛保留。
+- 日报、周报、月报已下线；旧入口返回 410。增量迁移清理报告历史，内部信源健康周报与备份保留。
+- 精选后的订阅目前仅为可点击占位，不实现画像、推荐或推送。
 
 ## 写代码
 
