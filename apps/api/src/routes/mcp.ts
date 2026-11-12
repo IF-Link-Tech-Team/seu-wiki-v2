@@ -10,6 +10,7 @@ import { config } from "@aihot/backend/config";
 import { MCP_TOOL_NAMES as T } from "@aihot/contracts/mcp";
 
 import { v1Items } from "@aihot/backend/publication/v1";
+import { stamp } from "@aihot/backend/publication/agent";
 import { SearchBusyError } from "@aihot/backend/publication/pool";
 import { resolveStory, v1HotTopics, v1Story } from "@aihot/backend/publication/stories";
 import { PUBLIC_VERSIONS } from "@aihot/backend/publication/llms";
@@ -93,7 +94,7 @@ function itemsText(heading: string, res: ItemList): string {
   res.items.forEach((it, i) => {
     lines.push(`${i + 1}. ${it.title}`);
     lines.push(`来源：${it.source.name}`);
-    lines.push(`时间：${it.publishedAt ?? it.discoveredAt}`);
+    lines.push(`时间：${it.publishedAt ? stamp(it.publishedAt, it.publishedAtPrecision) : stamp(it.discoveredAt)}`);
     if (it.summary) lines.push(`摘要：${it.summary}`);
     if (it.reason) lines.push(`推荐理由：${it.reason}`);
     lines.push(`${SITE.name}：${it.links.aihot}`);
@@ -157,7 +158,7 @@ export function buildMcpServer(): McpServer {
       const lines = [`${SITE.name} 当前热点（${items.length} 个）`, ""];
       for (const t of items) {
         const publicId = t.links.story.split("/").pop();
-        lines.push(`第 ${t.rank} 名：${t.title}`, `信源：${t.sourceNames.join("、")}`, `最新进展：${t.latestAt}`, `${SITE.name}：${t.links.aihot}`, `事件 public_id：${publicId}`, `事件页：${t.links.story}`, "");
+        lines.push(`第 ${t.rank} 名：${t.title}`, `信源：${t.sourceNames.join("、")}`, `最新进展：${stamp(t.latestAt)}`, `${SITE.name}：${t.links.aihot}`, `事件 public_id：${publicId}`, `事件页：${t.links.story}`, "");
       }
       return ok(lines.join("\n").trimEnd(), { schemaVersion: 1, count: items.length, items });
     }),
@@ -179,7 +180,7 @@ export function buildMcpServer(): McpServer {
       const lines = [`${SITE.name} 事件：${story.title}`, `状态：${story.status === "active" ? "持续更新" : "历史事件"}｜${story.reportCount} 篇报道｜${story.sourceCount} 个来源`, `最新进展：${story.latest}`];
       if (story.digest) lines.push("", `事件综述：${story.digest}`);
       lines.push("", "报道时间线：");
-      story.reports.forEach((r, i) => lines.push(`${i + 1}. ${r.publishedAt}｜${r.source.name}｜${r.title}｜${r.links.aihot}`));
+      story.reports.forEach((r, i) => lines.push(`${i + 1}. ${stamp(r.publishedAt, r.publishedAtPrecision)}｜${r.source.name}｜${r.title}｜${r.links.aihot}`));
       lines.push("", `事件页：${story.links.aihot}`);
       return ok(lines.join("\n"), { schemaVersion: 1, story });
     }),

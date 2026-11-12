@@ -33,7 +33,7 @@ export async function searchContent(q: string) {
 
 export async function contentChain(id: string) {
   const [article] = await sql`
-    SELECT a.id, a.source_id, a.url, a.identity_key, a.title, a.author, a.language, a.published_at, a.published_at_claim, a.discovered_at,
+    SELECT a.id, a.source_id, a.url, a.identity_key, a.title, a.author, a.language, a.published_at, a.published_at_precision, a.published_at_claim, a.discovered_at,
            a.timeline_at, a.backfill, a.body_status, a.revision, a.processing_state, a.processing_error, a.grouped_at, length(a.body_text) AS body_chars,
            s.name AS source_name, s.kind AS source_kind, s.tier, s.participation_mode, s.site_fulltext, s.syndicate_fulltext
     FROM articles a JOIN sources s ON s.id = a.source_id WHERE a.id = ${id}`;

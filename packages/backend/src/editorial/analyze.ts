@@ -12,6 +12,7 @@
 import { z } from "zod";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import type { CampusAudience } from "@aihot/contracts/site";
+import { beijingDate, hasPublishedClock, type PublishedAtPrecision } from "@aihot/contracts/time";
 import { CATEGORIES } from "@aihot/industry/taxonomy";
 import { COLLEGES } from "@aihot/industry/colleges";
 import { SELECTION } from "@aihot/industry/selection";
@@ -25,7 +26,7 @@ import { pageFetchable } from "../content/extract.ts";
 import { shutdownSignal } from "../jobs/queue.ts";
 import {
   buildArticlePrompt, buildLongTweetPrompt, buildShortTweetPrompt, finalizeCopy, isShortTweetInput, looksZh, MAX_BODY_CHARS, missingEvidence,
-  needsShortTweetTranslation, parseTranslateOutput, PREFILTER_SYSTEM, prefilterUser, translateInputOf, UNDERSTAND_SYSTEM, understandUser,
+  needsShortTweetTranslation, parseTranslateOutput, PREFILTER_SYSTEM, prefilterUser, translateInputOf, understandUser,
   type IdentityGuard,
 } from "./writing.ts";
 import { CATEGORY_BY_ITEM_TYPE, CATEGORY_GUIDE, CATEGORY_TAGS, ENTITIES, ENTITY_TAGS, ITEM_TYPES, normalizeTags, warmTagVocabulary } from "./vocabulary.ts";
@@ -79,7 +80,8 @@ const SCORE_TIME = new Intl.DateTimeFormat("sv-SE", {
 });
 
 /** The score input's time: Beijing time, ISO 8601 with +08:00 (the form the prompt was tuned on). */
-export function scoreInputTime(at: Date): string {
+export function scoreInputTime(at: Date, precision: PublishedAtPrecision = "second"): string {
+  if (!hasPublishedClock(precision)) return `${beijingDate(at)}（只有日期）`;
   const ms = at.getTime() % 1000;
   return `${SCORE_TIME.format(at).replace(" ", "T")}${ms ? `.${String(ms).padStart(3, "0")}` : ""}+08:00`;
 }
@@ -100,7 +102,7 @@ export function buildScoreInput(a: AnalyzeInputArticle): string {
   const at = a.publishedAt ?? a.discoveredAt ?? null;
   return [
     "请按系统规则评估以下单篇材料所代表的事件。只输出 attentionScore。",
-    `【发布时间（北京时间）】\n${at ? scoreInputTime(at) : ""}`,
+    `【发布时间（北京时间）】\n${at ? scoreInputTime(at, a.publishedAtPrecision) : ""}`,
     `【标题】\n${a.title.trim()}`,
     `【完整正文】\n${body.length > MAX_BODY_CHARS ? body.slice(0, MAX_BODY_CHARS) : body}`,
   ].join("\n\n");
@@ -223,6 +225,13 @@ async function structureSystem(): Promise<string> {
   });
 }
 
+/** The content understanding's prompt, with the same runtime topic vocabulary as the structure step. */
+async function understandSystem(): Promise<string> {
+  const tax = await getTaxonomyTerms();
+  warmTagVocabulary(tax);
+  return promptText("understand", { categoryTags: CATEGORY_TAGS.join("、"), topicTags: tax.active.join("、"), entityTags: ENTITY_TAGS.join("、") });
+}
+
 export interface AnalysisRun {
   prefilter: { label: "PASS" | "BLOCK" | "UNKNOWN"; reason: string; model: string; receiptId: number; reused: boolean };
   /**
@@ -339,10 +348,11 @@ async function runStructure(a: AnalyzeInputArticle, opts: StepOpts): Promise<Non
 async function runUnderstand(a: AnalyzeInputArticle, opts: StepOpts): Promise<AnalysisRun["writing"]> {
   const model = await modelFor("understand");
   const text = understandUser(a);
+  const system = await understandSystem();
   const call = (image: ContentPart | null) => {
     checkAnalysisRunning();
     return chatJson({
-      model, purpose: "understand_article", subject: subjectOf(a), promptVersion: PROMPT_VERSIONS.understand, system: UNDERSTAND_SYSTEM,
+      model, purpose: "understand_article", subject: subjectOf(a), promptVersion: PROMPT_VERSIONS.understand, system,
       user: image ? [{ type: "text", text }, image] : text, schema: UnderstandSchema, temperature: 0.2, maxTokens: 16_384,
       timeoutMs: 180_000, attemptTag: tagged(opts.attemptTag, "understand"),
     });

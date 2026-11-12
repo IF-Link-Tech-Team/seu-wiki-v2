@@ -1,6 +1,7 @@
 // Public read layer, item level. Every exit (site API, v1, RSS, MCP, sitemap) reads
 // items through these functions; visibility, release gate and body licences are applied here.
 import type { CategoryKey, ChannelKey } from "@aihot/contracts/taxonomy";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import type { FeedItemSummary, ItemSummary, MediaView, SourceKind, XPostView } from "@aihot/contracts/site";
 import { sql, type Db } from "../db.ts";
 import { proxiedImage, proxiedImageSet } from "../media/imgproxy.ts";
@@ -21,6 +22,7 @@ export interface ItemRow {
   channel: "news" | "x";
   url: string;
   published_at: Date | null;
+  published_at_precision: PublishedAtPrecision;
   discovered_at: Date;
   timeline_at: Date;
   /** Reading-group anchor for a selected item (timeline_at otherwise). */
@@ -52,7 +54,7 @@ export interface ItemRow {
 /** Columns every item listing selects. Internal judgement details never leave this layer. */
 export const ITEM_COLUMNS = sql`
   p.article_id AS id, p.revision, p.title, p.original_title, p.summary, p.reason, p.category, p.tags, p.score,
-  p.selected, p.eligible, p.channel, p.url, p.published_at, p.discovered_at, p.timeline_at, p.sort_at, p.visibility,
+  p.selected, p.eligible, p.channel, p.url, p.published_at, p.published_at_precision, p.discovered_at, p.timeline_at, p.sort_at, p.visibility,
   p.body_mode, p.syndicate, p.indexable, p.visible_after, p.backfill, p.fact_id, p.story_id,
   s.id AS source_id, s.name AS source_name, s.kind AS source_kind, s.participation_mode AS source_mode, s.icon_url AS source_icon,
   a.x_post, a.author, a.language,
@@ -60,10 +62,10 @@ export const ITEM_COLUMNS = sql`
   CASE WHEN p.channel = 'x' THEN tr.body_text END AS zh_text, qt.text_zh AS quoted_zh`;
 
 /** Public API listings never render article bodies, X media or story metadata. */
-export type ApiItemRow = Pick<ItemRow, "id" | "title" | "original_title" | "summary" | "source_name" | "url" | "published_at" | "discovered_at" | "category" | "score" | "selected" | "reason">;
+export type ApiItemRow = Pick<ItemRow, "id" | "title" | "original_title" | "summary" | "source_name" | "url" | "published_at" | "published_at_precision" | "discovered_at" | "category" | "score" | "selected" | "reason">;
 export const API_ITEM_COLUMNS = sql`
   p.article_id AS id, p.title, p.original_title, p.summary, s.name AS source_name, p.url,
-  p.published_at, p.discovered_at, p.category, p.score, p.selected, p.reason`;
+  p.published_at, p.published_at_precision, p.discovered_at, p.category, p.score, p.selected, p.reason`;
 export const API_ITEM_FROM = sql`FROM publications p JOIN sources s ON s.id = p.source_id`;
 
 /** A translation of an older revision is left out: the original changed after it (the worker translates it again). */
@@ -171,6 +173,7 @@ export function toItemSummary(row: ItemRow): ItemSummary {
     },
     links: { aihot: `/items/${row.id}`, original: row.url },
     publishedAt: row.published_at?.toISOString() ?? null,
+    publishedAtPrecision: row.published_at_precision,
     discoveredAt: row.discovered_at.toISOString(),
     timelineAt: row.timeline_at.toISOString(),
     category: (row.category as CategoryKey | null) ?? null,
@@ -187,7 +190,7 @@ export function toItemSummary(row: ItemRow): ItemSummary {
 export function toFeedItemSummary(row: ItemRow): FeedItemSummary {
   const item = toItemSummary(row);
   return {
-    id: item.id, title: item.title, summary: item.summary, reason: item.reason,
+    id: item.id, title: item.title, summary: item.summary, reason: item.reason, publishedAtPrecision: item.publishedAtPrecision,
     source: { name: item.source.name }, publishedAt: item.publishedAt, timelineAt: item.timelineAt,
     category: item.category, tags: item.tags, score: item.score, selected: item.selected, channel: item.channel,
     x: item.x ? {

@@ -1,9 +1,10 @@
 import { SITE } from "@aihot/industry/site";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types/source-new";
 import { useAdminAction } from "../../features/admin/action";
-import { bj } from "../../features/admin/format";
+import { publishedDateTime } from "../../lib/format";
 import { KIND_LABEL, MODE_LABEL, TIER_LABEL } from "../../features/admin/labels";
 import { AdminPage, Button, Card, Empty, Field, Input, Select, Textarea } from "../../features/admin/ui";
 
@@ -21,7 +22,7 @@ const TEMPLATES: Record<string, Record<string, unknown>> = {
 interface Preview {
   ms: number;
   count: number;
-  items: Array<{ title: string; url: string; publishedAt: string | null; excerpt: string }>;
+  items: Array<{ title: string; url: string; publishedAt: string | null; publishedAtPrecision: PublishedAtPrecision; excerpt: string }>;
 }
 
 export default function NewSource() {
@@ -147,7 +148,7 @@ export default function NewSource() {
               {preview.items.map((i) => (
                 <li key={i.url} className="text-[13px]">
                   <a href={i.url} target="_blank" rel="noreferrer" className="font-medium text-ink hover:text-accent">{i.title}</a>
-                  <div className="text-[12px] text-ink-4">{i.publishedAt ? bj(i.publishedAt, true) : "无发布时间"}</div>
+                  <div className="text-[12px] text-ink-4">{i.publishedAt ? publishedDateTime(i.publishedAt, i.publishedAtPrecision) : "无发布时间"}</div>
                   {i.excerpt && <div className="mt-0.5 line-clamp-2 text-[12.5px] text-ink-3">{i.excerpt}</div>}
                 </li>
               ))}

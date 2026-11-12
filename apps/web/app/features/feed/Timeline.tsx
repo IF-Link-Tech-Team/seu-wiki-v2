@@ -9,7 +9,7 @@ import { FeedItem } from "./FeedItem";
 import { IconChevronDown } from "../../components/icons";
 import { RingMark } from "../../components/Logo";
 import { EmptyState } from "../../components/ui/Page";
-import { beijingDate, beijingTime, beijingWeekday } from "../../lib/format";
+import { beijingDate, beijingWeekday } from "../../lib/format";
 import { markRead, useReadSet } from "../../lib/local-state";
 import { isHydrated, isReload, markHydrated, readSnapshot, restoreAnchor, saveSnapshot } from "./restore";
 
@@ -54,9 +54,9 @@ export function DayHeader({ day, today, count, collapsed, onToggle }: { day: str
         {day === today && <span className="text-[12.5px] text-ink-4">{date}</span>}
         <span className="text-[12.5px] text-ink-4">{short}</span>
       </div>
-      {/* Desktop: the date ends where the times end, the fold toggle sits on the rail. */}
-      <div className="hidden h-11 grid-cols-[64px_22px_minmax(0,1fr)] items-center lg:grid">
-        <button type="button" onClick={onToggle} disabled={!onToggle} className="justify-self-end whitespace-nowrap text-right text-[18px] font-semibold leading-6 text-ink">
+      {/* Desktop: date, fold toggle and weekday. */}
+      <div className="hidden h-11 items-center lg:flex">
+        <button type="button" onClick={onToggle} disabled={!onToggle} className="whitespace-nowrap text-[18px] font-semibold leading-6 text-ink">
           {date}
         </button>
         {onToggle ? (
@@ -70,7 +70,7 @@ export function DayHeader({ day, today, count, collapsed, onToggle }: { day: str
             <IconChevronDown size={14} className={`transition-transform duration-200 ${collapsed ? "-rotate-90" : ""}`} />
           </button>
         ) : (
-          <span />
+          <span className="w-6" />
         )}
         <span className="text-[13px] text-ink-4">
           {weekday}
@@ -87,19 +87,16 @@ export function DayHeader({ day, today, count, collapsed, onToggle }: { day: str
 }
 
 /**
- * One dated slot: the time, the rail (desktop) and the item. As on the original timeline, the rail is a
+ * One dated slot: the rail (desktop) and the item. As on the original timeline, the rail is a
  * 1px line from this node's centre to the next one's, so the day reads as one continuous thread.
  */
-export function TimelineSlot({ at, children, fresh = false, delay = 0, dataKey }: { at: string; children: React.ReactNode; fresh?: boolean; delay?: number; dataKey?: string }) {
+export function TimelineSlot({ children, fresh = false, delay = 0, dataKey }: { children: React.ReactNode; fresh?: boolean; delay?: number; dataKey?: string }) {
   return (
     <li
       data-card-key={dataKey}
-      className={`group/slot grid grid-cols-[48px_minmax(0,1fr)] border-b border-line-soft py-3.5 last:border-b-0 lg:grid-cols-[64px_22px_minmax(0,1fr)] lg:border-b-0 lg:py-0 lg:pb-3 lg:last:pb-0 ${fresh ? "animate-fade-up" : ""}`}
+      className={`group/slot grid border-b border-line-soft py-3.5 last:border-b-0 lg:grid-cols-[22px_minmax(0,1fr)] lg:border-b-0 lg:py-0 lg:pb-3 lg:last:pb-0 ${fresh ? "animate-fade-up" : ""}`}
       style={fresh ? { animationDelay: `${delay}ms` } : undefined}
     >
-      <time dateTime={at} className="mono pt-[2px] text-[13px] leading-[18px] text-ink-4 lg:pt-[17px] lg:text-[12.5px] lg:font-semibold lg:leading-6 lg:text-ink-3">
-        {beijingTime(at)}
-      </time>
       <span aria-hidden="true" className="relative hidden lg:block">
         <span className="absolute -bottom-[41px] left-[10.5px] top-[29px] w-px bg-line-strong group-last/slot:hidden" />
         <span className="absolute left-[7.5px] top-[25.5px] size-[7px] rounded-full bg-accent shadow-[0_0_0_4px_var(--bg)] transition-transform duration-300 group-hover/slot:scale-[1.15]" />
@@ -289,7 +286,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
                     const fresh = freshKeys.has(c.key);
                     const delay = fresh ? Math.min(order++, 10) * 40 : 0;
                     return (
-                      <TimelineSlot key={c.key} dataKey={c.key} at={c.anchorAt} fresh={fresh} delay={delay}>
+                      <TimelineSlot key={c.key} dataKey={c.key} fresh={fresh} delay={delay}>
                         <FeedItem item={c.item} group={c.group} filters={filters} read={readSet.has(c.item.id)} onOpen={markRead} />
                       </TimelineSlot>
                     );

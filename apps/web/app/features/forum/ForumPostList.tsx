@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { IconFlame, IconHeart, IconMessage } from "../../components/icons";
 import { monthDayTime } from "../../lib/format";
+import { resolveForumAssetUrl } from "../../lib/forum-assets";
 import type { ForumPostListItem } from "../../lib/forum.server";
 
 export function ForumPostCard({ post, forumBase }: { post: ForumPostListItem; forumBase: string }) {
@@ -19,7 +20,7 @@ export function ForumPostCard({ post, forumBase }: { post: ForumPostListItem; fo
       {post.images.length > 0 && (
         <div className="mt-2 flex gap-1.5 overflow-hidden">
           {post.images.slice(0, 3).map((img) => (
-            <img key={img.id} src={img.asset_url} alt="" loading="lazy" className="size-16 rounded-control object-cover" />
+            <img key={img.id} src={resolveForumAssetUrl(img.asset_url, forumBase)} alt="" loading="lazy" decoding="async" className="size-16 rounded-control object-cover" />
           ))}
         </div>
       )}

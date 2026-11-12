@@ -3,9 +3,10 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { Link, redirect, useLoaderData } from "react-router";
 import type { Route } from "./+types/story";
 import type { StoryDetail, StoryReportView } from "@aihot/contracts/site";
+import { hasPublishedClock } from "@aihot/contracts/time";
 import { data as routeData } from "react-router";
 import { breadcrumbLd, pageMeta, titled } from "../lib/seo";
-import { beijingDate, beijingTime, monthDayTime, relativeTime, shortSourceName } from "../lib/format";
+import { beijingDate, publishedMonthDayTime, relativeTime, shortSourceName } from "../lib/format";
 import { HeatChart } from "../features/story/HeatChart";
 import { Badge, SelectedBadge } from "../components/ui/Badge";
 import { PillTabs } from "../components/ui/Tabs";
@@ -123,7 +124,7 @@ function TimelineRow({ r }: { r: StoryReportView }) {
   return (
     <li className="grid gap-x-3 border-b border-line-soft py-4 last:border-b-0 lg:grid-cols-[48px_minmax(0,1fr)]">
       <time dateTime={r.publishedAt} className="mono text-[12px] leading-[20px] text-ink-4">
-        {beijingTime(r.publishedAt)}
+        {publishedMonthDayTime(r.publishedAt, r.publishedAtPrecision)}
       </time>
       <div className="min-w-0">
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-[12px] leading-[20px] text-ink-4 lg:mt-0">
@@ -178,6 +179,9 @@ export default function StoryPage() {
     return out;
   }, [story.timeline, filter, order]);
   const newest = story.timeline.reduce<StoryReportView | null>((a, b) => (!a || Date.parse(b.publishedAt) > Date.parse(a.publishedAt) ? b : a), null);
+  const firstReport = story.timeline.reduce<StoryReportView | null>((a, b) => (!a || Date.parse(b.publishedAt) < Date.parse(a.publishedAt) ? b : a), null);
+  const latestPrecision = newest?.publishedAtPrecision ?? "unknown";
+  const firstPrecision = firstReport?.publishedAtPrecision ?? "unknown";
   const overview = story.digest
     ? { label: "AI 综述", text: story.digest, note: story.digestUpdatedAt ? `AI 根据报道生成 · ${relativeTime(story.digestUpdatedAt)}更新` : "AI 根据报道生成" }
     : story.summary
@@ -214,7 +218,7 @@ export default function StoryPage() {
           {story.latestAt && (
             <span className="inline-flex items-center gap-1.5" suppressHydrationWarning>
               <IconClock size={15} className="text-ink-4" />
-              {relativeTime(story.latestAt)}更新
+              {hasPublishedClock(latestPrecision) ? `${relativeTime(story.latestAt)}更新` : `${publishedMonthDayTime(story.latestAt, latestPrecision)}更新`}
             </span>
           )}
         </div>
@@ -255,7 +259,7 @@ export default function StoryPage() {
               <div className="-mx-5 mt-5 border-t border-line-soft px-5 pt-4 lg:-mx-6 lg:px-6">
                 <div className="flex items-center gap-2.5 text-[12px]">
                   <span className="font-semibold text-ink">最新进展</span>
-                  {story.latestAt && <span className="num text-ink-4">{monthDayTime(story.latestAt)}</span>}
+                  {story.latestAt && <span className="num text-ink-4">{publishedMonthDayTime(story.latestAt, latestPrecision)}</span>}
                 </div>
                 {newest ? (
                   <Link to={`/items/${newest.id}`} className="group mt-1.5 inline text-[14px] leading-[1.7] text-ink-2 transition-colors hover:text-accent">
@@ -276,7 +280,7 @@ export default function StoryPage() {
                   <li key={d.factId} className="relative">
                     <span className={`absolute -left-5 top-[7px] size-[7px] rounded-full ring-4 ring-surface ${i === 0 ? "bg-accent" : "bg-line-strong"}`} aria-hidden="true" />
                     <div className="num text-[12px] text-ink-4">
-                      {monthDayTime(d.firstReportAt)} · {d.reportCount} 篇报道
+                      {publishedMonthDayTime(d.firstReportAt, d.representative.publishedAtPrecision)} · {d.reportCount} 篇报道
                     </div>
                     <Link to={`/items/${d.representative.id}`} className="mt-0.5 block text-[15px] font-semibold leading-snug text-ink transition-colors hover:text-accent">
                       {d.title}
@@ -384,7 +388,7 @@ export default function StoryPage() {
                 <div className="flex justify-between gap-3">
                   <dt className="text-ink-4">最早报道</dt>
                   <dd className="num text-ink-2">
-                    <time dateTime={story.firstReportAt}>{monthDayTime(story.firstReportAt)}</time>
+                    <time dateTime={story.firstReportAt}>{publishedMonthDayTime(story.firstReportAt, firstPrecision)}</time>
                   </dd>
                 </div>
               )}
@@ -392,7 +396,7 @@ export default function StoryPage() {
                 <div className="flex justify-between gap-3">
                   <dt className="text-ink-4">最近更新</dt>
                   <dd className="num text-ink-2">
-                    <time dateTime={story.latestAt}>{monthDayTime(story.latestAt)}</time>
+                    <time dateTime={story.latestAt}>{publishedMonthDayTime(story.latestAt, latestPrecision)}</time>
                   </dd>
                 </div>
               )}

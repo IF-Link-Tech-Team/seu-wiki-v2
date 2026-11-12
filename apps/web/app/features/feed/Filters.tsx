@@ -3,10 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import { Form, Link, useLocation, useNavigate, useNavigation, useSearchParams } from "react-router";
 import { CATEGORY_KEYS, CATEGORY_LABELS, type CategoryKey } from "@aihot/contracts/taxonomy";
 import type { SourceOption } from "@aihot/contracts/site";
-import { IconChevronDown, IconClose, IconSearch } from "../../components/icons";
+import { IconChevronDown, IconChevronLeft, IconChevronRight, IconClose, IconSearch } from "../../components/icons";
 import { PillTabs } from "../../components/ui/Tabs";
+import { groupSourceOptions, matchSourceOrgs, selectedSourceChips, SOURCE_GROUP_ORDER, type SourceRow } from "./sourceOrgs";
 
 const CATEGORY_TAB_LABELS = { ...CATEGORY_LABELS, academic: "教学教务", aid: "奖助学金", competition: "科创竞赛" };
+
+const CATEGORY_TAB_KEYS: CategoryKey[] = [
+  ...CATEGORY_KEYS.filter((k) => k !== "life" && k !== "research-institution"),
+  ...CATEGORY_KEYS.filter((k) => k === "research-institution"),
+];
 
 /** Same page with some query parameters changed (paging state dropped). */
 export function hrefWith(base: string, params: URLSearchParams, patch: Record<string, string | null>) {
@@ -23,7 +29,7 @@ export function hrefWith(base: string, params: URLSearchParams, patch: Record<st
 
 /**
  * The feed's one tab row, shared by the home page and 全部动态: 精选（过门槛的精选集）、订阅占位、
- * 教学教务至校园新闻的七个分类。生活服务与全量列表保留原入口，切换 tab 时保留信源筛选。
+ * 教学教务至校园新闻、科研机构的八个分类，最后是全量的「全部」。生活服务与全量列表保留原入口，切换 tab 时保留信源筛选。
  * 搜索词只属于 /all：搜索中点分类是在结果内过滤（留在 /all），点「精选」才退出搜索回家。
  */
 export function CategoryTabs({ active, layoutId, size = "md", className = "" }: { active: string; layoutId: string; size?: "md" | "sm"; className?: string }) {
@@ -36,15 +42,37 @@ export function CategoryTabs({ active, layoutId, size = "md", className = "" }: 
   const items = [
     { key: "selected", label: "精选", to: homeTab({ channel: null, category: null }) },
     { key: "subscription", label: "订阅", to: "/subscription" },
-    ...CATEGORY_KEYS.filter((k) => k !== "life").map((k: CategoryKey) => ({ key: k, label: CATEGORY_TAB_LABELS[k], to: scopeTab({ category: k, channel: null }) })),
+    ...CATEGORY_TAB_KEYS.map((k) => ({ key: k, label: CATEGORY_TAB_LABELS[k], to: scopeTab({ category: k, channel: null }) })),
+    { key: "all", label: "全部", to: hrefWith("/all", params, { channel: null, category: null, tag: null, tab: null, type: null, search: null }) },
   ];
   return <PillTabs items={items} active={active} layoutId={layoutId} label="筛选" size={size} className={className} />;
 }
 
-/** 信源筛选（学院/部门）：一个弹出面板，按组列出信源，多选，选中的以可移除的 chip 呈现。 */
+/** 面板里的一行栏目：点一下选中这组信源，再点取消。 */
+function SourceRowButton({ label, ids, selected, onToggle }: { label: string; ids: string[]; selected: string[]; onToggle: (ids: string[]) => void }) {
+  const on = ids.every((id) => selected.includes(id));
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(ids)}
+      aria-pressed={on}
+      className={`flex w-full items-center gap-2 rounded-control px-2.5 py-1.5 text-left text-[13px] transition-colors ${on ? "bg-accent-soft text-accent" : "text-ink-2 hover:bg-bg-sunk"}`}
+    >
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {on && <IconClose size={12} className="shrink-0" />}
+    </button>
+  );
+}
+
+function SourceRows({ rows, selected, onToggle }: { rows: SourceRow[]; selected: string[]; onToggle: (ids: string[]) => void }) {
+  return rows.map((r) => <SourceRowButton key={r.label} label={r.label} ids={r.ids} selected={selected} onToggle={onToggle} />);
+}
+
+/** 信源筛选（学院/部门）：弹出面板一级列单位，点开后二级列单位下的栏目，多选，选中的以可移除的 chip 呈现。搜索时直接列出命中的栏目。 */
 export function SourceFilter({ options, selected, className = "" }: { options: SourceOption[]; selected: string[]; className?: string }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [activeOrg, setActiveOrg] = useState<string | null>(null);
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -74,16 +102,15 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
     const s = sp.toString();
     navigate(s ? `?${s}` : "?", { preventScrollReset: true });
   };
-  const toggle = (id: string) => apply(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
+  const toggle = (ids: string[]) => {
+    const on = ids.every((id) => selected.includes(id));
+    apply(on ? selected.filter((id) => !ids.includes(id)) : [...new Set([...selected, ...ids])]);
+  };
 
-  const byId = new Map(options.map((o) => [o.id, o]));
-  const groups: Array<{ label: string; items: SourceOption[] }> = [];
-  const q = query.trim().toLowerCase();
-  const visible = q ? options.filter((o) => o.name.toLowerCase().includes(q)) : options;
-  for (const g of ["学院与书院", "机关与职能部门", "校级媒体与权益服务", "校区与社区空间", "学院", "机关", "校级", "公众号", null] as const) {
-    const items = visible.filter((o) => o.group === g);
-    if (items.length) groups.push({ label: g ?? "其他", items });
-  }
+  const orgs = groupSourceOptions(options);
+  const searching = !!query.trim();
+  const matches = matchSourceOrgs(orgs, query);
+  const current = searching ? undefined : orgs.find((o) => o.org === activeOrg);
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
@@ -111,29 +138,53 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
               className="h-9 w-full rounded-control bg-bg-sunk px-3 text-[13.5px] text-ink outline-none placeholder:text-ink-4 focus:ring-1 focus:ring-accent"
             />
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
-            {groups.length === 0 && <p className="px-3 py-6 text-center text-[12.5px] text-ink-4">没有匹配的信源。</p>}
-            {groups.map((g) => (
-              <div key={g.label}>
-                <div className="px-2.5 pb-1 pt-2 text-[11.5px] font-medium text-ink-4">{g.label}</div>
-                {g.items.map((o) => {
-                  const on = selected.includes(o.id);
-                  return (
-                    <button
-                      key={o.id}
-                      type="button"
-                      onClick={() => toggle(o.id)}
-                      aria-pressed={on}
-                      className={`flex w-full items-center gap-2 rounded-control px-2.5 py-1.5 text-left text-[13px] transition-colors ${on ? "bg-accent-soft text-accent" : "text-ink-2 hover:bg-bg-sunk"}`}
-                    >
-                      <span className="min-w-0 flex-1 truncate">{o.name}</span>
-                      {on && <IconClose size={12} className="shrink-0" />}
-                    </button>
-                  );
-                })}
+          {current ? (
+            <>
+              <button type="button" onClick={() => setActiveOrg(null)} className="flex items-center gap-1 border-b border-line-soft px-2.5 py-2 text-left text-[13px] font-medium text-ink transition-colors hover:text-accent">
+                <IconChevronLeft size={14} className="shrink-0" />
+                <span className="min-w-0 flex-1 truncate">{current.org}</span>
+              </button>
+              <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
+                {current.rows.length > 1 && <SourceRowButton label={`全部（${current.rows.length} 个栏目）`} ids={current.ids} selected={selected} onToggle={toggle} />}
+                <SourceRows rows={current.rows} selected={selected} onToggle={toggle} />
               </div>
-            ))}
-          </div>
+            </>
+          ) : (
+            <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
+              {matches.length === 0 && <p className="px-3 py-6 text-center text-[12.5px] text-ink-4">没有匹配的信源。</p>}
+              {searching
+                ? matches.map((o) => (
+                    <div key={o.org}>
+                      <div className="px-2.5 pb-1 pt-2 text-[11.5px] font-medium text-ink-4">{o.org}</div>
+                      <SourceRows rows={o.rows} selected={selected} onToggle={toggle} />
+                    </div>
+                  ))
+                : SOURCE_GROUP_ORDER.map((group) => {
+                    const items = matches.filter((o) => o.group === group);
+                    if (items.length === 0) return null;
+                    return (
+                      <div key={group}>
+                        <div className="px-2.5 pb-1 pt-2 text-[11.5px] font-medium text-ink-4">{group}</div>
+                        {items.map((o) => {
+                          const count = o.ids.filter((id) => selected.includes(id)).length;
+                          return (
+                            <button
+                              key={o.org}
+                              type="button"
+                              onClick={() => setActiveOrg(o.org)}
+                              className={`flex w-full items-center gap-2 rounded-control px-2.5 py-1.5 text-left text-[13px] transition-colors hover:bg-bg-sunk ${count ? "text-accent" : "text-ink-2"}`}
+                            >
+                              <span className="min-w-0 flex-1 truncate">{o.org}</span>
+                              {count > 0 && <span className="num shrink-0 text-[12px]">{count}</span>}
+                              <IconChevronRight size={13} className="shrink-0 text-ink-4" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+            </div>
+          )}
           {selected.length > 0 && (
             <div className="border-t border-line-soft p-2">
               <button type="button" onClick={() => apply([])} className="w-full rounded-control py-1.5 text-[12.5px] text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink">
@@ -145,7 +196,7 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
       )}
 
       {selected.length > 0 && !open && (
-        <span className="sr-only">已选 {selected.length} 个信源：{selected.map((id) => byId.get(id)?.name ?? id).join("、")}</span>
+        <span className="sr-only">已选 {selected.length} 个信源：{selectedSourceChips(orgs, selected).map((c) => c.label).join("、")}</span>
       )}
     </div>
   );
@@ -156,17 +207,16 @@ export function SelectedSourceChips({ options, selected }: { options: SourceOpti
   const [params] = useSearchParams();
   const { pathname } = useLocation();
   if (selected.length === 0) return null;
-  const byId = new Map(options.map((o) => [o.id, o]));
-  const remove = (id: string) => {
-    const next = selected.filter((x) => x !== id);
+  const remove = (ids: string[]) => {
+    const next = selected.filter((x) => !ids.includes(x));
     return hrefWith(pathname, params, { sources: next.length ? next.join(",") : null });
   };
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <span className="text-[12px] text-ink-4">信源：</span>
-      {selected.map((id) => (
-        <Link key={id} to={remove(id)} preventScrollReset className="chip group border-accent/50 bg-accent-soft text-accent" aria-label={`移除信源 ${byId.get(id)?.name ?? id}`}>
-          {byId.get(id)?.name ?? id}
+      {selectedSourceChips(groupSourceOptions(options), selected).map((c) => (
+        <Link key={c.label} to={remove(c.ids)} preventScrollReset className="chip group border-accent/50 bg-accent-soft text-accent" aria-label={`移除信源 ${c.label}`}>
+          {c.label}
           <IconClose size={11} className="opacity-60 transition-opacity group-hover:opacity-100" />
         </Link>
       ))}

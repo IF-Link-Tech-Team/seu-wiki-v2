@@ -9,6 +9,7 @@ import { closeDb, sql } from "@aihot/backend/db";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { buildApp } from "../apps/api/src/app.ts";
 import { createHmac } from "node:crypto";
+import { createMemberSession } from "@aihot/backend/member/auth";
 
 const T = tag();
 const SUB = `logto-sub-${T}`;
@@ -94,6 +95,7 @@ const ENV = {
   ACCOUNTS_API_RESOURCE: `${logtoBase}/api`,
   ACCOUNTS_M2M_APP_ID: "m2m-app",
   ACCOUNTS_M2M_APP_SECRET: "m2m-secret",
+  SUBSCRIPTION_EXPERIMENT_ENABLED: "true",
 };
 
 before(() => {
@@ -156,6 +158,26 @@ async function loginFlow(returnPath: string): Promise<Jar> {
   return Object.assign(jar, { lastStatus: r3.statusCode, lastBody: r3.body });
 }
 
+test("subscription login opens required onboarding and unlocks its API", async () => {
+  let jar=await pendingFlow("/subscription");
+  const complete=await app_.inject({method:"GET",url:"/api/logto/bootstrap-complete",headers:{cookie:cookieHeader(jar)}});
+  assert.equal(complete.statusCode,302);
+  assert.equal(complete.headers.location,"/welcome");
+  jar=merge(jar,jarOf(complete.headers["set-cookie"]));
+  const taxonomy=await app_.inject({method:"GET",url:"/api/site/subscription-taxonomy",headers:{cookie:cookieHeader(jar)}});
+  assert.equal(taxonomy.statusCode,200);
+  assert.equal(taxonomy.headers["cache-control"],"private, no-store");
+});
+
+test("public login opens onboarding before the subscription feed", async () => {
+  for (const target of ["/all?q=%E4%BF%9D%E7%A0%94&page=2", "/items/example-article"]) {
+    const jar = await pendingFlow(target);
+    const complete = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
+    assert.equal(complete.statusCode, 302);
+    assert.equal(complete.headers.location, "/welcome");
+  }
+});
+
 test("pending identity is consumed once, including concurrent bootstrap requests", async () => {
   rolesForUser = ["community_admin"];
   try {
@@ -188,7 +210,7 @@ test("unfinished Accounts bootstrap preserves pending and return cookies for ret
     assert.equal(result.headers["set-cookie"], undefined);
   } finally { accountsReady = true; }
   const retried = await app_.inject({ method: "GET", url: "/api/logto/bootstrap-complete", headers: { cookie: cookieHeader(jar) } });
-  assert.equal(retried.headers.location, "/for-you");
+  assert.equal(retried.headers.location, "/welcome");
   assert.ok(jarOf(retried.headers["set-cookie"]).get("seuwiki_member"));
 });
 
@@ -290,6 +312,57 @@ test("画像绑定：认证 + CSRF + 精确 Origin，写入 members", async () =
   assert.equal(ok.statusCode, 200);
   const [m] = await sql<{ college: string; degree: string; interests: string[] }[]>`SELECT college, degree, interests FROM members WHERE id = ${UUID}`;
   assert.deepEqual([m!.college, m!.degree, m!.interests], ["信息科学与工程学院", "本科", ["保研", "实习"]]);
+});
+
+test("订阅画像：账号隔离、严格校验、乐观锁、清除与试验开关", async () => {
+  const jar = await loginFlow("/subscription");
+  const cookie = cookieHeader(jar);
+  const empty = await app_.inject({ method: "GET", url: "/api/member/subscription-profile", headers: { cookie } });
+  assert.equal(empty.statusCode, 200);
+  assert.equal(empty.json().profile, null);
+  assert.equal(empty.json().revision, 0);
+  const csrf = empty.json().csrf as string;
+  const profile = {
+    degree: "硕士生", college: "", enrollmentYear: "2025", international: "no",
+    interests: ["topic:AI/机器学习"], publishers: [], types: [], identityNotices: false,
+    mode: "interest", followOwnCollege: false, topicGroups: [], excludedTypes: [], excludedLocations: [],
+  };
+  const noCsrf = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost" }, payload: { profile, revision: 0 } });
+  assert.equal(noCsrf.statusCode, 403);
+  const badOrigin = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "https://evil.example", "x-csrf-token": csrf }, payload: { profile, revision: 0 } });
+  assert.equal(badOrigin.statusCode, 403);
+  const invalid = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost", "x-csrf-token": csrf }, payload: { profile: { ...profile, interests: ["topic:not-real"] }, revision: 0 } });
+  assert.equal(invalid.statusCode, 400);
+  const saved = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost", "x-csrf-token": csrf }, payload: { profile, revision: 0 } });
+  assert.equal(saved.statusCode, 200);
+  assert.equal(saved.json().revision, 1);
+  assert.equal(saved.json().taxonomyVersion, "2026-11-09-v3");
+  const stale = await app_.inject({ method: "PUT", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost", "x-csrf-token": csrf }, payload: { profile, revision: 0 } });
+  assert.equal(stale.statusCode, 409);
+
+  const otherId = crypto.randomUUID();
+  const otherSub = `other-${T}`;
+  await sql`INSERT INTO members (id, logto_sub) VALUES (${otherId}, ${otherSub})`;
+  const otherToken = await createMemberSession(otherId, { sub: otherSub, sid: null, iat: null }, undefined);
+  const isolated = await app_.inject({ method: "GET", url: "/api/member/subscription-profile", headers: { cookie: `seuwiki_member=${otherToken}` } });
+  assert.equal(isolated.statusCode, 200);
+  assert.equal(isolated.json().profile, null, "另一账号不能读取当前账号画像");
+  await sql`DELETE FROM members WHERE id = ${otherId}`;
+
+  const removed = await app_.inject({ method: "DELETE", url: "/api/member/subscription-profile", headers: { cookie, origin: "http://localhost", "x-csrf-token": csrf }, payload: { revision: 1 } });
+  assert.equal(removed.statusCode, 204);
+  assert.equal((await app_.inject({ method: "GET", url: "/api/member/subscription-profile", headers: { cookie } })).json().profile, null);
+
+  process.env.SUBSCRIPTION_EXPERIMENT_ENABLED = "false";
+  try {
+    for (const request of [
+      { method: "GET" as const, url: "/api/member/subscription-profile" },
+      { method: "GET" as const, url: "/api/site/subscription-taxonomy" },
+      { method: "POST" as const, url: "/api/site/subscription-preview", payload: { profile, asOf: "2026-10-25" } },
+    ]) assert.equal((await app_.inject({ ...request, headers: { cookie } })).statusCode, 404);
+  } finally {
+    process.env.SUBSCRIPTION_EXPERIMENT_ENABLED = "true";
+  }
 });
 
 test("backchannel-logout：验签通过转发 Accounts（204），无效 token 400 且不写库", async () => {

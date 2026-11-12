@@ -5,7 +5,7 @@
 import { SITE } from "@aihot/industry/site";
 import { MCP_TOOL_NAMES as T } from "@aihot/contracts/mcp";
 import { CATEGORY_LABELS, isCategoryKey, PUBLIC_API_CATEGORY_KEYS, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
-import { beijingDate, beijingTime, beijingWeekday } from "@aihot/contracts/time";
+import { beijingDate, beijingTime, beijingWeekday, hasPublishedClock, type PublishedAtPrecision } from "@aihot/contracts/time";
 import { siteUrl } from "./links.ts";
 import type { V1ItemPayload } from "./publish.ts";
 import type { v1HotTopics, v1Story } from "./stories.ts";
@@ -30,9 +30,10 @@ export function answer(head: string[], data: string[] | null, hints: string[]): 
 }
 
 /** "09-30 20:15" on the Beijing clock; the year is written only when it is not this year. */
-export function stamp(at: string | Date, now = Date.now()): string {
+export function stamp(at: string | Date, precision: PublishedAtPrecision = "unknown", now = Date.now()): string {
   const day = beijingDate(at);
-  return `${day.slice(0, 4) === beijingDate(now).slice(0, 4) ? day.slice(5) : day} ${beijingTime(at)}`;
+  const date = day.slice(0, 4) === beijingDate(now).slice(0, 4) ? day.slice(5) : day;
+  return hasPublishedClock(precision) ? `${date} ${beijingTime(at)}` : date;
 }
 
 const linkText = (title: string) => title.replace(/([[\]])/g, "\\$1");
@@ -41,7 +42,7 @@ const category = (key: string | null) => (key && isCategoryKey(key) ? CATEGORY_L
 function itemLines(items: V1ItemPayload[]): string[] {
   return items.flatMap((it, i) => [
     `${i + 1}. [${linkText(it.title)}](${it.links.aihot})`,
-    `   ${[it.source.name, it.publishedAt ? `发布于 ${stamp(it.publishedAt)}` : `${SITE.name} 收录于 ${stamp(it.discoveredAt)}`, category(it.category)].filter(Boolean).join(" · ")}`,
+    `   ${[it.source.name, it.publishedAt ? `发布于 ${stamp(it.publishedAt, it.publishedAtPrecision)}` : `${SITE.name} 收录于 ${stamp(it.discoveredAt)}`, category(it.category)].filter(Boolean).join(" · ")}`,
     ...(it.summary ? [`   摘要：${it.summary}`] : []),
     ...(it.reason ? [`   ${REASON_LABEL}：${it.reason}`] : []),
     `   原文：${it.links.original}`,
@@ -130,7 +131,7 @@ export function storyAnswer(s: Story, limit: number, via: Via): string {
     "",
     ...(s.digest ? [`事件综述：${s.digest}`, ""] : []),
     "报道时间线（从新到旧）：",
-    ...reports.map((r, i) => `${i + 1}. ${stamp(r.publishedAt)} · ${r.source.name} · [${linkText(r.title)}](${r.links.aihot})`),
+    ...reports.map((r, i) => `${i + 1}. ${stamp(r.publishedAt, r.publishedAtPrecision)} · ${r.source.name} · [${linkText(r.title)}](${r.links.aihot})`),
     ...(neighbours.length ? ["", "相关事件：", ...neighbours.map((n) => `- ${n.title}：${via === "http" ? agentUrl(`/stories/${n.publicId}`) : `public_id=${n.publicId}`}`)] : []),
   ];
   return answer([

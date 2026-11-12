@@ -15,6 +15,7 @@
 // look when a report founds a fact close to them (rematchSignals); history (isHistorical) founds no
 // event. Runs serially (queue concurrency 1).
 import { modelFor } from "../editorial/models.ts";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { sql, type Db } from "../db.ts";
 import { newShortId, newUuid, sha256 } from "../lib/ids.ts";
 import { chatJson } from "../providers/llm.ts";
@@ -47,6 +48,7 @@ interface ArticleRow {
   title: string;
   url: string;
   published_at: Date | null;
+  published_at_precision: PublishedAtPrecision;
   discovered_at: Date;
   grouped_at: Date | null;
   body_text: string | null;
@@ -240,10 +242,10 @@ async function candidateViews(recalled: Recalled[]): Promise<CandidateView[]> {
   if (recalled.length === 0) return [];
   const rows = await sql<{
     fact_id: number; story_id: number; fact_title: string; subject: string | null; action: string | null; object: string | null; occurred_at: Date | null;
-    title: string; summary: string | null; source: string; at: Date; members: number; root_fact_id: number;
+    title: string; summary: string | null; source: string; at: Date; published_at_precision: PublishedAtPrecision; members: number; root_fact_id: number;
   }[]>`
     SELECT DISTINCT ON (fa.fact_id) fa.fact_id, f.story_id, f.title AS fact_title, f.subject, f.action, f.object, f.occurred_at,
-           p.title, p.summary, s.name AS source, coalesce(p.published_at, p.discovered_at) AS at,
+           p.title, p.summary, s.name AS source, coalesce(p.published_at, p.discovered_at) AS at, p.published_at_precision,
            (SELECT count(*) FROM fact_articles x WHERE x.fact_id = fa.fact_id AND x.role IN ('primary', 'report') AND ${trusted("x")}) AS members,
            ${rootFactOf(sql`f.story_id`)} AS root_fact_id
     FROM fact_articles fa
@@ -264,7 +266,7 @@ async function candidateViews(recalled: Recalled[]): Promise<CandidateView[]> {
       storyRoot: Number(row.root_fact_id) === r.factId,
       score: r.score,
       report: {
-        title: row.title, source: row.source, at: row.at, summary: row.summary,
+        title: row.title, source: row.source, at: row.at, publishedAtPrecision: row.published_at_precision, summary: row.summary,
         frame: { subject: row.subject, action: row.action, object: row.object, occurredAt: row.occurred_at ? row.occurred_at.toISOString().slice(0, 10) : null },
       },
     }];
@@ -425,10 +427,10 @@ interface StoryRoot {
 async function storyRoot(storyId: number): Promise<StoryRoot | null> {
   const [row] = await sql<{
     subject: string | null; action: string | null; object: string | null; occurred_at: Date | null;
-    title: string; summary: string | null; source: string; at: Date; started_at: Date; roundup: boolean;
+    title: string; summary: string | null; source: string; at: Date; published_at_precision: PublishedAtPrecision; started_at: Date; roundup: boolean;
   }[]>`
     SELECT f.subject, f.action, f.object, f.occurred_at, p.title, p.summary, s.name AS source,
-           coalesce(p.published_at, p.discovered_at) AS at,
+           coalesce(p.published_at, p.discovered_at) AS at, p.published_at_precision,
            (SELECT min(coalesce(q.published_at, q.discovered_at)) FROM fact_articles z JOIN publications q ON q.article_id = z.article_id
             WHERE z.fact_id = f.id AND z.role IN ('primary', 'report') AND ${trusted("z")}) AS started_at,
            EXISTS (SELECT 1 FROM grouping_decisions d WHERE d.article_id = fa.article_id AND d.verdict = 'roundup') AS roundup
@@ -443,7 +445,7 @@ async function storyRoot(storyId: number): Promise<StoryRoot | null> {
   return {
     storyId, at: row.started_at, roundup: row.roundup,
     report: {
-      title: row.title, source: row.source, at: row.at, summary: row.summary,
+      title: row.title, source: row.source, at: row.at, publishedAtPrecision: row.published_at_precision, summary: row.summary,
       frame: { subject: row.subject, action: row.action, object: row.object, occurredAt: row.occurred_at ? row.occurred_at.toISOString().slice(0, 10) : null },
     },
   };
@@ -603,7 +605,7 @@ export async function groupArticle(articleId: string, opts: GroupOptions = {}): 
 
 async function decide(articleId: string, opts: GroupOptions): Promise<GroupResult> {
   const [a] = await sql<ArticleRow[]>`
-    SELECT a.id, a.title, a.url, a.published_at, a.discovered_at, a.grouped_at, a.body_text, a.x_post, a.backfill,
+    SELECT a.id, a.title, a.url, a.published_at, a.published_at_precision, a.discovered_at, a.grouped_at, a.body_text, a.x_post, a.backfill,
            s.id AS source_id, s.name AS source_name, s.signal_group_id, s.participation_mode,
            EXISTS (SELECT 1 FROM regroup_pending rp WHERE rp.article_id = a.id) AS regroup_pending
     FROM articles a JOIN sources s ON s.id = a.source_id WHERE a.id = ${articleId}`;
@@ -646,7 +648,7 @@ async function decide(articleId: string, opts: GroupOptions): Promise<GroupResul
   }
   const title = an.title_zh || a.title;
   const query: ReportView = {
-    title, source: a.source_name, at: observedAt, summary: an.summary_zh,
+    title, source: a.source_name, at: observedAt, publishedAtPrecision: a.published_at_precision, summary: an.summary_zh,
     frame: frame ? { subject: frame.subject, action: frame.action, object: frame.object, occurredAt: frame.occurredAt } : null,
   };
   const newTitle = String(frame?.title || title).slice(0, 60);
@@ -853,7 +855,7 @@ async function groupSignal(a: ArticleRow, source: { id: string; signal_group_id:
   }
   const cands = await candidateViews(recalled);
   if (cands.length === 0) return { verdict: "signal-unmatched" };
-  const query: ReportView = { title: a.title, source: a.source_name, at: observedAt, summary: a.body_text?.slice(0, 300) ?? null };
+  const query: ReportView = { title: a.title, source: a.source_name, at: observedAt, publishedAtPrecision: a.published_at_precision, summary: a.body_text?.slice(0, 300) ?? null };
   const { verdicts, receiptId } = await judgeSignal(a.id, query, cands);
   const target = signalTarget(cands, verdicts);
   if (target) await recordSignal(sql, target.storyId, a.id, source, "signal", observedAt);

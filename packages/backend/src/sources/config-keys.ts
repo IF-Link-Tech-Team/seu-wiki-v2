@@ -11,7 +11,7 @@ const KEYS: Record<SourceRow["kind"], string[]> = {
   web_list: [
     ...COLLECTED, "url", "baseUrl", "parseMode", "adapter", "cacheToleranceSeconds", "linksStartLine", "preserveUrlFragment",
     "itemSelector", "linkSelector", "titleSelector", "publishedAtSelector", "publishedAtRegex", "publishedAtUtcOffset",
-    "requestHeaders",
+    "requestHeaders", "publicationCategory",
   ],
   json_list: [
     ...COLLECTED, "url", "mode", "method", "headers", "bodyJson", "jsonKey", "windowVar", "itemsPath", "itemsObjectValues",
@@ -20,7 +20,7 @@ const KEYS: Record<SourceRow["kind"], string[]> = {
   ],
   // X accounts are mostly read in shards, which apply only these.
   x_search: ["_aihot", "ingestNoiseFilter", "itemUrlPrefixRewrite", "query", "searchType"],
-  mp_account: ["wxid", "ghid", "nickname"],
+  mp_account: ["wxid", "ghid", "nickname", "url"],
   external: [],
 };
 

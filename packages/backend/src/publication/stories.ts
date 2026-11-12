@@ -1,6 +1,7 @@
 // Stories (events) and the hot ranking through the public read layer. The website sees heat values;
 // v1 / MCP / Skill only see ranks and counts.
 import type { HeatPoint, HotResponse, StoryDetail, StoryReportView } from "@aihot/contracts/site";
+import type { PublishedAtPrecision } from "@aihot/contracts/time";
 import { sql } from "../db.ts";
 import { proxiedImage, proxiedImageSet } from "../media/imgproxy.ts";
 import { latestHotRanking, rankingExtras } from "../events/hot-read.ts";
@@ -41,6 +42,7 @@ interface ReportRow {
   url: string;
   selected: boolean;
   at: Date;
+  published_at_precision: PublishedAtPrecision;
   source_id: string;
   source_name: string;
   source_kind: string;
@@ -58,7 +60,7 @@ interface ReportRow {
 async function storyReports(storyId: number, now: Date): Promise<ReportRow[]> {
   return sql<ReportRow[]>`
     SELECT DISTINCT ON (p.article_id) p.article_id AS id, p.title, p.summary, p.url, p.selected,
-      coalesce(p.published_at, p.discovered_at) AS at, s.id AS source_id, s.name AS source_name, s.kind AS source_kind,
+      coalesce(p.published_at, p.discovered_at) AS at, p.published_at_precision, s.id AS source_id, s.name AS source_name, s.kind AS source_kind,
       s.icon_url, f.public_id AS fact_public_id, f.id AS fact_id
     FROM facts f JOIN fact_articles fa ON fa.fact_id = f.id JOIN publications p ON p.article_id = fa.article_id
     JOIN sources s ON s.id = p.source_id
@@ -74,6 +76,7 @@ function reportView(r: ReportRow): StoryReportView {
     summary: r.summary,
     source: { id: r.source_id, name: r.source_name, kind: r.source_kind as never, iconUrl: proxiedImage(r.icon_url, "avatar") },
     publishedAt: r.at.toISOString(),
+    publishedAtPrecision: r.published_at_precision,
     originalUrl: r.url,
     selected: r.selected,
     factId: r.fact_public_id,
@@ -318,6 +321,7 @@ export async function v1Story(storyId: number) {
         summary: r.summary,
         source: { name: r.source_name, },
         publishedAt: r.at.toISOString(),
+        publishedAtPrecision: r.published_at_precision,
         links: { aihot: itemUrl(r.id), original: r.url },
       })),
       storyline: neighbors.filter((n) => n.relation === "storyline"),
