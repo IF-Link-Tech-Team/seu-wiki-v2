@@ -31,7 +31,7 @@ export function hrefWith(base: string, params: URLSearchParams, patch: Record<st
  * 教学教务至校园新闻、科研机构的八个分类，最后是全量的「全部」。生活服务与全量列表保留原入口，切换 tab 时保留信源筛选。
  * 搜索词只属于 /all：搜索中点分类是在结果内过滤（留在 /all），点「精选」才退出搜索回家。
  */
-export function CategoryTabs({ active, layoutId, size = "md", className = "" }: { active: string; layoutId: string; size?: "md" | "sm"; className?: string }) {
+export function CategoryTabs({ active, layoutId, className = "" }: { active: string; layoutId: string; className?: string }) {
   const [params] = useSearchParams();
   const searching = !!params.get("q")?.trim();
   const homeTab = (patch: Record<string, string | null>) =>
@@ -44,7 +44,7 @@ export function CategoryTabs({ active, layoutId, size = "md", className = "" }: 
     ...CATEGORY_TAB_KEYS.map((k) => ({ key: k, label: CATEGORY_TAB_LABELS[k], to: scopeTab({ category: k, channel: null }) })),
     { key: "all", label: "全部", to: hrefWith("/all", params, { channel: null, category: null, tag: null, tab: null, type: null, search: null }) },
   ];
-  return <PillTabs items={items} active={active} layoutId={layoutId} label="筛选" size={size} className={className} />;
+  return <PillTabs items={items} active={active} layoutId={layoutId} label="筛选" revealActive={active !== "all"} className={`lg:[scrollbar-color:var(--line-strong)_transparent] lg:[scrollbar-width:thin] ${className}`} />;
 }
 
 /** 信源筛选（学院/部门）：一个弹出面板，按组列出信源，多选，选中的以可移除的 chip 呈现。 */
@@ -54,6 +54,7 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -61,7 +62,10 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
@@ -92,14 +96,15 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
   }
 
   return (
-    <div ref={rootRef} className={`relative ${className}`}>
+    <div ref={rootRef} className={`relative shrink-0 ${className}`}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className={`inline-flex h-[42px] shrink-0 items-center gap-1.5 rounded-full bg-bg-sunk px-4 text-[14px] font-medium ring-1 ring-inset transition-colors ${
-          selected.length ? "text-accent ring-accent/50" : "text-ink-3 ring-line-soft hover:text-ink hover:ring-line-strong"
-        } dark:bg-bg-muted/60`}
+        className={`inline-flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-[14px] font-medium ring-1 ring-inset ring-line-soft transition-colors sm:px-4 ${
+          selected.length ? "bg-accent-soft text-accent" : "bg-bg-sunk text-ink-3 hover:text-ink hover:ring-line-strong"
+        }`}
       >
         学院/部门
         {selected.length > 0 && <span className="num text-[12px]">{selected.length}</span>}
@@ -107,14 +112,15 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
       </button>
 
       {open && (
-        <div className="absolute right-0 z-30 mt-2 flex max-h-[70vh] w-72 flex-col overflow-hidden rounded-panel bg-surface shadow-lg ring-1 ring-line">
+        <div className="absolute right-0 z-30 mt-2 flex max-h-[60dvh] w-72 max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-panel bg-surface shadow-[var(--shadow-pop)] ring-1 ring-line">
           <div className="border-b border-line-soft p-2.5">
             <input
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              aria-label="搜索信源"
               placeholder="搜索信源…"
-              className="h-9 w-full rounded-control bg-bg-sunk px-3 text-[13.5px] text-ink outline-none placeholder:text-ink-4 focus:ring-1 focus:ring-accent"
+              className="h-10 w-full rounded-control bg-bg-sunk px-3 text-base text-ink outline-none placeholder:text-ink-4 focus:ring-1 focus:ring-accent lg:text-sm"
             />
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
@@ -130,9 +136,9 @@ export function SourceFilter({ options, selected, className = "" }: { options: S
                       type="button"
                       onClick={() => toggle(o.id)}
                       aria-pressed={on}
-                      className={`flex w-full items-center gap-2 rounded-control px-2.5 py-1.5 text-left text-[13px] transition-colors ${on ? "bg-accent-soft text-accent" : "text-ink-2 hover:bg-bg-sunk"}`}
+                      className={`flex min-h-10 w-full items-center gap-2 rounded-control px-2.5 py-2 text-left text-sm leading-normal transition-colors ${on ? "bg-accent-soft text-accent" : "text-ink-2 hover:bg-bg-sunk"}`}
                     >
-                      <span className="min-w-0 flex-1 truncate">{o.name}</span>
+                      <span className="min-w-0 flex-1 wrap-anywhere">{o.name}</span>
                       {on && <IconClose size={12} className="shrink-0" />}
                     </button>
                   );
@@ -171,9 +177,9 @@ export function SelectedSourceChips({ options, selected }: { options: SourceOpti
     <div className="flex flex-wrap items-center gap-1.5">
       <span className="text-[12px] text-ink-4">信源：</span>
       {selected.map((id) => (
-        <Link key={id} to={remove(id)} preventScrollReset className="chip group border-accent/50 bg-accent-soft text-accent" aria-label={`移除信源 ${byId.get(id)?.name ?? id}`}>
-          {byId.get(id)?.name ?? id}
-          <IconClose size={11} className="opacity-60 transition-opacity group-hover:opacity-100" />
+        <Link key={id} to={remove(id)} preventScrollReset className="chip group h-auto min-h-8 min-w-0 bg-accent-soft py-1 text-accent" aria-label={`移除信源 ${byId.get(id)?.name ?? id}`}>
+          <span className="min-w-0 wrap-anywhere">{byId.get(id)?.name ?? id}</span>
+          <IconClose size={11} className="shrink-0 opacity-60 transition-opacity group-hover:opacity-100" />
         </Link>
       ))}
       <Link to={hrefWith(pathname, params, { sources: null })} preventScrollReset className="text-[12px] text-ink-4 hover:text-accent">
@@ -186,9 +192,10 @@ export function SelectedSourceChips({ options, selected }: { options: SourceOpti
 function useSlashFocus(ref: React.RefObject<HTMLInputElement | null>) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "/" && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target as HTMLElement)?.isContentEditable)) {
+      const input = ref.current;
+      if (e.key === "/" && input?.getClientRects().length && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target as HTMLElement)?.isContentEditable)) {
         e.preventDefault();
-        ref.current?.focus();
+        input.focus();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -197,8 +204,7 @@ function useSlashFocus(ref: React.RefObject<HTMLInputElement | null>) {
 }
 
 /**
- * Search field (GET /all?q=…). Desktop ("track"): at the end of the filter row as the same grey track,
- * at the height of md tabs, with a "/" hint. Phones ("bar"): full width with a separate 搜索 button.
+ * Search field (GET /all?q=…). The search page shows a full-width field and submit button on small screens.
  */
 export function SearchField({ action = "/all", defaultValue = "", keep = {}, variant = "track", autoFocus = false }: { action?: string; defaultValue?: string; keep?: Record<string, string | null>; variant?: "track" | "bar"; autoFocus?: boolean }) {
   const [value, setValue] = useState(defaultValue);
@@ -212,69 +218,44 @@ export function SearchField({ action = "/all", defaultValue = "", keep = {}, var
   const searching = navigation.state === "loading" && navigation.location?.pathname === action && !!new URLSearchParams(navigation.location.search).get("q");
   const hidden = Object.entries(keep).map(([k, v]) => (v ? <input key={k} type="hidden" name={k} value={v} /> : null));
 
-  if (variant === "bar") {
-    return (
-      <Form method="get" action={action} role="search" className="flex gap-2">
-        {hidden}
-        <label className="relative flex-1">
-          <span className="sr-only">搜索标题、摘要与正文</span>
-          <IconSearch size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-4" />
-          <input
-            ref={inputRef}
-            name="q"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="搜索标题、摘要…"
-            maxLength={200}
-            autoComplete="off"
-            enterKeyHint="search"
-            className="h-11 w-full rounded-full border border-line-strong bg-surface pl-10 pr-9 text-[15px] text-ink outline-none transition-[border-color,box-shadow] placeholder:text-ink-4 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-soft)]"
-          />
-          {value && (
-            <button type="button" aria-label="清空" onClick={() => { setValue(""); inputRef.current?.focus(); }} className="absolute right-2.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-ink-4">
-              <IconClose size={15} />
-            </button>
-          )}
-        </label>
-        <button type="submit" className={`h-11 shrink-0 rounded-full bg-accent px-5 text-[14.5px] font-semibold text-accent-contrast transition-[background-color,transform] active:scale-[0.98] ${searching ? "opacity-60" : ""}`}>
+  return (
+    <Form method="get" action={action} role="search" className="col-span-full flex min-w-0 gap-2 lg:col-auto lg:w-60">
+      {hidden}
+      <div className="group relative min-w-0 flex-1">
+        <label htmlFor="site-search" className="sr-only">搜索标题、摘要与正文</label>
+        <IconSearch size={16} className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searching ? "text-accent" : "text-ink-4 group-focus-within:text-ink-3"}`} />
+        <input
+          ref={inputRef}
+          id="site-search"
+          name="q"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="搜索标题、摘要…"
+          maxLength={200}
+          autoComplete="off"
+          enterKeyHint="search"
+          className={`h-11 w-full rounded-full bg-bg-sunk pl-10 text-base text-ink outline-none ring-1 ring-inset ring-line-soft transition-[background-color,box-shadow] placeholder:text-ink-4 hover:ring-line-strong focus:bg-surface focus:shadow-[0_0_0_3px_var(--accent-soft)] focus:ring-accent lg:text-sm ${value ? "pr-11" : "pr-3 lg:pr-10"}`}
+        />
+        {value ? (
+          <button
+            type="button"
+            aria-label="清空"
+            onClick={() => {
+              setValue("");
+              inputRef.current?.focus();
+            }}
+            className="absolute right-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-ink-4 transition-colors hover:bg-bg-sunk hover:text-ink"
+          >
+            <IconClose size={15} />
+          </button>
+        ) : (
+          <kbd className="mono pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-mark border border-line-strong bg-surface px-1.5 text-[10.5px] leading-4 text-ink-4 lg:block">/</kbd>
+        )}
+      </div>
+      {variant === "bar" && (
+        <button type="submit" className={`h-11 shrink-0 rounded-full bg-accent-soft px-4 text-sm font-semibold text-accent transition-colors hover:bg-bg-muted lg:hidden ${searching ? "opacity-60" : ""}`}>
           搜索
         </button>
-      </Form>
-    );
-  }
-
-  return (
-    <Form method="get" action={action} role="search" className="group relative w-full shrink-0 lg:w-60">
-      {hidden}
-      <label htmlFor="site-search" className="sr-only">
-        搜索标题、摘要与正文
-      </label>
-      <IconSearch size={16} className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searching ? "text-accent" : "text-ink-4 group-focus-within:text-ink-3"}`} />
-      <input
-        ref={inputRef}
-        id="site-search"
-        name="q"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="搜索标题、摘要…"
-        maxLength={200}
-        autoComplete="off"
-        className="h-[42px] w-full rounded-full bg-bg-sunk pl-10 pr-10 text-[14px] text-ink outline-none ring-1 ring-inset ring-line-soft transition-[background-color,box-shadow] placeholder:text-ink-4 hover:ring-line-strong focus:bg-surface focus:shadow-[0_0_0_3px_var(--accent-soft)] focus:ring-accent dark:bg-bg-muted/60 dark:focus:bg-surface"
-      />
-      {value ? (
-        <button
-          type="button"
-          aria-label="清空"
-          onClick={() => {
-            setValue("");
-            inputRef.current?.focus();
-          }}
-          className="absolute right-3 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full text-ink-4 transition-colors hover:bg-bg-sunk hover:text-ink"
-        >
-          <IconClose size={13} />
-        </button>
-      ) : (
-        <kbd className="mono pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-mark border border-line-strong bg-surface px-1.5 text-[10.5px] leading-4 text-ink-4 lg:block">/</kbd>
       )}
     </Form>
   );
@@ -283,7 +264,7 @@ export function SearchField({ action = "/all", defaultValue = "", keep = {}, var
 /** Mobile home: the search icon at the end of the category row opens search on 全部动态. */
 export function SearchIconLink() {
   return (
-    <Link to="/all?search=1" aria-label="搜索" className="flex size-9 shrink-0 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink">
+    <Link to="/all?search=1" aria-label="搜索" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-bg-sunk text-ink-3 transition-colors hover:text-ink">
       <IconSearch size={19} />
     </Link>
   );

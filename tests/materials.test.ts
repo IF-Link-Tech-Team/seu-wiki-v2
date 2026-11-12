@@ -52,6 +52,35 @@ test("an unchanged report does not add a revision", async () => {
   assert.equal(article!.revision, 1);
 });
 
+test("same-source HTML and media enrichment preserves the text revision and existing metadata", async () => {
+  const input = { sourceId: SOURCE, url: `https://example.com/enrich-${tag()}`, title: "原文标题", bodyText: "原文正文", via: "fetch" as const };
+  const first = await upsertMaterial({ ...input, raw: { retained: true } });
+  const media = [{ kind: "image" as const, url: "https://example.com/picture.jpg" }];
+  const result = await upsertMaterial({ ...input, bodyHtml: '<p>原文正文</p><img src="https://example.com/picture.jpg">', media, raw: { dajiala: { mode: 2 } } });
+  assert.equal(result.revised, false);
+  assert.equal(result.enriched, true);
+  const [stored] = await sql`SELECT revision, body_html, media, raw FROM articles WHERE id = ${first.articleId}`;
+  assert.equal(stored!.revision, 1);
+  assert.match(stored!.body_html, /<img/);
+  assert.deepEqual(stored!.media, media);
+  assert.deepEqual(stored!.raw, { retained: true, dajiala: { mode: 2 } });
+  const repeated = await upsertMaterial({ ...input, bodyHtml: stored!.body_html, media, raw: { dajiala: { mode: 2 } } });
+  assert.equal(repeated.enriched, undefined, "identical media does not repeatedly refresh publication");
+  await upsertMaterial({ ...input, bodyHtml: "", media: [] });
+  const [kept] = await sql`SELECT body_html, media FROM articles WHERE id = ${first.articleId}`;
+  assert.equal(kept!.body_html, stored!.body_html);
+  assert.deepEqual(kept!.media, media);
+});
+
+test("another source cannot replace HTML or media of the original article", async () => {
+  const url = `https://example.com/enrich-other-${tag()}`;
+  const first = await upsertMaterial({ sourceId: SOURCE, url, title: "Original", bodyText: "body", via: "fetch" });
+  await upsertMaterial({ sourceId: OTHER, url, title: "Original", bodyText: "body", bodyHtml: "foreign HTML", media: [{kind: "image", url: "https://example.com/foreign.jpg"}], via: "fetch" });
+  const [stored] = await sql`SELECT body_html, media FROM articles WHERE id = ${first.articleId}`;
+  assert.equal(stored!.body_html, null);
+  assert.deepEqual(stored!.media, []);
+});
+
 test("an imported article's first report records a baseline, not a revision", async () => {
   const url = `https://example.com/imported-${tag()}`;
   const id = `imp${tag()}`;

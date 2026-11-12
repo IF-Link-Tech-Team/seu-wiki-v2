@@ -47,7 +47,7 @@ export function DayHeader({ day, today, count, collapsed, onToggle }: { day: str
   const weekday = beijingWeekday(day);
   const short = WEEKDAY_SHORT[new Date(`${day}T12:00:00+08:00`).getUTCDay()] ?? "";
   return (
-    <div className="sticky top-0 z-20 -mx-4 bg-daybar px-4 lg:mx-0 lg:bg-bg lg:px-0">
+    <div className="sticky top-0 z-20 -mx-4 bg-bg-sunk px-4 lg:mx-0 lg:bg-bg lg:px-0">
       {/* Phones: a full-width day bar. */}
       <div className="flex h-9 items-center gap-2 lg:hidden">
         <span className="text-[14px] font-bold text-ink">{day === today ? "今天" : date}</span>
@@ -94,12 +94,12 @@ export function TimelineSlot({ children, fresh = false, delay = 0, dataKey }: { 
   return (
     <li
       data-card-key={dataKey}
-      className={`group/slot grid border-b border-line-soft py-3.5 last:border-b-0 lg:grid-cols-[22px_minmax(0,1fr)] lg:border-b-0 lg:py-0 lg:pb-3 lg:last:pb-0 ${fresh ? "animate-fade-up" : ""}`}
+      className={`group/slot grid border-b border-line-soft py-4 last:border-b-0 lg:grid-cols-[22px_minmax(0,1fr)] lg:border-b-0 lg:py-0 lg:pb-3 lg:last:pb-0 ${fresh ? "animate-fade-up" : ""}`}
       style={fresh ? { animationDelay: `${delay}ms` } : undefined}
     >
       <span aria-hidden="true" className="relative hidden lg:block">
         <span className="absolute -bottom-[41px] left-[10.5px] top-[29px] w-px bg-line-strong group-last/slot:hidden" />
-        <span className="absolute left-[7.5px] top-[25.5px] size-[7px] rounded-full bg-accent shadow-[0_0_0_4px_var(--bg)] transition-transform duration-300 group-hover/slot:scale-[1.15]" />
+        <span className="absolute left-[7.5px] top-[25.5px] size-[7px] rounded-full bg-accent/60 shadow-[0_0_0_4px_var(--bg)] transition-transform duration-300 group-hover/slot:scale-[1.15]" />
       </span>
       {children}
     </li>

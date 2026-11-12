@@ -11,6 +11,7 @@ import { closeDb, sql } from "@aihot/backend/db";
 import { detachFromFact } from "@aihot/backend/admin/content";
 import { upsertMaterial } from "@aihot/backend/content/materials";
 import { groupArticle, linkRelatedStories } from "@aihot/backend/events/group";
+import { reportText } from "@aihot/backend/events/relate";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { publishArticle } from "@aihot/backend/publication/publish";
 
@@ -75,6 +76,12 @@ after(async () => {
   await provider.close();
   await stopBoss();
   await closeDb();
+});
+
+test("group recall uses the structured fact when an article has no summary", () => {
+  const fact = { subject: "团委", action: "开放报名", object: "志愿活动", occurredAt: "2026-11-10" };
+  assert.equal(reportText("最新通知", null, fact), "最新通知。团委 开放报名 志愿活动 2026-11-10");
+  assert.equal(reportText("最新通知", "原有摘要", fact), "最新通知。原有摘要");
 });
 
 test("a detach made while the model is deciding the report's fact stands", async () => {

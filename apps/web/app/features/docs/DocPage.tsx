@@ -11,11 +11,11 @@ function docHref(slug: string) {
 /** 目录树（桌面左侧）：篇 → 组 → 条目。 */
 export function DocTree({ parts, activeSlug }: { parts: SurvivalPartView[]; activeSlug: string | null }) {
   return (
-    <nav className="space-y-4 text-[13px] leading-relaxed" aria-label="手册目录">
+    <nav className="space-y-3 text-sm leading-normal" aria-label="手册目录">
       {parts.map((part) => (
         <details key={part.key} open={activeSlug ? part.groups.some((g) => g.items.some((i) => i.slug === activeSlug)) : part.key === "preface"}>
-          <summary className="cursor-pointer select-none text-[13.5px] font-semibold text-ink">{part.label}</summary>
-          <div className="mt-1.5 space-y-2 border-l border-line pl-3">
+          <summary className="cursor-pointer select-none py-2 font-semibold text-ink">{part.label}</summary>
+          <div className="space-y-2 border-l border-line-soft pl-2">
             {part.groups.map((g) => (
               <div key={g.key}>
                 <div className="space-y-0.5">
@@ -23,7 +23,8 @@ export function DocTree({ parts, activeSlug }: { parts: SurvivalPartView[]; acti
                     <Link
                       key={it.slug}
                       to={docHref(it.slug)}
-                      className={`block rounded-control px-2 py-1 ${it.slug === activeSlug ? "bg-accent-soft font-medium text-accent" : "text-ink-3 hover:bg-bg-sunk hover:text-ink"}`}
+                      aria-current={it.slug === activeSlug ? "page" : undefined}
+                      className={`block rounded-control px-2 py-2 wrap-anywhere ${it.slug === activeSlug ? "bg-accent-soft font-medium text-accent" : "text-ink-3 hover:bg-bg-sunk hover:text-ink"}`}
                     >
                       {it.title}
                     </Link>
@@ -75,7 +76,7 @@ export function DocPage({ doc, parts }: { doc: DocDetail; parts?: SurvivalPartVi
           </div>
         </aside>
       )}
-      <article className="min-w-0 pb-10">
+      <article className="mx-auto w-full min-w-0 max-w-[760px] pb-10">
         <AnchorBar doc={doc} />
         <h1 className="font-serif text-[26px] font-bold leading-snug tracking-tight text-ink lg:text-[30px]">{doc.title}</h1>
         <div className="mt-3 space-y-1 rounded-panel bg-bg-sunk px-4 py-3">

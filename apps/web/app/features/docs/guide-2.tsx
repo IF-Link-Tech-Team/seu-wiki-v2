@@ -16,18 +16,18 @@ export function GuideContents({ articles }: { articles: GuideEntry[] }) {
     current.children.push({ name: article.title, children: [], article });
   }
   function render(nodes: Node[]) {
-    return <ul className="space-y-1 border-l border-line pl-3">{nodes.map((node, i) => <li key={`${node.name}-${i}`}>
-      {node.article ? <a className="block rounded-control px-2 py-1 text-ink-3 hover:bg-bg-sunk hover:text-accent" href={`#guide-${node.article.slug}`}>{node.name}</a> : <details open><summary className="cursor-pointer py-1 font-semibold text-ink">{node.name}</summary>{render(node.children)}</details>}
+    return <ul className="border-l border-line-soft pl-2">{nodes.map((node, i) => <li key={`${node.name}-${i}`}>
+      {node.article ? <a className="block rounded-control px-2 py-2 wrap-anywhere text-ink-3 hover:bg-bg-sunk hover:text-accent" href={`#guide-${node.article.slug}`}>{node.name}</a> : <details open><summary className="cursor-pointer py-2 font-semibold wrap-anywhere text-ink">{node.name}</summary>{render(node.children)}</details>}
     </li>)}</ul>;
   }
-  return <nav aria-label="生存指南 2.0 目录" className="text-[13px] leading-relaxed" onClick={(event) => {
+  return <nav aria-label="生存指南 2.0 目录" className="text-sm leading-normal" onClick={(event) => {
     if ((event.target as HTMLElement).closest("a[href^='#guide-']")) {
       const mobileContents = event.currentTarget.closest("details");
       if (mobileContents) mobileContents.open = false;
     }
   }}>
     {render(root.children)}
-    <p className="mt-5 text-[12px] leading-relaxed text-ink-4">东南大学校友编写团队原著，IF.Link 社区经授权非商业转载整理，著作权归原作者团队，禁止商业用途。<a className="text-accent hover:underline" href="https://github.com/IF-Link-Tech-Team/seu-survival-guide-2.0">原稿出处</a></p>
+    <p className="mt-4 text-[13px] leading-normal text-ink-4">东南大学校友编写团队原著，IF.Link 社区经授权非商业转载整理，著作权归原作者团队，禁止商业用途。<a className="text-accent hover:underline" href="https://github.com/IF-Link-Tech-Team/seu-survival-guide-2.0">原稿出处</a></p>
   </nav>;
 }
 
@@ -37,9 +37,9 @@ export function GuideReader({ articles }: { articles: GuideArticle[] }) {
   const acknowledgements = articles.find((article) => article.slug === "cr8aqk");
   const ordered = [preface, ...articles.filter((article) => article !== preface && article !== acknowledgements), acknowledgements].filter((article): article is GuideArticle => !!article);
   return <div className="pb-10">
-    <h1 className="pt-5 font-serif text-[30px] font-bold leading-snug text-ink lg:pt-0 lg:text-[34px]">生存手册 2.0（2023）</h1>
-    {ordered.map((article) => <article id={`guide-${article.slug}`} key={article.slug} className="scroll-mt-6 border-b border-line pb-10 pt-8 last:border-b-0 lg:[&+article]:pt-10">
-    <h2 className="font-serif text-[26px] font-bold leading-snug text-ink lg:text-[30px]">{article.title}</h2>
+    <h1 className="browse-title pt-6 font-serif xl:pt-0">生存手册 2.0（2023）</h1>
+    {ordered.map((article) => <article id={`guide-${article.slug}`} key={article.slug} className="scroll-mt-6 border-b border-line-soft py-8 last:border-b-0">
+    <h2 className="font-serif text-[22px] font-semibold leading-snug wrap-anywhere text-ink sm:text-[24px]">{article.title}</h2>
     <div className="prose mt-6" dangerouslySetInnerHTML={{ __html: article.html }} />
   </article>)}</div>;
 }

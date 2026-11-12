@@ -59,7 +59,7 @@ export function Pagination({ page, pageCount, href }: { page: number; pageCount:
           <Link
             to={href(p)}
             aria-current={p === page ? "page" : undefined}
-            className={`num ${btn} ${p === page ? "bg-ink font-semibold text-bg" : "text-ink-3 hover:bg-bg-sunk hover:text-ink"}`}
+            className={`num ${btn} ${p === page ? "bg-accent-soft font-semibold text-accent" : "text-ink-3 hover:bg-bg-sunk hover:text-ink"}`}
           >
             {p}
           </Link>

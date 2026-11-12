@@ -192,7 +192,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
   // Material from an isolated source reaches no public surface at all: not even a detail page.
   const visibility = source.participation_mode === "isolated" ? "withdrawn" : (override?.visibility ?? "public");
 
-  const eligible = isPoolEligible({ participationMode: source.participation_mode, relevance, title, summary });
+  const eligible = isPoolEligible({ participationMode: source.participation_mode, relevance, title });
   const selected = isSelectable(eligible, judgedSelected, source.tier);
   const reason = selected ? pickString(f.reason, analysis?.reason_zh ?? null) : null;
   const hasXPost = !!article.x_post;
@@ -223,7 +223,7 @@ export async function publishArticleTx(tx: Tx, articleId: string, options: Publi
   }
 
   const indexable = isIndexable({
-    visibility, hasSummary: !!summary, selected, seoIndexedAt: previous?.seo_indexed_at ?? null, seoExcludedAt: previous?.seo_excluded_at ?? null,
+    visibility, hasContent: eligible || !!summary, selected, seoIndexedAt: previous?.seo_indexed_at ?? null, seoExcludedAt: previous?.seo_excluded_at ?? null,
   });
   const searchText = collapseWhitespace(
     [title, originalTitle, summary, source.name, ...displayTags(tags), ...(analysis?.subjects ?? [])].filter(Boolean).join(" "),

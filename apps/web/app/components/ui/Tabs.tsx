@@ -61,7 +61,7 @@ const SIZES = {
  * options evenly across the available width.
  */
 export function PillTabs({
-  items, active, onSelect, layoutId, size = "md", label, fill = false, className = "",
+  items, active, onSelect, layoutId, size = "md", label, fill = false, revealActive = false, className = "",
 }: {
   items: TabItem[];
   active: string;
@@ -71,12 +71,29 @@ export function PillTabs({
   size?: keyof typeof SIZES;
   label?: string;
   fill?: boolean;
+  revealActive?: boolean;
   className?: string;
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (!revealActive) return;
+    const reveal = () => {
+      const scroller = scrollRef.current;
+      const current = scroller?.querySelector("[aria-current='page'], [aria-selected='true']");
+      if (!scroller || !current || !scroller.clientWidth) return;
+      const { left, right } = current.getBoundingClientRect();
+      const bounds = scroller.getBoundingClientRect();
+      if (left < bounds.left) scroller.scrollLeft += left - bounds.left - 3;
+      else if (right > bounds.right) scroller.scrollLeft += right - bounds.right + 3;
+    };
+    reveal();
+    window.addEventListener("resize", reveal);
+    return () => window.removeEventListener("resize", reveal);
+  }, [active, revealActive]);
   const links = items.some((t) => t.to);
   const Track = links ? "nav" : "div";
   return (
-    <div className={`scrollbar-none max-w-full overflow-x-auto ${fill ? "w-full" : ""} ${className}`}>
+    <div ref={scrollRef} className={`scrollbar-none max-w-full overflow-x-auto ${fill ? "w-full" : ""} ${className}`}>
       <Track
         data-pill-track=""
         aria-label={label}
