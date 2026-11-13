@@ -20651,6 +20651,25 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
+    },
+    {
+      "id": "mp-saikr",
+      "name": "公众号·赛氪竞赛",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e3b6e6279f5e",
+        "nickname": "赛氪竞赛"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "竞赛"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
     }
   ]
 }

@@ -141,6 +141,7 @@ const MP_PREFIX = "公众号";
 function mpCollection(tags: readonly string[]): string {
   if (tags.includes("校友")) return "校友会公众号";
   if (tags.includes("科研机构")) return "课题组与学术公众号";
+  if (tags.includes("竞赛")) return "竞赛与赛事公众号";
   if (tags.includes("校级")) return "校级公众号";
   return "其他公众号";
 }
