@@ -37,19 +37,19 @@ export default function Handbook() {
     setVersion(next);
     window.scrollTo({ top: 0 });
   };
-  return <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
-    <aside className="hidden lg:block">
+  return <div className="xl:grid xl:grid-cols-[220px_minmax(0,1fr)] xl:gap-8">
+    <aside className="hidden xl:block">
       <div className="sticky top-6 max-h-[calc(100dvh-48px)] overflow-y-auto pb-6 pr-2">
         <div className="mb-4"><VersionSwitch version={version} onChange={chooseVersion} /></div>
         {version === "2.0" && <GuideContents articles={entries} />}
       </div>
     </aside>
-    <div className="min-w-0">
-      <div className="mt-5 lg:hidden"><VersionSwitch version={version} onChange={chooseVersion} /></div>
+    <div className="mx-auto w-full min-w-0 max-w-[760px] xl:mx-0">
+      <div className="mt-5 lg:mt-0 xl:hidden"><VersionSwitch version={version} onChange={chooseVersion} /></div>
       {version === "2.0" ? <>
-      <details className="mb-6 mt-5 rounded-panel border border-line p-3 lg:hidden">
-        <summary className="cursor-pointer text-[14px] font-semibold text-ink">生存指南 2.0 目录</summary>
-        <div className="mt-3 max-h-[50dvh] overflow-y-auto"><GuideContents articles={entries} /></div>
+      <details className="mt-4 rounded-card bg-panel-quiet px-4 ring-1 ring-inset ring-line xl:hidden">
+        <summary className="cursor-pointer py-3 text-sm font-semibold leading-normal text-ink">生存指南 2.0 目录</summary>
+        <div className="max-h-[50dvh] overflow-y-auto overscroll-contain pb-4"><GuideContents articles={entries} /></div>
       </details>
       <GuideReader articles={articles} />
       </> : <section className="py-10 lg:pt-2">

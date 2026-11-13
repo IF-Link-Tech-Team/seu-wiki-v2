@@ -159,9 +159,10 @@ export function firmlyTied(relation: string | undefined, confidence: number | un
  */
 export const STORY_REVIEW_MIN_CONFIDENCE = 0.75;
 
-/** The text a report is embedded with: title and the start of the summary, the same on both sides of a comparison. */
-export function reportText(title: string, summary: string | null | undefined): string {
-  return `${title}。${(summary ?? "").slice(0, 300)}`;
+/** Use the same text on both sides of a recall comparison. */
+export function reportText(title: string, summary: string | null | undefined, frame?: ReportView["frame"]): string {
+  const context = summary || [frame?.subject, frame?.action, frame?.object, frame?.occurredAt].filter(Boolean).join(" ");
+  return `${title}。${context.slice(0, 300)}`;
 }
 
 /** Lexical stand-in for cosine when embeddings are off (tests, development without a key): shared character bigrams. */

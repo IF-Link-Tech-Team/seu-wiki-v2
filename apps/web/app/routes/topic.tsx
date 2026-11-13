@@ -52,15 +52,15 @@ export default function TopicPage() {
     <div className="pb-6">
       <header className="pb-4 pt-5 lg:pt-1">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-[22px] font-bold leading-[1.35] text-ink">{topic.name}</h1>
-          <span className="hidden pt-2 lg:block">
+          <h1 className="browse-title min-w-0">{topic.name}</h1>
+          <span className="shrink-0 pt-1">
             <MoreLink to="/topics">全部主题</MoreLink>
           </span>
         </div>
-        <p className="mt-1 max-w-[640px] text-[13px] leading-relaxed text-ink-3">{topic.definition}</p>
+        <p className="mt-2 max-w-[640px] text-sm leading-normal wrap-anywhere text-ink-3">{topic.definition}</p>
         <div className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1">
           <span className="text-[12.5px] text-ink-4">
-            <span className="num mr-1 text-[20px] font-bold text-ink">{topic.total.toLocaleString("zh-CN")}</span>条精选
+            <span className="num mr-1 font-semibold text-ink-2">{topic.total.toLocaleString("zh-CN")}</span>条精选
           </span>
           {topic.related.length > 0 && (
             <span className="flex flex-wrap items-center gap-1.5 text-[12.5px]">
@@ -75,8 +75,8 @@ export default function TopicPage() {
         </div>
       </header>
 
-      <div className="mb-1 mt-2 flex items-baseline justify-between">
-        <h2 className="text-[18px] font-bold text-ink">最新精选</h2>
+      <div className="mb-2 mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h2 className="text-[18px] font-semibold text-ink">最新精选</h2>
         {items.length > 0 && (
           <span className="num text-[12px] text-ink-4">
             第 {first}–{last} 条 · 共 {topic.total.toLocaleString("zh-CN")} 条

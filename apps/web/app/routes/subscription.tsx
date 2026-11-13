@@ -167,7 +167,7 @@ function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf, we
   const cancelEditing = profile && !welcome ? () => setEditing(false) : undefined;
   return <div className="subscription-page pb-10">
     {welcome ? <div className="flex min-h-[65vh] flex-col items-center justify-center text-center"><p className="text-sm font-medium text-accent">SEU Wiki</p><h1 className="mt-3 text-3xl font-semibold">欢迎回来</h1><p className="mt-3 text-ink-3">完成订阅设置，开启你的校园信息流。</p></div> : <>
-      <h1 className="text-2xl font-semibold text-ink">我的订阅</h1>
+      <h1 className="browse-title pt-5 lg:pt-0">我的订阅</h1>
       <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
       <p className="my-5 text-sm text-ink-3">你关心的校园消息，都在这里。</p>
     </>}

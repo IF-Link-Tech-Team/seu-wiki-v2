@@ -45,8 +45,8 @@ async function loadRow(id: string): Promise<DetailRow | null> {
 }
 
 /**
- * Public detail (rules.hasItemPage): items the lists leave out (low relevance, merged duplicates, no
- * Chinese summary yet) keep a noindex page; withdrawn and hot_signal items are a 404.
+ * Public detail (rules.hasItemPage): items the lists leave out (e.g. unreviewed articles)
+ * keep their detail page; withdrawn and hot_signal items are a 404.
  */
 export async function loadItemDetail(id: string, now = new Date()): Promise<DetailResult> {
   const row = await loadRow(id);

@@ -202,6 +202,36 @@ test("item pages follow the live rule: unsummarised editorial items keep one, ho
   assert.ok(!storyPage.body.includes(signal) && !storyPage.body.includes(`SIGNAL-SUMMARY-${T}`), "and not the hot_signal one");
 });
 
+test("a relevant article without a summary can be listed and selected without exposing restricted text", async () => {
+  const source = `${SOURCE}-title-only`;
+  const title = `报名通知${T}`;
+  const restricted = `RESTRICTED-${T}`;
+  await sql`INSERT INTO sources (id, name, kind, tier, participation_mode, site_fulltext, syndicate_fulltext)
+            VALUES (${source}, 'Test title-only publication', 'rss', 'T1', 'editorial', false, false)`;
+  const { articleId } = await upsertMaterial({
+    sourceId: source, url: `https://example.com/${source}`, title, bodyText: restricted,
+    bodyHtml: `<p>${restricted}</p>`, bodyStatus: "ok", via: "fetch", publishedAt: new Date(),
+  });
+  const search = (q: string, suffix = "") => get(`/api/site/pool?q=${encodeURIComponent(q)}${suffix}`);
+
+  await publishArticle(articleId);
+  assert.ok(!(await search(title)).body.includes(articleId), "awaits a relevance judgement");
+  await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, selected)
+            VALUES (${articleId}, 1, 'rule', 'pass', 'academic', true)`;
+  await publishArticle(articleId, released());
+
+  const hit = JSON.parse((await search(title)).body).items.find((item: { id: string }) => item.id === articleId);
+  assert.ok(hit, "searchable by title without a summary");
+  assert.deepEqual([hit.title, hit.summary, hit.selected], [title, null, true]);
+  assert.ok(!(await search(restricted, "&tab=relevance")).body.includes(articleId), "restricted body is excluded from search");
+  const detail = JSON.parse((await get(`/api/site/items/${articleId}`)).body);
+  assert.deepEqual([detail.summary, detail.body, detail.indexable], [null, null, true]);
+  const rss = await get("/feed.xml");
+  assert.ok(rss.body.includes(title) && !rss.body.includes(restricted), "RSS carries the title and original link only");
+  const snapshot = await get("/api/v1/selected/snapshot?fields=minimal&limit=1000");
+  assert.ok(snapshot.body.includes(articleId), "synced to selected clients");
+});
+
 test("an early release keeps the selected ledger in order", async () => {
   const x = await article();
   await publishArticle(x, released());

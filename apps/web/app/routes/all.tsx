@@ -102,43 +102,29 @@ export default function AllPage() {
 
   return (
     <div className="pb-6">
-      {/* Desktop, as on 精选: the title, then one filter row with the search field aligned on the right. */}
-      <div className="hidden lg:block">
-        <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">{title ?? `全部${withSubject("动态")}`}</h1>
-        <div className="mb-5 mt-4 flex items-center justify-between gap-4">
-          <CategoryTabs active="all" layoutId="all-cat-desk" className="min-w-0" />
-          <div className="flex shrink-0 items-center gap-2">
-            <SourceFilter options={sourceOptions} selected={sources ?? []} />
-            <SearchField variant="track" defaultValue={f.q ?? ""} keep={keep} />
-          </div>
-        </div>
-        <SelectedSourceChips options={sourceOptions} selected={sources ?? []} />
-      </div>
-
-      {/* Phones: title with today's count, the search bar, then the same filter row as 精选. */}
-      <div className="lg:hidden">
-        <div className="flex items-baseline justify-between pb-3 pt-5">
-          <h1 className="text-[22px] font-bold text-ink">{title ?? "全部动态"}</h1>
+      <header className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-3 pt-5 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:pt-0">
+        <div className="min-w-0">
+          <h1 className="browse-title line-clamp-2">{title ?? `全部${withSubject("动态")}`}</h1>
           {!f.q && (
-            <span className="text-[12.5px] text-ink-4">
+            <span className="text-[13px] text-ink-4 lg:hidden">
               今日 <span className="num">{data.todayCount}</span> 条
             </span>
           )}
         </div>
+        <SourceFilter options={sourceOptions} selected={sources ?? []} />
         <SearchField variant="bar" defaultValue={f.q ?? ""} keep={keep} autoFocus={params.get("search") === "1"} />
-        <div className="-mx-4 mt-3 flex items-center gap-2 border-b border-line-soft px-4 pb-3">
-          <CategoryTabs active="all" layoutId="all-cat-mobile" size="sm" className="min-w-0 flex-1" />
-          <SourceFilter options={sourceOptions} selected={sources ?? []} />
-        </div>
-        <div className="mt-2">
-          <SelectedSourceChips options={sourceOptions} selected={sources ?? []} />
-        </div>
-      </div>
+        <CategoryTabs active={f.category ?? "all"} layoutId="all-cat" className="col-span-full min-w-0" />
+        {!!sources?.length && (
+          <div className="col-span-full">
+            <SelectedSourceChips options={sourceOptions} selected={sources} />
+          </div>
+        )}
+      </header>
 
       {f.q && (
-        <div className="mb-3 mt-3 flex flex-wrap items-center justify-between gap-2 lg:mt-0">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <PillTabs
-            size="xs"
+            size="sm"
             layoutId="all-search-sort"
             label="搜索排序"
             active={f.tab}
@@ -153,7 +139,7 @@ export default function AllPage() {
       {f.q && (
         <div className="mb-3 flex flex-wrap gap-1.5">
           {([["all", "全部"], ["feed", "动态"], ["survival", "手册"], ["experience", "经验"]] as const).map(([key, label]) => (
-            <Link key={key} to={typeHref(key)} className={f.type === key ? "chip border-accent/50 bg-accent-soft text-accent" : "chip hover:text-accent"}>
+            <Link key={key} to={typeHref(key)} aria-current={f.type === key ? "page" : undefined} className={`chip h-8 ${f.type === key ? "bg-accent-soft font-medium text-accent" : "hover:text-accent"}`}>
               {label}
             </Link>
           ))}
@@ -162,20 +148,20 @@ export default function AllPage() {
 
       {/* 手册/经验命中：按相关度排在动态列表前面，手册结果落到最匹配的章节锚点。 */}
       {data.docs.length > 0 && (
-        <ul className="mb-4 space-y-2">
+        <ul className="mb-4 divide-y divide-line-soft">
           {data.docs.map((d) => (
             <li key={d.slug}>
               <Link
                 to={`/${d.slug}${d.anchor ? `#${d.anchor.id}` : ""}`}
-                className="block rounded-panel bg-surface p-3.5 ring-1 ring-line transition-colors hover:ring-line-strong"
+                className="group block px-1 py-3 transition-colors hover:bg-bg-sunk"
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="chip border-accent/50 bg-transparent text-accent">{d.kind === "survival" ? "手册" : "经验"}</span>
-                  <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-ink">{d.title}</span>
+                  <span className="chip">{d.kind === "survival" ? "手册" : "经验"}</span>
+                  <span className="min-w-0 flex-1 text-[15px] font-semibold leading-normal wrap-anywhere text-ink group-hover:text-accent">{d.title}</span>
                   {d.occurredAt && <span className="num text-[12px] text-ink-4">{d.occurredAt}</span>}
                 </div>
-                {d.description && <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-ink-3">{d.description}</p>}
-                {d.anchor && <p className="mt-1 text-[12px] text-ink-4">定位到：§ {d.anchor.text}</p>}
+                {d.description && <p className="mt-1 line-clamp-2 text-[14px] leading-normal wrap-anywhere text-ink-3">{d.description}</p>}
+                {d.anchor && <p className="mt-1 text-[13px] leading-normal wrap-anywhere text-ink-4">定位到：§ {d.anchor.text}</p>}
               </Link>
             </li>
           ))}
@@ -183,7 +169,9 @@ export default function AllPage() {
       )}
 
       <div className={`transition-opacity duration-200 ${busy ? "opacity-50" : ""}`}>
-        {data.items.length === 0 ? (
+        {data.items.length > 0 ? (
+          <DayList items={data.items} todayCount={f.q ? null : data.todayCount} showTags />
+        ) : data.docs.length === 0 ? (
           <div className="mt-2 lg:card">
             <EmptyState
               title="没有找到相关内容"
@@ -198,9 +186,7 @@ export default function AllPage() {
               {f.q ? "换个说法，或者去掉筛选再试。" : "这个筛选下暂时没有内容。"}
             </EmptyState>
           </div>
-        ) : (
-          <DayList items={data.items} todayCount={f.q ? null : data.todayCount} showTags />
-        )}
+        ) : null}
       </div>
       <Pagination page={data.page} pageCount={data.pageCount} href={(p) => pageHref(params, p)} />
       {data.page >= 50 && <p className="mt-4 text-center text-[12px] text-ink-4">最多提供 50 页，更早的内容请使用搜索或主题页。</p>}

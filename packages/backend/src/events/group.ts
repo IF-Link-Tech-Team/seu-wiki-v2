@@ -110,16 +110,16 @@ async function recallPool(withWaiting = false): Promise<PoolRow[]> {
     WHERE fa.role IN ('primary', 'report') AND ${withWaiting ? sql`true` : trusted("fa")} AND a.discovered_at > now() - make_interval(days => ${RECALL_DAYS})`;
 }
 
-/** The public title and summary of reports (the analysis when a report has no publication yet). */
+/** Recall text from the public title and summary, with the analysis as a fallback. */
 async function reportTexts(ids: string[]): Promise<Map<string, string>> {
   if (ids.length === 0) return new Map();
-  const rows = await sql<{ id: string; title: string; summary: string | null }[]>`
-    SELECT a.id, coalesce(p.title, an.title_zh, a.title) AS title, coalesce(p.summary, an.summary_zh, '') AS summary
+  const rows = await sql<{ id: string; title: string; summary: string | null; frame: ReportView["frame"] }[]>`
+    SELECT a.id, coalesce(p.title, an.title_zh, a.title) AS title, coalesce(p.summary, an.summary_zh) AS summary, an.output->'fact' AS frame
     FROM articles a
     LEFT JOIN publications p ON p.article_id = a.id
-    LEFT JOIN LATERAL (SELECT title_zh, summary_zh FROM analyses x WHERE x.article_id = a.id ORDER BY input_revision DESC, id DESC LIMIT 1) an ON true
+    LEFT JOIN LATERAL (SELECT title_zh, summary_zh, output FROM analyses x WHERE x.article_id = a.id ORDER BY input_revision DESC, id DESC LIMIT 1) an ON true
     WHERE a.id = ANY(${ids})`;
-  return new Map(rows.map((r) => [r.id, reportText(r.title, r.summary)]));
+  return new Map(rows.map((r) => [r.id, reportText(r.title, r.summary, r.frame)]));
 }
 
 // Vectors of the recall window stay in the worker process; only new or changed texts are embedded
@@ -651,6 +651,7 @@ async function decide(articleId: string, opts: GroupOptions): Promise<GroupResul
     title, source: a.source_name, at: observedAt, publishedAtPrecision: a.published_at_precision, summary: an.summary_zh,
     frame: frame ? { subject: frame.subject, action: frame.action, object: frame.object, occurredAt: frame.occurredAt } : null,
   };
+  const recallText = reportText(query.title, query.summary, query.frame);
   const newTitle = String(frame?.title || title).slice(0, 60);
 
   const { sameUrl, referenced } = await relatedPosts(a);
@@ -667,7 +668,7 @@ async function decide(articleId: string, opts: GroupOptions): Promise<GroupResul
     storyId = sameUrl.story_id;
   } else {
     try {
-      cands = await candidateViews(await recallFacts(articleId, reportText(title, an.summary_zh), RECALL_MIN_COSINE, RECALL_TOP_FACTS, referenced));
+      cands = await candidateViews(await recallFacts(articleId, recallText, RECALL_MIN_COSINE, RECALL_TOP_FACTS, referenced));
       if (cands.length) {
         const judged = await judgeBatch(articleId, query, cands);
         verdicts = judged.verdicts;
@@ -764,7 +765,7 @@ async function decide(articleId: string, opts: GroupOptions): Promise<GroupResul
   // A new fact may be what discussion posts of the last hours were about before any report came.
   if (verdict === "new-story" || verdict === "new-fact-in-story") {
     try {
-      result.rematched = await rematchSignals(articleId, reportText(title, an.summary_zh));
+      result.rematched = await rematchSignals(articleId, recallText);
     } catch (error) {
       result.rematchError = String(error).slice(0, 300);
     }
