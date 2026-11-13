@@ -13,8 +13,8 @@ import { BudgetExceededError, ProviderRejectedError, completeReceipt } from "../
 import { publishArticle } from "../publication/publish.ts";
 
 const MAX_NEW_PER_CHECK = 8;
-/** Posts older than this on the first check of an account are history, not news. */
-const FIRST_CHECK_WINDOW_MS = 7 * 86400_000;
+/** Apply on every check so later runs cannot buy the history skipped during initialization. */
+const RECENT_POST_WINDOW_MS = 7 * 86400_000;
 /** A body missing for a passing reason is fetched again on later checks: this often, while the post is this recent. */
 const BODY_RETRIES = 3;
 const BODY_RETRY_WINDOW_MS = 3 * 86400_000;
@@ -48,6 +48,19 @@ export async function checkMpAccount(sourceId: string, reason: "schedule" | "man
   if (!source.enabled && reason !== "manual") return { sourceId, status: "paused" as const };
   const ghid = source.config.ghid ?? source.config.wxid ?? "";
   if (!ghid && !source.config.url && !source.config.nickname) return { sourceId, status: "unconfigured" as const };
+  if (reason === "schedule") {
+    // Claim before sending, including failed attempts. Queued retries and concurrent workers cannot
+    // buy another ten-minute history key within the source interval or bypass an unresolved receipt.
+    const claimed = await sql`UPDATE sources s SET last_fetch_at = now(),
+        next_fetch_at = now() + make_interval(mins => interval_minutes), updated_at = now()
+      WHERE s.id = ${sourceId} AND s.kind = 'mp_account' AND s.enabled
+        AND (s.last_fetch_at IS NULL OR s.last_fetch_at <= now() - make_interval(mins => s.interval_minutes))
+        AND (s.next_fetch_at IS NULL OR s.next_fetch_at <= now())
+        AND NOT EXISTS (SELECT 1 FROM receipts r WHERE r.subject IN (s.id, 'source:' || s.id)
+          AND r.status IN ('pending', 'unknown'))
+      RETURNING s.id`;
+    if (!claimed.length) return { sourceId, status: "not-due" as const };
+  }
   const [run] = await sql<{ id: number }[]>`INSERT INTO fetch_runs (source_id, detail) VALUES (${sourceId}, ${sql.json({ reason })}) RETURNING id`;
   const firstCheck = !source.cursor?.lastCheckedAt;
   let created = 0;
@@ -60,7 +73,7 @@ export async function checkMpAccount(sourceId: string, reason: "schedule" | "man
     for (const p of posts) {
       if (!p.url || !p.title || fetched >= maxNew) continue;
       const publishedAt = p.post_time ? new Date(p.post_time * 1000) : null;
-      if (firstCheck && publishedAt && Date.now() - publishedAt.getTime() > FIRST_CHECK_WINDOW_MS) continue;
+      if (publishedAt && Date.now() - publishedAt.getTime() > RECENT_POST_WINDOW_MS) continue;
       // Same identity rule as every entrance: the long link without tracking parameters. A known post is
       // skipped, unless its body failed for a passing reason: then it is tried again a few times.
       const key = identityKeyForUrl(p.url);
@@ -145,19 +158,21 @@ export async function checkMpAccount(sourceId: string, reason: "schedule" | "man
         health = CASE WHEN ${soft} THEN health WHEN fail_count + 1 >= 3 THEN 'failing' ELSE 'degraded' END, updated_at = now()
       WHERE id = ${sourceId}`;
     await sql`UPDATE fetch_runs SET status = 'failed', finished_at = now(), new_count = ${created}, error = ${message} WHERE id = ${run!.id}`;
-    if (soft) throw error; // retried by the queue
+    if (soft && reason === "manual") throw error; // Scheduled failures wait for their next interval.
     return { sourceId, status: "failed" as const, error: message };
   }
 }
 
 /** Every enabled account is checked once per its interval (the paid list call is the cost). */
 export async function scheduleMpReconcile(now = new Date()) {
-  const rows = await sql<{ id: string; last: string | null; interval_minutes: number }[]>`
-    SELECT id, cursor->>'lastCheckedAt' AS last, interval_minutes FROM sources WHERE kind = 'mp_account' AND enabled`;
+  const rows = await sql<{ id: string }[]>`
+    SELECT s.id FROM sources s WHERE s.kind = 'mp_account' AND s.enabled
+      AND (s.last_fetch_at IS NULL OR s.last_fetch_at <= ${now}::timestamptz - make_interval(mins => s.interval_minutes))
+      AND (s.next_fetch_at IS NULL OR s.next_fetch_at <= ${now})
+      AND NOT EXISTS (SELECT 1 FROM receipts r WHERE r.subject IN (s.id, 'source:' || s.id)
+        AND r.status IN ('pending', 'unknown'))`;
   let enqueued = 0;
   for (const s of rows) {
-    const since = s.last ? now.getTime() - Date.parse(s.last) : Infinity;
-    if (since <= s.interval_minutes * 60_000) continue;
     await enqueue(QUEUES.mpCheck, { sourceId: s.id, reason: "schedule" }, { singletonKey: `mp:${s.id}` });
     enqueued += 1;
   }

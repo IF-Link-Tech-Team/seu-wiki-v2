@@ -175,13 +175,28 @@ export async function runBatch(options: BatchOptions) {
     }
     if (options.phase === "process") {
       let groupTail: Promise<unknown> = Promise.resolve();
+      const group = async (id: string, entry: Progress["articles"][string]) => {
+        entry.stage = "group"; save();
+        const grouping = groupTail.then(() => groupArticle(id));
+        groupTail = grouping.catch(() => undefined); // A failed article must not stop later groups.
+        await grouping;
+        entry.stage = "done";
+      };
       const articles = Object.entries(progress.articles).filter(([, a]) => a.process.status === "pending").slice(0, maxArticles);
       await pool(articles, concurrency, async ([id, entry]) => record(entry.process, async () => {
-        const [article] = await sql<{ body_status: string; processing_state: string; kind: string }[]>`
-          SELECT a.body_status, a.processing_state, s.kind FROM articles a JOIN sources s ON s.id = a.source_id
+        const [article] = await sql<{ body_status: string; processing_state: string; kind: string; grouped_at: Date | null; relevance: string | null }[]>`
+          SELECT a.body_status, a.processing_state, a.grouped_at, s.kind,
+            (SELECT relevance FROM analyses WHERE article_id = a.id ORDER BY input_revision DESC, id DESC LIMIT 1) AS relevance
+          FROM articles a JOIN sources s ON s.id = a.source_id
           WHERE a.id = ${id} AND a.source_id = ${entry.sourceId}`;
         if (!article) throw new Error("manifest article no longer exists");
-        if (["analyzed", "blocked", "skipped"].includes(article.processing_state)) return { state: article.processing_state, alreadyProcessed: true };
+        if (article.processing_state === "analyzed") {
+          // groupArticle can mark grouped_at before rethrowing; the checkpoint's unfinished stage wins.
+          if (article.relevance === "pass" && (!article.grouped_at || entry.stage === "group")) await group(id, entry);
+          entry.stage = "done";
+          return { state: article.processing_state, alreadyProcessed: true };
+        }
+        if (["blocked", "skipped"].includes(article.processing_state)) return { state: article.processing_state, alreadyProcessed: true };
         const [unknown] = await sql`SELECT 1 FROM receipts WHERE subject IN (${id}, ${`article:${id}`}) AND status IN ('unknown', 'pending') LIMIT 1`;
         if (unknown) throw new Error("article receipt outcome unknown; no automatic retry");
         entry.stage = "extract"; save();
@@ -190,12 +205,7 @@ export async function runBatch(options: BatchOptions) {
         const result = await processArticle(id);
         if (result.state === "unknown-receipt") throw new Error("article receipt outcome unknown");
         if (["fetching-body", "stale", "missing"].includes(result.state)) throw new Error(`processing incomplete: ${result.state}`);
-        entry.stage = "group"; save();
-        if (result.state === "pass") {
-          const grouping = groupTail.then(() => groupArticle(id));
-          groupTail = grouping.catch(() => undefined); // A failed article must not stop later groups.
-          await grouping;
-        }
+        if (result.state === "pass") await group(id, entry);
         entry.stage = "done";
         return result;
       }), options.signal);

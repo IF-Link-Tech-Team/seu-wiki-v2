@@ -10,6 +10,7 @@ import { sql, closeDb } from "@aihot/backend/db";
 import { config } from "@aihot/backend/config";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { adaptIntervals } from "@aihot/backend/sources/collect";
+import { upsertMaterial } from "@aihot/backend/content/materials";
 
 const T = tag();
 const dir = mkdtempSync(join(tmpdir(), "source-batch-"));
@@ -106,4 +107,47 @@ test("batch inserts only explicit sources, preserves existing configuration, cap
   const pending = await runBatch({ ...opts, phase: "process", maxArticles: 0 });
   assert.ok(pending.articles_pending > 0);
   assert.equal(JSON.parse(readFileSync(state, "utf8")).sources[fresh].collect.status, "ok");
+});
+
+test("batch recovery completes unfinished grouping of analyzed reports without running analysis again", async (t) => {
+  const sourceId = `batch-recover-${T}`, manifest = join(dir, "recover-manifest.json"), state = join(dir, "recover-state.json");
+  t.after(async () => {
+    // Do not leave synthetic reports in the recall window for subsequent tests/runs.
+    await sql`DELETE FROM articles WHERE source_id = ${sourceId}`;
+    await sql`DELETE FROM sources WHERE id = ${sourceId}`;
+  });
+  writeFileSync(manifest, JSON.stringify([{ ...base, id: sourceId }]));
+  await runBatch({ manifest, state, phase: "register" });
+  const progress = JSON.parse(readFileSync(state, "utf8"));
+  const ids: string[] = [];
+  for (const [index, status] of ["unfinished", "group-failed", "complete", "blocked"].entries()) {
+    // UUIDs can share enough character bigrams to recall each other and trigger an unconfigured
+    // model. Distinct private-use characters keep these recovery fixtures lexically unrelated,
+    // including to the ordinary text left by other tests in the shared database.
+    const title = String.fromCodePoint(0xe000 + index).repeat(8);
+    const { articleId } = await upsertMaterial({ sourceId, url: `https://example.com/${T}/${status}`, title,
+      bodyText: title, bodyStatus: "ok", publishedAt: new Date(), via: "fetch" });
+    ids.push(articleId);
+    await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected, output)
+      VALUES (${articleId}, 1, 'rule', ${status === "blocked" ? "block" : "pass"}, 'academic', ${title}, ${title}, 80, false, '{}')`;
+    await sql`UPDATE articles SET processing_state = ${status === "blocked" ? "blocked" : "analyzed"},
+      grouped_at = ${["group-failed", "complete"].includes(status) ? new Date() : null} WHERE id = ${articleId}`;
+    progress.articles[articleId] = { sourceId, process: { status: "pending" }, stage: status === "complete" ? "done" : "group" };
+  }
+  writeFileSync(state, JSON.stringify(progress));
+  const [before] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM receipt_attempts`;
+  process.env.EMBEDDINGS_ENABLED = "false";
+  try {
+    const report = await runBatch({ manifest, state, phase: "process", allowModelCalls: true, maxArticles: 4, concurrency: 3 });
+    const saved = JSON.parse(readFileSync(state, "utf8"));
+    assert.equal(report.articles_processed, 4, JSON.stringify(saved.articles));
+    assert.equal(report.articles_failed, 0);
+    const links = await sql<{ article_id: string }[]>`SELECT article_id FROM fact_articles WHERE article_id IN ${sql(ids)} ORDER BY article_id`;
+    assert.deepEqual(links.map((r) => r.article_id).sort(), ids.slice(0, 2).sort(), "both missing and previously failed grouping resume; completed and blocked reports stay unchanged");
+    const [after] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM receipt_attempts`;
+    assert.equal(after!.n, before!.n, "these unrelated reports group without any new analysis or paid calls");
+    const [analyses] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM analyses WHERE article_id IN ${sql(ids)}`;
+    assert.equal(analyses!.n, 4);
+    for (const id of ids.slice(0, 2)) assert.equal(saved.articles[id].stage, "done");
+  } finally { delete process.env.EMBEDDINGS_ENABLED; }
 });

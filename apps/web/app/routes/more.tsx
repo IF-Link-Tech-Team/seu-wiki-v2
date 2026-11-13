@@ -1,5 +1,4 @@
 import { SITE } from "@aihot/industry/site";
-import { FEATURES } from "@aihot/industry/features";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { pageMeta } from "../lib/seo";
@@ -24,8 +23,6 @@ const GROUPS: Array<{ title: string; rows: Row[] }> = [
       { to: "/handbook", label: "东大生存手册", icon: <IconBook size={18} /> },
       { to: "/all", label: "全部动态", icon: <IconList size={18} /> },
       { to: "/hot", label: "热点榜", icon: <IconFlame size={18} /> },
-      ...(FEATURES.leaderboard ? [{ to: "/leaderboard", label: "模型榜", icon: <IconChart size={18} /> }] : []),
-      ...(FEATURES.codexResetMonitor ? [{ to: "/codex-reset", label: "Tibo重置监控", icon: <IconHistory size={18} /> }] : []),
       { to: "/agent", label: "Agent 接入", icon: <IconPlug size={18} /> },
     ],
   },

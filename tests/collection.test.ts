@@ -37,14 +37,20 @@ let bodyCalls = 0;
 const dajiala = await stub((_hit, req) => {
   if (req.url.startsWith("/fbmain/monitor/v3/history_by_ghid")) {
     const body = JSON.parse(req.body);
+    const recentUrl = body.ghid.startsWith("gh_old_") ? `${MP_URL}-recent` : MP_URL;
+    const snPrefix = body.ghid.startsWith("gh_limit_") ? "limit-" : body.ghid.startsWith("gh_old_") ? "recent-" : "";
     assert.equal(body.offset, "");
     assert.equal(body.verifycode, process.env.DAJIALA_VERIFYCODE ?? "");
     return { code: 0, cost: 0.14, AccountInfo: { NickName: "测试学院", UserName: body.ghid }, MsgList: { Msg: [
       { AppMsg: { DetailInfo: Array.from({ length: body.ghid.startsWith("gh_limit_") ? 5 : 1 }, (_, i) => ({
-        ItemIndex: i + 1, ContentUrl: body.ghid.startsWith("gh_limit_") ? `${MP_URL}-limit-${i}` : MP_URL,
+        ItemIndex: i + 1, ContentUrl: body.ghid.startsWith("gh_limit_") ? `${MP_URL}-limit-${i}` : recentUrl,
         Title: `公众号文章 ${T}`, send_time: Math.floor(Date.now() / 1000) - 3600,
-        Digest: "摘要 2026-10-01", Sn: `sn-${body.ghid.startsWith("gh_limit_") ? "limit-" : ""}${T}-${i}`, CoverImgUrl: "https://mmbiz.qpic.cn/cover.png",
+        Digest: "摘要 2026-10-01", Sn: `sn-${snPrefix}${T}-${i}`, CoverImgUrl: "https://mmbiz.qpic.cn/cover.png",
       })) } },
+      ...(body.ghid.startsWith("gh_old_") ? [{ AppMsg: { DetailInfo: [{
+        ItemIndex: 2, ContentUrl: `${MP_URL}-old`, Title: `历史文章 ${T}`,
+        send_time: Math.floor(Date.now() / 1000) - 8 * 86400, Sn: `old-${T}`,
+      }] } }] : []),
     ] }, remain_money: 100 };
   }
   bodyCalls += 1;
@@ -160,6 +166,30 @@ test("a controlled WeChat batch buys at most three new bodies and does not rebuy
   assert.equal(dajiala.hits(), before + 6);
   await checkMpAccount(id, "manual", { maxNew: 3 });
   assert.equal(dajiala.hits(), before + 6, "no known body or same-window list is bought twice");
+});
+
+test("WeChat checks skip old posts after initialization as well as on the first check", async () => {
+  const id = `mp-old-${T}`;
+  await sql`INSERT INTO sources (id, name, kind, config, tier, participation_mode)
+    VALUES (${id}, '测试学院', 'mp_account', ${sql.json({ ghid: `gh_old_${T}`, nickname: "测试学院" })}, 'T1', 'editorial')`;
+  const before = bodyCalls;
+  const first = await checkMpAccount(id, "manual");
+  assert.equal(first.status, "ok");
+  assert.equal(first.created, 1, "the recent post is collected on the first check");
+  assert.equal(bodyCalls, before + 1, "the first check does not buy the eight-day-old body");
+
+  const second = await checkMpAccount(id, "manual");
+  assert.equal(second.status, "ok");
+  assert.equal(second.created, 0, "initialization must not turn old posts into new material");
+  assert.equal(bodyCalls, before + 1, "later manual checks must not buy old bodies either");
+
+  await sql`UPDATE sources SET last_fetch_at = now() - interval '2 days', next_fetch_at = now() - interval '1 day' WHERE id = ${id}`;
+  const scheduled = await checkMpAccount(id, "schedule");
+  assert.equal(scheduled.status, "ok");
+  assert.equal(scheduled.created, 0);
+  assert.equal(bodyCalls, before + 1, "the next scheduled list must not buy old bodies");
+  const [receipts] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM receipts WHERE service = 'dajiala' AND purpose = 'mp_article' AND subject = ${id}`;
+  assert.equal(receipts!.n, 1, "only the recent article has a paid detail receipt");
 });
 
 test("a short verification code cannot corrupt numeric status or cost while redacting responses", async () => {

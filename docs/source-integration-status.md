@@ -31,7 +31,7 @@ node --env-file=.data/wechat-first-batch/local.env .data/wechat-all-sources/repo
 
 ## 每日采集与本地预览
 
-2026-11-06 验收快照：514 篇已入库，512 篇已完成分析和发布判断（包含按预筛规则不进入公开列表的内容）。剩余 2 篇的旧请求仍在未知结果保护期内；已有单次、有时限的恢复进程等待原有机制放行，不会无限重试。其 PID、目标和状态在 `.data/wechat-all-sources/held-recovery-state.json`，不能把等待状态标为完成。
+2026-11-06 13:24 验收快照：514 篇已入库，514 篇均完成分析和发布判断，其中 504 篇已分析、10 篇被预筛阻止。之前结果未知的 2 篇已通过原有单次放行机制恢复；恢复进程状态为 `completed`，没有无限重试。
 
 `scripts/watch-mp-sources.ts` 仅检查清单中启用且间隔为 1440 分钟的公众号，不启动全源 worker、模型或推送。每次发请求前重查启停、到期和未知回执；检查失败也不在同一天反复请求。启动预检查确认 84 个账号、0 个立即到期，无额外查询扣费。运行 PID 和心跳在 `.data/wechat-all-sources/daily-watcher.json`。
 
@@ -41,4 +41,4 @@ node --env-file=.data/wechat-first-batch/local.env .data/wechat-all-sources/repo
 - IF.Link 筛选：`http://localhost:3100/all?sources=mp-iflinkcommunity`
 - API：`127.0.0.1:3101`；独立预览数据库：`127.0.0.1:55440/seuwiki_wechat_preview`。
 
-本轮没有修改正式站数据库、发布部署或发送外部消息。正式站上线需将已审阅的变更部署并按同样的数据库、公开读取、图片和页面层次验收；不能把本地预览当作生产上线。
+上述数字是本地验收结果。用户随后授权提交 PR、审核合并、管理员部署及服务器每日采集；生产部署按 [公众号采集接入](wechat-collection.md) 的检查步骤执行，部署结果另以实际工作流和服务器记录为准。

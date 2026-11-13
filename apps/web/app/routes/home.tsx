@@ -14,7 +14,7 @@ import { EmptyState } from "../components/ui/Page";
 import { beijingDate, beijingWeekday } from "../lib/format";
 
 function parseSourcesParam(url: URL): string[] | null {
-  const ids = (url.searchParams.get("sources") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+  const ids = (url.searchParams.get("sources") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 50);
   return ids.length ? ids : null;
 }
 
@@ -120,7 +120,7 @@ export default function Home() {
       <CategoryTabs active={active} layoutId="home-cat-mobile" className="mt-3 lg:hidden" />
       <div className="my-3 flex items-center justify-end gap-2 lg:hidden">
         <SelectedSourceChips options={sourceOptions} selected={selectedSources} />
-        <SourceFilter options={sourceOptions} selected={selectedSources} />
+        <SourceFilter options={sourceOptions} selected={selectedSources} className="ml-auto" />
       </div>
 
       {mode === "timeline" && timeline ? (

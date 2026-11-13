@@ -15,6 +15,8 @@ export interface ModelSpec {
   apiKeyEnv: string;
   /** Extra request fields, e.g. switching reasoning off for short structured tasks. */
   extra?: Record<string, unknown>;
+  /** Extra output allowance for models whose reasoning consumes max_tokens. */
+  reasoningTokens?: number;
   jsonMode: boolean;
   vision?: boolean;
 }
@@ -36,6 +38,22 @@ export const MODELS: Record<string, ModelSpec> = {
     get extra() { return extraFromEnv(process.env.LLM_EXTRA_JSON); },
     get jsonMode() { return process.env.LLM_JSON_MODE !== "false"; },
     get vision() { return process.env.LLM_VISION === "true"; },
+  },
+  // Separate credentials keep the deployment's default model available for rollback.
+  "step-3.5-flash-2603": {
+    key: "step-3.5-flash-2603", service: "stepfun", model: "step-3.5-flash-2603",
+    baseUrlEnv: "STEPFUN_BASE_URL", apiKeyEnv: "STEPFUN_API_KEY",
+    extra: { reasoning_effort: "low" }, reasoningTokens: 8192, jsonMode: true, vision: false,
+  },
+  "step-3.7-flash": {
+    key: "step-3.7-flash", service: "stepfun", model: "step-3.7-flash",
+    baseUrlEnv: "STEPFUN_BASE_URL", apiKeyEnv: "STEPFUN_API_KEY",
+    extra: { reasoning_effort: "low" }, reasoningTokens: 16384, jsonMode: true, vision: false,
+  },
+  "step-5-preview": {
+    key: "step-5-preview", service: "stepfun", model: "step-5-preview",
+    baseUrlEnv: "STEPFUN_BASE_URL", apiKeyEnv: "STEPFUN_API_KEY",
+    extra: { reasoning_effort: "medium" }, reasoningTokens: 32768, jsonMode: true, vision: false,
   },
   // MiniMax M2.7：score/structure 这类重 JSON 任务用（M3.1-Flash 强制思考会烧光 max_tokens、content 为空）。
   // 历史上用 M2.5，2026-10-02 起升级到 M2.7。
@@ -186,7 +204,7 @@ export async function chatJson<S extends z.ZodType>(opts: ChatJsonOptions<S>): P
   // 否则长提示词下思考烧完配额、content 为空（"No JSON object in model output"）。
   // 初期故意给宽（32768，实测 API 接受），先跑起来再按用量统计收紧。
   const alwaysReasons = /^MiniMax-M[23]/i.test(spec.model);
-  const maxTokens = Math.max(opts.maxTokens ?? 1500, 512) + (spec.key.endsWith("-think") || alwaysReasons ? 32768 : 0);
+  const maxTokens = Math.max(opts.maxTokens ?? 1500, 512) + (spec.reasoningTokens ?? (spec.key.endsWith("-think") || alwaysReasons ? 32768 : 0));
   const userText = typeof opts.user === "string" ? opts.user : JSON.stringify(opts.user);
   const body: Record<string, unknown> = {
     model: spec.model,

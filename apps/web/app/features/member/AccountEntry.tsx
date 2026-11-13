@@ -1,9 +1,10 @@
-// 登录/用户入口：站点启用统一账户时才渲染。状态请求禁缓存、同源带 cookie，
+// 登录/用户入口：未配置统一账户时显示不可用提示。状态请求禁缓存、同源带 cookie，
 // pageshow/窗口聚焦时刷新（跨站 SSO 回来后不能还显示旧的匿名状态）。
 // 接口 5xx 时保留入口并提示"暂时不可用"，不隐藏、不冒充未登录。
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { IconUsers } from "../../components/icons";
+import { memberReturnPath } from "./member-return";
 
 type State =
   | { kind: "loading" }
@@ -40,9 +41,10 @@ export function useMemberState(enabled: boolean): State {
 
 export function AccountEntry({ enabled }: { enabled: boolean }) {
   const state = useMemberState(enabled);
-  const { pathname, search } = useLocation();
-  if (!enabled) return null;
+  const location = useLocation();
+  const returnTo = memberReturnPath(location.pathname, location.search);
   const base = "flex h-10 items-center gap-2.5 rounded-control px-2.5 text-[14px] font-medium transition-colors";
+  if (!enabled) return <div className={`${base} text-ink-4`} title="本地尚未配置 IF.Link 统一账户"><IconUsers size={17} /><span>登录暂未启用</span></div>;
   if (state.kind === "loading") return null;
   if (state.kind === "unavailable") {
     return (
@@ -64,7 +66,7 @@ export function AccountEntry({ enabled }: { enabled: boolean }) {
     );
   }
   return (
-    <a href={`/api/logto/sign-in?redirect=${encodeURIComponent(`${pathname}${search}`)}`} className={`${base} text-ink-3 hover:bg-bg-sunk hover:text-ink`}>
+    <a href={`/api/logto/sign-in?redirect=${encodeURIComponent(returnTo)}`} className={`${base} text-ink-3 hover:bg-bg-sunk hover:text-ink`}>
       <span className="flex w-[22px] shrink-0 justify-center"><IconUsers size={17} /></span>
       登录 IF.Link 账号
     </a>

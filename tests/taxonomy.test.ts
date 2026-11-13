@@ -29,11 +29,21 @@ after(async () => {
   await closeDb();
 });
 
-test("种子导入：TOPIC_GROUPS 落为 active 词，幂等", async () => {
+test("种子导入：TOPIC_GROUPS 落为 active 词，幂等；换代退役的词被重新收编时复活", async () => {
   const again = await seedTaxonomyTerms();
   assert.equal(again, 0, "第二次导入不应新增");
   const tax = await getTaxonomyTerms();
   for (const g of TOPIC_GROUPS) for (const name of g.terms) assert.ok(tax.active.includes(name), `缺种子词 ${name}`);
+
+  // 换代边界：seed-sync 退役的词被新词表重新收编 → 复活；人工拒绝的词不复活
+  const word = TOPIC_GROUPS[0]!.terms[0]!;
+  await sql`UPDATE taxonomy_terms SET status = 'rejected', reviewed_by = 'seed-sync' WHERE name = ${word}`;
+  await seedTaxonomyTerms();
+  assert.equal((await getTaxonomyTerms()).active.includes(word), true, "seed-sync 退役的词应复活");
+  await sql`UPDATE taxonomy_terms SET status = 'rejected', reviewed_by = 'admin' WHERE name = ${word}`;
+  await seedTaxonomyTerms();
+  assert.equal((await getTaxonomyTerms()).active.includes(word), false, "人工拒绝的词不复活");
+  await sql`UPDATE taxonomy_terms SET status = 'active', reviewed_by = NULL WHERE name = ${word}`;
 });
 
 test("候选池：同词计数，满门槛才进审核队列", async () => {
@@ -47,6 +57,19 @@ test("候选池：同词计数，满门槛才进审核队列", async () => {
   assert.ok(c, "满门槛应出现");
   assert.equal(c!.count, CANDIDATE_THRESHOLD);
   assert.ok(c!.examples.includes(`/items/a-${T}`));
+});
+
+test("正式种子吸收已存在的模型候选，并更新沿用词的分组；重复导入无变更", async () => {
+  const group = TOPIC_GROUPS[0]!;
+  const name = group.terms[0]!;
+  await sql`UPDATE taxonomy_terms SET status = 'candidate', source = 'model', grp = '', reviewed_by = NULL WHERE name = ${name}`;
+  await seedTaxonomyTerms();
+  const [row] = await sql`SELECT status, source, grp FROM taxonomy_terms WHERE name = ${name}`;
+  assert.deepEqual({ ...row }, { status: 'active', source: 'seed', grp: group.label });
+  await sql`UPDATE taxonomy_terms SET grp = '旧分组' WHERE name = ${name}`;
+  await seedTaxonomyTerms();
+  assert.equal((await sql`SELECT grp FROM taxonomy_terms WHERE name = ${name}`)[0]!.grp, group.label);
+  assert.equal(await seedTaxonomyTerms(), 0);
 });
 
 test("候选池：active 词、别名、rejected 词不再进", async () => {

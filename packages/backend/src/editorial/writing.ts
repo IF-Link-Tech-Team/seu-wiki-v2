@@ -8,7 +8,6 @@ import type { AnalyzeInputArticle } from "./input.ts";
 import { promptText } from "./prompts.ts";
 
 export const PREFILTER_SYSTEM = promptText("prefilter");
-export const UNDERSTAND_SYSTEM = promptText("understand");
 
 /** A body longer than this is cut (whole bodies are sent; a few run past the context). */
 export const MAX_BODY_CHARS = 60_000;
