@@ -3830,6 +3830,41 @@
         "verifiedAt": "2026-11-13",
         "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
       }
+    },
+    {
+      "candidateRef": "U-saikr",
+      "name": "公众号·赛氪竞赛",
+      "note": "2026-11-13 用户指定接入；面向大学生竞赛的全国性信息聚合账号，接口返回显示名与配置一致（当日 64 篇）",
+      "evidence": [
+        "https://www.saikr.com/",
+        "https://mp.weixin.qq.com/s?__biz=Mzg4MDU3MzkzMg==&mid=2247522620&idx=1&sn=d39541a358e7f4e0b9b33d7e56238df9"
+      ],
+      "identifier": null,
+      "id": "mp-saikr",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e3b6e6279f5e",
+        "nickname": "赛氪竞赛"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "竞赛"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-saikr",
+        "status": "verified",
+        "actualName": "赛氪竞赛",
+        "ghid": "gh_e3b6e6279f5e",
+        "receiptId": 25,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
     }
   ],
   "pending": [
