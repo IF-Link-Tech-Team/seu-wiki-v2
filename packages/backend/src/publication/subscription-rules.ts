@@ -1,7 +1,7 @@
 import { SUBSCRIPTION_TAXONOMY as TAX } from "@aihot/industry/subscription-v2";
 import { TAG_SYNONYMS } from "@aihot/industry/taxonomy";
 import type { SubscriptionAnnotation, SubscriptionEvidence, SubscriptionProfile } from "@aihot/contracts/subscription";
-import { LEGACY_TOPIC_GROUP_IDS, OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES } from "@aihot/industry/subscription-onboarding";
+import { CHILD_TOPIC_NAMES, LEGACY_TOPIC_GROUP_IDS, OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES } from "@aihot/industry/subscription-onboarding";
 
 const tags = TAX.tags as readonly { id: string; label: string; dimension: string; reserved: boolean }[];
 const groups = TAX.groups as readonly { id: string; label: string; dimension: string; terms: readonly string[] }[];
@@ -9,33 +9,42 @@ const topicNames = new Set(tags.filter(t => t.dimension === "topic").map(t => t.
 const collegeNames = groups.find(g => g.id === "group:12")!.terms.map(id => id.slice(id.indexOf(":") + 1));
 
 /** 非主题维度的召回别名（主体、学院、校区）；主题词的旧写法统一由 TAG_SYNONYMS 归一派生。 */
-const EXTRA_ALIASES: Record<string, string[]> = {
+export const EXTRA_ALIASES: Record<string, string[]> = {
   "丁家桥": ["丁家桥校区"], "学生处（党委学工部）": ["学生处", "党委学工部", "学生工作处", "东南学工家"],
   "就业指导中心": ["就业中心", "学生就业指导中心"], "网络与信息中心": ["网络信息中心"],
   "经济管理学院": ["经管"], "外国语学院": ["外国语"], "计算机科学与工程学院": ["计算机"],
   "信息科学与工程学院": ["信息学院"], "电子科学与工程学院": ["电子学院"],
   "生物科学与医学工程学院": ["生医"], "仪器科学与工程学院": ["仪科学院"],
   "能源与环境学院": ["能环"], "化学化工学院": ["化工"], "网络空间安全学院": ["网安"],
-  "AI/机器学习": ["AI"], "访学与交流": ["国家留学基金委", "CSC"],
+  "AI/机器学习": ["AI"], "交换与访学": ["国家留学基金委", "CSC"],
   "项目申报与基金": ["国家自然科学基金", "国家社会科学基金"], "国企与制造": ["国企", "央企"],
+  // 被泛化别名剔除的精确说法：主持→主持人大赛，机器人→机器人竞赛，论文→论文投稿/征集论文（征文/征稿太泛），
+  // 调剂/内推 子串撞词（设备调剂、团内推优），开题→集中开题/开题答辩/开题工作（教师"开题报告会"不召回）
+  "演讲辩论": ["主持人大赛"], "学科竞赛": ["机器人竞赛", "RoboCup"], "论文发表": ["论文投稿", "征集论文", "论文征集"],
+  "考研": ["硕士研究生招生", "调剂复试", "调剂系统"], "校园招聘": ["内推码", "内部推荐"],
+  "研究生培养": ["集中开题", "开题答辩", "开题工作"], "奖学金": ["奖助学金"], "文艺演出": ["舞剧", "展映"],
+  "防诈骗与安全": ["防诈"], "校园服务": ["医保"], "学籍与辅修": ["退学"],
   // 公众号昵称（信源名）→ 订阅可关注的部门：113 个 mp_account 接入后，昵称与部门名对不上的靠这里召回
   "科研院": ["东大科研"], "社会科学处": ["东大文科"], "实验室与设备管理处": ["东大设备"],
   "党委教师工作部": ["东南教师"], "研究生招生网": ["东南大学研招", "研招"],
   "本科招生网": ["东南大学本科招生"], "档案馆": ["东南大学档案馆"], "校友服务与基金事务处": ["东南大学校友服务", "校友总会"],
-  "文化素质教育": ["东南大学文化素质教育中心"], "体育系": ["东南大学体育系", "东大体育"],
+  "讲座与文化": ["东南大学文化素质教育中心"], "体育系": ["东南大学体育系", "东大体育"],
 };
 const aliases: Record<string, string[]> = (() => {
+  // 泛化别名在订阅匹配里造成大量误命中（"活动"65 条、"主持"20 条、"设计"19 条…），主站打标归一仍用 TAG_SYNONYMS，
+  // 订阅召回只认更具体的词；被剔除的口语词若指向真实高频话题，在 EXTRA_ALIASES 用精确说法补回。
+  const blocklist = new Set(["活动", "主持", "设计", "毕业", "实验室", "机器人", "体育", "创业", "论文", "投稿", "拟录取", "科研成果", "成果转化", "志愿", "科学技术奖", "顶尖科学家", "犀牛鸟", "调剂", "内推", "开题", "换届"]);
   const out: Record<string, string[]> = {};
   for (const [variant, canonical] of Object.entries(TAG_SYNONYMS)) {
-    if (canonical !== variant) (out[canonical] ??= []).push(variant);
+    if (canonical !== variant && !blocklist.has(variant)) (out[canonical] ??= []).push(variant);
   }
   for (const [label, words] of Object.entries(EXTRA_ALIASES)) (out[label] ??= []).push(...words);
   return out;
 })();
 
-/** 旧画像/旧模型词里的主题名归一到聚合词；不认识的原样返回，由校验层处置。 */
+/** 旧画像/旧模型词里的主题名归一到聚合词；细分词本身已是词表节点，不再归一到所属大类；不认识的原样返回，由校验层处置。 */
 export function canonicalTopicName(name: string): string {
-  return OPTIMIZED_TOPIC_NAMES.has(name) ? name : TAG_SYNONYMS[name] ?? name;
+  return OPTIMIZED_TOPIC_NAMES.has(name) || CHILD_TOPIC_NAMES.has(name) ? name : TAG_SYNONYMS[name] ?? name;
 }
 
 /** v3 聚合词 → v4 拆分词：一对一映射表达不了的换代在这里拆。 */
@@ -77,6 +86,7 @@ export function normalizeSubscriptionProfile(raw: unknown): SubscriptionProfile 
     interests: list("interests", "topic"), publishers: list("publishers", "publisher"), types: list("types", "type"),
     identityNotices: p.identityNotices === true,
     ...(optimized ? { mode: p.mode as "interest" | "identity_all", followOwnCollege: p.followOwnCollege === true,
+      followColleges: [...new Set((Array.isArray(p.followColleges) ? p.followColleges : []).filter(x => typeof x === "string").slice(0, 10))].filter(c => collegeNames.includes(c)),
       topicGroups: selectedGroups.map(g => g.id), excludedTypes: list("excludedTypes", "type"), excludedLocations: list("excludedLocations", "location") } : {}),
   };
 }
@@ -99,15 +109,19 @@ export function annotateSubscription(input: { title: string; summary: string | n
   const evidence: SubscriptionEvidence[] = [];
   const warnings: string[] = [];
   const source = input.source.replace(/（本地快照）$/, "");
-  const hit = (label: string, words = [label, ...(aliases[label] ?? [])], sourceOnly = false) => {
-    const fields = sourceOnly ? [["来源", source]] : [["标题", title], ["摘要", summary]];
+  const hit = (label: string, words = [label, ...(aliases[label] ?? [])], sourceOnly = false, titleOnly = false) => {
+    const fields = sourceOnly ? [["来源", source]] : titleOnly ? [["标题", title]] : [["标题", title], ["摘要", summary]];
     for (const [field, value] of fields) for (const word of words) if (contains(label === "AI/机器学习" ? value.replace(/人工智能学院/g, "") : value, word)) {
       evidence.push({ tag: label, field, quote: snippet(value, word) }); return true;
     }
     return false;
   };
   // Category names are never a fallback for topics; every hit retains its text evidence.
-  const topics = tags.filter(t => t.dimension === "topic" && (!t.reserved || (optimized && OPTIMIZED_TOPIC_NAMES.has(t.label))) && hit(t.label)).map(t => t.label);
+  // 摘要擦边的主题只认标题：违纪/条件/后果列举（"保研资格""取消学籍""入伍加分""论文要求"）、
+  // 名单摘要列举（"招生方式：硕博连读"）、征集活动动词（"投稿""征稿"）都会在摘要里偶然提到主题词，
+  // 而这些通知的标题必带主题词，标题命中即精准。集合按画像回归发现的新擦边模式持续扩充。
+  const TITLE_ONLY_TOPICS = new Set(["AI/机器学习", "志愿公益", "交换与访学", "研究生培养", "校园服务", "讲座与文化", "硕博连读", "大创", "考研", "学科竞赛", "选课与成绩", "评优评先", "保研", "投稿", "学籍与辅修", "项目申报与基金", "推免", "入伍", "国防与征兵"]);
+  const topics = tags.filter(t => t.dimension === "topic" && (!t.reserved || (optimized && OPTIMIZED_TOPIC_NAMES.has(t.label))) && hit(t.label, undefined, false, TITLE_ONLY_TOPICS.has(t.label))).map(t => t.label);
   const publishers = tags.filter(t => t.dimension === "publisher" && hit(t.label, undefined, true)).map(t => t.label);
   const locations = tags.filter(t => t.dimension === "location" && hit(t.label)).map(t => t.label);
   const formats = hit("线上", ["线上", "腾讯会议", "在线参加"]) ? ["线上"] : [];
@@ -184,9 +198,12 @@ export function matchSubscription(a: SubscriptionAnnotation, p: SubscriptionProf
   const conflicts: string[] = [];
   const uncertain: string[] = [];
   const audience = a.audience;
+  const followedColleges = [...(p.followColleges ?? [])];
   if (audience.staffOnly) conflicts.push("明确面向教职工，本订阅面向在校学生");
   for (const [label, allowed, value] of [["培养层次", audience.degrees, p.degree], ["适用学院", audience.colleges, p.college], ["入学年份", audience.years, p.enrollmentYear]] as const) {
     if (!allowed.length) continue;
+    // 关注的学院可以豁免所在学院不符：吴健雄/未来技术学生关注分流学院后，面向该学院的通知照进订阅流。
+    if (value && !allowed.includes(value) && allowed.some(c => followedColleges.includes(c))) continue;
     if (!value) uncertain.push(`${label}未填写，无法核对`);
     else if (!allowed.includes(value)) conflicts.push(`${label}不符合（要求：${allowed.join("、")}）`);
   }
@@ -194,10 +211,12 @@ export function matchSubscription(a: SubscriptionAnnotation, p: SubscriptionProf
     if (p.international === "no") conflicts.push("仅面向留学生"); else uncertain.push("留学生身份未填写");
   }
   const interestHits = a.topics.filter(t => p.interests.includes(`topic:${t}`));
-  const sourceHits = a.publishers.filter(t => p.publishers.includes(`publisher:${t}`) || (p.followOwnCollege && p.college === t));
+  const sourceHits = a.publishers.filter(t => p.publishers.includes(`publisher:${t}`) || (p.followOwnCollege && p.college === t) || followedColleges.includes(t));
+  const audienceCollegeHits = audience.colleges.filter(c => followedColleges.includes(c));
   if (interestHits.length) reasons.push(`兴趣：${interestHits.join("、")}`);
   if (sourceHits.length) reasons.push(`关注机构：${sourceHits.join("、")}`);
-  const identityHit = (audience.schoolwide || (p.degree && audience.degrees.includes(p.degree)) || (p.college && audience.colleges.includes(p.college)) || (p.enrollmentYear && audience.years.includes(p.enrollmentYear)) || (audience.internationalOnly && p.international === "yes"));
+  if (audienceCollegeHits.length) reasons.push(audienceCollegeHits.includes(p.college) ? `面向你的学院：${audienceCollegeHits.join("、")}` : `面向你关注的学院：${audienceCollegeHits.join("、")}`);
+  const identityHit = (audience.schoolwide || (p.degree && audience.degrees.includes(p.degree)) || (p.college && audience.colleges.includes(p.college)) || audience.colleges.some(c => followedColleges.includes(c)) || (p.enrollmentYear && audience.years.includes(p.enrollmentYear)) || (audience.internationalOnly && p.international === "yes"));
   const identityNotice = p.identityNotices && identityHit && conflicts.length === 0 && a.types.includes("事务通知");
   if (identityNotice) reasons.push("明确面向你的事务通知");
   if (p.mode === "identity_all") reasons.push("已开启接收兴趣之外的信息，仍核对身份与排除条件");

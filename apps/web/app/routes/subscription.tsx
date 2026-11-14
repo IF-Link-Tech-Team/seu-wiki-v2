@@ -184,6 +184,7 @@ function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf, we
             <p>{[profile.degree,profile.college].filter(Boolean).join(" · ") || "尚未填写身份"}</p>
             <p>感兴趣：{profile.interests.map(label).join("、") || "尚未选择"}</p>
             {!!profile.publishers.length && <p>关注机构：{profile.publishers.map(label).join("、")}</p>}
+            {!!profile.followColleges?.length && <p>关注学院：{profile.followColleges.join("、")}</p>}
             {!!profile.topicGroups?.length && <p>关注方向：{profile.topicGroups.map(id=>OPTIMIZED_TOPIC_GROUPS.find(g=>g.id===id)?.label??id).join("、")}</p>}
             <div className="flex flex-wrap gap-2"><button className={primary} onClick={()=>setEditing(true)}>修改偏好</button><button className={button} disabled={saving} onClick={()=>void reset()}>清除偏好</button></div>
           </div>
@@ -208,6 +209,7 @@ function SubscriptionCard({item}:{item:SubscriptionItem}){
     <p className="text-xs text-ink-3">{item.source.replace(/（本地快照）$/,"")} · {new Date(item.publishedAt).toLocaleDateString("zh-CN",{timeZone:"Asia/Shanghai"})}</p>
     <h2 className="mt-2 text-lg font-semibold leading-7"><Link to={"/items/"+item.id} target="_blank" rel="noreferrer" className="hover:text-accent">{item.title}</Link></h2>
     <p className="mt-2 text-sm leading-7 text-ink-2">{item.summary||"暂无摘要，请查看原始信息。"}</p>
+    {!!item.reasons.length && <p className="mt-2 text-xs leading-6 text-ink-3">命中：{item.reasons.slice(0,3).join("；")}</p>}
     <div className="mt-3 flex flex-wrap gap-2">{item.annotation.topics.slice(0,5).map(t=><span key={t} className="rounded-lg bg-accent-soft px-2 py-1 text-xs text-accent-ink">{t}</span>)}</div>
   </article>;
 }
