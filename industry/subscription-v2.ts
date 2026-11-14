@@ -1,7 +1,8 @@
 // User-approved taxonomy. Navigation groups never imply audience restrictions.
 // 2026-11-09-v3：SRTP/大创独立成词、交换与访学/论文发表更贴学生口语，别名覆盖绩点/挂科/调剂/毕设/数模/电赛/内推等高频词。
+// 2026-11-14-v4：大类下恢复高频细分词（TOPIC_TAG_CHILDREN）作为可单独订阅的第三层；大类整选语义不变（细分词经 TAG_SYNONYMS 归一到大类参与别名召回）。
 export const SUBSCRIPTION_TAXONOMY = {
-  "version": "2026-11-09-v3",
+  "version": "2026-11-14-v4",
   "tags": [
     {
       "id": "topic:选课与成绩",
@@ -258,6 +259,342 @@ export const SUBSCRIPTION_TAXONOMY = {
     {
       "id": "topic:校友活动",
       "label": "校友活动",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:四六级",
+      "label": "四六级",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:期末考试",
+      "label": "期末考试",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:转专业",
+      "label": "转专业",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:辅修",
+      "label": "辅修",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:考博",
+      "label": "考博",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:硕博连读",
+      "label": "硕博连读",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:毕业设计",
+      "label": "毕业设计",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:推免",
+      "label": "推免",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:夏令营",
+      "label": "夏令营",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:留学申请",
+      "label": "留学申请",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:暑期学校",
+      "label": "暑期学校",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:交换生",
+      "label": "交换生",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:秋招",
+      "label": "秋招",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:春招",
+      "label": "春招",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:宣讲会",
+      "label": "宣讲会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:招聘会",
+      "label": "招聘会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:公务员",
+      "label": "公务员",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:事业单位",
+      "label": "事业单位",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:职业规划",
+      "label": "职业规划",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:创业",
+      "label": "创业",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:互联网",
+      "label": "互联网",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:芯片",
+      "label": "芯片",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:创新创业",
+      "label": "创新创业",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:科研助理",
+      "label": "科研助理",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:国自然",
+      "label": "国自然",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:投稿",
+      "label": "投稿",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:数学建模",
+      "label": "数学建模",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:电赛",
+      "label": "电赛",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:挑战杯",
+      "label": "挑战杯",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:大模型",
+      "label": "大模型",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:深度学习",
+      "label": "深度学习",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:国家奖学金",
+      "label": "国家奖学金",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:国奖",
+      "label": "国奖",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:勤工助学",
+      "label": "勤工助学",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:助学贷款",
+      "label": "助学贷款",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:三好学生",
+      "label": "三好学生",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:优秀毕业生",
+      "label": "优秀毕业生",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:学生会",
+      "label": "学生会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:研究生会",
+      "label": "研究生会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:招新",
+      "label": "招新",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:百团大战",
+      "label": "百团大战",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:迎新晚会",
+      "label": "迎新晚会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:音乐会",
+      "label": "音乐会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:运动会",
+      "label": "运动会",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:社会实践",
+      "label": "社会实践",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:支教",
+      "label": "支教",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:辩论赛",
+      "label": "辩论赛",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:食堂",
+      "label": "食堂",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:宿舍",
+      "label": "宿舍",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:校园网",
+      "label": "校园网",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:展览",
+      "label": "展览",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:党课",
+      "label": "党课",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:青马工程",
+      "label": "青马工程",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:军训",
+      "label": "军训",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:入伍",
+      "label": "入伍",
+      "dimension": "topic",
+      "reserved": false
+    },
+    {
+      "id": "topic:国际会议",
+      "label": "国际会议",
       "dimension": "topic",
       "reserved": false
     },

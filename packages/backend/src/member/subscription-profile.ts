@@ -64,6 +64,7 @@ export function parseSubscriptionProfile(value: unknown): SubscriptionProfile {
     identityNotices: raw.identityNotices,
     ...(raw.mode === undefined ? {} : { mode: raw.mode }),
     ...(raw.followOwnCollege === undefined ? {} : { followOwnCollege: raw.followOwnCollege }),
+    ...(raw.followColleges === undefined ? {} : { followColleges: selection(raw.followColleges, "关注学院", collegeNames, 10) }),
     ...(raw.topicGroups === undefined ? {} : { topicGroups: selection(raw.topicGroups, "兴趣组", topicGroupIds, 20) }),
     ...(raw.excludedTypes === undefined ? {} : { excludedTypes: selection(raw.excludedTypes, "排除内容类型", typeIds) }),
     ...(raw.excludedLocations === undefined ? {} : { excludedLocations: selection(raw.excludedLocations, "排除校区", locationIds) }),
