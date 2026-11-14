@@ -102,23 +102,23 @@ export default function Home() {
         <TodayLabel />
       </div>
       <div className="hidden lg:block">
-        <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">{title}</h1>
-        <div className="mb-5 mt-4 flex items-center justify-between gap-4">
-          <CategoryTabs active={active} layoutId="home-cat-desk" className="min-w-0" />
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="browse-title min-w-0">{title}</h1>
           <div className="flex shrink-0 items-center gap-2">
             <SourceFilter options={sourceOptions} selected={selectedSources} />
             <SearchField variant="track" keep={{ category: filters.category, sources: sources?.join(",") ?? null }} />
           </div>
         </div>
+        <CategoryTabs active={active} layoutId="home-cat-desk" className="mb-4 mt-3" />
         <SelectedSourceChips options={sourceOptions} selected={selectedSources} />
       </div>
 
-      <h2 className="mt-6 text-[20px] font-bold text-ink lg:hidden">{filters.tag ? title : mode === "timeline" ? "最新精选" : title}</h2>
-      <div className="-mx-4 mt-3 flex items-center gap-2 pl-4 pr-2 lg:hidden">
-        <CategoryTabs active={active} layoutId="home-cat-mobile" size="sm" className="min-w-0 flex-1" />
+      <div className="mt-4 flex items-center justify-between gap-2 lg:hidden">
+        <h2 className="browse-title min-w-0">{filters.tag ? title : mode === "timeline" ? "最新精选" : title}</h2>
         <SearchIconLink />
       </div>
-      <div className="mt-2 flex items-center justify-between lg:hidden">
+      <CategoryTabs active={active} layoutId="home-cat-mobile" className="mt-3 lg:hidden" />
+      <div className="my-3 flex items-center justify-end gap-2 lg:hidden">
         <SelectedSourceChips options={sourceOptions} selected={selectedSources} />
         <SourceFilter options={sourceOptions} selected={selectedSources} className="ml-auto" />
       </div>

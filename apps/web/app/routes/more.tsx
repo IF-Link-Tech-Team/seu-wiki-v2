@@ -43,7 +43,7 @@ const GROUPS: Array<{ title: string; rows: Row[] }> = [
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="card overflow-hidden">
-      <div className="px-4 pb-1 pt-3 text-[11.5px] text-ink-4">{title}</div>
+      <h2 className="px-4 pb-1 pt-3 text-[13px] font-medium leading-normal text-ink-4">{title}</h2>
       <ul className="divide-y divide-line-soft">{children}</ul>
     </section>
   );
@@ -52,21 +52,21 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 export default function MorePage() {
   return (
     <div className="mx-auto max-w-[var(--page-max-reading)] pb-8">
-      <h1 className="pb-4 pt-5 text-[22px] font-bold text-ink lg:pt-1">更多</h1>
-      <div className="space-y-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0 2xl:grid-cols-3">
+      <h1 className="browse-title pb-4 pt-5 lg:pt-1">更多</h1>
+      <div className="grid items-start gap-4 sm:grid-cols-2 2xl:grid-cols-3">
         {GROUPS.map((g) => (
           <Group key={g.title} title={g.title}>
             {g.rows.map((r) => (
               <li key={r.to}>
-                <Link to={r.to} className="flex h-[50px] items-center gap-3 px-4 text-[15px] font-medium text-ink transition-colors active:bg-bg-sunk lg:hover:bg-bg-sunk">
-                  <span className="text-ink-3">{r.icon}</span>
-                  <span className="flex-1">{r.label}</span>
-                  <IconChevronRight size={16} className="text-ink-4" />
+                <Link to={r.to} className="flex min-h-12 items-center gap-3 px-4 py-2 text-[15px] font-medium leading-normal text-ink transition-colors hover:bg-bg-sunk">
+                  <span className="shrink-0 text-ink-3">{r.icon}</span>
+                  <span className="min-w-0 flex-1">{r.label}</span>
+                  <IconChevronRight size={16} className="shrink-0 text-ink-4" />
                 </Link>
               </li>
             ))}
             {g.title === "偏好" && (
-              <li className="flex h-[58px] items-center gap-3 px-4 text-[15px] font-medium text-ink">
+              <li className="flex min-h-12 items-center gap-3 px-4 py-2 text-[15px] font-medium leading-normal text-ink">
                 <span className="text-ink-3">
                   <IconMoon size={18} />
                 </span>

@@ -22,6 +22,7 @@ import { completeReceipt, ProviderRejectedError } from "../providers/receipts.ts
 import { collapseWhitespace } from "../lib/text.ts";
 import { modelFor } from "./models.ts";
 import { buildMaterial, firstImagePart, loadAnalyzeInput, type AnalyzeInputArticle } from "./input.ts";
+import { ActivityEditorialSchema, normalizeActivityEditorial } from "./activity.ts";
 import { pageFetchable } from "../content/extract.ts";
 import { shutdownSignal } from "../jobs/queue.ts";
 import {
@@ -187,6 +188,7 @@ const StructureSchema = z.object({
   subjects: z.array(z.string()).max(6).catch([]),
   fact: FactSchema,
   campus: CampusRawSchema,
+  editorial: ActivityEditorialSchema,
   /** 主题词表覆盖不了时模型提议的新词（进候选池，不进 tags）。 */
   suggestedTopic: z.string().max(30).nullish().catch(null),
 });
@@ -253,7 +255,7 @@ export interface AnalysisRun {
     receiptIds: number[];
     reused: boolean;
   } | null;
-  structure: { model: string; category: string | null; tags: string[]; subjects: string[]; fact: z.infer<typeof FactSchema>; campus: CampusAudience | null; receiptId: number; reused: boolean } | null;
+  structure: { model: string; category: string | null; tags: string[]; subjects: string[]; fact: z.infer<typeof FactSchema>; campus: CampusAudience | null; editorial: ReturnType<typeof normalizeActivityEditorial>; receiptId: number; reused: boolean } | null;
 }
 
 const isContentFilter = (error: unknown) => error instanceof ProviderRejectedError && !error.retryable && /contentFilter|"1301"/.test(error.message);
@@ -335,13 +337,17 @@ async function runStructure(a: AnalyzeInputArticle, opts: StepOpts): Promise<Non
     user: buildMaterial(a),
     schema: StructureSchema,
     temperature: 0.2,
-    maxTokens: 800,
+    maxTokens: 2048,
     attemptTag: tagged(opts.attemptTag, "structure"),
   });
   const subjects = [...new Set(res.data.subjects.map((s) => s.trim().toLowerCase()).filter((s) => s in ENTITIES))];
   // 词表覆盖不了的主题：模型提议进候选池（同名计数，≥3 进审核队列），不进 tags。
   if (res.data.suggestedTopic) await recordCandidate(res.data.suggestedTopic, "model", `/items/${a.id}`);
-  return { model: res.model, category: res.data.category, tags: normalizeTags(res.data.tags), subjects, fact: res.data.fact, campus: normalizeCampus(res.data.campus, a), receiptId: res.receiptId, reused: res.reused };
+  return {
+    model: res.model, category: res.data.category, tags: normalizeTags(res.data.tags), subjects,
+    fact: res.data.fact, campus: normalizeCampus(res.data.campus, a), editorial: normalizeActivityEditorial(res.data.editorial, a),
+    receiptId: res.receiptId, reused: res.reused,
+  };
 }
 
 /** The content understanding; null when the model's content filter declines the material. */
@@ -495,6 +501,7 @@ export function normalizeAnalysis(run: AnalysisRun) {
     reasonZh: run.writing?.reasonZh ?? null,
     fact: run.structure?.fact ?? null,
     campus: run.structure?.campus ?? null,
+    editorial: run.structure?.editorial ?? null,
   };
 }
 
@@ -530,6 +537,7 @@ export async function analyzeArticle(articleId: string, opts: StepOpts = {}): Pr
     ...(w?.identityGuard?.outcome === "fallback" ? { identityGuard: w.identityGuard } : {}),
     fact: out.fact,
     campus: out.campus,
+    ...(out.editorial ? { editorial: out.editorial } : {}),
   };
   const committed = await sql.begin(async (tx) => {
     const [current] = await tx<{ revision: number }[]>`SELECT revision FROM articles WHERE id = ${articleId} FOR UPDATE`;

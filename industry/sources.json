@@ -20531,6 +20531,145 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
+    },
+    {
+      "id": "mp-c07",
+      "name": "公众号·東南土木",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_721956a44230",
+        "nickname": "東南土木"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "土木工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-civil-gs",
+      "name": "公众号·东南土木研究生",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_dcfb7ef874f0",
+        "nickname": "东南土木研究生"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "土木工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-info-gs",
+      "name": "公众号·东大信息研究生会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_556c092bc168",
+        "nickname": "东大信息研究生会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-physics",
+      "name": "公众号·东南大学物理学院",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_354800f35ca5",
+        "nickname": "东南大学物理学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "物理学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-global",
+      "name": "公众号·东大国际Global SEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0b6b4aa4cd86",
+        "nickname": "东大国际Global SEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "国际合作处"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-arch-gs",
+      "name": "公众号·东南建筑研究生会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_28fe18d04262",
+        "nickname": "东南建筑研究生会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "建筑学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-saikr",
+      "name": "公众号·赛氪竞赛",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e3b6e6279f5e",
+        "nickname": "赛氪竞赛"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "竞赛"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
     }
   ]
 }

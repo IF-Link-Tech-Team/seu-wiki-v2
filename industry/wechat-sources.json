@@ -3618,6 +3618,253 @@
         "verifiedAt": "2026-11-06",
         "method": "用户明确确认接入；极致了 history_by_ghid 返回名称和原始ID核验"
       }
+    },
+    {
+      "candidateRef": "C07",
+      "name": "公众号·東南土木",
+      "note": "学院教师页面引用、科研院转载来源；2026-11-13 用户指定接入，接口返回显示名「東南土木」（繁体）与配置一致，此前按「东南土木」查询失败已更正",
+      "evidence": [
+        "https://civil.seu.edu.cn/dzq/list.htm",
+        "https://kjc.seu.edu.cn/ddkx/2024/0617/c51407a494203/page.htm"
+      ],
+      "identifier": null,
+      "id": "mp-c07",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_721956a44230",
+        "nickname": "東南土木"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "土木工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-c07",
+        "status": "verified",
+        "actualName": "東南土木",
+        "ghid": "gh_721956a44230",
+        "receiptId": 1,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
+    },
+    {
+      "candidateRef": "U-n01",
+      "name": "公众号·东南土木研究生",
+      "note": "2026-11-13 用户指定接入；学院研究生账号，接口返回显示名与配置一致",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzA5MDAyNTE5NA==&mid=2648975985&idx=1&sn=af8506af5c13ecf202dae768a213517f"
+      ],
+      "identifier": null,
+      "id": "mp-seu-civil-gs",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_dcfb7ef874f0",
+        "nickname": "东南土木研究生"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "土木工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-civil-gs",
+        "status": "verified",
+        "actualName": "东南土木研究生",
+        "ghid": "gh_dcfb7ef874f0",
+        "receiptId": 2,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
+    },
+    {
+      "candidateRef": "U-n02",
+      "name": "公众号·东大信息研究生会",
+      "note": "2026-11-13 用户指定接入；学院研究生会账号，接口返回显示名与配置一致",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzkyODgxNDQ2Mw==&mid=2247514116&idx=1&sn=b7d11cb42b8103963a770fd7c3a7bc9b"
+      ],
+      "identifier": null,
+      "id": "mp-seu-info-gs",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_556c092bc168",
+        "nickname": "东大信息研究生会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-info-gs",
+        "status": "verified",
+        "actualName": "东大信息研究生会",
+        "ghid": "gh_556c092bc168",
+        "receiptId": 3,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
+    },
+    {
+      "candidateRef": "U-n04",
+      "name": "公众号·东南大学物理学院",
+      "note": "2026-11-13 用户指定接入；学院主号，与既有 mp-c13「牛顿的四维口袋」是两个不同账号，均保留",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzA3NzQyNTA3Mg==&mid=2247497249&idx=1&sn=f0625575e0d961a24c150b5df054388f"
+      ],
+      "identifier": null,
+      "id": "mp-seu-physics",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_354800f35ca5",
+        "nickname": "东南大学物理学院"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "物理学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-physics",
+        "status": "verified",
+        "actualName": "东南大学物理学院",
+        "ghid": "gh_354800f35ca5",
+        "receiptId": 5,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
+    },
+    {
+      "candidateRef": "U-n05",
+      "name": "公众号·东大国际Global SEU",
+      "note": "2026-11-13 用户指定接入；国际合作处官方账号，原待核线索 E02 已核准，接口返回显示名与配置一致",
+      "evidence": [
+        "https://oic.seu.edu.cn/18956/list.htm",
+        "https://mp.weixin.qq.com/s?__biz=MzkyMjQzNzczMQ==&mid=2247497849&idx=1&sn=1ffe630b8fe8f9b8e889b28cdcdd1902"
+      ],
+      "identifier": null,
+      "id": "mp-seu-global",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0b6b4aa4cd86",
+        "nickname": "东大国际Global SEU"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "国际合作处"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-global",
+        "status": "verified",
+        "actualName": "东大国际Global SEU",
+        "ghid": "gh_0b6b4aa4cd86",
+        "receiptId": 6,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
+    },
+    {
+      "candidateRef": "U-n07",
+      "name": "公众号·东南建筑研究生会",
+      "note": "2026-11-13 用户指定接入；建筑学院研究生会账号，接口返回显示名与配置一致",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzIyODEyMTIyMw==&mid=2650659281&idx=1&sn=f4785849f91640332966773f75e78117"
+      ],
+      "identifier": null,
+      "id": "mp-seu-arch-gs",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_28fe18d04262",
+        "nickname": "东南建筑研究生会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "建筑学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-arch-gs",
+        "status": "verified",
+        "actualName": "东南建筑研究生会",
+        "ghid": "gh_28fe18d04262",
+        "receiptId": 8,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
+    },
+    {
+      "candidateRef": "U-saikr",
+      "name": "公众号·赛氪竞赛",
+      "note": "2026-11-13 用户指定接入；面向大学生竞赛的全国性信息聚合账号，接口返回显示名与配置一致（当日 64 篇）",
+      "evidence": [
+        "https://www.saikr.com/",
+        "https://mp.weixin.qq.com/s?__biz=Mzg4MDU3MzkzMg==&mid=2247522620&idx=1&sn=d39541a358e7f4e0b9b33d7e56238df9"
+      ],
+      "identifier": null,
+      "id": "mp-saikr",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e3b6e6279f5e",
+        "nickname": "赛氪竞赛"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "竞赛"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-saikr",
+        "status": "verified",
+        "actualName": "赛氪竞赛",
+        "ghid": "gh_e3b6e6279f5e",
+        "receiptId": 25,
+        "verifiedAt": "2026-11-13",
+        "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
+      }
     }
   ],
   "pending": [
@@ -3862,15 +4109,6 @@
       "reason": "尚未核准账号唯一标识或归属范围"
     },
     {
-      "candidateRef": "E02",
-      "name": "东大国际 Global SEU",
-      "note": "官网有“东大国际公众号”入口；需核准完整名称和ID，避免同名企业号 | 国际合作处官网",
-      "evidence": [
-        "https://oic.seu.edu.cn/18956/list.htm"
-      ],
-      "reason": "尚未核准账号唯一标识或归属范围"
-    },
-    {
       "candidateRef": "E03",
       "name": "东南大学学生事务服务中心",
       "note": "历史校园服务账号；与现有学工账号关系、当前状态待核 | 历史转载来源记录",
@@ -4009,31 +4247,6 @@
       "enabled": false,
       "interval_minutes": 1440,
       "reason": "dajiala history: invalid article list"
-    },
-    {
-      "candidateRef": "C07",
-      "name": "東南土木／东南土木",
-      "note": "学院教师页面引用、科研院转载来源；需核准显示名",
-      "evidence": [
-        "https://civil.seu.edu.cn/dzq/list.htm",
-        "https://kjc.seu.edu.cn/ddkx/2024/0617/c51407a494203/page.htm"
-      ],
-      "identifier": null,
-      "id": "mp-c07",
-      "kind": "mp_account",
-      "config": {
-        "nickname": "东南土木"
-      },
-      "tier": "T2",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": false,
-      "interval_minutes": 1440,
-      "reason": "dajiala history_by_ghid code 107"
     },
     {
       "candidateRef": "C08",
@@ -4184,6 +4397,9 @@
     "社会实践专号、实践队账号",
     "成贤学院体系",
     "既有禁用官网栏目保持禁用",
-    "VolunteerSEU（gh_fb2ca2f3a2b8，原信源 mp-b03）：2026-11-06 用户确认停用并从接入清单移除，不得以至善青协或其他别名恢复接入"
+    "VolunteerSEU（gh_fb2ca2f3a2b8，原信源 mp-b03）：2026-11-06 用户确认停用并从接入清单移除，不得以至善青协或其他别名恢复接入",
+    "东南大学电子学院研究生会（gh_68b1bd9b65ed，原信源 mp-seu-ee-gs）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
+    "东南大学人权研究院（gh_064f64890e5a，原信源 mp-seu-hr）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
+    "东南大学蒙纳士大学联合研究生院（gh_afc51c0c90e1，原信源 mp-seu-monash）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入"
   ]
 }

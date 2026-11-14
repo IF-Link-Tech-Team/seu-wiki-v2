@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import type { AddressInfo } from "node:net";
 import { after, before, test } from "node:test";
 import { fileURLToPath } from "node:url";
+import { parseHTML } from "linkedom";
 import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import { releaseBoundCache } from "../app/lib/api.server.ts";
 
@@ -227,7 +228,9 @@ test("home renders titles and developments without the hot strip, card summaries
 test("changelog renders the latest release", async () => {
   const response = await fetch(`${origin}/changelog`);
   assert.equal(response.status, 200);
-  const html = await response.text();
+  const { document } = parseHTML(await response.text());
+  for (const script of document.querySelectorAll("script")) script.remove();
+  const html = document.body.textContent ?? "";
   assert.match(html, /扩充校园信源，优化信息流和生存手册/);
   assert.match(html, /接入 84 个已核准的校园公众号/);
   assert.match(html, /移除消息列表中的 AI 评分和左侧时间点/);

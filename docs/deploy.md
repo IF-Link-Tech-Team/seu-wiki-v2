@@ -43,6 +43,24 @@ docker compose --profile https up -d --build
 
 已经有 Nginx 的话，不用 Caddy，把站点反向代理到 `http://127.0.0.1:3000`，带上 `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`，并在 `.env` 里设 `TRUST_PROXY=true`。`SITE_URL` 一定要写成读者实际访问的地址：生成的链接、RSS、分享图和 MCP 都用它。
 
+### 阶跃星辰 Step Plan 按任务接入
+
+在 `.env` 中配置 `STEPFUN_BASE_URL=https://api.stepfun.com/step_plan/v1` 和 `STEPFUN_API_KEY`，再按任务选择预设：
+
+| 环境变量 | 模型预设 | 推理强度 |
+| --- | --- | --- |
+| `PREFILTER_MODEL`、`SUMMARIZE_MODEL`、`TRANSLATE_MODEL` | `step-3.5-flash-2603` | low |
+| `SCORE_MODEL`、`STRUCTURE_MODEL`、`GROUP_MODEL`、`UNDERSTAND_MODEL` | `step-3.7-flash` | low |
+| `GROUP_REVIEW_MODEL`、`DIGEST_MODEL` | `step-5-preview` | medium |
+
+这些预设沿用纯文本处理，在任务原有输出额度上，分别为 `max_tokens` 额外预留 8192、16384、32768 tokens；这是包含思考与正文的生成上限，不代表实际思考量。所有阶跃型号共用 `stepfun` 的请求次数熔断和调用回执；迁移首次创建预算时继承已有 `llm` 限额，后台可以继续调整。
+
+Step Plan 按套餐 Credit 计量，按量 API 使用另一个地址 `https://api.stepfun.com/v1`，两者余额独立；按量接口余额为零不代表 Step Plan 套餐没有额度。不要把按量 API 的人民币单价当作套餐实付；此接入不预置人民币价格，套餐额度与消耗以 Step Plan 控制台为准。接口与可用型号见[官方 Step Plan 接入说明](https://platform.stepfun.com/docs/zh/step-plan/integrations/reasoning-api.md)。
+
+后台“模型与评测”的任务设置优先于环境变量；切换前应逐项核对已有设置。先部署预设和迁移，再配置环境变量并重建 `api`、`worker` 容器，使两者读取相同配置。以实际回执的模型名和任务来源验证切换，不以 `.env` 文件内容代替验收。
+
+原 `LLM_*` 保留，阶跃使用独立凭据。回退时恢复各任务原有的 `*_MODEL` 和后台设置，再重建相关容器；不要只删除阶跃 Key。仅影响后续任务，历史内容不会自动重评。完整变量示例见 `.env.example`。
+
 ### 更新
 
 ```bash
