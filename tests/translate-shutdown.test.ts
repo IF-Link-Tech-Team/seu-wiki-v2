@@ -47,7 +47,11 @@ before(async () => {
   await sql`INSERT INTO sources (id,name,kind,tier,participation_mode,site_fulltext,next_fetch_at)
     VALUES (${SOURCE},'Translation shutdown','rss','T1','editorial',true,'2100-01-01')`;
 });
-after(async () => { await provider.close(); await stopBoss(); await closeDb(); });
+after(async () => {
+  // 撤回本文件的发布物：它们的 discoveredAt 在未来，残留会污染共享测试库里订阅的日期范围断言。
+  await sql`UPDATE publications SET visibility = 'withdrawn' WHERE source_id = ${SOURCE}`;
+  await provider.close(); await stopBoss(); await closeDb();
+});
 
 for (const misaligned of [false, true]) test(`SIGTERM finishes the sent ${misaligned ? 'misaligned' : 'normal'} batch and resumes from its receipt`, async () => {
   active = { asked: gate(), hold: gate(), calls: 0, misaligned };

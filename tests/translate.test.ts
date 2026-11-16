@@ -61,6 +61,8 @@ before(async () => {
             VALUES (${SOURCE}, 'Test translate', 'rss', 'T1', 'editorial', true, false, '2100-01-01')`;
 });
 after(async () => {
+  // 撤回本文件的发布物：discoveredAt 在未来，残留会污染共享测试库里订阅的日期范围断言。
+  await sql`UPDATE publications SET visibility = 'withdrawn' WHERE source_id = ${SOURCE}`;
   await app.close();
   await provider.close();
   await stopBoss();

@@ -293,11 +293,15 @@
     .search-results { display: grid; gap: 8px; }
     .bubble-help { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: #806f54; font-size: 12px; line-height: 1.8; margin: 14px 0; }
     .bubble-help button { border: 1px solid #d9c59a; border-radius: 99px; background: #ffffffa6; color: #775a2c; padding: 6px 11px; font-size: 11px; }
+    .follow-college-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .follow-college-chips .chip { font-size: 12px; }
     .bubble-field { position: relative; width: 100%; margin: 10px 0 22px; touch-action: pan-y; overflow-anchor: none; }
     .topic-bubble { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid transparent; padding: 9px; text-align: center; line-height: 1.5; color: #383a34; background: #fff; box-shadow: 0 7px 18px #af8a3e14; transition: color .18s, border-color .18s, box-shadow .18s; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: pan-y; }
     .topic-bubble:hover { box-shadow: 0 9px 22px #a5783828; }
     .topic-bubble:not(.leaf-bubble) { background: var(--group-color, #fffdf6); color: var(--group-ink, #735626); font-weight: 650; }
     .topic-bubble.leaf-bubble { background: var(--leaf-color, #fff); color: var(--group-ink, #383a34); }
+    .topic-bubble.child-bubble { box-shadow: 0 5px 12px #af8a3e10; }
+    .topic-bubble.child-bubble .bubble-label { font-size: 12.5px; }
     .topic-bubble[aria-expanded="true"] { border-color: var(--leaf-color, #fffbef); }
     .topic-bubble .bubble-label { font-size: 15px; overflow-wrap: anywhere; }
     .topic-bubble .expand-mark { position: absolute; top: 10px; left: 0; right: 0; font-size: 16px; line-height: 1; color: #b69451; font-weight: 400; }
@@ -478,6 +482,43 @@
         ]}
       ];
 
+      // 大类下的高频细分词（与 @aihot/industry/subscription-onboarding.ts 的 TOPIC_TAG_CHILDREN 保持一致）。
+      // 单击大类球即涵盖全部细分（细分词经同义词归一到大类参与召回），双击大类球弹开后可单独订阅细分。
+      const tagChildren = {
+        "选课与成绩": ["四六级", "期末考试"],
+        "学籍与辅修": ["转专业", "辅修"],
+        "研究生培养": ["考博", "硕博连读"],
+        "毕业与学位": ["毕业设计"],
+        "保研": ["推免", "夏令营"],
+        "考研": [],
+        "留学": ["留学申请"],
+        "交换与访学": ["暑期学校", "交换生"],
+        "校园招聘": ["秋招", "春招", "宣讲会", "招聘会"],
+        "选调与公职": ["公务员", "事业单位"],
+        "就业服务": ["职业规划", "创业"],
+        "互联网与芯片": ["互联网", "芯片"],
+        "大创": ["创新创业"],
+        "实验室与科研助理": ["科研助理"],
+        "项目申报与基金": ["国自然"],
+        "论文发表": ["投稿"],
+        "学科竞赛": ["数学建模", "电赛", "挑战杯"],
+        "AI/机器学习": ["大模型", "深度学习"],
+        "奖学金": ["国家奖学金", "国奖"],
+        "助学补助": ["勤工助学", "助学贷款"],
+        "评优评先": ["三好学生", "优秀毕业生"],
+        "学生组织": ["学生会", "研究生会"],
+        "社团活动": ["招新", "百团大战"],
+        "文艺演出": ["迎新晚会", "音乐会"],
+        "体育运动": ["运动会"],
+        "志愿公益": ["社会实践", "支教"],
+        "演讲辩论": ["辩论赛"],
+        "校园服务": ["食堂", "宿舍", "校园网"],
+        "讲座与文化": ["展览"],
+        "入党与党团": ["党课", "青马工程"],
+        "国防与征兵": ["军训", "入伍"],
+        "国际组织与会议": ["国际会议"]
+      };
+
       const bubblePalette = [
         ["#cde9dd", "#edf7f1", "#335f50"],
         ["#cedff1", "#eef4fb", "#3e5d7d"],
@@ -496,7 +537,6 @@
       }
 
       const publisherGroups = [
-        { label: "学院与院系", values: colleges },
         { label: "教学与学生服务", values: ["教务处", "研究生院", "学生处（党委学工部）", "就业指导中心", "校团委", "心理健康中心"] },
         { label: "科研与国际", values: ["科研院", "社会科学处", "实验室与设备管理处", "国际合作处"] },
         { label: "校园保障", values: ["总务处", "网络与信息中心", "图书馆", "校医院", "保卫处", "财务处"] },
@@ -516,6 +556,7 @@
         subscriptionPreferences: {
           mode: "interest",
           followOwnCollege: true,
+          followedColleges: [],
           topicGroups: [],
           topics: [],
           publishers: [],
@@ -529,9 +570,10 @@
       let completed = false;
       let topicQuery = "";
       let expandedTopicGroups = new Set();
+      let expandedTopicTags = new Set();
       let bubbleObserver;
       let bubblePositions = new Map();
-      let pendingSplitGroup = "";
+      let pendingSplitKey = "";
       let bubbleMotion;
       let motionEnabled = true;
       let toast = "";
@@ -579,6 +621,7 @@
 
       function renderStep1() {
         const identity = profile.userIdentity;
+        const preferences = profile.subscriptionPreferences;
         const years = Array.from({ length: 12 }, (_, index) => String(new Date().getFullYear() - index));
         chrome(`
           <p class="eyebrow">HELLO, seuer</p>
@@ -598,6 +641,11 @@
               <label class="field">哪一年入学？
                 <select id="enrollment-year"><option value="">暂不填写</option>${years.map(year => `<option value="${year}" ${identity.enrollmentYear === year ? "selected" : ""}>${year} 级</option>`).join("")}</select>
               </label>
+              <label class="field" style="grid-column:1/-1">关注的学院（可选，可多选）
+                <input id="follow-college-search" list="follow-college-options" placeholder="例如吴健雄、未来技术学院的同学，关注专业分流所在的学院" autocomplete="off">
+                <datalist id="follow-college-options">${colleges.filter(college => college !== identity.college && !preferences.followedColleges.includes(college)).map(college => `<option value="${esc(college)}"></option>`).join("")}</datalist>
+                ${preferences.followedColleges.length ? `<span class="follow-college-chips">${preferences.followedColleges.map(college => `<button type="button" class="chip" data-remove-follow-college="${esc(college)}" aria-label="移除关注的学院 ${esc(college)}">✓ ${esc(college)} ×</button>`).join("")}</span>` : ""}
+              </label>
             </div>
           </section>`);
 
@@ -613,6 +661,19 @@
         });
         document.getElementById("college-search").addEventListener("input", event => { identity.college = event.target.value; });
         document.getElementById("enrollment-year").addEventListener("change", event => { identity.enrollmentYear = event.target.value; });
+        document.getElementById("follow-college-search").addEventListener("change", event => {
+          const value = event.target.value.trim();
+          event.target.value = "";
+          if (!colleges.includes(value) || value === identity.college || preferences.followedColleges.includes(value)) { renderStep1(); return; }
+          preferences.followedColleges = toggleValue(preferences.followedColleges, value);
+          renderStep1();
+          document.getElementById("follow-college-search")?.focus({ preventScroll: true });
+        });
+        document.querySelectorAll("[data-remove-follow-college]").forEach(button => button.addEventListener("click", () => {
+          preferences.followedColleges = preferences.followedColleges.filter(college => college !== button.dataset.removeFollowCollege);
+          renderStep1();
+          document.getElementById("follow-college-search")?.focus({ preventScroll: true });
+        }));
       }
 
       function selectedTopicChips() {
@@ -633,6 +694,7 @@
           const results = [];
           topicGroups.forEach(group => group.subgroups.forEach(subgroup => subgroup.tags.forEach(tag => {
             if (`${tag}${tag === "AI/机器学习" ? "人工智能" : ""}`.toLowerCase().includes(query) && !results.some(item => item.tag === tag)) results.push({ tag, group: group.label, subgroup: subgroup.label });
+            for (const child of tagChildren[tag] || []) if (child.toLowerCase().includes(query) && !results.some(item => item.tag === child)) results.push({ tag: child, group: group.label, subgroup: `${subgroup.label} › ${tag}` });
           })));
           if (!results.length) return '<p class="empty-copy">没有找到相关标签，试试“保研”“AI”或“实习”。</p>';
           return `<div class="search-results">${results.map(item => `<div class="search-result"><span><strong>${esc(item.tag)}</strong><small>${esc(item.group)} › ${esc(item.subgroup)}</small></span><button type="button" class="chip" data-topic="${esc(item.tag)}" aria-pressed="${preferences.topics.includes(item.tag)}">${preferences.topics.includes(item.tag) ? "已选择 ✓" : "选择"}</button></div>`).join("")}</div>`;
@@ -647,7 +709,17 @@
             if (renderedTags.has(tag)) return false;
             renderedTags.add(tag);
             return true;
-          }).map(tag => `<button type="button" class="topic-bubble leaf-bubble" data-bubble-key="topic:${esc(tag)}" data-diameter="${tag.length > 8 ? 120 : tag.length > 5 ? 104 : tag.length > 3 ? 92 : 82}" data-topic="${esc(tag)}" data-topic-owner="${group.id}" style="${bubbleColors(group)}" aria-pressed="${preferences.topics.includes(tag)}" title="${esc(`${group.label} › ${subgroup.label}`)}" aria-label="${esc(`${group.label} › ${subgroup.label} › ${tag}`)}"><span class="bubble-label">${esc(tag)}</span>${preferences.topics.includes(tag) ? '<span class="selection-tick" aria-hidden="true">✓</span>' : ""}</button>`).join("")).join("");
+          }).map(tag => {
+            const children = tagChildren[tag] || [];
+            const tagExpanded = children.length > 0 && expandedTopicTags.has(tag);
+            const selected = preferences.topics.includes(tag);
+            const bubble = `<button type="button" class="topic-bubble leaf-bubble" data-bubble-key="topic:${esc(tag)}" data-diameter="${tag.length > 8 ? 120 : tag.length > 5 ? 104 : tag.length > 3 ? 92 : 82}" ${children.length ? `data-select-tag="${esc(tag)}"` : `data-topic="${esc(tag)}"`} data-topic-owner="group:${group.id}" style="${bubbleColors(group)}" aria-pressed="${selected}"${children.length ? ` aria-expanded="${tagExpanded}" aria-describedby="bubble-gestures"` : ""} title="${esc(`${group.label} › ${subgroup.label}`)}" aria-label="${esc(`${group.label} › ${subgroup.label} › ${tag}`)}${children.length ? "（含细分）" : ""}">${children.length ? `<span class="expand-mark" aria-hidden="true">${tagExpanded ? "−" : "+"}</span>` : ""}<span class="bubble-label">${esc(tag)}</span>${selected ? '<span class="selection-tick" aria-hidden="true">✓</span>' : ""}</button>`;
+            if (!tagExpanded) return bubble;
+            return bubble + children.map(child => {
+              const childSelected = preferences.topics.includes(child);
+              return `<button type="button" class="topic-bubble leaf-bubble child-bubble" data-bubble-key="child:${esc(child)}" data-diameter="${child.length > 6 ? 92 : child.length > 4 ? 82 : 72}" data-topic="${esc(child)}" data-topic-owner="topic:${esc(tag)}" style="${bubbleColors(group)}" aria-pressed="${childSelected}" title="${esc(`${group.label} › ${subgroup.label} › ${tag} › ${child}`)}" aria-label="${esc(`${tag}的细分：${child}`)}"><span class="bubble-label">${esc(child)}</span>${childSelected ? '<span class="selection-tick" aria-hidden="true">✓</span>' : ""}</button>`;
+            }).join("");
+          }).join("")).join("");
         }).join("")}</div>`;
       }
 
@@ -805,8 +877,8 @@
 
       function layoutBubbles(animate = false) {
         stopBubbleMotion();
-        const splitGroup = pendingSplitGroup;
-        pendingSplitGroup = "";
+        const splitKey = pendingSplitKey;
+        pendingSplitKey = "";
         const field = document.querySelector(".bubble-field");
         if (!field) return;
         const width = Math.max(180, field.clientWidth);
@@ -832,16 +904,16 @@
         paintBubbles(nodes);
         if (dynamic) {
           startBubbleMotion(field, nodes, width, layout.height);
-          if (splitGroup && animate) animateBubbleSplit(nodes, splitGroup);
+          if (splitKey && animate) animateBubbleSplit(nodes, splitKey);
         }
         else for (const node of nodes) bubblePositions.set(node.key, { x: node.x, y: node.y, tx: node.tx, ty: node.ty, vx: 0, vy: 0 });
       }
 
-      function animateBubbleSplit(nodes, groupId) {
-        const parent = nodes.find(node => node.key === `group:${groupId}`);
+      function animateBubbleSplit(nodes, parentKey) {
+        const parent = nodes.find(node => node.key === parentKey);
         if (!parent || !parent.button.animate) return;
         const origin = bubblePositions.get(parent.key) || parent;
-        const children = nodes.filter(node => node.button.dataset.topicOwner === groupId);
+        const children = nodes.filter(node => node.button.dataset.topicOwner === parentKey);
         children.forEach((node, index) => {
           const from = `translate3d(${origin.x - node.radius}px, ${origin.y - node.radius}px, 0) scale(.16)`;
           const to = `translate3d(${node.x - node.radius}px, ${node.y - node.radius}px, 0) scale(1)`;
@@ -871,10 +943,10 @@
           layoutBubbles(true);
           content.style.minHeight = "";
         } else {
-          for (const button of content.querySelectorAll("[data-select-group], [data-topic]")) {
+          for (const button of content.querySelectorAll("[data-select-group], [data-select-tag], [data-topic]")) {
             const selected = button.dataset.selectGroup
               ? preferences.topicGroups.includes(button.dataset.selectGroup)
-              : preferences.topics.includes(button.dataset.topic);
+              : preferences.topics.includes(button.dataset.selectTag ?? button.dataset.topic);
             if (button.getAttribute("aria-pressed") === String(selected)) continue;
             button.setAttribute("aria-pressed", String(selected));
             if (selected) button.insertAdjacentHTML("beforeend", '<span class="selection-tick" aria-hidden="true">✓</span>');
@@ -899,10 +971,22 @@
         if (!topicGroups.some(group => group.id === id)) return false;
         if (expandedTopicGroups.has(id)) {
           expandedTopicGroups.delete(id);
-          pendingSplitGroup = "";
+          pendingSplitKey = "";
         } else {
           expandedTopicGroups.add(id);
-          pendingSplitGroup = id;
+          pendingSplitKey = `group:${id}`;
+        }
+        return true;
+      }
+
+      function toggleTopicTag(tag) {
+        if (!(tagChildren[tag] || []).length) return false;
+        if (expandedTopicTags.has(tag)) {
+          expandedTopicTags.delete(tag);
+          pendingSplitKey = "";
+        } else {
+          expandedTopicTags.add(tag);
+          pendingSplitKey = `topic:${tag}`;
         }
         return true;
       }
@@ -916,7 +1000,7 @@
             <div class="selected-review-head"><strong>已选主题偏好</strong><span>${profile.subscriptionPreferences.topicGroups.length} 个整组 · ${profile.subscriptionPreferences.topics.length} 个具体标签</span></div>
             <div class="selected-chips" aria-live="polite">${selectedTopicChips()}</div>
           </div>
-          <div class="bubble-help" id="bubble-gestures">单击大球选择整组，双击展开或收起细分标签。单击小球选择单个标签。</div>
+          <div class="bubble-help" id="bubble-gestures">单击大球选择整组，双击展开或收起细分标签；单击中球选择该大类（含其下全部细分），双击展开细分内容，单击小球选择单个细分。</div>
           <div id="topic-content">${topicTreeMarkup()}</div>
           <details class="bulk-topics"><summary>展开或收起细分标签</summary><div class="chips">${groupExpansionMarkup()}</div></details>`);
 
@@ -936,11 +1020,17 @@
       }
 
       const pendingGroupSelections = new Map();
+      const pendingTagSelections = new Map();
       const groupClickDelay = 400;
 
       function selectTopicGroup(id) {
         const preferences = profile.subscriptionPreferences;
         preferences.topicGroups = toggleValue(preferences.topicGroups, id);
+      }
+
+      function selectTopicTag(tag) {
+        const preferences = profile.subscriptionPreferences;
+        preferences.topics = toggleValue(preferences.topics, tag);
       }
 
       function flushPendingGroupSelections() {
@@ -949,6 +1039,11 @@
           selectTopicGroup(id);
         }
         pendingGroupSelections.clear();
+        for (const [tag, timer] of pendingTagSelections) {
+          clearTimeout(timer);
+          selectTopicTag(tag);
+        }
+        pendingTagSelections.clear();
       }
 
       function bindTopicActions() {
@@ -996,6 +1091,29 @@
               return;
             }
             refreshAndFocus("selectGroup", id, pending !== undefined && event.detail !== 0);
+            return;
+          }
+          if ("selectTag" in data) {
+            const tag = data.selectTag;
+            const pending = pendingTagSelections.get(tag);
+            if (pending !== undefined) {
+              clearTimeout(pending);
+              pendingTagSelections.delete(tag);
+            }
+            if (event.detail === 0) {
+              // Keyboard activation selects the tag. Double click expands its children.
+              selectTopicTag(tag);
+            } else if (pending !== undefined) {
+              toggleTopicTag(tag);
+            } else {
+              pendingTagSelections.set(tag, setTimeout(() => {
+                pendingTagSelections.delete(tag);
+                selectTopicTag(tag);
+                refreshAndFocus("selectTag", tag);
+              }, groupClickDelay));
+              return;
+            }
+            refreshAndFocus("selectTag", tag, pending !== undefined && event.detail !== 0);
             return;
           }
           if ("openGroup" in data) { if (!toggleTopicGroup(data.openGroup)) return; }
@@ -1085,6 +1203,7 @@
             <div><dt>订阅模式</dt><dd>${modeLabels[preferences.mode]}</dd></div>
             <div><dt>主题偏好（OR）</dt><dd>${[...preferences.topicGroups.map(id => `${topicGroups.find(group => group.id === id)?.label || id}（整组）`), ...preferences.topics].join("、") || "未选择"}</dd></div>
             <div><dt>另外关注的机构（OR）</dt><dd>${preferences.publishers.join("、") || "未另外关注"}</dd></div>
+            <div><dt>关注的学院（OR）</dt><dd>${preferences.followedColleges.join("、") || "未另外关注"}</dd></div>
             <div><dt>不看的内容类型</dt><dd>${preferences.excludedContentTypes.join("、") || "未排除"}</dd></div>
             <div><dt>不看的线下校区</dt><dd>${preferences.excludedLocations.join("、") || "未排除"}；线上信息不受校区排除影响</dd></div>
           </dl></div>`;
@@ -1103,8 +1222,8 @@
             <div class="section-head"><div><h2 id="mode-heading">${selectedTopics.length ? "你的兴趣，已经记好了" : "还没想好兴趣？没关系"}</h2>${preferences.mode === "identity_all" ? "<p>当前接收身份范围内的全部信息，下面的兴趣会保留，供以后切回使用。</p>" : selectedTopics.length ? "<p>沿用上一步的选择，接下来会按这些兴趣为你匹配。</p>" : ownCollege || preferences.publishers.length ? "<p>先按本学院和已关注机构匹配，也可以返回挑几个兴趣。</p>" : ""}</div><button type="button" class="group-action" id="edit-interests">${selectedTopics.length ? "修改兴趣" : "去选兴趣"}</button></div>
             ${selectedTopics.length ? `<div class="confirmed-topics" aria-label="已选择的兴趣">${selectedTopics.map(topic => `<span>${esc(topic)}</span>`).join("")}</div>` : ""}
             <details class="optional-settings" data-panel="publishers" ${expanded("publishers")}>
-              <summary>还想关注特定部门或学院？ <span class="optional">可选${preferences.publishers.length ? ` · 已关注 ${preferences.publishers.length} 个` : ""}</span></summary>
-              <p class="hint">关注后，该机构发布且适合你身份的信息也会进入订阅流，无需同时命中兴趣。你排除的内容仍然不显示。</p>
+              <summary>还想关注特定部门？ <span class="optional">可选${preferences.publishers.length ? ` · 已关注 ${preferences.publishers.length} 个` : ""}</span></summary>
+              <p class="hint">关注后，该部门发布且适合你身份的信息也会进入订阅流，无需同时命中兴趣。学院请回到第一页“关注的学院”里选择（学院的通知和面向学院的信息都会进入订阅流）。你排除的内容仍然不显示。</p>
             <div class="publishers">${publisherGroups.map((group, index) => {
               const visibleValues = group.values.filter(value => value !== ownCollege);
               return `<details data-panel="publisher-${index}" ${expanded(`publisher-${index}`)}><summary>${group.label} · 已选 ${visibleValues.filter(value => preferences.publishers.includes(value)).length}</summary><div class="chips">${chipButtons(visibleValues, preferences.publishers, "publishers")}</div></details>`;
@@ -1177,7 +1296,7 @@
         app.innerHTML = `<section class="completion"><p class="eyebrow">NICE TO MEET YOU</p><h1>你的设置已整理好</h1><p class="intro">${bridgeToken ? "画像已保存到 SEU Wiki 数据库并与当前统一账号关联。" : "这是独立前端原型：不会发送到服务器，也不表示后端字段或匹配服务已经上线。"}</p>${summaryMarkup()}<div class="actions"><button type="button" class="download" id="download-json">导出设置 JSON ↓</button><button type="button" class="secondary" id="edit-profile">修改设置</button><button type="button" class="secondary" id="restart">重新体验</button></div><p class="toast" role="status">${toast}</p><p class="privacy">${bridgeToken ? "可在订阅页随时修改或清除画像。" : "关闭页面后填写内容不会保留。下载的 JSON 可用于评审字段结构，但不应视为生产接口契约。"}</p></section>`;
         document.getElementById("download-json").addEventListener("click", downloadJson);
         document.getElementById("edit-profile").addEventListener("click", () => { completed = false; step = 3; toast = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
-        document.getElementById("restart").addEventListener("click", () => { profile = emptyProfile(); step = 1; completed = false; topicQuery = ""; expandedTopicGroups = new Set(); bubblePositions.clear(); toast = ""; degreeError = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+        document.getElementById("restart").addEventListener("click", () => { profile = emptyProfile(); step = 1; completed = false; topicQuery = ""; expandedTopicGroups = new Set(); expandedTopicTags = new Set(); bubblePositions.clear(); toast = ""; degreeError = ""; render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
       }
 
       function validateRequiredIdentity() {

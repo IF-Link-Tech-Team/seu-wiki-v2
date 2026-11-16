@@ -9,6 +9,8 @@ export interface SubscriptionProfile {
   identityNotices: boolean;
   mode?: "interest" | "identity_all";
   followOwnCollege?: boolean;
+  /** 关注的学院（除所在学院外）：这些学院发布的通知、以及面向这些学院的通知都进入订阅流。 */
+  followColleges?: string[];
   topicGroups?: string[];
   excludedTypes?: string[];
   excludedLocations?: string[];

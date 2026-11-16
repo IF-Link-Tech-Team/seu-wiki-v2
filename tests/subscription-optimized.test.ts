@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { fromOptimizedProfile, toOptimizedProfile } from "@aihot/contracts/subscription-onboarding";
 import { annotateSubscription as annotate, matchSubscription as match, normalizeSubscriptionProfile as normalize } from "@aihot/backend/publication/subscription-rules";
-import { OPTIMIZED_TOPIC_GROUPS } from "@aihot/industry/subscription-onboarding";
+import { OPTIMIZED_TOPIC_GROUPS, OPTIMIZED_TOPIC_NAMES, TOPIC_TAG_CHILDREN } from "@aihot/industry/subscription-onboarding";
+import { TAG_SYNONYMS } from "@aihot/industry/taxonomy";
 
 const day = "2026-10-25";
 function form() { const p = toOptimizedProfile(); p.userIdentity = { degree: "本科生", college: "计算机科学与工程学院", enrollmentYear: "2025" }; return p; }
@@ -28,11 +29,54 @@ test("explicit group selection expands to its actual supplied leaves; opening a 
   assert.equal(match(message(), p, day).lane, "matched");
 });
 
+test("child topics are selectable third-level tags and alias back to their parent for whole-category recall", () => {
+  for (const [parent, children] of Object.entries(TOPIC_TAG_CHILDREN)) {
+    assert.ok(OPTIMIZED_TOPIC_NAMES.has(parent), parent);
+    for (const child of children) assert.equal(TAG_SYNONYMS[child], parent, child);
+  }
+  const value = form();
+  value.subscriptionPreferences.topics = ["招新", "百团大战"];
+  const converted = fromOptimizedProfile(value);
+  const p = normalize(converted);
+  assert.ok(p.interests.includes("topic:招新") && p.interests.includes("topic:百团大战"));
+  assert.deepEqual(toOptimizedProfile(converted), value);
+  const baiwan = annotate({ title: "百团大战社团招新", summary: "面向全校学生。", source: "校团委" }, true);
+  assert.ok(baiwan.topics.includes("社团活动") && baiwan.topics.includes("百团大战"));
+  assert.equal(match(baiwan, p, day).lane, "matched");
+  const childOnly = normalize({ degree: "本科生", interests: ["topic:招新"], identityNotices: true, international: "no", types: [] });
+  assert.deepEqual(childOnly.interests, ["topic:招新"]);
+  assert.notEqual(match(annotate({ title: "社团招新通知", summary: "面向全校学生。", source: "校团委" }, true), childOnly, day).lane, "excluded");
+  assert.notEqual(match(annotate({ title: "迎新晚会预告", summary: "面向全校学生。", source: "校团委" }, true), childOnly, day).lane, "matched");
+});
+
 test("own-college following is independent of interest and never overrides explicit degree restrictions", () => {
   const p = normalize(fromOptimizedProfile(form()));
   assert.equal(match(message(), p, day).lane, "matched");
   assert.equal(match(message("仅限硕士研究生报名。"), p, day).lane, "excluded");
   assert.equal(match(message(undefined, "自动化学院"), p, day).lane, "excluded");
+});
+
+test("followed colleges match by publisher and audience and waive college conflicts", () => {
+  const value = form();
+  value.userIdentity.college = "吴健雄学院";
+  value.subscriptionPreferences.followOwnCollege = false;
+  value.subscriptionPreferences.followedColleges = ["信息科学与工程学院"];
+  const p = normalize(fromOptimizedProfile(value));
+  assert.deepEqual(p.followColleges, ["信息科学与工程学院"]);
+  // 面向关注学院的通知：豁免所在学院冲突并给出原因
+  const targeted = annotate({ title: "信息科学与工程学院专业分流说明", summary: "面向信息科学与工程学院本科生。", source: "教务处" }, true);
+  assert.deepEqual(targeted.audience.colleges, ["信息科学与工程学院"]);
+  const targetedMatch = match(targeted, p, day);
+  assert.notEqual(targetedMatch.lane, "excluded");
+  assert.ok(targetedMatch.reasons.some(r => r.includes("面向你关注的学院")));
+  // 关注学院发布的消息照进订阅流
+  const posted = annotate({ title: "学院学术论坛预告", summary: "面向全校学生。", source: "信息科学与工程学院" }, true);
+  assert.ok(match(posted, p, day).reasons.some(r => r.includes("关注机构")));
+  // 未关注时同样的受众通知仍因所在学院不符被排除
+  const plain = normalize(fromOptimizedProfile({ ...value, subscriptionPreferences: { ...value.subscriptionPreferences, followedColleges: [] } }));
+  assert.equal(match(targeted, plain, day).lane, "excluded");
+  // 关注学院不会把培养层次冲突一起豁免
+  assert.equal(match(annotate({ title: "人工智能学术报告预告", summary: "仅限硕士研究生报名。", source: "信息科学与工程学院" }, true), p, day).lane, "excluded");
 });
 
 test("identity-all broadens candidates but keeps conflicts, unknown audience and exclusions", () => {
