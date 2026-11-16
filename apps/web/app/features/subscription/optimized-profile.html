@@ -641,10 +641,11 @@
               <label class="field">哪一年入学？
                 <select id="enrollment-year"><option value="">暂不填写</option>${years.map(year => `<option value="${year}" ${identity.enrollmentYear === year ? "selected" : ""}>${year} 级</option>`).join("")}</select>
               </label>
-              <label class="field" style="grid-column:1/-1">关注的学院（可选，可多选）
+              <label class="field" style="grid-column:1/-1">关注的学院（可选，可多选，最多 10 个）
                 <input id="follow-college-search" list="follow-college-options" placeholder="例如吴健雄、未来技术学院的同学，关注专业分流所在的学院" autocomplete="off">
                 <datalist id="follow-college-options">${colleges.filter(college => college !== identity.college && !preferences.followedColleges.includes(college)).map(college => `<option value="${esc(college)}"></option>`).join("")}</datalist>
                 ${preferences.followedColleges.length ? `<span class="follow-college-chips">${preferences.followedColleges.map(college => `<button type="button" class="chip" data-remove-follow-college="${esc(college)}" aria-label="移除关注的学院 ${esc(college)}">✓ ${esc(college)} ×</button>`).join("")}</span>` : ""}
+                ${preferences.followedColleges.length >= 10 ? '<span class="hint">已选满 10 个学院，移除一个后可继续添加。</span>' : ""}
               </label>
             </div>
           </section>`);
@@ -665,6 +666,7 @@
           const value = event.target.value.trim();
           event.target.value = "";
           if (!colleges.includes(value) || value === identity.college || preferences.followedColleges.includes(value)) { renderStep1(); return; }
+          if (preferences.followedColleges.length >= 10) { renderStep1(); return; }
           preferences.followedColleges = toggleValue(preferences.followedColleges, value);
           renderStep1();
           document.getElementById("follow-college-search")?.focus({ preventScroll: true });

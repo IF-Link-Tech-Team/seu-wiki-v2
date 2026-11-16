@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SUBSCRIPTION_TAXONOMY as tax } from "@aihot/industry/subscription-v2";
-import { annotateSubscription as annotate, matchSubscription as match, normalizeSubscriptionProfile as profile } from "@aihot/backend/publication/subscription-rules";
+import { annotateSubscription as annotate, matchSubscription as match, migrateLegacySubscription, normalizeSubscriptionProfile as profile } from "@aihot/backend/publication/subscription-rules";
 
 const day="2026-10-25";
 const p=profile({degree:"本科生",college:"计算机科学与工程学院",enrollmentYear:"2023",international:"no",interests:["topic:AI/机器学习"],identityNotices:true});
@@ -23,6 +23,29 @@ test("navigation selection expands without inferring undergraduate eligibility",
   assert.ok(annotate({title:"关于2026年春季学期补考安排的通知",summary:"",source:"教务处"}).topics.includes("选课与成绩"));
   assert.ok(annotate({title:"2026年硕士研究生调剂系统开通通知",summary:"",source:"研究生院"}).topics.includes("考研"));
   assert.ok(annotate({title:"关于2026届本科毕业设计（毕设）答辩安排的通知",summary:"",source:"教务处"}).topics.includes("毕业与学位"));
+});
+test("title-only generic words keep headline recall and stop summary false hits",()=>{
+  const at=(title:string,summary="",source="教务处")=>annotate({title,summary,source});
+  assert.ok(at("关于2026届毕业生离校手续办理的通知").topics.includes("毕业与学位"));
+  assert.ok(!at("关于做好期末工作的通知","毕业生离校工作另行通知。").topics.includes("毕业与学位"));
+  assert.ok(at("本学期体育课调整安排").topics.includes("体育运动"));
+  assert.ok(!at("关于做好场馆开放工作的通知","体育馆开放时间另行通知。").topics.includes("体育运动"));
+  assert.ok(at("2025年硕士研究生调剂公告").topics.includes("考研"));
+  assert.ok(!at("设备调剂使用说明","调剂设备清单见附件。").topics.includes("考研"));
+  // 推免通知的标准写法把“推荐免试”拆开，靠精确别名命中
+  assert.ok(at("关于做好2025年推荐优秀应届本科毕业生免试攻读研究生工作的通知").topics.includes("保研"));
+  // 大类整选仍覆盖其细分词，即使该词只认标题
+  const startup=at("关于举办创业大赛的通知");assert.ok(startup.topics.includes("就业服务")&&startup.topics.includes("创业"));
+  const submission=at("投稿须知");assert.ok(submission.topics.includes("论文发表")&&submission.topics.includes("投稿"));
+  assert.ok(at("关于评选优秀青年志愿者的通知").topics.includes("志愿公益"));
+  assert.ok(at("机器人大赛校内选拔").topics.includes("学科竞赛"));
+});
+test("legacy college publishers migrate to followed colleges without touching mode-less profiles",()=>{
+  const base={degree:"本科生",college:"吴健雄学院",enrollmentYear:"2023",international:"no",interests:["topic:保研"],publishers:["publisher:信息科学与工程学院","publisher:教务处"],types:[],identityNotices:true,mode:"interest" as const,followOwnCollege:true};
+  const migrated=migrateLegacySubscription(base);
+  assert.deepEqual(migrated.followColleges,["信息科学与工程学院"]);assert.deepEqual(migrated.publishers,["publisher:教务处"]);
+  const withoutMode=migrateLegacySubscription({...base,mode:undefined});
+  assert.deepEqual(withoutMode.publishers,base.publishers,"没有订阅模式的旧画像不动 publishers");
 });
 test("reject unknown IDs, wrong dimensions, reserved terms and duplicate selections",()=>{
   const q=profile({degree:"教授",interests:["unknown","publisher:教务处","topic:不存在的词","topic:保研","topic:保研"]});

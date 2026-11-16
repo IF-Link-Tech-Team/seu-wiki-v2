@@ -41,7 +41,7 @@ export function fromOptimizedProfile(raw: unknown, previous?: SubscriptionProfil
     interests: selected(preferences.topics, names("topic"), "兴趣").map(v => `topic:${v}`),
     publishers: selected(preferences.publishers, names("publisher"), "关注机构").map(v => `publisher:${v}`),
     mode: preferences.mode, followOwnCollege: preferences.followOwnCollege,
-    followColleges: selected(preferences.followedColleges, colleges, "关注学院").filter(c => c !== identity.college),
+    followColleges: selected(preferences.followedColleges ?? [], colleges, "关注学院").filter(c => c !== identity.college),
     topicGroups: selected(preferences.topicGroups, groupIds, "整组订阅"),
     excludedTypes: selected(preferences.excludedContentTypes, names("type"), "内容类型").map(v => `type:${v}`),
     excludedLocations: selected(preferences.excludedLocations, new Set(Object.keys(ONBOARDING_LOCATIONS)), "校区").map(v => ONBOARDING_LOCATIONS[v]),
