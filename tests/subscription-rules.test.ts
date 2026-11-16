@@ -39,6 +39,7 @@ test("title-only generic words keep headline recall and stop summary false hits"
   const submission=at("投稿须知");assert.ok(submission.topics.includes("论文发表")&&submission.topics.includes("投稿"));
   assert.ok(at("关于评选优秀青年志愿者的通知").topics.includes("志愿公益"));
   assert.ok(at("机器人大赛校内选拔").topics.includes("学科竞赛"));
+  assert.ok(at("实验室安全检查通知").topics.includes("实验室与科研助理"));
 });
 test("legacy college publishers migrate to followed colleges without touching mode-less profiles",()=>{
   const base={degree:"本科生",college:"吴健雄学院",enrollmentYear:"2023",international:"no",interests:["topic:保研"],publishers:["publisher:信息科学与工程学院","publisher:教务处"],types:[],identityNotices:true,mode:"interest" as const,followOwnCollege:true};
