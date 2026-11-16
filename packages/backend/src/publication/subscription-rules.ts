@@ -25,7 +25,7 @@ export const EXTRA_ALIASES: Record<string, string[]> = {
   // 推免通知的标准写法常把"推荐免试"拆开（"推荐优秀应届本科毕业生免试攻读研究生"），只认拆不开的精确说法
   "保研": ["免试攻读研究生", "推荐免试研究生"], "志愿公益": ["志愿者"],
   // 体育/实验室 保留在 blocklist 里（体育馆、实验室与设备管理处同名噪声），改由精确说法召回
-  "体育运动": ["体育课", "体测", "体育比赛"], "实验室与科研助理": ["重点实验室"],
+  "体育运动": ["体育课", "体测", "体育比赛"], "实验室与科研助理": ["重点实验室", "实验室安全", "实验室开放"],
   "研究生培养": ["集中开题", "开题答辩", "开题工作"], "奖学金": ["奖助学金"], "文艺演出": ["舞剧", "展映"],
   "防诈骗与安全": ["防诈"], "校园服务": ["医保"], "学籍与辅修": ["退学"],
   // 公众号昵称（信源名）→ 订阅可关注的部门：113 个 mp_account 接入后，昵称与部门名对不上的靠这里召回
@@ -229,10 +229,12 @@ export function matchSubscription(a: SubscriptionAnnotation, p: SubscriptionProf
     if (p.international === "no") conflicts.push("仅面向留学生"); else uncertain.push("留学生身份未填写");
   }
   const interestHits = a.topics.filter(t => p.interests.includes(`topic:${t}`));
-  const sourceHits = a.publishers.filter(t => p.publishers.includes(`publisher:${t}`) || (p.followOwnCollege && p.college === t) || followedColleges.includes(t));
+  const publisherHits = a.publishers.filter(t => p.publishers.includes(`publisher:${t}`) || (p.followOwnCollege && p.college === t));
+  const collegeSourceHits = a.publishers.filter(t => !publisherHits.includes(t) && followedColleges.includes(t));
   const audienceCollegeHits = audience.colleges.filter(c => followedColleges.includes(c));
   if (interestHits.length) reasons.push(`兴趣：${interestHits.join("、")}`);
-  if (sourceHits.length) reasons.push(`关注机构：${sourceHits.join("、")}`);
+  if (publisherHits.length) reasons.push(`关注机构：${publisherHits.join("、")}`);
+  if (collegeSourceHits.length) reasons.push(`关注学院：${collegeSourceHits.join("、")}`);
   if (audienceCollegeHits.length) reasons.push(audienceCollegeHits.includes(p.college) ? `面向你的学院：${audienceCollegeHits.join("、")}` : `面向你关注的学院：${audienceCollegeHits.join("、")}`);
   const identityHit = (audience.schoolwide || (p.degree && audience.degrees.includes(p.degree)) || (p.college && audience.colleges.includes(p.college)) || audience.colleges.some(c => followedColleges.includes(c)) || (p.enrollmentYear && audience.years.includes(p.enrollmentYear)) || (audience.internationalOnly && p.international === "yes"));
   const identityNotice = p.identityNotices && identityHit && conflicts.length === 0 && a.types.includes("事务通知");

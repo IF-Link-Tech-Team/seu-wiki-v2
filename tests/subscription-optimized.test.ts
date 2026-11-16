@@ -79,7 +79,7 @@ test("followed colleges match by publisher and audience and waive college confli
   assert.ok(targetedMatch.reasons.some(r => r.includes("面向你关注的学院")));
   // 关注学院发布的消息照进订阅流
   const posted = annotate({ title: "学院学术论坛预告", summary: "面向全校学生。", source: "信息科学与工程学院" }, true);
-  assert.ok(match(posted, p, day).reasons.some(r => r.includes("关注机构")));
+  assert.ok(match(posted, p, day).reasons.some(r => r.includes("关注学院")));
   // 未关注时同样的受众通知仍因所在学院不符被排除
   const plain = normalize(fromOptimizedProfile({ ...value, subscriptionPreferences: { ...value.subscriptionPreferences, followedColleges: [] } }));
   assert.equal(match(targeted, plain, day).lane, "excluded");
