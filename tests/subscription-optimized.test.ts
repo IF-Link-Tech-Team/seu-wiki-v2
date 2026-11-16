@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { fromOptimizedProfile, toOptimizedProfile } from "@aihot/contracts/subscription-onboarding";
 import { annotateSubscription as annotate, matchSubscription as match, normalizeSubscriptionProfile as normalize } from "@aihot/backend/publication/subscription-rules";
@@ -18,6 +19,13 @@ test("optimized HTML selections survive conversion and normalization, including 
   const recruitment = annotate({ title: "社团招新通知", summary: "面向全校学生，欢迎参加。", source: "校团委" }, true);
   assert.ok(recruitment.topics.includes("社团活动"));
   assert.notEqual(match(recruitment, profile, day).lane, "excluded");
+});
+
+test("the onboarding HTML keeps the same child-tag list as the industry package", () => {
+  const html = readFileSync(new URL("../apps/web/app/features/subscription/optimized-profile.html", import.meta.url), "utf8");
+  const block = html.slice(html.indexOf("const tagChildren = {"), html.indexOf("};", html.indexOf("const tagChildren = {")));
+  const parsed = Object.fromEntries([...block.matchAll(/"([^"]+)"\s*:\s*\[([^\]]*)\]/g)].map((m) => [m[1], [...m[2].matchAll(/"([^"]+)"/g)].map((x) => x[1])]));
+  assert.deepEqual(parsed, TOPIC_TAG_CHILDREN);
 });
 
 test("explicit group selection expands to its actual supplied leaves; opening a group does not select it", () => {

@@ -42,6 +42,12 @@ function selection(value: unknown, field: string, allowed: Set<string>, limit = 
   return [...new Set(value as string[])];
 }
 
+/** 关注学院另有 10 个上限；超限时给出可读原因，而不是混在"无效标签"里。 */
+function followColleges(value: unknown): string[] {
+  if (Array.isArray(value) && value.length > 10) throw new Error("关注的学院最多 10 个");
+  return selection(value, "关注学院", collegeNames, 10);
+}
+
 /** Strictly validates the complete server-stored profile; unknown taxonomy IDs are rejected. */
 export function parseSubscriptionProfile(value: unknown): SubscriptionProfile {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("画像必须是对象");
@@ -64,7 +70,7 @@ export function parseSubscriptionProfile(value: unknown): SubscriptionProfile {
     identityNotices: raw.identityNotices,
     ...(raw.mode === undefined ? {} : { mode: raw.mode }),
     ...(raw.followOwnCollege === undefined ? {} : { followOwnCollege: raw.followOwnCollege }),
-    ...(raw.followColleges === undefined ? {} : { followColleges: selection(raw.followColleges, "关注学院", collegeNames, 10) }),
+    ...(raw.followColleges === undefined ? {} : { followColleges: followColleges(raw.followColleges) }),
     ...(raw.topicGroups === undefined ? {} : { topicGroups: selection(raw.topicGroups, "兴趣组", topicGroupIds, 20) }),
     ...(raw.excludedTypes === undefined ? {} : { excludedTypes: selection(raw.excludedTypes, "排除内容类型", typeIds) }),
     ...(raw.excludedLocations === undefined ? {} : { excludedLocations: selection(raw.excludedLocations, "排除校区", locationIds) }),

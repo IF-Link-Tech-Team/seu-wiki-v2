@@ -209,7 +209,7 @@ function SubscriptionCard({item}:{item:SubscriptionItem}){
     <p className="text-xs text-ink-3">{item.source.replace(/（本地快照）$/,"")} · {new Date(item.publishedAt).toLocaleDateString("zh-CN",{timeZone:"Asia/Shanghai"})}</p>
     <h2 className="mt-2 text-lg font-semibold leading-7"><Link to={"/items/"+item.id} target="_blank" rel="noreferrer" className="hover:text-accent">{item.title}</Link></h2>
     <p className="mt-2 text-sm leading-7 text-ink-2">{item.summary||"暂无摘要，请查看原始信息。"}</p>
-    {!!item.reasons.length && <p className="mt-2 text-xs leading-6 text-ink-3">命中：{item.reasons.slice(0,3).join("；")}</p>}
+    {!!item.reasons.length && <p className="mt-2 text-xs leading-6 text-ink-3">{item.lane === "matched" ? "命中" : item.lane === "excluded" ? "排除依据" : "命中与待核对"}：{item.reasons.slice(0,3).join("；")}</p>}
     <div className="mt-3 flex flex-wrap gap-2">{item.annotation.topics.slice(0,5).map(t=><span key={t} className="rounded-lg bg-accent-soft px-2 py-1 text-xs text-accent-ink">{t}</span>)}</div>
   </article>;
 }

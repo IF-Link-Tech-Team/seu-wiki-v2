@@ -20,8 +20,12 @@ export const EXTRA_ALIASES: Record<string, string[]> = {
   "项目申报与基金": ["国家自然科学基金", "国家社会科学基金"], "国企与制造": ["国企", "央企"],
   // 被泛化别名剔除的精确说法：主持→主持人大赛，机器人→机器人竞赛，论文→论文投稿/征集论文（征文/征稿太泛），
   // 调剂/内推 子串撞词（设备调剂、团内推优），开题→集中开题/开题答辩/开题工作（教师"开题报告会"不召回）
-  "演讲辩论": ["主持人大赛"], "学科竞赛": ["机器人竞赛", "RoboCup"], "论文发表": ["论文投稿", "征集论文", "论文征集"],
-  "考研": ["硕士研究生招生", "调剂复试", "调剂系统"], "校园招聘": ["内推码", "内部推荐"],
+  "演讲辩论": ["主持人大赛"], "学科竞赛": ["机器人竞赛", "RoboCup", "机器人大赛"], "论文发表": ["论文投稿", "征集论文", "论文征集"],
+  "考研": ["硕士研究生招生", "调剂复试", "调剂系统", "调剂公告", "调剂通知", "调剂办法", "调剂工作"], "校园招聘": ["内推码", "内部推荐"],
+  // 推免通知的标准写法常把"推荐免试"拆开（"推荐优秀应届本科毕业生免试攻读研究生"），只认拆不开的精确说法
+  "保研": ["免试攻读研究生", "推荐免试研究生"], "志愿公益": ["志愿者"],
+  // 体育/实验室 保留在 blocklist 里（体育馆、实验室与设备管理处同名噪声），改由精确说法召回
+  "体育运动": ["体育课", "体测", "体育比赛"], "实验室与科研助理": ["重点实验室"],
   "研究生培养": ["集中开题", "开题答辩", "开题工作"], "奖学金": ["奖助学金"], "文艺演出": ["舞剧", "展映"],
   "防诈骗与安全": ["防诈"], "校园服务": ["医保"], "学籍与辅修": ["退学"],
   // 公众号昵称（信源名）→ 订阅可关注的部门：113 个 mp_account 接入后，昵称与部门名对不上的靠这里召回
@@ -33,7 +37,7 @@ export const EXTRA_ALIASES: Record<string, string[]> = {
 const aliases: Record<string, string[]> = (() => {
   // 泛化别名在订阅匹配里造成大量误命中（"活动"65 条、"主持"20 条、"设计"19 条…），主站打标归一仍用 TAG_SYNONYMS，
   // 订阅召回只认更具体的词；被剔除的口语词若指向真实高频话题，在 EXTRA_ALIASES 用精确说法补回。
-  const blocklist = new Set(["活动", "主持", "设计", "毕业", "实验室", "机器人", "体育", "创业", "论文", "投稿", "拟录取", "科研成果", "成果转化", "志愿", "科学技术奖", "顶尖科学家", "犀牛鸟", "调剂", "内推", "开题", "换届"]);
+  const blocklist = new Set(["活动", "主持", "设计", "实验室", "机器人", "体育", "论文", "拟录取", "科研成果", "成果转化", "志愿", "科学技术奖", "顶尖科学家", "犀牛鸟", "调剂", "内推", "开题", "换届"]);
   const out: Record<string, string[]> = {};
   for (const [variant, canonical] of Object.entries(TAG_SYNONYMS)) {
     if (canonical !== variant && !blocklist.has(variant)) (out[canonical] ??= []).push(variant);
@@ -41,6 +45,9 @@ const aliases: Record<string, string[]> = (() => {
   for (const [label, words] of Object.entries(EXTRA_ALIASES)) (out[label] ??= []).push(...words);
   return out;
 })();
+
+/** 标题命中即精准、摘要里出现却常是附带提到的泛化词：只在标题里参与召回（"毕业生离校""创业大赛""投稿须知"照常命中）。 */
+const TITLE_ONLY_WORDS = new Set(["毕业", "创业", "投稿"]);
 
 /** 旧画像/旧模型词里的主题名归一到聚合词；细分词本身已是词表节点，不再归一到所属大类；不认识的原样返回，由校验层处置。 */
 export function canonicalTopicName(name: string): string {
@@ -56,9 +63,16 @@ export function migrateLegacySubscription(profile: SubscriptionProfile): Subscri
     const canonical = canonicalTopicName(name);
     return SPLIT_TOPICS[canonical] ?? [canonical];
   };
+  // 学院从 v4 起由 followColleges 承载：旧画像里放在 publishers 的学院迁过去，否则新 UI 既看不到也删不掉。
+  const collegePublishers = profile.mode ? profile.publishers.filter(id => collegeNames.includes(id.slice(id.indexOf(":") + 1))) : [];
+  const followColleges = [...new Set([...(profile.followColleges ?? []), ...collegePublishers.map(id => id.slice(id.indexOf(":") + 1))])].slice(0, 10);
   return {
     ...profile,
     interests: [...new Set(profile.interests.flatMap(id => id.startsWith("topic:") ? migrateTopic(id.slice(6)).map(t => `topic:${t}`) : id))],
+    ...(collegePublishers.length ? {
+      publishers: profile.publishers.filter(id => !collegePublishers.includes(id)),
+      followColleges,
+    } : {}),
     ...(profile.topicGroups ? { topicGroups: profile.topicGroups.map(id => LEGACY_TOPIC_GROUP_IDS[id] ?? id) } : {}),
   };
 }
@@ -111,8 +125,11 @@ export function annotateSubscription(input: { title: string; summary: string | n
   const source = input.source.replace(/（本地快照）$/, "");
   const hit = (label: string, words = [label, ...(aliases[label] ?? [])], sourceOnly = false, titleOnly = false) => {
     const fields = sourceOnly ? [["来源", source]] : titleOnly ? [["标题", title]] : [["标题", title], ["摘要", summary]];
-    for (const [field, value] of fields) for (const word of words) if (contains(label === "AI/机器学习" ? value.replace(/人工智能学院/g, "") : value, word)) {
-      evidence.push({ tag: label, field, quote: snippet(value, word) }); return true;
+    for (const [field, value] of fields) for (const word of words) {
+      if (field === "摘要" && TITLE_ONLY_WORDS.has(word)) continue;
+      if (contains(label === "AI/机器学习" ? value.replace(/人工智能学院/g, "") : value, word)) {
+        evidence.push({ tag: label, field, quote: snippet(value, word) }); return true;
+      }
     }
     return false;
   };
@@ -202,8 +219,9 @@ export function matchSubscription(a: SubscriptionAnnotation, p: SubscriptionProf
   if (audience.staffOnly) conflicts.push("明确面向教职工，本订阅面向在校学生");
   for (const [label, allowed, value] of [["培养层次", audience.degrees, p.degree], ["适用学院", audience.colleges, p.college], ["入学年份", audience.years, p.enrollmentYear]] as const) {
     if (!allowed.length) continue;
-    // 关注的学院可以豁免所在学院不符：吴健雄/未来技术学生关注分流学院后，面向该学院的通知照进订阅流。
-    if (value && !allowed.includes(value) && allowed.some(c => followedColleges.includes(c))) continue;
+    // 关注的学院只豁免"适用学院"不符：吴健雄/未来技术学生关注分流学院后，面向该学院的通知照进订阅流；
+    // 培养层次与入学年份的限制不因关注学院而放宽。
+    if (label === "适用学院" && value && !allowed.includes(value) && allowed.some(c => followedColleges.includes(c))) continue;
     if (!value) uncertain.push(`${label}未填写，无法核对`);
     else if (!allowed.includes(value)) conflicts.push(`${label}不符合（要求：${allowed.join("、")}）`);
   }
