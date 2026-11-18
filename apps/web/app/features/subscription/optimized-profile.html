@@ -295,6 +295,11 @@
     .bubble-help button { border: 1px solid #d9c59a; border-radius: 99px; background: #ffffffa6; color: #775a2c; padding: 6px 11px; font-size: 11px; }
     .follow-college-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .follow-college-chips .chip { font-size: 12px; }
+    .college-options { max-height: 220px; overflow-y: auto; margin-top: 6px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .college-options[hidden] { display: none; }
+    .college-options button { display: block; width: 100%; min-height: 44px; padding: 10px 14px; border: 0; background: transparent; text-align: left; color: var(--ink); }
+    .college-options button:hover, .college-options button[aria-selected="true"] { background: var(--green-soft); }
+    .college-options p { padding: 10px 14px; margin: 0; font-size: 13px; color: var(--muted); }
     .bubble-field { position: relative; width: 100%; margin: 10px 0 22px; touch-action: pan-y; overflow-anchor: none; }
     .topic-bubble { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid transparent; padding: 9px; text-align: center; line-height: 1.5; color: #383a34; background: #fff; box-shadow: 0 7px 18px #af8a3e14; transition: color .18s, border-color .18s, box-shadow .18s; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: pan-y; }
     .topic-bubble:hover { box-shadow: 0 9px 22px #a5783828; }
@@ -569,6 +574,7 @@
       let step = 1;
       let completed = false;
       let topicQuery = "";
+      let followCollegeQuery = "";
       let expandedTopicGroups = new Set();
       let expandedTopicTags = new Set();
       let bubbleObserver;
@@ -634,19 +640,19 @@
             </div>
             <p class="field-error" id="degree-error" role="alert" tabindex="-1">${degreeError}</p>
             <div class="field-grid" style="margin-top:20px">
-              <label class="field">你所在的学院
-                <input id="college-search" list="college-options" value="${esc(identity.college)}" placeholder="输入关键词，如“计算机”" autocomplete="off">
-                <datalist id="college-options">${colleges.map(college => `<option value="${esc(college)}"></option>`).join("")}</datalist>
-              </label>
+              <div class="field"><label for="college-search">你所在的学院</label>
+                <input id="college-search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="college-options" value="${esc(identity.college)}" placeholder="输入关键词后选择学院" autocomplete="off">
+                <div id="college-options" class="college-options" role="listbox" aria-label="所在学院选项" hidden></div>
+              </div>
               <label class="field">哪一年入学？
                 <select id="enrollment-year"><option value="">暂不填写</option>${years.map(year => `<option value="${year}" ${identity.enrollmentYear === year ? "selected" : ""}>${year} 级</option>`).join("")}</select>
               </label>
-              <label class="field" style="grid-column:1/-1">关注的学院（可选，可多选，最多 10 个）
-                <input id="follow-college-search" list="follow-college-options" placeholder="例如吴健雄、未来技术学院的同学，关注专业分流所在的学院" autocomplete="off">
-                <datalist id="follow-college-options">${colleges.filter(college => college !== identity.college && !preferences.followedColleges.includes(college)).map(college => `<option value="${esc(college)}"></option>`).join("")}</datalist>
+              <div class="field" style="grid-column:1/-1"><label for="follow-college-search">关注的学院（可选，可多选，最多 10 个）</label>
+                <input id="follow-college-search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="follow-college-options" value="${esc(followCollegeQuery)}" placeholder="输入关键词后选择，如“机械”“计算机”" autocomplete="off" ${preferences.followedColleges.length >= 10 ? "disabled" : ""}>
+                <div id="follow-college-options" class="college-options" role="listbox" aria-label="关注学院选项" hidden></div>
                 ${preferences.followedColleges.length ? `<span class="follow-college-chips">${preferences.followedColleges.map(college => `<button type="button" class="chip" data-remove-follow-college="${esc(college)}" aria-label="移除关注的学院 ${esc(college)}">✓ ${esc(college)} ×</button>`).join("")}</span>` : ""}
                 ${preferences.followedColleges.length >= 10 ? '<span class="hint">已选满 10 个学院，移除一个后可继续添加。</span>' : ""}
-              </label>
+              </div>
             </div>
           </section>`);
 
@@ -656,26 +662,81 @@
           render();
           document.querySelector(`[data-degree="${identity.degree}"]`)?.focus({ preventScroll: true });
         }));
-        document.getElementById("college-search").addEventListener("change", event => {
-          identity.college = event.target.value.trim();
-          render();
-        });
-        document.getElementById("college-search").addEventListener("input", event => { identity.college = event.target.value; });
+        bindCollegePicker("college-search", "college-options", false);
+        bindCollegePicker("follow-college-search", "follow-college-options", true);
         document.getElementById("enrollment-year").addEventListener("change", event => { identity.enrollmentYear = event.target.value; });
-        document.getElementById("follow-college-search").addEventListener("change", event => {
-          const value = event.target.value.trim();
-          event.target.value = "";
-          if (!colleges.includes(value) || value === identity.college || preferences.followedColleges.includes(value)) { renderStep1(); return; }
-          if (preferences.followedColleges.length >= 10) { renderStep1(); return; }
-          preferences.followedColleges = toggleValue(preferences.followedColleges, value);
-          renderStep1();
-          document.getElementById("follow-college-search")?.focus({ preventScroll: true });
-        });
         document.querySelectorAll("[data-remove-follow-college]").forEach(button => button.addEventListener("click", () => {
           preferences.followedColleges = preferences.followedColleges.filter(college => college !== button.dataset.removeFollowCollege);
           renderStep1();
           document.getElementById("follow-college-search")?.focus({ preventScroll: true });
         }));
+      }
+
+      function bindCollegePicker(inputId, optionsId, multiple) {
+        const input = document.getElementById(inputId);
+        const options = document.getElementById(optionsId);
+        const identity = profile.userIdentity;
+        const preferences = profile.subscriptionPreferences;
+        let matches = [], active = -1, composing = false;
+        function close() {
+          options.hidden = true;
+          input.setAttribute("aria-expanded", "false");
+          input.removeAttribute("aria-activedescendant");
+          active = -1;
+        }
+        function choose(value) {
+          if (!colleges.includes(value)) return;
+          if (multiple) {
+            if (value === identity.college || preferences.followedColleges.includes(value) || preferences.followedColleges.length >= 10) return;
+            preferences.followedColleges.push(value);
+            followCollegeQuery = "";
+          } else {
+            identity.college = value;
+            preferences.followedColleges = preferences.followedColleges.filter(college => college !== value);
+          }
+          renderStep1();
+          document.getElementById(inputId).focus({ preventScroll: true });
+        }
+        function update() {
+          const query = input.value.trim();
+          if (!multiple) identity.college = query;
+          else followCollegeQuery = input.value;
+          close();
+          matches = [];
+          if (!query || composing) return;
+          matches = colleges.filter(name => name.includes(query) && (!multiple || (name !== identity.college && !preferences.followedColleges.includes(name))));
+          options.innerHTML = matches.length ? matches.map((name, index) => `<button type="button" role="option" aria-selected="false" tabindex="-1" id="${optionsId}-${index}" data-college="${esc(name)}">${esc(name)}</button>`).join("") : '<p role="status">没有匹配的学院，请换个关键词。</p>';
+          options.hidden = false;
+          input.setAttribute("aria-expanded", "true");
+        }
+        input.addEventListener("input", update);
+        input.addEventListener("focus", update);
+        input.addEventListener("compositionstart", () => { composing = true; close(); });
+        input.addEventListener("compositionend", () => { composing = false; update(); });
+        input.addEventListener("blur", close);
+        // Keep focus until click: blur must not remove a touch/click target.
+        options.addEventListener("mousedown", event => event.preventDefault());
+        options.addEventListener("click", event => {
+          const button = event.target.closest("[data-college]");
+          if (button) choose(button.dataset.college);
+        });
+        input.addEventListener("keydown", event => {
+          if (composing || event.isComposing || event.keyCode === 229) return;
+          if (event.key === "Escape") { close(); return; }
+          if (event.key === "Enter" && !options.hidden && matches.length) {
+            event.preventDefault();
+            if (active >= 0 || matches.length === 1) choose(matches[Math.max(0, active)]);
+          }
+          if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+          event.preventDefault();
+          if (options.hidden) update();
+          if (!matches.length) return;
+          active = active < 0 ? (event.key === "ArrowDown" ? 0 : matches.length - 1) : (active + (event.key === "ArrowDown" ? 1 : matches.length - 1)) % matches.length;
+          options.querySelectorAll("[data-college]").forEach((button, index) => button.setAttribute("aria-selected", String(index === active)));
+          const option = document.getElementById(`${optionsId}-${active}`);
+          input.setAttribute("aria-activedescendant", option.id);
+          option.scrollIntoView({ block: "nearest" });
+        });
       }
 
       function selectedTopicChips() {
@@ -1302,6 +1363,12 @@
       }
 
       function validateRequiredIdentity() {
+        if (followCollegeQuery.trim()) {
+          if (step !== 1) { step = 1; render(); }
+          showBridgeError("请点击选项添加关注的学院，或清空搜索框后继续。");
+          document.getElementById("follow-college-search").focus();
+          return false;
+        }
         const college = profile.userIdentity.college.trim();
         if (college && !colleges.includes(college)) {
           const matches = colleges.filter(name => name.includes(college));
