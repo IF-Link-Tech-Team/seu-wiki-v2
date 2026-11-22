@@ -62,8 +62,29 @@ export interface ItemSummary {
   x: XPostView | null;
 }
 
+export interface ActivityScheduleTime {
+  text: string;
+  value: string | null;
+  precision: "day" | "minute" | "second" | null;
+}
+
+export interface ActivityScheduleEntry {
+  name: string;
+  registrationStart?: ActivityScheduleTime;
+  registrationEnd?: ActivityScheduleTime;
+  activityStart?: ActivityScheduleTime;
+  activityEnd?: ActivityScheduleTime;
+  registrationNote?: string;
+}
+
+export interface ActivitySchedule {
+  activities: ActivityScheduleEntry[];
+  notice?: "时间待核实" | "活动已取消";
+}
+
 /** The fields rendered by a site feed card; full original text lives in the item detail. */
 export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "publishedAt" | "publishedAtPrecision" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
+  activitySchedule?: ActivitySchedule | null;
   source: Pick<SourceRef, "name">;
   x: (Pick<XPostView, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet" | "media"> & {
     quoted: Omit<NonNullable<XPostView["quoted"]>, "url"> | null;

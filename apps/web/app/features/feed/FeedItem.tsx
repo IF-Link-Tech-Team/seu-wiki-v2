@@ -9,6 +9,7 @@ import { SelectedBadge } from "../../components/ui/Badge";
 import { MediaThumbs, SourceLine, StarButton } from "./parts";
 import { GroupDevelopments, GroupSources, LatestDevelopment } from "./ReadingGroup";
 import { QuotedLine } from "../item/QuotedPost";
+import { ActivityTimes } from "./ActivityTimes";
 
 export interface FeedItemProps {
   item: FeedItemSummary;
@@ -30,7 +31,7 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
   const tags = showTags ? item.tags.slice(0, 3) : [];
 
   return (
-    <article className="relative min-w-0 lg:card lg:card-hover lg:px-4 lg:py-4" data-item-id={item.id}>
+    <article className="@container/feed relative min-w-0 lg:card lg:card-hover lg:px-4 lg:py-4" data-item-id={item.id}>
       <header className="flex min-h-[18px] items-center gap-2 text-[12.5px] leading-[18px] text-ink-4">
         <SourceLine item={item} className="text-ink-4" />
         {item.selected && (
@@ -43,40 +44,45 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
         </span>
       </header>
 
-      <h3 className={`mt-2 line-clamp-2 text-[17px] font-semibold leading-normal wrap-anywhere lg:line-clamp-none ${read ? "text-ink-4" : "text-ink"}`}>
-        <IntentLink to={`/items/${item.id}`} onClick={open} className="after:absolute after:inset-0 after:content-['']">
-          {item.title}
-        </IntentLink>
-      </h3>
+      <div className={`mt-2 min-w-0 ${item.activitySchedule ? "grid items-start gap-x-6 gap-y-3 lg:@min-[680px]/feed:grid-cols-[fit-content(50%)_minmax(0,22rem)]" : ""}`}>
+        <div className="min-w-0">
+          <h3 className={`line-clamp-2 text-[17px] font-semibold leading-normal wrap-anywhere lg:line-clamp-none ${read ? "text-ink-4" : "text-ink"}`}>
+            <IntentLink to={`/items/${item.id}`} onClick={open} className="after:absolute after:inset-0 after:content-['']">
+              {item.title}
+            </IntentLink>
+          </h3>
 
-      {isX && item.x!.media.length > 0 && <MediaThumbs media={item.x!.media} className="mt-2.5" />}
-      {isX && item.x!.quoted?.text && <QuotedLine quoted={item.x!.quoted} />}
+          {isX && item.x!.media.length > 0 && <MediaThumbs media={item.x!.media} className="mt-2.5" />}
+          {isX && item.x!.quoted?.text && <QuotedLine quoted={item.x!.quoted} />}
 
-      {matchReasons && matchReasons.length > 0 && (
-        <div className="relative z-10 mt-2 flex flex-wrap items-center gap-1.5">
-          <span className="text-[12px] text-ink-4">为你放前面：</span>
-          {matchReasons.map((r) => (
-            <span key={r} className="chip border-accent/50 bg-transparent text-accent">
-              {r}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {(tags.length > 0 || (showTags && item.category)) && (
-        <div className="relative z-10 mt-2 hidden flex-wrap gap-x-2.5 gap-y-1 text-[12px] text-ink-4 lg:flex">
-          {showTags && item.category && (
-            <Link to={`/all?category=${item.category}`} className="hover:text-accent">
-              {CATEGORY_LABELS[item.category]}
-            </Link>
+          {matchReasons && matchReasons.length > 0 && (
+            <div className="relative z-10 mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="text-[12px] text-ink-4">为你放前面：</span>
+              {matchReasons.map((r) => (
+                <span key={r} className="chip border-accent/50 bg-transparent text-accent">
+                  {r}
+                </span>
+              ))}
+            </div>
           )}
-          {tags.map((t) => (
-            <Link key={t} to={`/all?tag=${encodeURIComponent(t)}`} className="hover:text-accent">
-              #{t}
-            </Link>
-          ))}
+
+          {(tags.length > 0 || (showTags && item.category)) && (
+            <div className="relative z-10 mt-2 hidden flex-wrap gap-x-2.5 gap-y-1 text-[12px] text-ink-4 lg:flex">
+              {showTags && item.category && (
+                <Link to={`/all?category=${item.category}`} className="hover:text-accent">
+                  {CATEGORY_LABELS[item.category]}
+                </Link>
+              )}
+              {tags.map((t) => (
+                <Link key={t} to={`/all?tag=${encodeURIComponent(t)}`} className="hover:text-accent">
+                  #{t}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+        {item.activitySchedule && <ActivityTimes schedule={item.activitySchedule} />}
+      </div>
 
       {group && <LatestDevelopment group={group} />}
       {(showSources || showDevelopments) && (
