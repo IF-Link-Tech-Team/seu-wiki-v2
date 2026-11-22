@@ -6,6 +6,7 @@ import type { GroupInfo, TimelineCard, TimelineFilters, TimelineResponse } from 
 import { beijingDate } from "@aihot/contracts/time";
 import { sql } from "../db.ts";
 import { decodeCursor, encodeCursor, InvalidCursorError, queryBinding } from "../lib/cursor.ts";
+import { loadActivitySchedules } from "./activity.ts";
 import {
   ITEM_COLUMNS, ITEM_FROM, categoryCondition, channelCondition, selectedCondition, sourceCondition, tagCondition, toFeedItemSummary, topicCondition,
   type ItemRow,
@@ -184,6 +185,11 @@ export async function loadTimeline(q: TimelineQuery): Promise<Omit<TimelineRespo
     if (group) group.story = row.story_public_id ? { publicId: row.story_public_id, title: row.story_title ?? "" } : null;
     return [{ key, anchorAt, item: toFeedItemSummary(row), group }];
   });
+  const schedules = await loadActivitySchedules(cards, q, now);
+  for (const card of cards) {
+    const schedule = schedules.get(card.item.id);
+    if (schedule) card.item.activitySchedule = schedule;
+  }
 
   // Day header counts for the days on this page, over the full grouped set.
   const days = new Set(page.map((g) => beijingDate(g.anchor_at)));
