@@ -39,8 +39,8 @@ type Activity = {
 } & Partial<Record<TimeField, ActivityTime>>;
 
 const ABSOLUTE_DATE = /^(?:(\d{4})[-年/.])?(\d{1,2})[-月/.](\d{1,2})[日号]?$/;
-const CLOCK = /[T\s]*(?:(上午|中午|下午|晚上)\s*)?(\d{1,2}|[一二两三四五六七八九十])(?::(\d{2})(?::(\d{2}))?|[时点](?:(\d{1,2})分?)?)$/;
-const WEEKDAY_SUFFIX = /\((?:周|星期)([一二三四五六日天])\)$/;
+const CLOCK = /[T\s]*(?:(上午|中午|下午|晚上)\s*)?(\d{1,2}|[一二两三四五六七八九十])\s*(?::\s*(\d{2})(?:\s*:\s*(\d{2}))?|[时点]\s*(?:(\d{1,2})\s*分?)?)$/;
+const WEEKDAY_SUFFIX = /(?:\((?:周|星期)([一二三四五六日天])\)|(?:周|星期)([一二三四五六日天]))$/;
 const WEEKDAY = "一二三四五六日";
 const pad = (value: string | number) => String(value).padStart(2, "0");
 
@@ -74,10 +74,11 @@ function resolveTime(evidence: string, anchor: string | null): ActivityTime {
   const text = evidence.normalize("NFKC").trim().replace(/\s*(?:北京时间|\+08:00)$/, "");
   const clock = CLOCK.exec(text);
   const unresolved = { evidence, value: null, precision: null };
-  const dayText = clock ? text.slice(0, clock.index).trim() : text;
-  const weekday = WEEKDAY_SUFFIX.exec(dayText);
+  let dayText = (clock ? text.slice(0, clock.index) : text).replace(/\s+/g, "");
+  if (clock && dayText.endsWith(",") && ABSOLUTE_DATE.test(dayText.slice(0, -1))) dayText = dayText.slice(0, -1);
+  const weekday = /^(本|下)(?:周|星期)[一二三四五六日天]$/.test(dayText) ? null : WEEKDAY_SUFFIX.exec(dayText);
   const date = resolveDay(weekday ? dayText.slice(0, weekday.index).trim() : dayText, anchor);
-  if (!date || (weekday && WEEKDAY[(new Date(date).getUTCDay() + 6) % 7] !== weekday[1]!.replace("天", "日"))) return unresolved;
+  if (!date || (weekday && WEEKDAY[(new Date(date).getUTCDay() + 6) % 7] !== (weekday[1] ?? weekday[2])!.replace("天", "日"))) return unresolved;
   if (!clock) return { evidence, value: date, precision: "day" };
   const [, period, hourText, colonMinute, second, chineseMinute] = clock;
   let hour = /^\d/.test(hourText!) ? Number(hourText) : "一二三四五六七八九十".indexOf(hourText!.replace("两", "二")) + 1;
@@ -126,6 +127,18 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
     const quote = collapseWhitespace(value ?? "");
     return quote && source.some((text) => text.includes(quote)) ? quote : null;
   };
+  const verifiedTime = (value: string | null | undefined) => {
+    const quote = collapseWhitespace(value ?? "");
+    if (!quote) return null;
+    // Formatting spaces may differ after extraction. Return the actual continuous source span;
+    // every non-space character (including all digits and punctuation) must still match.
+    const clock = CLOCK.exec(quote.normalize("NFKC"));
+    const datePrefix = clock ? quote.slice(0, clock.index).replace(/\s+/g, "") : "";
+    const commaAt = ABSOLUTE_DATE.test(datePrefix.normalize("NFKC")) ? datePrefix.length : -1;
+    const pattern = new RegExp([...quote.replace(/\s+/g, "")].map((char, index) =>
+      (index === commaAt ? "[,，]?\\s*" : "") + char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s*"));
+    return source.map((text) => pattern.exec(text)?.[0]).find(Boolean) ?? null;
+  };
   const evidence = verified(raw.evidence);
   const kind = evidence ? raw.kind : "unknown";
   const candidateType = kind === "activity_notice" || kind === "activity_registration";
@@ -135,14 +148,14 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
     for (const item of raw.activities) {
       if (!item) continue;
       const name = verified(item.name);
-      if (!name) continue;
-      const activity: Activity = { name };
+      if (!name && !source[0]) continue;
+      const activity: Activity = { name: name ?? source[0]! };
       const venue = verified(item.venue);
       const participation = verified(item.participation);
       if (venue) activity.venue = venue;
       if (participation) activity.participation = participation;
       for (const field of TIME_FIELDS) {
-        const quote = verified(item[field]);
+        const quote = verifiedTime(item[field]);
         if (quote) activity[field] = resolveTime(quote, anchor);
       }
       // Some models expand a shared date onto the range end. Accept only the actual source clock,
@@ -153,7 +166,7 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
         if (activity[endField] || !proposed || !start?.value) continue;
         const clock = CLOCK.exec(proposed.normalize("NFKC"));
         if (!clock || clock.index === 0) continue;
-        const quote = verified(proposed.slice(clock.index).trim());
+        const quote = verifiedTime(proposed.slice(clock.index).trim());
         if (!quote) continue;
         const end = resolveTime(quote, anchor);
         normalizeRange(source, { ...start }, end);
@@ -161,6 +174,11 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
       }
       normalizeRange(source, activity.registrationStart, activity.registrationEnd);
       normalizeRange(source, activity.activityStart, activity.activityEnd);
+      if (!name && raw.activities.length > 1) {
+        const marker = activity.activityStart?.evidence ?? activity.registrationEnd?.evidence;
+        if (!marker) continue;
+        activity.name = `${source[0]} · ${marker}`;
+      }
       activities.push(activity);
     }
   }
@@ -168,5 +186,5 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
   const decision = candidateType && actionable && body && !raw.needsReview ? "candidate"
     : candidateType || kind === "activity_update" || kind === "unknown" ? "review"
     : "excluded";
-  return { kind, evidence, decision, activities, ...(kind === "activity_update" && raw.update ? { update: raw.update } : {}) };
+  return { kind, evidence, decision, needsReview: raw.needsReview, activities, ...(kind === "activity_update" && raw.update ? { update: raw.update } : {}) };
 }

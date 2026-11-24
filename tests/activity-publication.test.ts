@@ -7,6 +7,13 @@ const time = (evidence: string, value: string | null = null, precision: "day" | 
 const activity = (name = "读书会", activityStart = time("11月24日19:00", "2026-11-24T19:00+08:00", "minute")) => ({ name, activityStart });
 const editorial = (activities: unknown[] = [activity()]) => ({ kind: "activity_registration", evidence: "读书会开放报名", decision: "candidate", activities });
 
+test("一个未解析端点不丢弃其他已验证时间", () => {
+  const schedule = projectActivitySchedule(editorial([{ ...activity(), activityEnd: time("尚未确定具体时刻") }]));
+  assert.equal(schedule?.notice, undefined);
+  assert.equal(schedule?.activities[0]?.activityStart?.value, "2026-11-24T19:00+08:00");
+  assert.equal(schedule?.activities[0]?.activityEnd, undefined);
+});
+
 test("公开时间投影保留四端点、日期精度与不同场次，去除内部判断", () => {
   const raw = editorial([
     { ...activity(), registrationStart: time("即日起", "2026-11-20", "day"), registrationEnd: time("11月22日18:00", "2026-11-22T18:00+08:00", "minute"), activityEnd: time("21:00", "2026-11-24T21:00+08:00", "minute") },
