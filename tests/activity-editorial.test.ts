@@ -13,6 +13,55 @@ function material(bodyText: string, publishedAt: string | null = "2026-11-08T14:
 
 const analyze = (raw: unknown, article: AnalyzeInputArticle) => normalizeActivityEditorial(ActivityEditorialSchema.parse(raw), article);
 
+test("无括号星期、全角钟点及排版空白按原文解析，星期冲突仍拒绝", () => {
+  for (const [phrase, expected] of [
+    ["2026年11月25日 周三18:30", "2026-11-25T18:30+08:00"],
+    ["2026年11月25日 星期三 18 : 30", "2026-11-25T18:30+08:00"],
+    ["2026/11/26（周四）19:00", "2026-11-26T19:00+08:00"],
+    ["11月26日(周四)１９：００", "2026-11-26T19:00+08:00"],
+  ]) {
+    const result = analyze({ kind: "activity_notice", evidence: "讲座预告", activities: [{ name: "讲座", activityStart: phrase }] }, material(`讲座预告：${phrase}`));
+    assert.equal(result?.activities[0]?.activityStart?.value, expected, phrase);
+    assert.equal(result?.activities[0]?.activityStart?.evidence, phrase);
+  }
+  for (const phrase of ["2026年11月25日 周四18:30", "2026年2月30日 星期一19:00"]) {
+    const result = analyze({ kind: "activity_notice", evidence: "讲座预告", activities: [{ name: "讲座", activityStart: phrase }] }, material(`讲座预告：${phrase}`));
+    assert.equal(result?.activities[0]?.activityStart?.value, null);
+  }
+});
+
+test("时间排版空白可忽略但证据仍取原文，数字变化和伪造类型不能混过校验", () => {
+  const article = material("讲座预告：2026/11/26 （周四）19 : 00 开始。");
+  const raw = { kind: "activity_notice", evidence: "讲座预告", activities: [{ name: "讲座", activityStart: "2026/11/26（周四）19:00" }] };
+  assert.deepEqual(analyze(raw, article)?.activities[0]?.activityStart, { evidence: "2026/11/26 （周四）19 : 00", value: "2026-11-26T19:00+08:00", precision: "minute" });
+  assert.equal(analyze({ ...raw, activities: [{ name: "讲座", activityStart: "2026/11/26（周四）19:30" }] }, article)?.activities[0]?.activityStart, undefined);
+  assert.equal(analyze({ ...raw, evidence: "伪造的讲座预告" }, article)?.kind, "unknown");
+});
+
+test("AI合成单场名称不再丢弃已核验端点，显示名回落到原文标题", () => {
+  const article = { ...material("讲座预告。主题：健康养生。2026年11月26日19:00开始。"), title: "研究生讲座预告｜健康养生" };
+  const result = analyze({ kind: "activity_notice", evidence: "讲座预告", activities: [{ name: "研究生人文素养讲座（健康养生类）：健康养生", activityStart: "2026年11月26日19:00" }] }, article);
+  assert.equal(result?.activities[0]?.name, article.title);
+  assert.equal(result?.activities[0]?.activityStart?.value, "2026-11-26T19:00+08:00");
+});
+
+test("多场合成名称用原文时间区分，保留模型needsReview与各场对应端点", () => {
+  const article = { ...material("沙龙预告。11月24日12:30—13:40；11月25日17:00—18:00。"), title: "微电沙龙本周预告" };
+  const raw = { kind: "activity_notice", evidence: "沙龙预告", needsReview: true, activities: [
+    { name: "微电沙龙（嘉宾甲专场）", activityStart: "11月24日12:30", activityEnd: "13:40" },
+    { name: "微电沙龙（嘉宾乙专场）", activityStart: "11月25日17:00", activityEnd: "18:00" },
+  ] };
+  const result = analyze(raw, article);
+  assert.equal(result?.decision, "review");
+  assert.equal((result as { needsReview?: boolean })?.needsReview, true);
+  assert.equal(result?.activities.length, 2);
+  assert.equal(result?.activities[0]?.name, `${article.title} · 11月24日12:30`);
+  assert.equal(result?.activities[1]?.name, `${article.title} · 11月25日17:00`);
+  assert.equal(result?.activities[0]?.activityEnd?.value, "2026-11-24T13:40+08:00");
+  assert.equal(result?.activities[1]?.activityEnd?.value, "2026-11-25T18:00+08:00");
+  assert.equal(analyze({ ...raw, evidence: "伪造预告" }, article)?.kind, "unknown");
+});
+
 test("活动报名分别提取报名起止和活动开始，保留日期精度", () => {
   const body = "开放志愿活动报名。报名时间即日起至11月15日。活动于11月20日 19:30开始。";
   const result = analyze({

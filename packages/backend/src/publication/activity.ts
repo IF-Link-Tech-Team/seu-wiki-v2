@@ -42,12 +42,13 @@ export function projectActivitySchedule(raw: unknown): ActivitySchedule | null {
   if (data.kind === "activity_update" && data.update === "cancelled") return { activities: [], notice: "活动已取消" };
   if (data.kind === "activity_update" || data.decision === "review") return review();
   const activities: ActivityScheduleEntry[] = [];
+  let unresolved = false;
   for (const item of data.activities) {
     const entry: ActivityScheduleEntry = { name: item.name };
     for (const field of fields) {
       if (!item[field]) continue;
       const value = publicTime(item[field]);
-      if (!value) return review();
+      if (!value) { unresolved = true; continue; }
       entry[field] = value;
     }
     for (const [startKey, endKey] of [["registrationStart", "registrationEnd"], ["activityStart", "activityEnd"]] as const) {
@@ -65,7 +66,7 @@ export function projectActivitySchedule(raw: unknown): ActivitySchedule | null {
     if (entry.registrationNote === "无需报名" && (entry.registrationStart || entry.registrationEnd)) return review();
     if (fields.some((field) => entry[field]) || entry.registrationNote) activities.push(entry);
   }
-  return activities.length ? { activities } : null;
+  return activities.length ? { activities } : unresolved ? review() : null;
 }
 
 /** A newer same-name change invalidates old times; different reports never supply missing endpoints. */
