@@ -74,7 +74,8 @@ function resolveTime(evidence: string, anchor: string | null): ActivityTime {
   const text = evidence.normalize("NFKC").trim().replace(/\s*(?:北京时间|\+08:00)$/, "");
   const clock = CLOCK.exec(text);
   const unresolved = { evidence, value: null, precision: null };
-  const dayText = (clock ? text.slice(0, clock.index) : text).replace(/\s+/g, "");
+  let dayText = (clock ? text.slice(0, clock.index) : text).replace(/\s+/g, "");
+  if (clock && dayText.endsWith(",") && ABSOLUTE_DATE.test(dayText.slice(0, -1))) dayText = dayText.slice(0, -1);
   const weekday = /^(本|下)(?:周|星期)[一二三四五六日天]$/.test(dayText) ? null : WEEKDAY_SUFFIX.exec(dayText);
   const date = resolveDay(weekday ? dayText.slice(0, weekday.index).trim() : dayText, anchor);
   if (!date || (weekday && WEEKDAY[(new Date(date).getUTCDay() + 6) % 7] !== (weekday[1] ?? weekday[2])!.replace("天", "日"))) return unresolved;
@@ -131,7 +132,11 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
     if (!quote) return null;
     // Formatting spaces may differ after extraction. Return the actual continuous source span;
     // every non-space character (including all digits and punctuation) must still match.
-    const pattern = new RegExp([...quote.replace(/\s+/g, "")].map((char) => char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s*"));
+    const clock = CLOCK.exec(quote.normalize("NFKC"));
+    const datePrefix = clock ? quote.slice(0, clock.index).replace(/\s+/g, "") : "";
+    const commaAt = ABSOLUTE_DATE.test(datePrefix.normalize("NFKC")) ? datePrefix.length : -1;
+    const pattern = new RegExp([...quote.replace(/\s+/g, "")].map((char, index) =>
+      (index === commaAt ? "[,，]?\\s*" : "") + char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s*"));
     return source.map((text) => pattern.exec(text)?.[0]).find(Boolean) ?? null;
   };
   const evidence = verified(raw.evidence);
