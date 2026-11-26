@@ -50,7 +50,7 @@ export default function TopicPage() {
   const last = first + items.length - 1;
   return (
     <div className="pb-6">
-      <header className="pb-4 pt-5 lg:pt-1">
+      <header className="editorial-masthead mb-4 pt-5 lg:pt-1">
         <div className="flex items-start justify-between gap-4">
           <h1 className="browse-title min-w-0">{topic.name}</h1>
           <span className="shrink-0 pt-1">

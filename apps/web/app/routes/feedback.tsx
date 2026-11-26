@@ -154,8 +154,8 @@ export default function FeedbackPage() {
   const canSend = draft.content.trim().length >= 2 && state.kind !== "sending";
   return (
     <ReadingLayout aside={<FeedbackAside />}>
-      <header>
-        <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">说说你的想法</h1>
+      <header className="editorial-masthead mb-5">
+        <h1 className="browse-title">说说你的想法</h1>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-3">发现 bug、想要的功能、看不顺眼的地方，都可以告诉我，我都会看到。</p>
       </header>
 

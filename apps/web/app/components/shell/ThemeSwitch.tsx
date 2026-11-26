@@ -11,7 +11,7 @@ const OPTIONS: Array<{ key: Choice; label: string; icon: ReactNode }> = [
 ];
 
 /** Three-way appearance switch (dark / follow the system / light) with a sliding thumb. */
-export function ThemeSwitch({ className = "" }: { className?: string }) {
+export function ThemeSwitch({ className = "", onForest = false, compact = false }: { className?: string; onForest?: boolean; compact?: boolean }) {
   const pref = useThemePreference();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -30,10 +30,20 @@ export function ThemeSwitch({ className = "" }: { className?: string }) {
   };
 
   return (
-    <div role="radiogroup" aria-label="外观" className={`relative grid h-[34px] grid-cols-3 rounded-full border border-line bg-bg-sunk p-[3px] ${className}`}>
+    <div
+      role="radiogroup"
+      aria-label="外观"
+      className={`relative grid grid-cols-3 rounded-full border ${compact ? "h-[28px] p-[2px]" : "h-[34px] p-[3px]"} ${
+        onForest ? "border-[var(--forest-border)] bg-[var(--forest-dock-bg)] backdrop-blur-md" : "border-line bg-bg-sunk"
+      } ${className}`}
+    >
       <span
         aria-hidden="true"
-        className="absolute inset-y-[3px] left-[3px] w-[calc((100%-6px)/3)] rounded-full border border-line bg-surface shadow-[var(--shadow-card)] transition-transform duration-200 ease-[var(--ease-out-quart)]"
+        className={`absolute rounded-full border transition-transform duration-200 ease-[var(--ease-out-quart)] ${
+          compact ? "inset-y-[2px] left-[2px] w-[calc((100%-4px)/3)]" : "inset-y-[3px] left-[3px] w-[calc((100%-6px)/3)]"
+        } ${
+          onForest ? "border-[var(--forest-glass-border)] bg-[var(--forest-glass-bg)] shadow-sm" : "border-line bg-surface shadow-[var(--shadow-card)]"
+        }`}
         style={{ transform: `translateX(${index * 100}%)` }}
       />
       {OPTIONS.map((o) => (
@@ -44,7 +54,11 @@ export function ThemeSwitch({ className = "" }: { className?: string }) {
           aria-checked={current === o.key}
           title={o.label}
           onClick={() => choose(o.key)}
-          className={`relative z-10 flex items-center justify-center rounded-full transition-colors duration-150 ${current === o.key ? "text-ink" : "text-ink-4 hover:text-ink-2"}`}
+          className={`relative z-10 flex items-center justify-center rounded-full transition-colors duration-150 ${compact ? "scale-90" : ""} ${
+            onForest
+              ? current === o.key ? "text-[var(--forest-glass-ink)]" : "text-[var(--forest-muted)] hover:text-[var(--forest-ink)]"
+              : current === o.key ? "text-ink" : "text-ink-4 hover:text-ink-2"
+          }`}
         >
           {o.icon}
           <span className="sr-only">{o.label}</span>

@@ -39,36 +39,40 @@ export function useMemberState(enabled: boolean): State {
   return enabled ? state : { kind: "loading" };
 }
 
-export function AccountEntry({ enabled }: { enabled: boolean }) {
+export function AccountEntry({ enabled, onForest = false, compact = false }: { enabled: boolean; onForest?: boolean; compact?: boolean }) {
   const state = useMemberState(enabled);
   const location = useLocation();
   const returnTo = memberReturnPath(location.pathname, location.search);
-  const base = "flex h-10 items-center gap-2.5 rounded-control px-2.5 text-[14px] font-medium transition-colors";
-  if (!enabled) return <div className={`${base} text-ink-4`} title="本地尚未配置 IF.Link 统一账户"><IconUsers size={17} /><span>登录暂未启用</span></div>;
+  const iconSize = compact ? 14 : 17;
+  const iconBox = compact ? "flex w-[16px] shrink-0 justify-center" : "flex w-[22px] shrink-0 justify-center";
+  const base = compact
+    ? "flex h-7 items-center gap-1.5 rounded-control px-2 text-[12px] font-medium transition-colors"
+    : "flex h-10 items-center gap-2.5 rounded-tile px-2.5 text-[13.5px] font-medium transition-colors";
+  if (!enabled) return <div className={`${base} ${onForest ? "text-[var(--forest-muted)] opacity-80" : "text-ink-4"}`} title="本地尚未配置 IF.Link 统一账户"><span className={iconBox}><IconUsers size={iconSize} /></span><span className="truncate">登录暂未启用</span></div>;
   if (state.kind === "loading") return null;
   if (state.kind === "unavailable") {
     return (
-      <div className={`${base} text-ink-4`}>
-        <span className="flex w-[22px] shrink-0 justify-center"><IconUsers size={17} /></span>
-        账号暂时不可用
+      <div className={`${base} ${onForest ? "text-[var(--forest-muted)]" : "text-ink-4"}`}>
+        <span className={iconBox}><IconUsers size={iconSize} /></span>
+        <span className="truncate">账号暂时不可用</span>
       </div>
     );
   }
   if (state.kind === "member") {
     return (
-      <div className={`${base} text-ink-3`}>
-        <span className="flex w-[22px] shrink-0 justify-center text-accent"><IconUsers size={17} /></span>
+      <div className={`${base} ${onForest ? "text-[var(--forest-ink)]" : "text-ink-3"}`}>
+        <span className={`${iconBox} text-accent`}><IconUsers size={iconSize} /></span>
         <span className="min-w-0 flex-1 truncate">{state.name}</span>
         <form method="post" action="/api/logto/sign-out">
-          <button type="submit" className="text-[12px] text-ink-4 hover:text-ink-2">退出</button>
+          <button type="submit" className={`text-[11px] ${onForest ? "text-[var(--forest-muted)] hover:text-[var(--forest-ink)]" : "text-ink-4 hover:text-ink-2"}`}>退出</button>
         </form>
       </div>
     );
   }
   return (
-    <a href={`/api/logto/sign-in?redirect=${encodeURIComponent(returnTo)}`} className={`${base} text-ink-3 hover:bg-bg-sunk hover:text-ink`}>
-      <span className="flex w-[22px] shrink-0 justify-center"><IconUsers size={17} /></span>
-      登录 IF.Link 账号
+    <a href={`/api/logto/sign-in?redirect=${encodeURIComponent(returnTo)}`} className={`${base} ${onForest ? "text-[var(--forest-ink)] hover:bg-[var(--forest-glass-bg)]" : "text-ink-3 hover:bg-bg-sunk hover:text-ink"}`}>
+      <span className={iconBox}><IconUsers size={iconSize} /></span>
+      <span className="truncate">登录 IF.Link 账号</span>
     </a>
   );
 }

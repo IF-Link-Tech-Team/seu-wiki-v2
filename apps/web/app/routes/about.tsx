@@ -145,7 +145,7 @@ function Maker({ maker, contact }: { maker: NonNullable<typeof ABOUT.maker>; con
     <section aria-labelledby="maker" className="mt-20 grid gap-10 xl:mt-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
       <div>
         <Kicker>做这个站的人</Kicker>
-        <h2 id="maker" className="mt-4 flex items-center gap-3.5 text-[26px] font-black leading-[1.3] tracking-[-0.02em] text-ink xl:gap-4 xl:text-[34px]">
+        <h2 id="maker" className="mt-4 flex items-center gap-3.5 text-[26px] font-black leading-[1.3] tracking-[-0.025em] text-ink xl:gap-4 xl:text-[34px]">
           {contact.makerAvatar && <MakerFace src={contact.makerAvatar} />}
           <span>
             嗨，我是 <span className="whitespace-nowrap text-accent">{maker.name}</span>

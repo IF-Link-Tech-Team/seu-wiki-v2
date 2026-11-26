@@ -6,6 +6,7 @@ import { pageMeta } from "../lib/seo";
 import { exportBundle, importBundle, removeStar, useStarred, type ImportReport } from "../lib/local-state";
 import { fullDateTime, publishedDateTime, shortSourceName } from "../lib/format";
 import { IconBookmark, IconDownload, IconClose } from "../components/icons";
+import { EmptyPaperArt } from "../components/PaperArt";
 
 /** Shared caches may keep this page for five minutes. */
 export function headers() {
@@ -66,9 +67,9 @@ export default function StarredPage() {
   const action = "text-[12.5px] text-ink-3 transition-colors hover:text-accent";
   return (
     <div className="pb-12">
-      <header className="flex flex-col gap-2 pb-4 pt-5 sm:flex-row sm:items-start sm:justify-between lg:pt-1">
+      <header className="editorial-masthead mb-4 flex flex-col gap-2 pt-5 sm:flex-row sm:items-start sm:justify-between lg:pt-1">
         <div>
-          <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">收藏</h1>
+          <h1 className="browse-title">收藏</h1>
           <p className="mt-1.5 text-[13px] text-ink-3">本机收藏的 {SITE.name} 内容，适合稍后阅读和回看。</p>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:pt-1.5">
@@ -97,8 +98,8 @@ export default function StarredPage() {
       </Presence>
       {!mounted ? null : starred.length === 0 ? (
         <div className="mt-3 flex flex-col items-center rounded-card border border-dashed border-line-strong px-6 py-12 text-center">
-          <IconBookmark size={20} className="text-ink-4" />
-          <p className="mt-3 text-[13px] text-ink-3">还没有收藏内容。点开任意一条内容，在详情页点击收藏即可添加。</p>
+          <EmptyPaperArt className="mb-1" />
+          <p className="mt-2 text-[13px] text-ink-3">还没有收藏内容。点开任意一条内容，在详情页点击收藏即可添加。</p>
           <Link to="/" className="mt-4 text-[12.5px] font-medium text-accent hover:text-accent-ink">
             去看精选 →
           </Link>
@@ -120,7 +121,7 @@ export default function StarredPage() {
                     <IconClose size={14} />
                   </button>
                 </div>
-                <h2 className="mt-1.5 text-[16px] font-[650] leading-[1.55] text-ink">
+                <h2 className="mt-1.5 text-[16.5px] font-bold leading-[1.48] tracking-[-0.01em] text-ink">
                   {unavailable ? (
                     s.title
                   ) : (

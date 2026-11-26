@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link, redirect, useLoaderData, useRevalidator, useLocation, useNavigate } from "react-router";
 import { apiGet, ApiError } from "../lib/api.server";
 import { EmptyState } from "../components/ui/Page";
+import type { SourceListResponse, SourceOption } from "@aihot/contracts/site";
 import type { SubscriptionItem, SubscriptionProfile, SubscriptionResponse } from "@aihot/contracts/subscription";
 import { SUBSCRIPTION_TAXONOMY as TAX } from "@aihot/industry/subscription-v2";
 import { OptimizedOnboarding } from "../features/subscription/OptimizedOnboarding";
 import { ProfileDialog } from "../features/subscription/ProfileDialog";
 import { OPTIMIZED_TOPIC_GROUPS } from "@aihot/industry/subscription-onboarding";
-import { CategoryTabs } from "../features/feed/Filters";
+import { FeedTopBar } from "../features/feed/FeedTopBar";
 import { pageMeta } from "../lib/seo";
 
 const emptyProfile = (): SubscriptionProfile => ({ degree: "", college: "", enrollmentYear: "", international: "", interests: [], publishers: [], types: [], identityNotices: true });
@@ -20,22 +21,30 @@ const input = "mt-2 w-full rounded-xl border border-line bg-surface px-3 py-2.5 
 export function meta() { return pageMeta({ title: "我的订阅", path: "/subscription", noindex: true }); }
 export function headers() { return { "Cache-Control": "private, no-store" }; }
 export async function loader({ request }: { request: Request }) {
-  if (process.env.SUBSCRIPTION_EXPERIMENT_ENABLED !== "true") return { enabled: false as const, memberId: null, profile: null, revision: 0, csrf: "", unavailable: false, configured: true };
+  const sourcesPromise = apiGet<SourceListResponse>("/api/site/sources", { signal: request.signal })
+    .then((r) => r.sources)
+    .catch((): SourceOption[] => []);
+  if (process.env.SUBSCRIPTION_EXPERIMENT_ENABLED !== "true") {
+    return { enabled: false as const, memberId: null, profile: null, revision: 0, csrf: "", unavailable: false, configured: true, sourceOptions: await sourcesPromise };
+  }
   try {
-    const data = await apiGet<{ member: { id: string }; profile: SubscriptionProfile | null; revision: number; csrf: string }>("/api/member/subscription-profile", { signal: request.signal, headers: { cookie: request.headers.get("cookie") ?? "" } });
+    const [data, sourceOptions] = await Promise.all([
+      apiGet<{ member: { id: string }; profile: SubscriptionProfile | null; revision: number; csrf: string }>("/api/member/subscription-profile", { signal: request.signal, headers: { cookie: request.headers.get("cookie") ?? "" } }),
+      sourcesPromise,
+    ]);
     if (!data.profile && new URL(request.url).pathname === "/subscription") return redirect("/welcome");
-    return { enabled: true as const, memberId: data.member.id, profile: data.profile, revision: data.revision, csrf: data.csrf, unavailable: false, configured: true };
+    return { enabled: true as const, memberId: data.member.id, profile: data.profile, revision: data.revision, csrf: data.csrf, unavailable: false, configured: true, sourceOptions };
   } catch (error) {
     if (request.signal.aborted) throw error;
     const anonymous = error instanceof ApiError && error.status === 401;
     const unconfigured = error instanceof ApiError && error.code === "member_auth_unavailable";
     const disabled = error instanceof ApiError && error.status === 404;
-    return { enabled: !disabled as boolean, memberId: null, profile: null, revision: 0, csrf: "", unavailable: !anonymous && !unconfigured && !disabled, configured: !unconfigured };
+    return { enabled: !disabled as boolean, memberId: null, profile: null, revision: 0, csrf: "", unavailable: !anonymous && !unconfigured && !disabled, configured: !unconfigured, sourceOptions: await sourcesPromise };
   }
 }
 
 export default function Subscription() {
-  const { enabled, memberId, profile, revision, csrf, configured, unavailable } = useLoaderData<typeof loader>();
+  const { enabled, memberId, profile, revision, csrf, configured, unavailable, sourceOptions } = useLoaderData<typeof loader>();
   const revalidator = useRevalidator();
   const location = useLocation();
   const welcome = location.pathname === "/welcome";
@@ -45,31 +54,35 @@ export default function Subscription() {
     window.addEventListener("pageshow", refresh);
     return () => { window.removeEventListener("focus", refresh); window.removeEventListener("pageshow", refresh); };
   }, [revalidator.revalidate]);
-  if (!enabled) return <div className="pb-6">
-    <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">订阅</h1>
-    <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
-    <EmptyState title="订阅尚未开放" action={<Link to="/" className="font-medium text-accent hover:text-accent-ink">返回精选</Link>}>
-      个性化订阅仍在小范围试验中，完成产品、隐私和真实登录链路验证后再开放。
-    </EmptyState>
+  const topBar = <FeedTopBar active="subscription" title="我的订阅" sourceOptions={sourceOptions} sourceTargetPath="/" />;
+  if (!enabled) return <div className="pb-8">
+    {topBar}
+    <div className="lg:card">
+      <EmptyState title="订阅尚未开放" action={<Link to="/" className="font-medium text-accent hover:text-accent-ink">返回精选</Link>}>
+        个性化订阅仍在小范围试验中，完成产品、隐私和真实登录链路验证后再开放。
+      </EmptyState>
+    </div>
   </div>;
-  if (unavailable) return <div className="pb-6">
-    <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">订阅</h1>
-    <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
-    <EmptyState title="暂时无法载入订阅设置">服务器暂时无法读取你的画像。请稍后刷新；系统不会把读取失败误当作首次使用。</EmptyState>
+  if (unavailable) return <div className="pb-8">
+    {topBar}
+    <div className="lg:card">
+      <EmptyState title="暂时无法载入订阅设置">服务器暂时无法读取你的画像。请稍后刷新；系统不会把读取失败误当作首次使用。</EmptyState>
+    </div>
   </div>;
-  if (!memberId) return <div className="pb-6">
-    <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">订阅</h1>
-    <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
-    <EmptyState title="订阅功能登录后可解锁" action={configured ? <a href="/api/logto/sign-in?redirect=%2Fsubscription" className="font-medium text-accent hover:text-accent-ink">登录 IF.Link 账号</a> : <button disabled className="text-ink-4">登录暂未启用</button>}>
-      登录后，选择你的身份和兴趣，开启专属订阅。
-      {!configured && <span className="mt-3 block">账号登录尚未启用，请稍后再试。</span>}
-      {unavailable && <span role="alert" className="mt-3 block">暂时无法确认登录状态，请稍后刷新重试。</span>}
-    </EmptyState>
+  if (!memberId) return <div className="pb-8">
+    {topBar}
+    <div className="lg:card">
+      <EmptyState title="订阅功能登录后可解锁" action={configured ? <a href="/api/logto/sign-in?redirect=%2Fsubscription" className="font-medium text-accent hover:text-accent-ink">登录 IF.Link 账号</a> : <button disabled className="text-ink-4">登录暂未启用</button>}>
+        登录后，选择你的身份和兴趣，开启专属订阅。
+        {!configured && <span className="mt-3 block">账号登录尚未启用，请稍后再试。</span>}
+        {unavailable && <span role="alert" className="mt-3 block">暂时无法确认登录状态，请稍后刷新重试。</span>}
+      </EmptyState>
+    </div>
   </div>;
-  return <SubscriptionTrial key={`${memberId}:${welcome}`} memberId={memberId} initialProfile={profile} initialRevision={revision} csrf={csrf} welcome={welcome} />;
+  return <SubscriptionTrial key={`${memberId}:${welcome}`} memberId={memberId} initialProfile={profile} initialRevision={revision} csrf={csrf} welcome={welcome} sourceOptions={sourceOptions} />;
 }
 
-function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf, welcome }: { memberId: string; initialProfile: SubscriptionProfile | null; initialRevision: number; csrf: string; welcome: boolean }) {
+function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf, welcome, sourceOptions }: { memberId: string; initialProfile: SubscriptionProfile | null; initialRevision: number; csrf: string; welcome: boolean; sourceOptions: SourceOption[] }) {
   const navigate = useNavigate();
   const PROFILE_KEY = `seuwiki.subscription.v2.profile:${memberId}`;
   const OLD_PROFILE_KEY = "seuwiki.subscription.v2.profile";
@@ -167,9 +180,8 @@ function SubscriptionTrial({ memberId, initialProfile, initialRevision, csrf, we
   const cancelEditing = profile && !welcome ? () => setEditing(false) : undefined;
   return <div className="subscription-page pb-10">
     {welcome ? <div className="flex min-h-[65vh] flex-col items-center justify-center text-center"><p className="text-sm font-medium text-accent">SEU Wiki</p><h1 className="mt-3 text-3xl font-semibold">欢迎回来</h1><p className="mt-3 text-ink-3">完成订阅设置，开启你的校园信息流。</p></div> : <>
-      <h1 className="browse-title pt-5 lg:pt-0">我的订阅</h1>
-      <CategoryTabs active="subscription" layoutId="subscription-categories" className="mt-4" />
-      <p className="my-5 text-sm text-ink-3">你关心的校园消息，都在这里。</p>
+      <FeedTopBar active="subscription" title="我的订阅" sourceOptions={sourceOptions} sourceTargetPath="/" />
+      <p className="mb-4 text-sm text-ink-3">你关心的校园消息，都在这里。</p>
     </>}
     {editing && <ProfileDialog onCancel={cancelEditing}>
       {storageNotice && <p role="status" className="px-5 py-3 text-sm">{storageNotice}</p>}

@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from "react-router";
 import { apiGet } from "../lib/api.server";
 import { pageMeta } from "../lib/seo";
+import { MastheadPaperArt } from "../components/PaperArt";
 
 interface TopicSummary {
   slug: string;
@@ -35,16 +36,21 @@ export default function TopicsPage() {
   const { topics } = useLoaderData<typeof loader>();
   return (
     <div className="pb-10">
-      <header className="pb-2 pt-5 lg:pt-1">
-        <h1 className="browse-title">按主题看校园</h1>
-        <p className="mt-2 text-sm leading-normal text-ink-3">
-          按部门机构、学院、主题浏览 <span className="num">{topics.length}</span> 个主题，持续汇集近期通知与机会。
-        </p>
+      <header className="editorial-banner mb-5 px-6 py-5">
+        <div className="pointer-events-none absolute -bottom-2 right-4 hidden opacity-90 sm:block">
+          <MastheadPaperArt className="h-[112px] w-[228px]" />
+        </div>
+        <div className="relative z-10 sm:pr-56">
+          <h1 className="text-[28px] font-extrabold leading-[1.2] tracking-[-0.025em] text-[var(--forest-ink)]">按主题看校园</h1>
+          <p className="mt-2 text-sm leading-normal text-[var(--forest-muted)]">
+            按部门机构、学院、主题浏览 <span className="num font-semibold text-[var(--forest-gold)]">{topics.length}</span> 个主题，持续汇集近期通知与机会。
+          </p>
+        </div>
       </header>
       {GROUPS.map((g) => (
         <section key={g.key} aria-labelledby={`topics-${g.key}`} className="pt-6">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 id={`topics-${g.key}`} className="text-[15px] font-semibold leading-normal text-ink">
+            <h2 id={`topics-${g.key}`} className="text-[16px] font-bold leading-normal text-accent">
               {g.name}
             </h2>
             <p className="text-[13px] leading-normal text-ink-4">{g.blurb}</p>
@@ -60,7 +66,7 @@ export default function TopicsPage() {
                     aria-label={`查看${t.name}相关精选文章`}
                     className="card card-hover group flex h-full flex-col gap-2 bg-panel-quiet p-4"
                   >
-                    <span className="text-[15px] font-semibold leading-normal wrap-anywhere text-ink transition-colors group-hover:text-accent">{t.name}</span>
+                    <span className="text-[15.5px] font-bold leading-normal wrap-anywhere text-ink transition-colors group-hover:text-accent">{t.name}</span>
                     <span className="flex-1 text-sm leading-normal wrap-anywhere text-ink-3">{t.definition}</span>
                     <span className="text-[13px] text-ink-4 group-hover:text-accent">
                       查看 {t.total} 条精选 <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">→</span>

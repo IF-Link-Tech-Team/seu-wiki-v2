@@ -6,12 +6,10 @@ import type { PoolResponse, SourceListResponse, TimelineResponse } from "@aihot/
 import { CATEGORY_LABELS, isCategoryKey, isChannelKey, type CategoryKey } from "@aihot/contracts/taxonomy";
 import { loadOr404, queryString, releaseBoundCache } from "../lib/api.server";
 import { listPath, organizationLd, pageMeta } from "../lib/seo";
-import { Wordmark } from "../components/Logo";
 import { Timeline } from "../features/feed/Timeline";
-import { CategoryTabs, SearchField, SearchIconLink, SelectedSourceChips, SourceFilter } from "../features/feed/Filters";
+import { FeedTopBar } from "../features/feed/FeedTopBar";
 import { DayList, Pagination } from "../features/feed/DayList";
 import { EmptyState } from "../components/ui/Page";
-import { beijingDate, beijingWeekday } from "../lib/format";
 
 function parseSourcesParam(url: URL): string[] | null {
   const ids = (url.searchParams.get("sources") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 50);
@@ -66,16 +64,6 @@ export function headers({ loaderHeaders }: Route.HeadersArgs) {
   return loaderHeaders;
 }
 
-function TodayLabel() {
-  const today = beijingDate(Date.now());
-  const [, m, d] = today.split("-").map(Number) as [number, number, number];
-  return (
-    <span className="text-[12.5px] text-ink-4" suppressHydrationWarning>
-      {m}月{d}日 · {beijingWeekday(today).replace("星期", "周")}
-    </span>
-  );
-}
-
 export default function Home() {
   const { mode, timeline, pool, filters, sources, sourceOptions } = useLoaderData<typeof loader>();
   const [params] = useSearchParams();
@@ -95,33 +83,20 @@ export default function Home() {
   };
 
   return (
-    <div className="pb-6">
-      {/* Phones: brand bar, then the feed under its title. */}
-      <div className="flex h-14 items-center justify-between lg:hidden">
-        <Wordmark size={20} className="text-ink" />
-        <TodayLabel />
-      </div>
-      <div className="hidden lg:block">
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="browse-title min-w-0">{title}</h1>
-          <div className="flex shrink-0 items-center gap-2">
-            <SourceFilter options={sourceOptions} selected={selectedSources} />
-            <SearchField variant="track" keep={{ category: filters.category, sources: sources?.join(",") ?? null }} />
-          </div>
-        </div>
-        <CategoryTabs active={active} layoutId="home-cat-desk" className="mb-4 mt-3" />
-        <SelectedSourceChips options={sourceOptions} selected={selectedSources} />
-      </div>
+    <div className="pb-8">
+      <FeedTopBar
+        active={active}
+        title={title}
+        sourceOptions={sourceOptions}
+        selectedSources={selectedSources}
+        searchKeep={{ category: filters.category, sources: sources?.join(",") ?? null }}
+      />
 
-      <div className="mt-4 flex items-center justify-between gap-2 lg:hidden">
-        <h2 className="browse-title min-w-0">{filters.tag ? title : mode === "timeline" ? "最新精选" : title}</h2>
-        <SearchIconLink />
-      </div>
-      <CategoryTabs active={active} layoutId="home-cat-mobile" className="mt-3 lg:hidden" />
-      <div className="my-3 flex items-center justify-end gap-2 lg:hidden">
-        <SelectedSourceChips options={sourceOptions} selected={selectedSources} />
-        <SourceFilter options={sourceOptions} selected={selectedSources} className="ml-auto" />
-      </div>
+      {filters.tag && (
+        <div className="mb-3 flex items-center gap-2 text-[14px] font-bold text-ink">
+          <span className="text-accent">#{filters.tag}</span>
+        </div>
+      )}
 
       {mode === "timeline" && timeline ? (
         <Timeline initial={timeline} filters={timeline.filters} />

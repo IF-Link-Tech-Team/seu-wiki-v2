@@ -35,7 +35,7 @@ function Thumb({ id }: { id: string }) {
       thumbs.set(id, placeOf(el));
     };
   }, [id, entrance]);
-  return <span ref={ref} className="absolute inset-0 rounded-full bg-surface shadow-[var(--shadow-thumb)] ring-1 ring-line dark:bg-raised" />;
+  return <span ref={ref} className="absolute inset-0 rounded-full bg-[var(--nav-active-bg)] shadow-[var(--shadow-thumb)] ring-1 ring-inset ring-[var(--nav-active-border)]" />;
 }
 
 export interface TabItem {
@@ -108,11 +108,11 @@ export function PillTabs({
               {on && <Thumb id={layoutId} />}
               <span className="relative inline-flex items-center gap-1">
                 {t.label}
-                {t.count !== undefined && t.count !== null && <span className={`num text-[0.86em] font-normal ${on ? "text-ink-3" : "text-ink-4"}`}>{t.count}</span>}
+                {t.count !== undefined && t.count !== null && <span className={`num text-[0.86em] font-normal ${on ? "text-[var(--nav-active-ink)]/80" : "text-ink-4"}`}>{t.count}</span>}
               </span>
             </>
           );
-          const cls = `relative inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-full font-medium outline-offset-1 transition-colors duration-150 active:scale-[0.98] ${SIZES[size]} ${on ? "text-ink" : "text-ink-3 hover:text-ink"}`;
+          const cls = `relative inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-full font-semibold outline-offset-1 transition-colors duration-150 active:scale-[0.98] ${SIZES[size]} ${on ? "text-[var(--nav-active-ink)]" : "text-ink-3 hover:text-ink"}`;
           const TabLink = t.prefetch === "intent" ? IntentLink : Link;
           return t.to ? (
             <TabLink key={t.key} to={t.to} replace={t.replace} preventScrollReset aria-current={on ? "page" : undefined} className={cls}>

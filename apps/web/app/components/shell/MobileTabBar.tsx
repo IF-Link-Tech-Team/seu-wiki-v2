@@ -7,8 +7,8 @@ export function MobileTabBar({ changelogVersion }: { changelogVersion: string | 
   const { pathname } = useLocation();
   const dot = useChangelogDot(changelogVersion);
   return (
-    <nav aria-label="底部导航" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
-      <div className="mx-auto grid h-[54px] max-w-[640px] grid-cols-4">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(10px+env(safe-area-inset-bottom))] lg:hidden">
+      <nav aria-label="底部导航" className="glass-dock pointer-events-auto mx-auto grid h-[58px] max-w-[440px] grid-cols-4 rounded-full px-1.5">
         {TABBAR.map((t) => {
           const active = tabIsActive(t, pathname);
           const Icon = t.icon;
@@ -18,15 +18,17 @@ export function MobileTabBar({ changelogVersion }: { changelogVersion: string | 
               to={t.to}
               prefetch="intent"
               aria-current={active ? "page" : undefined}
-              className={`relative flex flex-col items-center justify-center gap-[3px] text-[11px] transition-colors ${active ? "font-semibold text-accent" : "text-ink-3 active:text-ink"}`}
+              className={`relative my-1.5 flex flex-col items-center justify-center gap-[2px] rounded-full text-[11px] transition-all duration-150 ${
+                active ? "bg-[var(--nav-active-bg)] font-bold text-[var(--nav-active-ink)] shadow-[var(--shadow-thumb)] ring-1 ring-inset ring-[var(--nav-active-border)]" : "text-ink-3 active:text-ink"
+              }`}
             >
-              <Icon size={21} />
+              <Icon size={19} />
               <span>{t.label}</span>
-              {dot && t.changelog && <span className="absolute right-[calc(50%-17px)] top-2 size-1.5 rounded-full bg-hot" aria-label="有新的更新" />}
+              {dot && t.changelog && <span className="absolute right-[calc(50%-18px)] top-1.5 size-1.5 rounded-full bg-hot" aria-label="有新的更新" />}
             </Link>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

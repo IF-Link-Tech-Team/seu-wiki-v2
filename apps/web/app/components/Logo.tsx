@@ -2,9 +2,9 @@
 // loader. A site with its own logo can replace Wordmark here.
 import { SITE } from "@aihot/industry/site";
 
-export function Wordmark({ size = 22, className = "" }: { size?: number; className?: string }) {
+export function Wordmark({ size = 22, className = "", onForest = false }: { size?: number; className?: string; onForest?: boolean }) {
   return (
-    <span className={`inline-flex items-center font-black leading-none tracking-[-0.03em] ${className}`} style={{ fontSize: size }} aria-label={SITE.name} role="img">
+    <span className={`inline-flex items-center font-black leading-none tracking-[-0.03em] ${onForest ? "text-[var(--forest-ink)]" : ""} ${className}`} style={{ fontSize: size }} aria-label={SITE.name} role="img">
       <span aria-hidden="true" className="mr-[0.3em] inline-block size-[0.42em] rounded-full bg-accent" />
       <span aria-hidden="true">{SITE.name}</span>
     </span>

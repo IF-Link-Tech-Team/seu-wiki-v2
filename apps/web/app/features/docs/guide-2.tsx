@@ -37,9 +37,9 @@ export function GuideReader({ articles }: { articles: GuideArticle[] }) {
   const acknowledgements = articles.find((article) => article.slug === "cr8aqk");
   const ordered = [preface, ...articles.filter((article) => article !== preface && article !== acknowledgements), acknowledgements].filter((article): article is GuideArticle => !!article);
   return <div className="pb-10">
-    <h1 className="browse-title pt-6 font-serif xl:pt-0">生存手册 2.0（2023）</h1>
+    <h1 className="browse-title pt-6 xl:pt-0">生存手册 2.0（2023）</h1>
     {ordered.map((article) => <article id={`guide-${article.slug}`} key={article.slug} className="scroll-mt-6 border-b border-line-soft py-8 last:border-b-0">
-    <h2 className="font-serif text-[22px] font-semibold leading-snug wrap-anywhere text-ink sm:text-[24px]">{article.title}</h2>
+    <h2 className="text-[22px] font-extrabold leading-snug tracking-[-0.02em] wrap-anywhere text-ink sm:text-[24px]">{article.title}</h2>
     <div className="prose mt-6" dangerouslySetInnerHTML={{ __html: article.html }} />
   </article>)}</div>;
 }

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ActivityEditorialSchema, normalizeActivityEditorial } from "@aihot/backend/editorial/activity";
+import { hasExtractedActivityTime, needsActivityVisionFallback } from "@aihot/backend/editorial/analyze";
 import type { AnalyzeInputArticle } from "@aihot/backend/editorial/input";
 
 function material(bodyText: string, publishedAt: string | null = "2026-11-08T14:00:00+08:00"): AnalyzeInputArticle {
@@ -59,14 +60,14 @@ test("AI合成单场名称不再丢弃已核验端点，显示名回落到原文
   assert.equal(result?.activities[0]?.activityStart?.value, "2026-11-26T19:00+08:00");
 });
 
-test("多场合成名称用原文时间区分，保留模型needsReview与各场对应端点", () => {
+test("多场合成名称用原文时间区分，已核验出明确时间时不再因保守needsReview隐藏全部场次", () => {
   const article = { ...material("沙龙预告。11月24日12:30—13:40；11月25日17:00—18:00。"), title: "微电沙龙本周预告" };
   const raw = { kind: "activity_notice", evidence: "沙龙预告", needsReview: true, activities: [
     { name: "微电沙龙（嘉宾甲专场）", activityStart: "11月24日12:30", activityEnd: "13:40" },
     { name: "微电沙龙（嘉宾乙专场）", activityStart: "11月25日17:00", activityEnd: "18:00" },
   ] };
   const result = analyze(raw, article);
-  assert.equal(result?.decision, "review");
+  assert.equal(result?.decision, "candidate");
   assert.equal((result as { needsReview?: boolean })?.needsReview, true);
   assert.equal(result?.activities.length, 2);
   assert.equal(result?.activities[0]?.name, `${article.title} · 11月24日12:30`);
@@ -74,6 +75,27 @@ test("多场合成名称用原文时间区分，保留模型needsReview与各场
   assert.equal(result?.activities[0]?.activityEnd?.value, "2026-11-24T13:40+08:00");
   assert.equal(result?.activities[1]?.activityEnd?.value, "2026-11-25T18:00+08:00");
   assert.equal(analyze({ ...raw, evidence: "伪造预告" }, article)?.kind, "unknown");
+});
+
+test("支持24:00、单字晚/早、半点、全半角标点差异及跨月省略年份区间", () => {
+  const body = "报名通知。截止时间为2026年12月6日（周日）24:00前，另有2027年2月20日晚24:00截止；讲座于11月28日晚7点半开始；展会将于2027年4月28日-5月2日举办；预约11月24日（周二）19：00。";
+  const result = analyze({
+    kind: "activity_registration",
+    evidence: "报名通知",
+    activities: [
+      { name: "截止A", registrationEnd: "2026年12月6日(周日)24:00前" },
+      { name: "截止B", registrationEnd: "2027年2月20日晚24:00" },
+      { name: "讲座C", activityStart: "11月28日晚7点半" },
+      { name: "展会D", activityStart: "2027年4月28日", activityEnd: "5月2日", registrationStart: "11月24日(周二)19:00" },
+    ],
+  }, material(body, "2026-11-24T12:00:00+08:00"));
+  assert.equal(result?.decision, "candidate");
+  assert.equal(result?.activities[0]?.registrationEnd?.value, "2026-12-06T23:59+08:00");
+  assert.equal(result?.activities[1]?.registrationEnd?.value, "2027-02-20T23:59+08:00");
+  assert.equal(result?.activities[2]?.activityStart?.value, "2026-11-28T19:30+08:00");
+  assert.equal(result?.activities[3]?.activityStart?.value, "2027-04-28");
+  assert.equal(result?.activities[3]?.activityEnd?.value, "2027-05-02");
+  assert.equal(result?.activities[3]?.registrationStart?.value, "2026-11-24T19:00+08:00");
 });
 
 test("活动报名分别提取报名起止和活动开始，保留日期精度", () => {
@@ -212,4 +234,45 @@ test("分类证据无效时仍保留单独核验过的活动时间，整条保�
   assert.equal(out?.kind, "unknown");
   assert.equal(out?.decision, "review");
   assert.equal(out?.activities[0]?.activityStart?.value, "2026-11-09T15:00+08:00");
+});
+
+test("文字未识别出活动时间时触发识图兜底，海报转录文本仍受逐字核对约束", () => {
+  const posterOnly = { ...material("讲座预告，具体安排详见下方海报。"), title: "学院前沿讲座预告" };
+  const textMissed = analyze({ kind: "activity_notice", evidence: "讲座预告", needsReview: true, activities: [] }, posterOnly);
+  assert.equal(textMissed?.decision, "review");
+  assert.equal(hasExtractedActivityTime(textMissed), false);
+  assert.equal(needsActivityVisionFallback(posterOnly, textMissed), true);
+
+  const posterText = "学院前沿讲座 时间：2026年11月28日 19:00-21:00 地点：九龙湖校区教一101 报名方式：扫码报名，报满即止";
+  const visionExtracted = normalizeActivityEditorial(ActivityEditorialSchema.parse({
+    kind: "activity_registration",
+    evidence: "学院前沿讲座",
+    needsReview: false,
+    activities: [{
+      name: "学院前沿讲座",
+      venue: "九龙湖校区教一101",
+      participation: "扫码报名，报满即止",
+      activityStart: "2026年11月28日 19:00",
+      activityEnd: "21:00",
+    }],
+  }), posterOnly, posterText);
+  assert.equal(visionExtracted?.decision, "candidate");
+  assert.equal(visionExtracted?.activities[0]?.activityStart?.value, "2026-11-28T19:00+08:00");
+  assert.equal(visionExtracted?.activities[0]?.activityEnd?.value, "2026-11-28T21:00+08:00");
+  assert.equal(hasExtractedActivityTime(visionExtracted), true);
+  assert.equal(needsActivityVisionFallback(posterOnly, visionExtracted), false, "已有可用时间不再触发识图");
+
+  const fabricated = normalizeActivityEditorial(ActivityEditorialSchema.parse({
+    kind: "activity_notice",
+    evidence: "学院前沿讲座",
+    needsReview: false,
+    activities: [{ name: "学院前沿讲座", activityStart: "2026年12月1日 14:00" }],
+  }), posterOnly, posterText);
+  assert.equal(fabricated?.decision, "review", "不在海报转录文本中的捏造时间仍被拦截");
+
+  const summary = analyze({ kind: "activity_summary", evidence: "活动圆满结束", activities: [] }, material("活动圆满结束。"));
+  assert.equal(needsActivityVisionFallback(posterOnly, summary), false, "活动总结不触发识图");
+
+  const cancelled = analyze({ kind: "activity_update", evidence: "讲座取消", update: "cancelled", activities: [] }, material("讲座取消。"));
+  assert.equal(needsActivityVisionFallback(posterOnly, cancelled), false, "明确取消不再触发识图");
 });

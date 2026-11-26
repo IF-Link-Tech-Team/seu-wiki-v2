@@ -53,7 +53,7 @@ export default function Handbook() {
       </details>
       <GuideReader articles={articles} />
       </> : <section className="py-10 lg:pt-2">
-        <h1 className="font-serif text-[26px] font-bold leading-snug text-ink lg:text-[30px]">生存手册 3.0</h1>
+        <h1 className="text-[26px] font-extrabold leading-snug tracking-[-0.02em] text-ink lg:text-[30px]">生存手册 3.0</h1>
         <p className="mt-6 text-ink-3">尚未出炉，正在等待更多伙伴一起编纂。</p>
         <p className="mt-3 text-ink-3">如感兴趣，欢迎联系 <a className="text-accent hover:underline" href="mailto:FKKXTXD@163.com">FKKXTXD@163.com</a>，加入编纂团队。</p>
       </section>}

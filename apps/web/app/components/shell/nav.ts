@@ -10,6 +10,8 @@ export interface NavItem {
   icon: (p: { size?: number }) => ReactNode;
   /** Match the path exactly (the home page). */
   end?: boolean;
+  /** Extra top-level paths that belong to this nav item (e.g. 订阅 / 全部 under 信息聚合). */
+  also?: string[];
   /** Shows the unread dot while the changelog has news. */
   changelog?: boolean;
 }
@@ -18,7 +20,7 @@ export const SIDEBAR: Array<{ title: string; items: NavItem[] }> = [
   {
     title: "内容",
     items: [
-      { to: "/", label: "信息聚合", icon: IconBolt, end: true },
+      { to: "/", label: "信息聚合", icon: IconBolt, end: true, also: ["/subscription", "/welcome", "/all"] },
       { to: "/experience-forum", label: "经验论坛", icon: IconPen },
       { to: "/handbook", label: "生存手册", icon: IconBook },
       { to: "/starred", label: "我的收藏", icon: IconBookmark },
@@ -46,6 +48,7 @@ export const TABBAR: NavItem[] = [
 export const MORE_PATHS = ["/more", "/all", "/for-you", "/hot", "/topics", "/starred", "/handbook", "/agent", "/about", "/changelog", "/feedback", "/terms", "/privacy"];
 
 export function tabIsActive(item: NavItem, pathname: string): boolean {
+  if (item.also?.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
   if (item.end) return pathname === item.to;
   if (item.to === "/more") return MORE_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   return pathname === item.to || pathname.startsWith(`${item.to}/`);

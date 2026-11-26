@@ -9,7 +9,7 @@ import { SelectedBadge } from "../../components/ui/Badge";
 import { MediaThumbs, SourceLine, StarButton } from "./parts";
 import { GroupDevelopments, GroupSources, LatestDevelopment } from "./ReadingGroup";
 import { QuotedLine } from "../item/QuotedPost";
-import { ActivityTimes } from "./ActivityTimes";
+import { ActivityTimes, hasVisibleActivitySchedule } from "./ActivityTimes";
 
 export interface FeedItemProps {
   item: FeedItemSummary;
@@ -29,6 +29,7 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
   const showSources = !!group && (group.additionalSourceCount > 0 || (group.developmentCount <= 1 && group.reportCount > 1));
   const showDevelopments = !!group?.story && group.developmentCount > 1;
   const tags = showTags ? item.tags.slice(0, 3) : [];
+  const showSchedule = hasVisibleActivitySchedule(item.activitySchedule);
 
   return (
     <article className="@container/feed relative min-w-0 lg:card lg:card-hover lg:px-4 lg:py-4" data-item-id={item.id}>
@@ -44,10 +45,10 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
         </span>
       </header>
 
-      <div className={`mt-2 min-w-0 ${item.activitySchedule ? "grid items-start gap-x-6 gap-y-3 lg:@min-[680px]/feed:grid-cols-[fit-content(50%)_minmax(0,22rem)]" : ""}`}>
-        <div className="min-w-0">
-          <h3 className={`line-clamp-2 text-[17px] font-semibold leading-normal wrap-anywhere lg:line-clamp-none ${read ? "text-ink-4" : "text-ink"}`}>
-            <IntentLink to={`/items/${item.id}`} onClick={open} className="after:absolute after:inset-0 after:content-['']">
+      <div className={`mt-2.5 min-w-0 ${showSchedule ? "grid items-start gap-x-6 gap-y-3 lg:@min-[680px]/feed:grid-cols-[fit-content(52%)_minmax(0,1fr)]" : ""}`}>
+        <div className={`min-w-0 ${showSchedule ? "lg:@min-[680px]/feed:pt-1.5" : ""}`}>
+          <h3 className={`line-clamp-2 text-[17px] font-bold leading-[1.45] tracking-[-0.015em] wrap-anywhere lg:line-clamp-none ${read ? "text-ink-4" : "text-ink"}`}>
+            <IntentLink to={`/items/${item.id}`} onClick={open} className="transition-colors after:absolute after:inset-0 after:content-[''] hover:text-accent">
               {item.title}
             </IntentLink>
           </h3>
@@ -81,7 +82,7 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
             </div>
           )}
         </div>
-        {item.activitySchedule && <ActivityTimes schedule={item.activitySchedule} />}
+        {showSchedule && item.activitySchedule && <ActivityTimes schedule={item.activitySchedule} />}
       </div>
 
       {group && <LatestDevelopment group={group} />}

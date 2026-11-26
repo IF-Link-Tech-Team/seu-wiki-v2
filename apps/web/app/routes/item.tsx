@@ -256,7 +256,7 @@ export default function ItemPage() {
       {item.body && <ReadingProgress />}
 
       {/* Phones: a sticky bar with back, 收藏, the original, share and more. Desktop puts these in the rails. */}
-      <div className="sticky top-0 z-30 -mx-4 flex h-12 items-center gap-1.5 border-b border-line-soft bg-bg/95 px-4 backdrop-blur lg:hidden">
+      <div className="glass-bar sticky top-0 z-30 -mx-4 flex h-12 items-center gap-1.5 border-b border-line-soft px-4 lg:hidden">
         {backButton}
         <span className="flex-1" />
         <StarButton item={item} size={32} />
@@ -307,7 +307,7 @@ export default function ItemPage() {
               </span>
             )}
           </div>
-          {!isX && <h1 className="text-[26px] font-bold leading-[1.38] tracking-[-0.01em] text-ink lg:text-[32px] lg:leading-[1.34] xl:text-[36px] xl:leading-[1.3]">{item.title}</h1>}
+          {!isX && <h1 className="text-[26px] font-extrabold leading-[1.32] tracking-[-0.02em] text-ink lg:text-[32px] lg:leading-[1.28] xl:text-[36px] xl:leading-[1.25]">{item.title}</h1>}
           {!isX && item.originalTitle && <p className="mt-2.5 text-[14px] leading-relaxed text-ink-4">{item.originalTitle}</p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {originalButton("h-9 px-4 text-[13.5px]")}
