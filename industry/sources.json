@@ -20670,6 +20670,26 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
+    },
+    {
+      "id": "mp-seu-chenghua-musical",
+      "name": "公众号·SEU橙花音乐剧社",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_70ec00806a3c",
+        "nickname": "SEU橙花音乐剧社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
     }
   ]
 }

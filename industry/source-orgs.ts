@@ -132,6 +132,7 @@ const MP_ORGS: Partial<Record<SourceGroup, Record<string, string>>> = {
     SEU辩协: "社团与艺术团公众号",
     东大SCDA: "社团与艺术团公众号",
     "IF.Link Community": "社团与艺术团公众号",
+    SEU橙花音乐剧社: "社团与艺术团公众号",
     东南文苑: "校级公众号",
   },
 };

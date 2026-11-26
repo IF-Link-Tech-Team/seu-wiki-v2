@@ -3865,6 +3865,42 @@
         "verifiedAt": "2026-11-13",
         "method": "用户指定名称；极致了 history_by_ghid 返回显示名与配置一致"
       }
+    },
+    {
+      "candidateRef": "U-seu-chenghua-musical",
+      "name": "公众号·SEU橙花音乐剧社",
+      "note": "2026-11-25 用户提供文章链接并指定接入；微信文章原页核验显示名与原始 ID 一致",
+      "evidence": [
+        "https://mp.weixin.qq.com/s/RvDSenjQpFS0o8qa9VpxHQ",
+        "https://mp.weixin.qq.com/s?__biz=MzkwNTI3ODkxNA==&mid=2247486256&idx=1&sn=f27d2b367ceb1b97962e0dbef5ffcb39"
+      ],
+      "identifier": null,
+      "id": "mp-seu-chenghua-musical",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_70ec00806a3c",
+        "nickname": "SEU橙花音乐剧社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-chenghua-musical",
+        "status": "verified",
+        "actualName": "SEU橙花音乐剧社",
+        "ghid": "gh_70ec00806a3c",
+        "receiptId": null,
+        "verifiedAt": "2026-11-25",
+        "method": "用户提供文章链接；微信原页 user_name（gh_70ec00806a3c）与 nickname（SEU橙花音乐剧社）核验一致"
+      }
     }
   ],
   "pending": [

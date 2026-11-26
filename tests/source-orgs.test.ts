@@ -18,6 +18,7 @@ test("公众号挂到运营单位，保留公众号字样；其余进合集", ()
   assert.deepEqual(sourceOrg("公众号·东南大学苏州校友会", ["公众号", "校友"]), { group: "公众号", org: "校友会公众号", label: "东南大学苏州校友会" });
   assert.deepEqual(sourceOrg("公众号·SEU辩协", ["公众号", "校级"]), { group: "公众号", org: "社团与艺术团公众号", label: "SEU辩协" });
   assert.deepEqual(sourceOrg("公众号·风雅颂东南", ["公众号", "校级"]), { group: "公众号", org: "社团与艺术团公众号", label: "风雅颂东南" });
+  assert.deepEqual(sourceOrg("公众号·SEU橙花音乐剧社", ["公众号", "校级", "学生社团"]), { group: "公众号", org: "社团与艺术团公众号", label: "SEU橙花音乐剧社" });
   assert.equal(sourceOrg("公众号·IF.Link Community", ["公众号", "IF.Link"]).org, "社团与艺术团公众号");
   // 东南文苑是书院、活动室预约平台，不属于人文学院。
   assert.deepEqual(sourceOrg("公众号·东南文苑", ["公众号", "学院"]), { group: "公众号", org: "校级公众号", label: "东南文苑" });
