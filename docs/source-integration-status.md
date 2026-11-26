@@ -75,3 +75,12 @@ node --env-file=.data/wechat-first-batch/local.env .data/wechat-all-sources/repo
 - 归属：它是校外账号，不挂任何学院。`source-orgs.ts` 的公众号合集新增按标签判断的「竞赛与赛事公众号」，带 `竞赛` 标签的账号自动落这里，现在 120 个公众号仍无「其他公众号」。
 - **只接公众号，不接网站**：`saikr.com` 是结构化赛事库，每场赛事的报名截止、考试安排、成绩会随时更新，覆盖范围也大于公众号推送；但这些不以文章形式出现在公众号。网站列表页是 Nuxt 单页应用，数据走内部接口 `apiv4buffer.saikr.com`，而它的 `robots.txt` 明确 `Disallow: /api/`、没有可用 sitemap，所以没有合规的列表入口。结论：公众号能覆盖它每周的赛事节点，覆盖不了网站的全量赛事库与字段级更新。
 - 两份清单现为 120 个公众号。
+
+## 2026-11-25：追加 SEU橙花音乐剧社
+
+用户提供文章链接 `https://mp.weixin.qq.com/s/RvDSenjQpFS0o8qa9VpxHQ` 并指定按名称 `SEU橙花音乐剧社` 接入：
+
+- 身份：直接从提供的微信文章原页核验 `nickname = SEU橙花音乐剧社`、`user_name = gh_70ec00806a3c`、`biz = MzkwNTI3ODkxNA==`（文章《飞鸟和鱼｜2026 GALA预热（游鱼篇）》，发布于 2026-11-25）；信源 `mp-seu-chenghua-musical`，T2，每日检查一次，默认只展示摘要和原文链接。
+- 归属：`source-orgs.ts` 中归入「公众号 → 社团与艺术团公众号」，121 个公众号均无落入「其他公众号」。
+- 本次仅完成清单配置与单元测试验证，未调用付费接口试采；合并部署后由 `setup` 写入生产数据库并进入既有每日采集调度。
+- 两份清单现为 121 个公众号。
