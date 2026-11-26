@@ -515,70 +515,6 @@
       }
     },
     {
-      "candidateRef": "A18",
-      "name": "公众号·东南大学档案馆",
-      "note": "档案馆官方办事指南",
-      "evidence": [
-        "https://archives.seu.edu.cn/2020/1019/c30521a350299/page.htm"
-      ],
-      "identifier": null,
-      "id": "mp-a18",
-      "kind": "mp_account",
-      "config": {
-        "ghid": "gh_060f0ee9c3c3",
-        "nickname": "东南大学档案馆"
-      },
-      "tier": "T1",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号",
-        "校级"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": true,
-      "interval_minutes": 1440,
-      "resolution": {
-        "id": "mp-a18",
-        "status": "verified",
-        "actualName": "东南大学档案馆",
-        "ghid": "gh_060f0ee9c3c3",
-        "receiptId": 67
-      }
-    },
-    {
-      "candidateRef": "A19",
-      "name": "公众号·东南教师",
-      "note": "党委教师工作部官方通知",
-      "evidence": [
-        "https://tc.seu.edu.cn/_upload/article/files/74/3b/7acfad1a4daab39992110eff2914/411df0a8-22d0-4c19-af2e-04adf74ad1fb.pdf"
-      ],
-      "identifier": null,
-      "id": "mp-a19",
-      "kind": "mp_account",
-      "config": {
-        "ghid": "gh_d073e2f083ea",
-        "nickname": "东南教师"
-      },
-      "tier": "T1",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号",
-        "校级"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": true,
-      "interval_minutes": 1440,
-      "resolution": {
-        "id": "mp-a19",
-        "status": "verified",
-        "actualName": "东南教师",
-        "ghid": "gh_d073e2f083ea",
-        "receiptId": 68
-      }
-    },
-    {
       "candidateRef": "A20",
       "name": "公众号·东大科研",
       "note": "学校新教师入职手册明确列为科研院公众号",
@@ -4436,6 +4372,8 @@
     "VolunteerSEU（gh_fb2ca2f3a2b8，原信源 mp-b03）：2026-11-06 用户确认停用并从接入清单移除，不得以至善青协或其他别名恢复接入",
     "东南大学电子学院研究生会（gh_68b1bd9b65ed，原信源 mp-seu-ee-gs）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
     "东南大学人权研究院（gh_064f64890e5a，原信源 mp-seu-hr）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
-    "东南大学蒙纳士大学联合研究生院（gh_afc51c0c90e1，原信源 mp-seu-monash）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入"
+    "东南大学蒙纳士大学联合研究生院（gh_afc51c0c90e1，原信源 mp-seu-monash）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
+    "东南大学档案馆（gh_060f0ee9c3c3，原信源 mp-a18）：2026-11-26 用户确认移除不再关注，已从清单移除并停用生产信源，不得以别名或其他 id 重新接入",
+    "东南教师（gh_d073e2f083ea，原信源 mp-a19）：2026-11-26 用户确认移除不再关注，已从清单移除并停用生产信源，不得以别名或其他 id 重新接入"
   ]
 }

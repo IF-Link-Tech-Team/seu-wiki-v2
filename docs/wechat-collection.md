@@ -102,3 +102,7 @@
 ## 2026-11-25：追加 SEU橙花音乐剧社
 
 用户提供文章链接 `https://mp.weixin.qq.com/s/RvDSenjQpFS0o8qa9VpxHQ` 并指定接入 `SEU橙花音乐剧社`（`gh_70ec00806a3c`，`mp-seu-chenghua-musical`，T2，每日检查一次），清单增至 121 个公众号。账号名与原始 ID 由所提供的微信文章原页核验一致，筛选面板归入「社团与艺术团公众号」，默认只展示摘要和原文链接。本次未调用付费接口试采，待合并部署后由 `setup` 写入生产库并按每日调度自动采集。
+
+## 2026-11-26：移除东南大学档案馆与东南教师
+
+用户确认不再关注 `东南大学档案馆`（`gh_060f0ee9c3c3`，原信源 `mp-a18`）与 `东南教师`（`gh_d073e2f083ea`，原信源 `mp-a19`）。已从 `industry/wechat-sources.json`、`industry/sources.json` 与 `industry/source-orgs.ts` 移除，写入 `excluded` 列表，并在生产库停用对应信源（保留历史记录）。两份清单现为 119 个公众号。
