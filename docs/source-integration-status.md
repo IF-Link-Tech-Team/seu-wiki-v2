@@ -84,3 +84,9 @@ node --env-file=.data/wechat-first-batch/local.env .data/wechat-all-sources/repo
 - 归属：`source-orgs.ts` 中归入「公众号 → 社团与艺术团公众号」，121 个公众号均无落入「其他公众号」。
 - 本次仅完成清单配置与单元测试验证，未调用付费接口试采；合并部署后由 `setup` 写入生产数据库并进入既有每日采集调度。
 - 两份清单现为 121 个公众号。
+
+## 2026-11-26：移除东南大学档案馆与东南教师
+
+- 用户确认不再关注 `东南大学档案馆`（`mp-a18`，`gh_060f0ee9c3c3`）与 `东南教师`（`mp-a19`，`gh_d073e2f083ea`）。
+- 两账号已从 `industry/wechat-sources.json`、`industry/sources.json`、`industry/source-orgs.ts` 移除并写入 `excluded`，同时在生产库停用（不删历史文章）。
+- 两份清单现为 119 个公众号（总启用信源 785 个）。

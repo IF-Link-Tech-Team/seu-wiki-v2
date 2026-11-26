@@ -18660,44 +18660,6 @@
       "enabled": true
     },
     {
-      "id": "mp-a18",
-      "name": "公众号·东南大学档案馆",
-      "kind": "mp_account",
-      "config": {
-        "ghid": "gh_060f0ee9c3c3",
-        "nickname": "东南大学档案馆"
-      },
-      "tier": "T1",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号",
-        "校级"
-      ],
-      "interval_minutes": 1440,
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": true
-    },
-    {
-      "id": "mp-a19",
-      "name": "公众号·东南教师",
-      "kind": "mp_account",
-      "config": {
-        "ghid": "gh_d073e2f083ea",
-        "nickname": "东南教师"
-      },
-      "tier": "T1",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号",
-        "校级"
-      ],
-      "interval_minutes": 1440,
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": true
-    },
-    {
       "id": "mp-a20",
       "name": "公众号·东大科研",
       "kind": "mp_account",
