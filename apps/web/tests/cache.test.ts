@@ -89,6 +89,7 @@ let deadline: number;
 let refreshAt: string;
 let metaDelayMs = 0;
 let feedFixture = false;
+let scheduleFixture = false;
 const apiCookies: Array<string | undefined> = [];
 const api = createServer((req, res) => {
   const url = new URL(req.url!, "http://api.local");
@@ -115,7 +116,23 @@ const api = createServer((req, res) => {
     const at = "2026-10-30T08:00:00Z";
     const item = { id: "sample", title: "奖学金公示标题", summary: "不应显示的摘要内容", reason: "不应显示的推荐理由", source: { name: "研究生院" }, publishedAt: at, publishedAtPrecision: "minute", timelineAt: at, category: null, tags: [], score: 77, selected: true, channel: "news", x: null };
     const group = { factId: "fact", story: { publicId: "story", title: "事件" }, additionalSourceCount: 0, reportCount: 2, developmentCount: 2, latestDevelopment: { factId: "new", title: "公示最新进展", at, precision: "day" } };
-    const cards = feedFixture ? [{ key: "sample", anchorAt: at, item, group }] : [];
+    const cards = feedFixture ? [{ key: "sample", anchorAt: at, item, group }]
+      : scheduleFixture ? [
+        {
+          key: "multi", anchorAt: at, group: null,
+          item: {
+            ...item, id: "multi", title: "多场活动测试",
+            activitySchedule: {
+              activities: [
+                { name: "首场活动名称", registrationEnd: { text: "11月25日", value: "2026-11-25", precision: "day" }, activityStart: { text: "11月26日19:00", value: "2026-11-26T19:00+08:00", precision: "minute" } },
+                { name: "第二场隐藏名称", activityStart: { text: "11月27日19:00", value: "2026-11-27T19:00+08:00", precision: "minute" } },
+              ],
+            },
+          },
+        },
+        { key: "pending", anchorAt: at, group: null, item: { ...item, id: "pending", title: "待核实活动测试", activitySchedule: { activities: [], notice: "时间待核实" } } },
+        { key: "cancelled", anchorAt: at, group: null, item: { ...item, id: "cancelled", title: "取消活动测试", activitySchedule: { activities: [], notice: "活动已取消" } } },
+      ] : [];
     const hot = feedFixture ? [{ rank: 1, title: "热点标题", heat: 100, trend: "up", storyPublicId: "story", itemId: null, participants: [], participantCount: 0 }] : null;
     return res.end(JSON.stringify({ filters, cards, nextCursor: null, refreshAt, dayCounts: {}, hot, generatedAt: "2026-09-28T00:00:00Z" }));
   }
@@ -222,6 +239,27 @@ test("home renders titles and developments without the hot strip, card summaries
     assert.match(visible, /公示最新进展/);
   } finally {
     feedFixture = false;
+  }
+});
+
+test("home activity schedule shows one session by default, orders event before registration, hides pending notices and keeps cancelled", async () => {
+  scheduleFixture = true;
+  try {
+    const response = await fetch(`${origin}/`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
+    assert.match(visible, /首场活动名称/);
+    assert.doesNotMatch(visible, /第二场隐藏名称/);
+    assert.match(visible, /展开其余 1 场/);
+    assert.match(visible, /paper-note-green/);
+    assert.match(visible, /paper-note-amber/);
+    assert.ok(visible.indexOf("paper-note-green") < visible.indexOf("paper-note-amber"), "活动块排在报名块前面");
+    assert.doesNotMatch(visible, /时间待核实/);
+    assert.match(visible, /paper-note-cancelled/);
+    assert.match(visible, /活动已取消/);
+  } finally {
+    scheduleFixture = false;
   }
 });
 

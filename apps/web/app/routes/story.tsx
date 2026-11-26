@@ -205,7 +205,7 @@ export default function StoryPage() {
           热点事件
           <Badge tone={status.tone}>{status.label}</Badge>
         </div>
-        <h1 className="mt-2.5 text-[27px] font-bold leading-[1.5] tracking-[-0.01em] text-ink lg:mt-3 lg:text-[36px] lg:font-[730]">{story.title}</h1>
+        <h1 className="mt-2.5 text-[27px] font-extrabold leading-[1.36] tracking-[-0.02em] text-ink lg:mt-3 lg:text-[36px]">{story.title}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[12.5px] text-ink-3">
           <span className="inline-flex items-center gap-1.5">
             <IconDoc size={15} className="text-ink-4" />
@@ -224,7 +224,7 @@ export default function StoryPage() {
         </div>
       </header>
 
-      <div className="sticky top-0 z-20 -mx-4 mt-5 bg-bg/90 px-4 py-2 backdrop-blur-md lg:mx-0 lg:px-0">
+      <div className="glass-bar sticky top-0 z-20 -mx-4 mt-5 border-b border-line-soft px-4 py-2 lg:mx-0 lg:border-b-0 lg:bg-transparent lg:px-0 lg:backdrop-blur-none">
         <PillTabs
           size="sm"
           layoutId="story-sections"

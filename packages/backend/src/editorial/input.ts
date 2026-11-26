@@ -16,6 +16,7 @@ export interface AnalyzeInputArticle {
   /** When the site first saw it (the score input's time when the source gives none). */
   discoveredAt?: Date | null;
   bodyText: string | null;
+  bodyHtml?: string | null;
   excerpt: string | null;
   /** pending: no body fetched yet; ok; unconfirmed: fetching failed; none. */
   bodyStatus?: string;
@@ -49,11 +50,11 @@ export function withXArticle(xPost: Record<string, any> | null, article: { title
 export async function loadAnalyzeInput(articleId: string): Promise<AnalyzeInputArticle | null> {
   const [row] = await sql<{
     id: string; revision: number; title: string; url: string; author: string | null; published_at: Date | null; published_at_precision: PublishedAtPrecision; discovered_at: Date;
-    body_text: string | null; excerpt: string | null; body_status: string; x_post: Record<string, any> | null; x_article: { title?: string; text?: string } | null;
+    body_text: string | null; body_html: string | null; excerpt: string | null; body_status: string; x_post: Record<string, any> | null; x_article: { title?: string; text?: string } | null;
     media: Array<Record<string, any>>; source_name: string; source_kind: string; tier: string; source_tags: string[]; owner_entity_id: string | null;
     config: Record<string, any>; translation_zh: string | null; has_attachment: boolean;
   }[]>`
-    SELECT a.id, a.revision, a.title, a.url, a.author, a.published_at, a.published_at_precision, a.discovered_at, a.body_text, a.excerpt, a.body_status, a.x_post, a.x_article, a.media,
+    SELECT a.id, a.revision, a.title, a.url, a.author, a.published_at, a.published_at_precision, a.discovered_at, a.body_text, a.body_html, a.excerpt, a.body_status, a.x_post, a.x_article, a.media,
            s.name AS source_name, s.kind AS source_kind, s.tier, s.tags AS source_tags, s.owner_entity_id, s.config,
            tr.body_text AS translation_zh,
            (a.body_html ~* '\.(xls|xlsx|doc|docx|pdf)[?"< ]') AS has_attachment
@@ -63,7 +64,7 @@ export async function loadAnalyzeInput(articleId: string): Promise<AnalyzeInputA
   if (!row) return null;
   return {
     id: row.id, revision: row.revision, title: row.title, url: row.url, author: row.author, publishedAt: row.published_at, publishedAtPrecision: row.published_at_precision, discoveredAt: row.discovered_at,
-    bodyText: row.body_text, excerpt: row.excerpt, bodyStatus: row.body_status, xPost: withXArticle(row.x_post, row.x_article), media: row.media,
+    bodyText: row.body_text, bodyHtml: row.body_html, excerpt: row.excerpt, bodyStatus: row.body_status, xPost: withXArticle(row.x_post, row.x_article), media: row.media,
     source: {
       name: row.source_name, kind: row.source_kind, tier: row.tier, tags: row.source_tags, ownerEntityId: row.owner_entity_id,
       fetchesBody: row.config?.fetchPublicContent === true || !!row.config?.detail || row.source_kind === "web_list",
@@ -117,4 +118,42 @@ export async function firstImagePart(a: AnalyzeInputArticle): Promise<ContentPar
   } catch {
     return null;
   }
+}
+
+/**
+ * Collect up to `limit` non-tiny images (body HTML images first, then post media) for poster OCR
+ * fallback when text extraction fails to recover activity times.
+ */
+export async function posterImageParts(a: AnalyzeInputArticle, limit = 3): Promise<ContentPart[]> {
+  const candidates: string[] = [];
+  const pushUrl = (rawUrl: string | undefined | null, width?: number | null, height?: number | null) => {
+    if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) return;
+    if (typeof width === "number" && typeof height === "number" && width > 0 && height > 0 && width < 120 && height < 120) return;
+    if (/\.svg(?:[?#]|$)/i.test(rawUrl)) return;
+    if (!candidates.includes(rawUrl)) candidates.push(rawUrl);
+  };
+  if (a.bodyHtml) {
+    for (const m of a.bodyHtml.matchAll(/<img\b[^>]*\bsrc="([^"]+)"[^>]*>/gi)) {
+      const w = /\bwidth="(\d+)"/.exec(m[0]);
+      const h = /\bheight="(\d+)"/.exec(m[0]);
+      pushUrl(m[1]!.replace(/&amp;/g, "&"), w ? Number(w[1]) : null, h ? Number(h[1]) : null);
+    }
+  }
+  const mediaList = [...(a.xPost?.media ?? []), ...(a.xPost?.quoted?.media ?? []), ...(a.media ?? [])];
+  for (const m of mediaList) {
+    if (m?.kind === "image") pushUrl(String(m.url ?? ""), typeof m.width === "number" ? m.width : null, typeof m.height === "number" ? m.height : null);
+  }
+  const parts: ContentPart[] = [];
+  for (const url of candidates) {
+    if (parts.length >= limit) break;
+    try {
+      const { body, type } = await produceImage(url, "image-1200");
+      if (/^image\/(jpeg|png|webp)$/.test(type)) {
+        parts.push({ type: "image_url", image_url: { url: `data:${type};base64,${body.toString("base64")}` } });
+      }
+    } catch {
+      // Unfetchable or unsupported image is skipped; other posters may still succeed.
+    }
+  }
+  return parts;
 }

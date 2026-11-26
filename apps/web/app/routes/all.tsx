@@ -5,7 +5,7 @@ import type { PoolResponse, SourceListResponse } from "@aihot/contracts/site";
 import { isCategoryKey, isChannelKey } from "@aihot/contracts/taxonomy";
 import { loadOr404, queryString } from "../lib/api.server";
 import { listPath, pageMeta } from "../lib/seo";
-import { CategoryTabs, SearchField, SelectedSourceChips, SourceFilter } from "../features/feed/Filters";
+import { FeedTopBar } from "../features/feed/FeedTopBar";
 import { PillTabs } from "../components/ui/Tabs";
 import { DayList, Pagination } from "../features/feed/DayList";
 import { EmptyState } from "../components/ui/Page";
@@ -101,25 +101,27 @@ export default function AllPage() {
   const updated = new Date(data.freshness).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Shanghai" });
 
   return (
-    <div className="pb-6">
-      <header className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-3 pt-5 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:pt-0">
-        <div className="min-w-0">
-          <h1 className="browse-title line-clamp-2">{title ?? `全部${withSubject("动态")}`}</h1>
+    <div className="pb-8">
+      <FeedTopBar
+        active={f.category ?? "all"}
+        title={title ?? `全部${withSubject("动态")}`}
+        sourceOptions={sourceOptions}
+        selectedSources={sources ?? []}
+        searchDefaultValue={f.q ?? ""}
+        searchKeep={keep}
+        searchAutoFocus={params.get("search") === "1"}
+        showMobileSearchBar={Boolean(f.q || params.get("search") === "1")}
+      />
+      {(title || (!f.q && data.todayCount > 0)) && (
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          {title && <h2 className="text-[18px] font-bold tracking-[-0.015em] text-ink">{title}</h2>}
           {!f.q && (
-            <span className="text-[13px] text-ink-4 lg:hidden">
+            <span className="text-[12.5px] text-ink-4 lg:hidden">
               今日 <span className="num">{data.todayCount}</span> 条
             </span>
           )}
         </div>
-        <SourceFilter options={sourceOptions} selected={sources ?? []} />
-        <SearchField variant="bar" defaultValue={f.q ?? ""} keep={keep} autoFocus={params.get("search") === "1"} />
-        <CategoryTabs active={f.category ?? "all"} layoutId="all-cat" className="col-span-full min-w-0" />
-        {!!sources?.length && (
-          <div className="col-span-full">
-            <SelectedSourceChips options={sourceOptions} selected={sources} />
-          </div>
-        )}
-      </header>
+      )}
 
       {f.q && (
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">

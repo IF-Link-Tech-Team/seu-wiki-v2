@@ -39,7 +39,7 @@ type Activity = {
 } & Partial<Record<TimeField, ActivityTime>>;
 
 const ABSOLUTE_DATE = /^(?:(\d{4})[-年/.])?(\d{1,2})[-月/.](\d{1,2})[日号]?$/;
-const CLOCK = /[T\s]*(?:(上午|中午|下午|晚上)\s*)?(\d{1,2}|[一二两三四五六七八九十])\s*(?::\s*(\d{2})(?:\s*:\s*(\d{2}))?|[时点]\s*(?:(\d{1,2})\s*分?)?)$/;
+const CLOCK = /[T\s]*(?:(早上|上午|中午|下午|晚上|早|晚)\s*)?(\d{1,2}|[一二两三四五六七八九十])\s*(?::\s*(\d{2})(?:\s*:\s*(\d{2}))?|[时点]\s*(?:(半)|(\d{1,2})\s*分?)?)$/;
 const WEEKDAY_SUFFIX = /(?:\((?:周|星期)([一二三四五六日天])\)|(?:周|星期)([一二三四五六日天]))$/;
 const WEEKDAY = "一二三四五六日";
 const pad = (value: string | number) => String(value).padStart(2, "0");
@@ -71,7 +71,10 @@ function resolveDay(text: string, anchor: string | null): string | null {
 }
 
 function resolveTime(evidence: string, anchor: string | null): ActivityTime {
-  const text = evidence.normalize("NFKC").trim().replace(/\s*(?:北京时间|\+08:00)$/, "");
+  const text = evidence.normalize("NFKC").trim()
+    .replace(/^(?:北京时间)\s*/, "")
+    .replace(/\s*(?:北京时间|\+08:00)$/, "")
+    .replace(/\s*(?:前|之前|止|截止)$/, "");
   const clock = CLOCK.exec(text);
   const unresolved = { evidence, value: null, precision: null };
   let dayText = (clock ? text.slice(0, clock.index) : text).replace(/\s+/g, "");
@@ -80,15 +83,20 @@ function resolveTime(evidence: string, anchor: string | null): ActivityTime {
   const date = resolveDay(weekday ? dayText.slice(0, weekday.index).trim() : dayText, anchor);
   if (!date || (weekday && WEEKDAY[(new Date(date).getUTCDay() + 6) % 7] !== (weekday[1] ?? weekday[2])!.replace("天", "日"))) return unresolved;
   if (!clock) return { evidence, value: date, precision: "day" };
-  const [, period, hourText, colonMinute, second, chineseMinute] = clock;
+  const [, period, hourText, colonMinute, second, half, chineseMinute] = clock;
   let hour = /^\d/.test(hourText!) ? Number(hourText) : "一二三四五六七八九十".indexOf(hourText!.replace("两", "二")) + 1;
-  if (period === "下午" || period === "晚上") {
-    if (hour === 0 || (period === "晚上" && hour === 12)) return unresolved;
+  let minute = half ? 30 : Number(colonMinute ?? chineseMinute ?? "0");
+  const sec = Number(second ?? "0");
+  if (period === "下午" || period === "晚上" || period === "晚") {
+    if (hour === 0 || ((period === "晚上" || period === "晚") && hour === 12)) return unresolved;
     if (hour < 12) hour += 12;
   }
-  if ((period === "上午" && hour >= 12) || (period === "中午" && (hour < 11 || hour > 13))) return unresolved;
-  const minute = Number(colonMinute ?? chineseMinute ?? "0");
-  if (hour > 23 || minute > 59 || Number(second ?? "0") > 59) return unresolved;
+  if (((period === "上午" || period === "早上" || period === "早") && hour >= 12) || (period === "中午" && (hour < 11 || hour > 13))) return unresolved;
+  if (hour === 24 && minute === 0 && sec === 0) {
+    hour = 23;
+    minute = 59;
+  }
+  if (hour > 23 || minute > 59 || sec > 59) return unresolved;
   return { evidence, value: `${date}T${pad(hour)}:${pad(minute)}${second ? `:${second}` : ""}+08:00`, precision: second ? "second" : "minute" };
 }
 
@@ -99,9 +107,10 @@ function normalizeRange(source: string[], start?: ActivityTime, end?: ActivityTi
     return endAt >= 0 && /^\s*(?:至|到|[-—–~～－]+)\s*$/.test(tail.slice(0, endAt));
   }))) {
     const day = start.value.slice(0, 10);
-    const partial = end.evidence.normalize("NFKC");
+    const partial = end.evidence.normalize("NFKC").trim();
     const expanded = /^\d{1,2}[日号]/.test(partial) ? `${day.slice(0, 7)}-${partial}`
-      : CLOCK.exec(partial)?.index === 0 ? `${day} ${partial}` : null;
+      : CLOCK.exec(partial)?.index === 0 ? `${day} ${partial}`
+      : /^(?:\d{1,2}[-月/.]\d{1,2}[日号]?)/.test(partial) ? `${day.slice(0, 4)}-${partial}` : null;
     if (expanded) {
       const resolved = resolveTime(expanded, null);
       end.value = resolved.value;
@@ -119,10 +128,11 @@ function normalizeRange(source: string[], start?: ActivityTime, end?: ActivityTi
 }
 
 /** Shadow assessment. Source facts are kept private in analyses.output until the publication cutover. */
-export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorialSchema>, article: AnalyzeInputArticle) {
+export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorialSchema>, article: AnalyzeInputArticle, extraText?: string | null) {
   if (!raw) return null;
   const body = collapseWhitespace(article.xPost ? String(article.xPost.text ?? "") : article.bodyText ?? article.excerpt ?? "");
-  const source = [collapseWhitespace(article.title), body];
+  const poster = collapseWhitespace(extraText ?? "");
+  const source = [collapseWhitespace(article.title), body, ...(poster ? [poster] : [])];
   const verified = (value: string | null | undefined) => {
     const quote = collapseWhitespace(value ?? "");
     return quote && source.some((text) => text.includes(quote)) ? quote : null;
@@ -132,11 +142,19 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
     if (!quote) return null;
     // Formatting spaces may differ after extraction. Return the actual continuous source span;
     // every non-space character (including all digits and punctuation) must still match.
-    const clock = CLOCK.exec(quote.normalize("NFKC"));
-    const datePrefix = clock ? quote.slice(0, clock.index).replace(/\s+/g, "") : "";
-    const commaAt = ABSOLUTE_DATE.test(datePrefix.normalize("NFKC")) ? datePrefix.length : -1;
-    const pattern = new RegExp([...quote.replace(/\s+/g, "")].map((char, index) =>
-      (index === commaAt ? "[,，]?\\s*" : "") + char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s*"));
+    const normalized = quote.normalize("NFKC");
+    const clock = CLOCK.exec(normalized);
+    const datePrefix = clock ? normalized.slice(0, clock.index).replace(/\s+/g, "") : "";
+    const commaAt = ABSOLUTE_DATE.test(datePrefix) ? datePrefix.length : -1;
+    const chars = [...quote.replace(/\s+/g, "")];
+    const pattern = new RegExp(chars.map((char, index) => {
+      const escaped = char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const equiv = char === ":" || char === "：" ? "[:：]"
+        : char === "(" || char === "（" ? "[\\(（]"
+        : char === ")" || char === "）" ? "[\\)）]"
+        : escaped;
+      return (index === commaAt ? "[,，]?\\s*" : "") + equiv;
+    }).join("\\s*"));
     return source.map((text) => pattern.exec(text)?.[0]).find(Boolean) ?? null;
   };
   const evidence = verified(raw.evidence);
@@ -182,8 +200,11 @@ export function normalizeActivityEditorial(raw: z.infer<typeof ActivityEditorial
       activities.push(activity);
     }
   }
-  const actionable = activities.some((item) => item.participation || item.activityStart?.value || item.registrationStart?.value || item.registrationEnd?.value);
-  const decision = candidateType && actionable && body && !raw.needsReview ? "candidate"
+  const hasResolvedTime = activities.some((item) => item.activityStart?.value || item.activityEnd?.value || item.registrationStart?.value || item.registrationEnd?.value);
+  const actionable = hasResolvedTime || activities.some((item) => item.participation);
+  // When concrete verified times were extracted from the body/poster, don't let a cautious
+  // needsReview flag (e.g. "报名方式见二维码" or "其余要求见附件") hide verified schedules.
+  const decision = candidateType && actionable && Boolean(body || poster) && (!raw.needsReview || hasResolvedTime) ? "candidate"
     : candidateType || kind === "activity_update" || kind === "unknown" ? "review"
     : "excluded";
   return { kind, evidence, decision, needsReview: raw.needsReview, activities, ...(kind === "activity_update" && raw.update ? { update: raw.update } : {}) };

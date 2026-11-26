@@ -17,11 +17,11 @@ import { CATEGORIES } from "@aihot/industry/taxonomy";
 import { COLLEGES } from "@aihot/industry/colleges";
 import { SELECTION } from "@aihot/industry/selection";
 import { sql } from "../db.ts";
-import { chatJson, MODELS, type ContentPart } from "../providers/llm.ts";
+import { chatJson, isModelConfigured, MODELS, type ContentPart } from "../providers/llm.ts";
 import { completeReceipt, ProviderRejectedError } from "../providers/receipts.ts";
 import { collapseWhitespace } from "../lib/text.ts";
 import { modelFor } from "./models.ts";
-import { buildMaterial, firstImagePart, loadAnalyzeInput, type AnalyzeInputArticle } from "./input.ts";
+import { buildMaterial, firstImagePart, loadAnalyzeInput, posterImageParts, type AnalyzeInputArticle } from "./input.ts";
 import { ActivityEditorialSchema, normalizeActivityEditorial } from "./activity.ts";
 import { pageFetchable } from "../content/extract.ts";
 import { shutdownSignal } from "../jobs/queue.ts";
@@ -42,6 +42,7 @@ export const PROMPT_VERSIONS = {
   understand: promptVersion("understand"),
   summarize: promptVersion("summarize-article", "summarize-article-empty", "summarize-short-post", "summarize-short-post-quoted", "summarize-long-post", "summarize-long-post-quoted", "identity-context"),
   structure: promptVersion("structure"),
+  structureVision: promptVersion("structure-vision"),
 } as const;
 /** Every step's prompt, as stored on each judgement. */
 export const ANALYZE_PROMPT_VERSION = Object.values(PROMPT_VERSIONS).join("+");
@@ -193,6 +194,11 @@ const StructureSchema = z.object({
   suggestedTopic: z.string().max(30).nullish().catch(null),
 });
 
+const StructureVisionSchema = z.object({
+  posterText: z.string().max(8000).catch(""),
+  editorial: ActivityEditorialSchema,
+});
+
 const UnderstandSchema = z.object({
   itemType: z.enum(ITEM_TYPES),
   authorRole: z.enum(["principal", "observer", "relayer"]).catch("relayer"),
@@ -255,7 +261,7 @@ export interface AnalysisRun {
     receiptIds: number[];
     reused: boolean;
   } | null;
-  structure: { model: string; category: string | null; tags: string[]; subjects: string[]; fact: z.infer<typeof FactSchema>; campus: CampusAudience | null; editorial: ReturnType<typeof normalizeActivityEditorial>; receiptId: number; reused: boolean } | null;
+  structure: { model: string; category: string | null; tags: string[]; subjects: string[]; fact: z.infer<typeof FactSchema>; campus: CampusAudience | null; editorial: ReturnType<typeof normalizeActivityEditorial>; receiptId: number; visionReceiptId?: number | null; reused: boolean } | null;
 }
 
 const isContentFilter = (error: unknown) => error instanceof ProviderRejectedError && !error.retryable && /contentFilter|"1301"/.test(error.message);
@@ -324,6 +330,61 @@ async function runScores(a: AnalyzeInputArticle, threshold: number, opts: StepOp
   return { model, threshold, values, receiptIds, reused };
 }
 
+const ACTIVITY_TITLE_HINT = /讲座|预告|沙龙|分享会|宣讲会|论坛|工作坊|招募|报名|比赛|竞赛|展览|演出|观影|志愿|开放日|见面会|训练营/;
+
+export function hasExtractedActivityTime(editorial: ReturnType<typeof normalizeActivityEditorial>): boolean {
+  if (!editorial || editorial.decision !== "candidate") return false;
+  return editorial.activities.some((item) =>
+    Boolean(item.registrationStart?.value || item.registrationEnd?.value || item.activityStart?.value || item.activityEnd?.value)
+    || Boolean(item.participation && /(?:无需报名|报满即止|额满即止)/.test(item.participation)),
+  );
+}
+
+export function needsActivityVisionFallback(a: AnalyzeInputArticle, editorial: ReturnType<typeof normalizeActivityEditorial>): boolean {
+  if (hasExtractedActivityTime(editorial)) return false;
+  if (editorial?.kind === "activity_update" && editorial.update === "cancelled") return false;
+  if (editorial && (editorial.decision === "review" || editorial.decision === "candidate")) return true;
+  if (!editorial || editorial.kind === "other" || editorial.kind === "unknown") {
+    const body = (a.xPost ? String(a.xPost.text ?? "") : a.bodyText ?? a.excerpt ?? "").trim();
+    return body.length < 250 && ACTIVITY_TITLE_HINT.test(a.title);
+  }
+  return false;
+}
+
+async function runStructureVision(a: AnalyzeInputArticle, opts: StepOpts): Promise<{
+  editorial: ReturnType<typeof normalizeActivityEditorial>;
+  receiptId: number;
+  reused: boolean;
+} | null> {
+  const model = await modelFor("structureVision");
+  if (!MODELS[model]?.vision || !isModelConfigured(model)) return null;
+  const images = await posterImageParts(a, 3);
+  if (!images.length) return null;
+  checkAnalysisRunning();
+  const system = promptText("structure-vision");
+  const text = `${buildMaterial(a)}\n\n请先逐字识别附带图片中的活动与时间信息（posterText），再结合图文返回 posterText 与 editorial。`;
+  try {
+    const res = await chatJson({
+      model,
+      purpose: "structure_vision",
+      subject: subjectOf(a),
+      promptVersion: PROMPT_VERSIONS.structureVision,
+      system,
+      user: [{ type: "text", text }, ...images],
+      schema: StructureVisionSchema,
+      temperature: 0.1,
+      maxTokens: 2048,
+      timeoutMs: 120_000,
+      attemptTag: tagged(opts.attemptTag, "structure-vision"),
+    });
+    const editorial = normalizeActivityEditorial(res.data.editorial, a, res.data.posterText);
+    return { editorial, receiptId: res.receiptId, reused: res.reused };
+  } catch (error) {
+    if (error instanceof AnalysisInterruptedError) throw error;
+    return null;
+  }
+}
+
 async function runStructure(a: AnalyzeInputArticle, opts: StepOpts): Promise<NonNullable<AnalysisRun["structure"]>> {
   const model = await modelFor("structure");
   const system = await structureSystem();
@@ -343,10 +404,25 @@ async function runStructure(a: AnalyzeInputArticle, opts: StepOpts): Promise<Non
   const subjects = [...new Set(res.data.subjects.map((s) => s.trim().toLowerCase()).filter((s) => s in ENTITIES))];
   // 词表覆盖不了的主题：模型提议进候选池（同名计数，≥3 进审核队列），不进 tags。
   if (res.data.suggestedTopic) await recordCandidate(res.data.suggestedTopic, "model", `/items/${a.id}`);
+  let editorial = normalizeActivityEditorial(res.data.editorial, a);
+  let visionReceiptId: number | null = null;
+  let reused = res.reused;
+  if (needsActivityVisionFallback(a, editorial)) {
+    const vision = await runStructureVision(a, opts);
+    if (vision) {
+      visionReceiptId = vision.receiptId;
+      reused &&= vision.reused;
+      const visionUseful = hasExtractedActivityTime(vision.editorial)
+        || (vision.editorial?.kind === "activity_update" && vision.editorial.update === "cancelled")
+        || (editorial?.decision === "review" && vision.editorial?.decision === "excluded")
+        || (!editorial && Boolean(vision.editorial));
+      if (visionUseful) editorial = vision.editorial;
+    }
+  }
   return {
     model: res.model, category: res.data.category, tags: normalizeTags(res.data.tags), subjects,
-    fact: res.data.fact, campus: normalizeCampus(res.data.campus, a), editorial: normalizeActivityEditorial(res.data.editorial, a),
-    receiptId: res.receiptId, reused: res.reused,
+    fact: res.data.fact, campus: normalizeCampus(res.data.campus, a), editorial,
+    receiptId: res.receiptId, visionReceiptId, reused,
   };
 }
 
@@ -527,7 +603,10 @@ export async function analyzeArticle(articleId: string, opts: StepOpts = {}): Pr
   const run = await runAnalysis(input, opts);
   const out = normalizeAnalysis(run);
   const receiptIds = [
-    run.prefilter.receiptId, ...(run.scores?.receiptIds ?? []), ...(run.writing?.receiptIds ?? []), ...(run.structure ? [run.structure.receiptId] : []),
+    run.prefilter.receiptId,
+    ...(run.scores?.receiptIds ?? []),
+    ...(run.writing?.receiptIds ?? []),
+    ...(run.structure ? [run.structure.receiptId, ...(run.structure.visionReceiptId ? [run.structure.visionReceiptId] : [])] : []),
   ];
   const w = run.writing;
   const detail = {

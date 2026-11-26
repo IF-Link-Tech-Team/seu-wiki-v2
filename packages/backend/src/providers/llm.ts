@@ -191,6 +191,12 @@ function isConnectFailure(error: unknown): boolean {
   return ["ECONNREFUSED", "ENOTFOUND", "EAI_AGAIN", "UND_ERR_CONNECT_TIMEOUT", "ECONNRESET_BEFORE_SEND", "CERT_HAS_EXPIRED"].includes(code ?? "");
 }
 
+export function isModelConfigured(model: string): boolean {
+  const spec = MODELS[model];
+  if (!spec || !spec.model) return false;
+  return Boolean(credential("models", spec.baseUrlEnv) && credential("models", spec.apiKeyEnv));
+}
+
 export async function chatJson<S extends z.ZodType>(opts: ChatJsonOptions<S>): Promise<ChatJsonResult<z.infer<S>>> {
   const spec = MODELS[opts.model];
   if (!spec) throw new Error(`Unknown model ${opts.model}`);

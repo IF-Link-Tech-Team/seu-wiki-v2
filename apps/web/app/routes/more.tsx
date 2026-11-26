@@ -52,7 +52,9 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 export default function MorePage() {
   return (
     <div className="mx-auto max-w-[var(--page-max-reading)] pb-8">
-      <h1 className="browse-title pb-4 pt-5 lg:pt-1">更多</h1>
+      <header className="editorial-masthead mb-5 pt-5 lg:pt-1">
+        <h1 className="browse-title">更多</h1>
+      </header>
       <div className="grid items-start gap-4 sm:grid-cols-2 2xl:grid-cols-3">
         {GROUPS.map((g) => (
           <Group key={g.title} title={g.title}>

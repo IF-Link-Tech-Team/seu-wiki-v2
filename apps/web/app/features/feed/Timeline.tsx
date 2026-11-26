@@ -47,16 +47,17 @@ export function DayHeader({ day, today, count, collapsed, onToggle }: { day: str
   const weekday = beijingWeekday(day);
   const short = WEEKDAY_SHORT[new Date(`${day}T12:00:00+08:00`).getUTCDay()] ?? "";
   return (
-    <div className="sticky top-0 z-20 -mx-4 bg-bg-sunk px-4 lg:mx-0 lg:bg-bg lg:px-0">
-      {/* Phones: a full-width day bar. */}
+    <div className="glass-bar sticky top-0 z-20 -mx-4 border-b px-4 lg:mx-0 lg:border-b-0 lg:bg-bg lg:px-0 lg:shadow-none lg:backdrop-blur-none">
+      {/* Phones: a full-width frosted glass day bar. */}
       <div className="flex h-9 items-center gap-2 lg:hidden">
-        <span className="text-[14px] font-bold text-ink">{day === today ? "今天" : date}</span>
+        <span className="inline-block size-1.5 rounded-full bg-accent" aria-hidden="true" />
+        <span className="text-[14px] font-bold tracking-[-0.01em] text-ink">{day === today ? "今天" : date}</span>
         {day === today && <span className="text-[12.5px] text-ink-4">{date}</span>}
         <span className="text-[12.5px] text-ink-4">{short}</span>
       </div>
       {/* Desktop: date, fold toggle and weekday. */}
       <div className="hidden h-11 items-center lg:flex">
-        <button type="button" onClick={onToggle} disabled={!onToggle} className="whitespace-nowrap text-[18px] font-semibold leading-6 text-ink">
+        <button type="button" onClick={onToggle} disabled={!onToggle} className="whitespace-nowrap text-[18px] font-extrabold tracking-[-0.02em] leading-6 text-accent">
           {date}
         </button>
         {onToggle ? (
@@ -98,8 +99,8 @@ export function TimelineSlot({ children, fresh = false, delay = 0, dataKey }: { 
       style={fresh ? { animationDelay: `${delay}ms` } : undefined}
     >
       <span aria-hidden="true" className="relative hidden lg:block">
-        <span className="absolute -bottom-[41px] left-[10.5px] top-[29px] w-px bg-line-strong group-last/slot:hidden" />
-        <span className="absolute left-[7.5px] top-[25.5px] size-[7px] rounded-full bg-accent/60 shadow-[0_0_0_4px_var(--bg)] transition-transform duration-300 group-hover/slot:scale-[1.15]" />
+        <span className="absolute -bottom-[41px] left-[10.5px] top-[29px] w-[1.5px] bg-accent/20 group-last/slot:hidden" />
+        <span className="absolute left-[7px] top-[25px] size-[8px] rounded-full bg-[#68ae92] shadow-[0_0_0_4px_var(--bg)] transition-transform duration-300 group-hover/slot:scale-[1.2] dark:bg-accent/80" />
       </span>
       {children}
     </li>

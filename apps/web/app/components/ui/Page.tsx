@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { IconChevronRight } from "../icons";
+import { EmptyPaperArt } from "../PaperArt";
 
 /**
  * The reading template, one of the site's two page widths (the other is the full-width feeds and
@@ -76,7 +77,8 @@ export function MoreLink({ to, children }: { to: string; children: ReactNode }) 
 export function EmptyState({ title, children, action }: { title: ReactNode; children?: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center px-6 py-14 text-center">
-      <div className="text-[15px] font-semibold text-ink-2">{title}</div>
+      <EmptyPaperArt className="mb-3" />
+      <div className="text-[16px] font-bold tracking-[-0.01em] text-ink-2">{title}</div>
       {children && <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-ink-4">{children}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>

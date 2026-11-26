@@ -111,7 +111,7 @@ function Lead({ e }: { e: HotEntryView }) {
       </div>
       <div className={`mt-4 grid gap-5 ${e.cover || panel ? "xl:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)] xl:gap-7" : ""}`}>
         <div className="min-w-0">
-          <h2 className="text-[21px] font-bold leading-[1.4] tracking-[-0.01em] text-ink sm:text-[23px] lg:text-[25px] lg:leading-[1.38]">
+          <h2 className="text-[21px] font-extrabold leading-[1.36] tracking-[-0.02em] text-ink sm:text-[23px] lg:text-[25px] lg:leading-[1.34]">
             <StoryLink e={e} className="group-hover:text-accent" />
           </h2>
           {e.summary && <p className="mt-3 line-clamp-3 text-[14px] leading-[1.75] text-ink-3">{e.summary}</p>}
@@ -160,7 +160,7 @@ function Runner({ e }: { e: HotEntryView }) {
         <Badges e={e} />
         <Delta trend={e.trend} pct={e.trendPct} className="ml-auto" />
       </div>
-      <h2 className="mt-2.5 line-clamp-2 text-[16px] font-[650] leading-[1.5] text-ink">
+      <h2 className="mt-2.5 line-clamp-2 text-[16.5px] font-bold leading-[1.45] tracking-[-0.01em] text-ink">
         <StoryLink e={e} className="group-hover:text-accent" />
       </h2>
       {e.summary && <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.7] text-ink-3 lg:line-clamp-1">{e.summary}</p>}
@@ -237,7 +237,7 @@ export default function HotPage() {
             </span>
             实时热度
           </div>
-          <h1 className="mt-1.5 text-[24px] font-bold leading-[1.3] tracking-[-0.01em] text-ink lg:text-[26px]">{withSubject("热点榜")}</h1>
+          <h1 className="browse-title mt-1.5">{withSubject("热点榜")}</h1>
           <p className="mt-1.5 text-[13.5px] text-ink-3">过去 {hot.windowHours} 小时，AI 圈讨论最多的 {hot.entries.length || 10} 件事</p>
         </div>
         {hot.computedAt && (

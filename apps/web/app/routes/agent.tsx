@@ -275,8 +275,8 @@ export default function AgentPage() {
   );
   return (
     <ReadingLayout aside={aside}>
-      <header>
-        <h1 className="text-[24px] font-semibold leading-[1.3] text-ink">让 Agent 直接使用 {SITE.name}</h1>
+      <header className="editorial-masthead mb-5">
+        <h1 className="browse-title">让 Agent 直接使用 {SITE.name}</h1>
         <p className="mt-1.5 text-[13px] text-ink-3">四条接入路径都是匿名只读、无需 API Key：Agent Skill、MCP、RSS、REST API v1。</p>
         <div className="mt-3.5 flex flex-wrap items-center gap-1.5">
           <span className={pill}>匿名只读</span>
@@ -297,7 +297,7 @@ export default function AgentPage() {
         ))}
       </div>
 
-      <div className="sticky top-0 z-20 -mx-4 mt-7 bg-bg/90 px-4 py-2 backdrop-blur-md lg:mx-0 lg:px-0">
+      <div className="glass-bar sticky top-0 z-20 -mx-4 mt-7 border-b border-line-soft px-4 py-2 lg:mx-0 lg:border-b-0 lg:bg-transparent lg:px-0 lg:backdrop-blur-none">
         <PillTabs layoutId="agent-tab" label="接入方式" active={tab} onSelect={(k: string) => select(k as TabKey)} items={TABS.map((t) => ({ key: t.key, label: t.label }))} />
       </div>
 
