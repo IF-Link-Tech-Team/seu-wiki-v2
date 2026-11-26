@@ -20652,6 +20652,565 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
+    },
+    {
+      "id": "mp-seu-peace",
+      "name": "公众号·平安东大",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_032f1782ba16",
+        "nickname": "平安东大"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "保卫处"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-mental-health",
+      "name": "公众号·SEU心理健康教育中心",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0ff0f1180d6a",
+        "nickname": "SEU心理健康教育中心"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "心理健康教育中心"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-science-park",
+      "name": "公众号·东大科技园",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5fb0518b77ac",
+        "nickname": "东大科技园"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-a24",
+      "name": "公众号·东南大学教育基金会SEUEF",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_1107907dd86d",
+        "nickname": "东南大学教育基金会SEUEF"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "教育基金会"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-sem-youth",
+      "name": "公众号·SEU经管团学",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5e400adfe7fe",
+        "nickname": "SEU经管团学"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "经济管理学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-me-gs",
+      "name": "公众号·知行中北至善机械",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6eeeae91e69b",
+        "nickname": "知行中北至善机械"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "机械工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-info-su",
+      "name": "公众号·东大信息学生会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4808f60b1717",
+        "nickname": "东大信息学生会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-info-sast",
+      "name": "公众号·东大信息学生科技协会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8a09e992302c",
+        "nickname": "东大信息学生科技协会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-tc-gs",
+      "name": "公众号·东大交院研究生",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5b47c5f8674c",
+        "nickname": "东大交院研究生"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "交通学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-mse-youth",
+      "name": "公众号·东南材料团委",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_25b72f7df193",
+        "nickname": "东南材料团委"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "材料科学与工程学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-cyber-youth",
+      "name": "公众号·网安青年汇",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9580c1501aa2",
+        "nickname": "网安青年汇"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "网络空间安全学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-law-youth",
+      "name": "公众号·东南法苑SEU",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6360aaa493d1",
+        "nickname": "东南法苑SEU"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "法学院"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-jzb-drama",
+      "name": "公众号·极坐标DRAMA",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2b07898d34e3",
+        "nickname": "极坐标DRAMA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-infinity",
+      "name": "公众号·INFINITY电子音乐社",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_150326cb09fd",
+        "nickname": "INFINITY电子音乐社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-dance",
+      "name": "公众号·东大舞蹈团",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d2411cd91c91",
+        "nickname": "东大舞蹈团"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d10",
+      "name": "公众号·玉笙寒配音工作室",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3ff236ef2a43",
+        "nickname": "玉笙寒配音工作室"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-astronomy",
+      "name": "公众号·夜空东南",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c0dc19bab2c8",
+        "nickname": "夜空东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-zhijiao",
+      "name": "公众号·至善支协",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d4f2da9916e8",
+        "nickname": "至善支协"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d08",
+      "name": "公众号·SEU方程式赛车队",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f1bb7a91c253",
+        "nickname": "SEU方程式赛车队"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d04",
+      "name": "公众号·seu户外",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9a1f51899336",
+        "nickname": "seu户外"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-d02",
+      "name": "公众号·伯藜学社Peeli",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f0b4d58fc9a5",
+        "nickname": "伯藜学社Peeli"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-3c",
+      "name": "公众号·3C 艺语集",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e0cbc9e07b4c",
+        "nickname": "3C 艺语集"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-literature",
+      "name": "公众号·东南风文学社",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_15938cb27218",
+        "nickname": "东南风文学社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-shanyuan",
+      "name": "公众号·善渊读书会",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e29bd277a336",
+        "nickname": "善渊读书会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-zhishan-love",
+      "name": "公众号·至善爱心社",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_a0b2f061b1fc",
+        "nickname": "至善爱心社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-lexing",
+      "name": "公众号·东南乐行运动俱乐部",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d67ee671eb55",
+        "nickname": "东南乐行运动俱乐部"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-fa",
+      "name": "公众号·SEUFA",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_69613eda256c",
+        "nickname": "SEUFA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "mp-seu-meiyu",
+      "name": "公众号·至善尽美美育实践工作坊",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d25ee52cc635",
+        "nickname": "至善尽美美育实践工作坊"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生组织"
+      ],
+      "interval_minutes": 1440,
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
     }
   ]
 }

@@ -19,6 +19,9 @@ test("公众号挂到运营单位，保留公众号字样；其余进合集", ()
   assert.deepEqual(sourceOrg("公众号·SEU辩协", ["公众号", "校级"]), { group: "公众号", org: "社团与艺术团公众号", label: "SEU辩协" });
   assert.deepEqual(sourceOrg("公众号·风雅颂东南", ["公众号", "校级"]), { group: "公众号", org: "社团与艺术团公众号", label: "风雅颂东南" });
   assert.deepEqual(sourceOrg("公众号·SEU橙花音乐剧社", ["公众号", "校级", "学生社团"]), { group: "公众号", org: "社团与艺术团公众号", label: "SEU橙花音乐剧社" });
+  assert.deepEqual(sourceOrg("公众号·极坐标DRAMA", ["公众号", "校级", "学生社团"]), { group: "公众号", org: "社团与艺术团公众号", label: "极坐标DRAMA" });
+  assert.deepEqual(sourceOrg("公众号·平安东大", ["公众号", "校级", "保卫处"]), { group: "机关与职能部门", org: "保卫处", label: "公众号·平安东大" });
+  assert.deepEqual(sourceOrg("公众号·SEU经管团学", ["公众号", "学院", "经济管理学院"]), { group: "学院与书院", org: "经济管理学院", label: "公众号·SEU经管团学" });
   assert.equal(sourceOrg("公众号·IF.Link Community", ["公众号", "IF.Link"]).org, "社团与艺术团公众号");
   // 东南文苑是书院、活动室预约平台，不属于人文学院。
   assert.deepEqual(sourceOrg("公众号·东南文苑", ["公众号", "学院"]), { group: "公众号", org: "校级公众号", label: "东南文苑" });

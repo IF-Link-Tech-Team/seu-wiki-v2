@@ -3837,39 +3837,984 @@
         "verifiedAt": "2026-11-25",
         "method": "用户提供文章链接；微信原页 user_name（gh_70ec00806a3c）与 nickname（SEU橙花音乐剧社）核验一致"
       }
+    },
+    {
+      "candidateRef": "A16",
+      "name": "公众号·平安东大",
+      "note": "2026-11-26 用户指定接入；保卫处官方公众号（官网 bwc.seu.edu.cn 链接核验一致，近半年活跃）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzA5MzMxMzY1OA==&mid=2653215102&idx=1&sn=ca454efec3bd998a1490413aaef9ba29&chksm=8ae77198330adda73542fa25421af21d1dae714a6b7bc4ae28473684f2a3cc4cff30bbc9d74d"
+      ],
+      "identifier": null,
+      "id": "mp-seu-peace",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_032f1782ba16",
+        "nickname": "平安东大"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "保卫处"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-peace",
+        "status": "verified",
+        "actualName": "平安东大",
+        "ghid": "gh_032f1782ba16",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_032f1782ba16) 与 nickname(平安东大) 一致，最近发文 2026-11-23"
+      }
+    },
+    {
+      "candidateRef": "E04",
+      "name": "公众号·SEU心理健康教育中心",
+      "note": "2026-11-26 用户指定接入；心理健康教育中心官方公众号（最近发文 2026-11-25）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzA4NjE2ODYyOQ==&mid=2662438154&idx=1&sn=c5682e9ac7fe9f5bf7fb5ad16db871e1&chksm=851b1e95e049ed9b9a220ea789b524634ab40a735977d9272a3ea25ec12cf8d51b14376acff4"
+      ],
+      "identifier": null,
+      "id": "mp-seu-mental-health",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_0ff0f1180d6a",
+        "nickname": "SEU心理健康教育中心"
+      },
+      "tier": "T1",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "心理健康教育中心"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-mental-health",
+        "status": "verified",
+        "actualName": "SEU心理健康教育中心",
+        "ghid": "gh_0ff0f1180d6a",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_0ff0f1180d6a) 与 nickname(SEU心理健康教育中心) 一致，最近发文 2026-11-25"
+      }
+    },
+    {
+      "candidateRef": "E13",
+      "name": "公众号·东大科技园",
+      "note": "2026-11-26 用户指定接入；东南大学国家大学科技园官方公众号（官网 sp.seu.edu.cn 核验一致，最近发文 2026-11-26）",
+      "evidence": [],
+      "identifier": null,
+      "id": "mp-seu-science-park",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5fb0518b77ac",
+        "nickname": "东大科技园"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-science-park",
+        "status": "verified",
+        "actualName": "东大科技园",
+        "ghid": "gh_5fb0518b77ac",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_5fb0518b77ac) 与 nickname(东大科技园) 一致，最近发文 2026-11-26"
+      }
+    },
+    {
+      "candidateRef": "A24",
+      "name": "公众号·东南大学教育基金会SEUEF",
+      "note": "2026-11-26 用户指定接入；教育基金会官方公众号（最近发文 2026-11-23）",
+      "evidence": [],
+      "identifier": null,
+      "id": "mp-a24",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_1107907dd86d",
+        "nickname": "东南大学教育基金会SEUEF"
+      },
+      "tier": "T1_5",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "教育基金会"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-a24",
+        "status": "verified",
+        "actualName": "东南大学教育基金会SEUEF",
+        "ghid": "gh_1107907dd86d",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_1107907dd86d) 与 nickname(东南大学教育基金会SEUEF) 一致，最近发文 2026-11-23"
+      }
+    },
+    {
+      "candidateRef": "U-sem-youth",
+      "name": "公众号·SEU经管团学",
+      "note": "2026-11-26 核验接入；经济管理学院团委学生会公众号（最近发文 2026-11-25）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzk0NzI3MTAxMg==&mid=2247516121&idx=1&sn=3e91f445e4eb86138f1c3c92a7bfe71f&chksm=c2d31e007d3cc972f9299c2600df6eaed97be33d6697bea3755648f11cb128ee8f7fefdbd2a5"
+      ],
+      "identifier": null,
+      "id": "mp-seu-sem-youth",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5e400adfe7fe",
+        "nickname": "SEU经管团学"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "经济管理学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-sem-youth",
+        "status": "verified",
+        "actualName": "SEU经管团学",
+        "ghid": "gh_5e400adfe7fe",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_5e400adfe7fe) 与 nickname(SEU经管团学) 一致，最近发文 2026-11-25"
+      }
+    },
+    {
+      "candidateRef": "U-me-gs",
+      "name": "公众号·知行中北至善机械",
+      "note": "2026-11-26 核验接入；机械工程学院研究生会公众号（最近发文 2026-11-24）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzAwNDEwNTI3NQ==&mid=2649904081&idx=1&sn=f842da3fee67582722b043d2155e8642&chksm=826178ad8d0d3848a8614b722aa2bea30759a9fb21ab04004716c04307ea7b82943d34d7982b"
+      ],
+      "identifier": null,
+      "id": "mp-seu-me-gs",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6eeeae91e69b",
+        "nickname": "知行中北至善机械"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "机械工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-me-gs",
+        "status": "verified",
+        "actualName": "知行中北至善机械",
+        "ghid": "gh_6eeeae91e69b",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_6eeeae91e69b) 与 nickname(知行中北至善机械) 一致，最近发文 2026-11-24"
+      }
+    },
+    {
+      "candidateRef": "U-info-su",
+      "name": "公众号·东大信息学生会",
+      "note": "2026-11-26 核验接入；信息科学与工程学院学生会公众号（最近发文 2026-11-12）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzkzMDMwOTk1Mg==&mid=2247500841&idx=1&sn=0af3a1111d1039fd17863d6a387a168d&chksm=c35ff30902e38b04e969bf4d697ea964fe5951fe80a636127e49f18893527a64c5b6390571cd"
+      ],
+      "identifier": null,
+      "id": "mp-seu-info-su",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_4808f60b1717",
+        "nickname": "东大信息学生会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-info-su",
+        "status": "verified",
+        "actualName": "东大信息学生会",
+        "ghid": "gh_4808f60b1717",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_4808f60b1717) 与 nickname(东大信息学生会) 一致，最近发文 2026-11-12"
+      }
+    },
+    {
+      "candidateRef": "U-info-sast",
+      "name": "公众号·东大信息学生科技协会",
+      "note": "2026-11-26 核验接入；信息科学与工程学院学生科技协会公众号（最近发文 2026-11-19）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzg4NjcxMTg5NQ==&mid=2247488597&idx=1&sn=c8964943836afe98d4817ed823043a72&chksm=cec964a7d1a89cec21d3ba73c943399be995fd9449141bee0b363cb67b5b3787500dd1e006cd"
+      ],
+      "identifier": null,
+      "id": "mp-seu-info-sast",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_8a09e992302c",
+        "nickname": "东大信息学生科技协会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "信息科学与工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-info-sast",
+        "status": "verified",
+        "actualName": "东大信息学生科技协会",
+        "ghid": "gh_8a09e992302c",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_8a09e992302c) 与 nickname(东大信息学生科技协会) 一致，最近发文 2026-11-19"
+      }
+    },
+    {
+      "candidateRef": "U-tc-gs",
+      "name": "公众号·东大交院研究生",
+      "note": "2026-11-26 核验接入；交通学院研究生会公众号（最近发文 2026-11-25）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzA4MzkwMzQxOQ==&mid=2654738137&idx=1&sn=082edba9abda4707ac0f18dff209b6b6&chksm=85e17c69e2d533fe4910fcc001e8f4d252953a4fb314f8303b893e27d2aed9fd0997a7b4efd8"
+      ],
+      "identifier": null,
+      "id": "mp-seu-tc-gs",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_5b47c5f8674c",
+        "nickname": "东大交院研究生"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "交通学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-tc-gs",
+        "status": "verified",
+        "actualName": "东大交院研究生",
+        "ghid": "gh_5b47c5f8674c",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_5b47c5f8674c) 与 nickname(东大交院研究生) 一致，最近发文 2026-11-25"
+      }
+    },
+    {
+      "candidateRef": "U-mse-youth",
+      "name": "公众号·东南材料团委",
+      "note": "2026-11-26 核验接入；材料科学与工程学院团委公众号（最近发文 2026-11-25）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzI1NDE4OTgzNQ==&mid=2650297272&idx=1&sn=35bad974047da879b53faf21ce5995f1&chksm=f0e742c6479a2154772dd5eef09c518b7b955d4cdd1790b1b8520c5b52b13106fa7e2e914468"
+      ],
+      "identifier": null,
+      "id": "mp-seu-mse-youth",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_25b72f7df193",
+        "nickname": "东南材料团委"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "材料科学与工程学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-mse-youth",
+        "status": "verified",
+        "actualName": "东南材料团委",
+        "ghid": "gh_25b72f7df193",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_25b72f7df193) 与 nickname(东南材料团委) 一致，最近发文 2026-11-25"
+      }
+    },
+    {
+      "candidateRef": "U-cyber-youth",
+      "name": "公众号·网安青年汇",
+      "note": "2026-11-26 核验接入；网络空间安全学院团委/研究生会公众号（最近发文 2026-11-22）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzg5OTQ5NDY5MQ==&mid=2247509865&idx=1&sn=7ff571a8830c58f470d2f171c51df04c&chksm=c14126b9c742effa9968198f13e05f57e1f5f1e031edcfe274db9f3a21104eec6a97811f20c9"
+      ],
+      "identifier": null,
+      "id": "mp-seu-cyber-youth",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9580c1501aa2",
+        "nickname": "网安青年汇"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "网络空间安全学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-cyber-youth",
+        "status": "verified",
+        "actualName": "网安青年汇",
+        "ghid": "gh_9580c1501aa2",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_9580c1501aa2) 与 nickname(网安青年汇) 一致，最近发文 2026-11-22"
+      }
+    },
+    {
+      "candidateRef": "U-law-youth",
+      "name": "公众号·东南法苑SEU",
+      "note": "2026-11-26 核验接入；法学院团委/学生活动公众号，与既有学术号 mp-g12 东南法苑为两个不同账号（最近发文 2026-11-25）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzI3NDI3ODM5Mg==&mid=2247591674&idx=2&sn=8a71a476cd15885cfd7f7fd2732a026d&chksm=ea80c2945e23e5c3c1bd4f3fe8838102238c54e0b6e262d5f1b59df1f3fcf35a54e03e35e0cd"
+      ],
+      "identifier": null,
+      "id": "mp-seu-law-youth",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_6360aaa493d1",
+        "nickname": "东南法苑SEU"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "学院",
+        "法学院"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-law-youth",
+        "status": "verified",
+        "actualName": "东南法苑SEU",
+        "ghid": "gh_6360aaa493d1",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_6360aaa493d1) 与 nickname(东南法苑SEU) 一致，最近发文 2026-11-25"
+      }
+    },
+    {
+      "candidateRef": "U-jzb-drama",
+      "name": "公众号·极坐标DRAMA",
+      "note": "2026-11-26 核验接入；极坐标话剧团公众号，近半年活跃（2026-11-21）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MjM5MTAxOTg0MA==&mid=2652360687&idx=1&sn=f5efcdb5062ddf7ab888a4ef1a4508af&chksm=bcb50b8843dee4927a73705d7c70f53f8f627665c8678205202f3092be2fcfb2b48e6687b1d1"
+      ],
+      "identifier": null,
+      "id": "mp-seu-jzb-drama",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_2b07898d34e3",
+        "nickname": "极坐标DRAMA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-jzb-drama",
+        "status": "verified",
+        "actualName": "极坐标DRAMA",
+        "ghid": "gh_2b07898d34e3",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_2b07898d34e3) 与 nickname(极坐标DRAMA) 一致，最近发文 2026-11-21"
+      }
+    },
+    {
+      "candidateRef": "U-infinity",
+      "name": "公众号·INFINITY电子音乐社",
+      "note": "2026-11-26 核验接入；INFINITY电子音乐协会公众号，近半年活跃（2026-11-07）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzIwMjA5MzU0MQ==&mid=2247484396&idx=1&sn=6e9296fc7c62f2ee132635e41f75c58f&chksm=96e2a566a1952c7081e43a8249671efc0ff972c65c9e125e4908b761aa9b2f6b9ebce6725505"
+      ],
+      "identifier": null,
+      "id": "mp-seu-infinity",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_150326cb09fd",
+        "nickname": "INFINITY电子音乐社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-infinity",
+        "status": "verified",
+        "actualName": "INFINITY电子音乐社",
+        "ghid": "gh_150326cb09fd",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_150326cb09fd) 与 nickname(INFINITY电子音乐社) 一致，最近发文 2026-11-07"
+      }
+    },
+    {
+      "candidateRef": "U-dance",
+      "name": "公众号·东大舞蹈团",
+      "note": "2026-11-26 核验接入；大学生艺术团舞蹈团公众号，近半年活跃（2026-11-14）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzg4NTQ0NDI2MQ==&mid=2247487961&idx=1&sn=62f6ca1e48e808d12c44d5028c139c85&chksm=ce4e73bfc0fb1c73aa4b3246df7300b241730047c60abccaa35fdb91714c7f74ca35ea79ce88"
+      ],
+      "identifier": null,
+      "id": "mp-seu-dance",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d2411cd91c91",
+        "nickname": "东大舞蹈团"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-dance",
+        "status": "verified",
+        "actualName": "东大舞蹈团",
+        "ghid": "gh_d2411cd91c91",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_d2411cd91c91) 与 nickname(东大舞蹈团) 一致，最近发文 2026-11-14"
+      }
+    },
+    {
+      "candidateRef": "D10",
+      "name": "公众号·玉笙寒配音工作室",
+      "note": "2026-11-26 核验接入；玉笙寒配音工作室公众号，近半年活跃（2026-09-16）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzI3NjA0NTg3OQ==&mid=2650535959&idx=1&sn=883de60a8ec4f12865cd485de2151a76&chksm=f2ec7d077395a379b2d322bf7d506a15c7a099d3560b8d298a85fc91963dbe67c1467f7faac5"
+      ],
+      "identifier": null,
+      "id": "mp-d10",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_3ff236ef2a43",
+        "nickname": "玉笙寒配音工作室"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-d10",
+        "status": "verified",
+        "actualName": "玉笙寒配音工作室",
+        "ghid": "gh_3ff236ef2a43",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_3ff236ef2a43) 与 nickname(玉笙寒配音工作室) 一致，最近发文 2026-09-16"
+      }
+    },
+    {
+      "candidateRef": "U-astronomy",
+      "name": "公众号·夜空东南",
+      "note": "2026-11-26 核验接入；东南大学天文协会官方公众号，近半年活跃（2026-11-22）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzI5MTA2MTcwNA==&mid=2649496955&idx=1&sn=7d4b89f76240b6106db6bf904e2f5f59&chksm=f52213e55d3130d31579c71935cf073e7c6ac11b1a0aa9fb86fc8ce24110a3e2b429d99df27c"
+      ],
+      "identifier": null,
+      "id": "mp-seu-astronomy",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_c0dc19bab2c8",
+        "nickname": "夜空东南"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-astronomy",
+        "status": "verified",
+        "actualName": "夜空东南",
+        "ghid": "gh_c0dc19bab2c8",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_c0dc19bab2c8) 与 nickname(夜空东南) 一致，最近发文 2026-11-22"
+      }
+    },
+    {
+      "candidateRef": "U-zhijiao",
+      "name": "公众号·至善支协",
+      "note": "2026-11-26 核验接入；东南大学支教协会公众号，近半年活跃（2026-11-23）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MjM5MjYzODkzNQ==&mid=2649873215&idx=1&sn=3bb32cc3ef1905d9ad48a162fb7b8851&chksm=bea6498789d1c0910b56a26b087787de409ee1505b84ca5505b4135afb0e68c9da5abe2653c1"
+      ],
+      "identifier": null,
+      "id": "mp-seu-zhijiao",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d4f2da9916e8",
+        "nickname": "至善支协"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-zhijiao",
+        "status": "verified",
+        "actualName": "至善支协",
+        "ghid": "gh_d4f2da9916e8",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_d4f2da9916e8) 与 nickname(至善支协) 一致，最近发文 2026-11-23"
+      }
+    },
+    {
+      "candidateRef": "D08",
+      "name": "公众号·SEU方程式赛车队",
+      "note": "2026-11-26 核验接入；SEU方程式赛车队公众号，近半年活跃（2026-11-20）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzAxMTEzMTUzNw==&mid=2651389831&idx=1&sn=80033576f673b505eaf15fd6a71cbcdf&chksm=8177ac0acd76880661111db7d856d3cf6d8067316e12cdbc64a5e19f0c7c286757af2d514fef"
+      ],
+      "identifier": null,
+      "id": "mp-d08",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f1bb7a91c253",
+        "nickname": "SEU方程式赛车队"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-d08",
+        "status": "verified",
+        "actualName": "SEU方程式赛车队",
+        "ghid": "gh_f1bb7a91c253",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_f1bb7a91c253) 与 nickname(SEU方程式赛车队) 一致，最近发文 2026-11-20"
+      }
+    },
+    {
+      "candidateRef": "D04",
+      "name": "公众号·seu户外",
+      "note": "2026-11-26 核验接入；东南大学户外协会公众号，近半年活跃（2026-11-21）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzkxMzQ1MjEyMA==&mid=2247485209&idx=1&sn=d9cb24af854d7cd8de96fc333db855b9&chksm=c0770468f67cfc55f79c639b0dd4582fec908cee2768f82d119eb863999861f66452255a57d8"
+      ],
+      "identifier": null,
+      "id": "mp-d04",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_9a1f51899336",
+        "nickname": "seu户外"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-d04",
+        "status": "verified",
+        "actualName": "seu户外",
+        "ghid": "gh_9a1f51899336",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_9a1f51899336) 与 nickname(seu户外) 一致，最近发文 2026-11-21"
+      }
+    },
+    {
+      "candidateRef": "D02",
+      "name": "公众号·伯藜学社Peeli",
+      "note": "2026-11-26 核验接入；东大伯藜学社公众号，近半年活跃（2026-06-27）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzAxMDcwMTYyNA==&mid=2649788231&idx=1&sn=d8c69f6e6531a955bae4ee1666ab1eae&chksm=82bb817608bdb4da444e14db482d3029046a9fa407aeb8c89bcd41f41dd044dbf6fce2d6b69b"
+      ],
+      "identifier": null,
+      "id": "mp-d02",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_f0b4d58fc9a5",
+        "nickname": "伯藜学社Peeli"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-d02",
+        "status": "verified",
+        "actualName": "伯藜学社Peeli",
+        "ghid": "gh_f0b4d58fc9a5",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_f0b4d58fc9a5) 与 nickname(伯藜学社Peeli) 一致，最近发文 2026-06-27"
+      }
+    },
+    {
+      "candidateRef": "U-3c",
+      "name": "公众号·3C 艺语集",
+      "note": "2026-11-26 核验接入；3C艺术协会公众号，近半年活跃（2026-11-21）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzkwNjc2ODQ4Mw==&mid=2247485662&idx=1&sn=ef4ed360df6b231c7c8410e3fe4319d0&chksm=c1cf265bc6905949711fc6226fd2ad490fb2ae319a86cf7e634541a7fcb3be8a1e85ae82c4a8"
+      ],
+      "identifier": null,
+      "id": "mp-seu-3c",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e0cbc9e07b4c",
+        "nickname": "3C 艺语集"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-3c",
+        "status": "verified",
+        "actualName": "3C 艺语集",
+        "ghid": "gh_e0cbc9e07b4c",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_e0cbc9e07b4c) 与 nickname(3C 艺语集) 一致，最近发文 2026-11-21"
+      }
+    },
+    {
+      "candidateRef": "U-literature",
+      "name": "公众号·东南风文学社",
+      "note": "2026-11-26 核验接入；东南风文学社公众号，近半年活跃（2026-11-12）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzIyODIyNzIwNA==&mid=2651232816&idx=1&sn=83cbe6393e05c37a9d5f57d112aacfb4&chksm=f2af42ad70416c37821fecb3e4d3f8f42133503e5827383b19e0fb88db1b505aa9f3efd46ea3"
+      ],
+      "identifier": null,
+      "id": "mp-seu-literature",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_15938cb27218",
+        "nickname": "东南风文学社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-literature",
+        "status": "verified",
+        "actualName": "东南风文学社",
+        "ghid": "gh_15938cb27218",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_15938cb27218) 与 nickname(东南风文学社) 一致，最近发文 2026-11-12"
+      }
+    },
+    {
+      "candidateRef": "U-shanyuan",
+      "name": "公众号·善渊读书会",
+      "note": "2026-11-26 核验接入；善渊读书会公众号，近半年活跃（2026-09-14）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzIyMTU2NDQ5OQ==&mid=2247486235&idx=1&sn=f637693210bd1c20c8e038c011ae58d9&chksm=e987de4c275596d72330aa911cbeeb156b656d6d8134a293d0bbe952fda615967d24226e93ca"
+      ],
+      "identifier": null,
+      "id": "mp-seu-shanyuan",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_e29bd277a336",
+        "nickname": "善渊读书会"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-shanyuan",
+        "status": "verified",
+        "actualName": "善渊读书会",
+        "ghid": "gh_e29bd277a336",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_e29bd277a336) 与 nickname(善渊读书会) 一致，最近发文 2026-09-14"
+      }
+    },
+    {
+      "candidateRef": "U-zhishan-love",
+      "name": "公众号·至善爱心社",
+      "note": "2026-11-26 核验接入；圆梦爱心社公众号，近半年活跃（2026-09-16）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=MzYzODIyNTU3Ng==&mid=2247483911&idx=1&sn=00e028a153d83cd4cd4abdc916544eed&chksm=f139c1e465596b1882f98082bd82f5437202e26971d1072172792e3666e7c5dc2733791d219c"
+      ],
+      "identifier": null,
+      "id": "mp-seu-zhishan-love",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_a0b2f061b1fc",
+        "nickname": "至善爱心社"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-zhishan-love",
+        "status": "verified",
+        "actualName": "至善爱心社",
+        "ghid": "gh_a0b2f061b1fc",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_a0b2f061b1fc) 与 nickname(至善爱心社) 一致，最近发文 2026-09-16"
+      }
+    },
+    {
+      "candidateRef": "U-lexing",
+      "name": "公众号·东南乐行运动俱乐部",
+      "note": "2026-11-26 核验接入；东南乐行运动俱乐部公众号，近半年活跃（2026-11-23）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzg5MTU4OTQ1Mw==&mid=2247497414&idx=1&sn=8aa78dd1aa595a20b365d34d7f908a8a&chksm=ceaf626cd7ecb7d1a7483522c1d00923ab5edd3638120f1bb35de5b0016db6a7a16c7e38ac0f"
+      ],
+      "identifier": null,
+      "id": "mp-seu-lexing",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d67ee671eb55",
+        "nickname": "东南乐行运动俱乐部"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-lexing",
+        "status": "verified",
+        "actualName": "东南乐行运动俱乐部",
+        "ghid": "gh_d67ee671eb55",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_d67ee671eb55) 与 nickname(东南乐行运动俱乐部) 一致，最近发文 2026-11-23"
+      }
+    },
+    {
+      "candidateRef": "U-seufa",
+      "name": "公众号·SEUFA",
+      "note": "2026-11-26 核验接入；东南大学足球协会公众号，近半年活跃（2026-11-20）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzk3NTY5ODM1MQ==&mid=2247485763&idx=1&sn=0c3ea8d0b19e898fc67b5716fbe047ab&chksm=c5c85cf88a7d4fe5f8387de194d8a07d0e8ba3bacb6422e9607d8362491cd6e1040bee551677"
+      ],
+      "identifier": null,
+      "id": "mp-seu-fa",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_69613eda256c",
+        "nickname": "SEUFA"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生社团"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-fa",
+        "status": "verified",
+        "actualName": "SEUFA",
+        "ghid": "gh_69613eda256c",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_69613eda256c) 与 nickname(SEUFA) 一致，最近发文 2026-11-20"
+      }
+    },
+    {
+      "candidateRef": "U-meiyu",
+      "name": "公众号·至善尽美美育实践工作坊",
+      "note": "2026-11-26 核验接入；至善尽美美育实践工作坊公众号，近半年活跃（2026-11-10）",
+      "evidence": [
+        "https://mp.weixin.qq.com/s?__biz=Mzg4NDkyNDg4Mw==&mid=2247490575&idx=1&sn=0e6ed54accaf815a3414046993907d75&chksm=cee21e5863cf3effe155fda76571a5cff8f4d42e1e10c5e9d487164e46d7136cf3c64b0898f3"
+      ],
+      "identifier": null,
+      "id": "mp-seu-meiyu",
+      "kind": "mp_account",
+      "config": {
+        "ghid": "gh_d25ee52cc635",
+        "nickname": "至善尽美美育实践工作坊"
+      },
+      "tier": "T2",
+      "participation_mode": "editorial",
+      "tags": [
+        "公众号",
+        "校级",
+        "学生组织"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true,
+      "interval_minutes": 1440,
+      "resolution": {
+        "id": "mp-seu-meiyu",
+        "status": "verified",
+        "actualName": "至善尽美美育实践工作坊",
+        "ghid": "gh_d25ee52cc635",
+        "receiptId": null,
+        "verifiedAt": "2026-11-26",
+        "method": "微信读书 /api/mp/cover + /web/mp/content 核验 user_name(gh_d25ee52cc635) 与 nickname(至善尽美美育实践工作坊) 一致，最近发文 2026-11-10"
+      }
     }
   ],
   "pending": [
-    {
-      "candidateRef": "B06",
-      "name": "小猴偷米",
-      "note": "校学生会历史招新稿称其为下属公益服务组织；当前组织关系需复核",
-      "evidence": [
-        "https://www.sohu.com/a/341218841_694348"
-      ],
-      "identifier": null,
-      "reason": "身份、别名或当前运营状态仍待核准"
-    },
-    {
-      "candidateRef": "B07",
-      "name": "社彩东南",
-      "note": "本地既有手册线索；本次未确认当前运营状态",
-      "evidence": [
-        "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\astro\\src\\content\\docs\\1-campus-life\\2.2-info-channels.md"
-      ],
-      "identifier": null,
-      "reason": "身份、别名或当前运营状态仍待核准"
-    },
-    {
-      "candidateRef": "B08",
-      "name": "东南SAST",
-      "note": "检索到往届负责人记录提及公众号关闭；当前号名、是否恢复均待核",
-      "evidence": [
-        "https://yijiemiao.github.io/SEU/Diary-SAST.html"
-      ],
-      "identifier": null,
-      "reason": "身份、别名或当前运营状态仍待核准"
-    },
     {
       "candidateRef": "C27",
       "name": "医路朝夕同辉",
@@ -3891,31 +4836,11 @@
       "reason": "身份、别名或当前运营状态仍待核准"
     },
     {
-      "candidateRef": "D08",
-      "name": "方程式赛车队账号",
-      "note": "赛事官方手册设有该队公众号二维码；油车、电车等账号是否分立待核",
-      "evidence": [
-        "https://img.sae-china.org/web/2024/10/2024FSEC%E7%AB%9E%E8%B5%9B%E6%89%8B%E5%86%8CHandbook.pdf"
-      ],
-      "identifier": null,
-      "reason": "身份、别名或当前运营状态仍待核准"
-    },
-    {
       "candidateRef": "D09",
       "name": "东南大学微软俱乐部账号",
       "note": "社团自建网站明确有官方公众号；当前状态、显示名待核",
       "evidence": [
         "https://seu-codingtogether.github.io/about/"
-      ],
-      "identifier": null,
-      "reason": "身份、别名或当前运营状态仍待核准"
-    },
-    {
-      "candidateRef": "D10",
-      "name": "玉笙寒配音工作室账号",
-      "note": "历史招新介绍确认开设公众号；准确名称、当前状态待核",
-      "evidence": [
-        "https://www.sohu.com/a/194271820_99941458"
       ],
       "identifier": null,
       "reason": "身份、别名或当前运营状态仍待核准"
@@ -3943,15 +4868,6 @@
       "note": "2026年新成立，尚未查明独立账号",
       "evidence": [
         "https://www.seu.edu.cn/2026/0727/c124a578227/page.htm"
-      ],
-      "reason": "尚未核准账号唯一标识或归属范围"
-    },
-    {
-      "candidateRef": "新生学院及八大书院",
-      "name": "八大书院独立账号",
-      "note": "2026-11-06 新生学院主号“东南大学新生学院”已按用户确认接入；三江、南高、东南、中大、南工、南雍、日新、至善八大书院的独立账号仍待核准，不以学院主号代替书院账号。",
-      "evidence": [
-        "https://news.seu.edu.cn/2025/0829/c55945a537635/page.htm"
       ],
       "reason": "尚未核准账号唯一标识或归属范围"
     },
@@ -4090,15 +5006,6 @@
       "reason": "尚未核准账号唯一标识或归属范围"
     },
     {
-      "candidateRef": "E04",
-      "name": "心理健康教育中心历史账号",
-      "note": "微信号 SEU_XL525；是否继续独立运营待核 | 学院官网2019年记录",
-      "evidence": [
-        "https://civil.seu.edu.cn/2019/0118/c1246a262230/pagem.htm"
-      ],
-      "reason": "尚未核准账号唯一标识或归属范围"
-    },
-    {
       "candidateRef": "E05",
       "name": "东大SEIC小助手",
       "note": "微信号 SEIC0808；2015年宿舍无线报障号，是否已被替代待核 | 网信中心官网历史通知",
@@ -4113,15 +5020,6 @@
       "note": "非官方校园社群线索；具体主体及名称关系待核 | 本地项目既有来源清单",
       "evidence": [
         "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\docs\\AI+应用创新应用大赛\\项目策划书与设计方案.md"
-      ],
-      "reason": "尚未核准账号唯一标识或归属范围"
-    },
-    {
-      "candidateRef": "E07",
-      "name": "东大小宝",
-      "note": "校园资讯账号，尚未核准主体 | 既有迎新原始资料",
-      "evidence": [
-        "file:///D:\\Desktop\\seu.wiki\\FutureMap_cc\\datapool\\raw\\03-学校官方\\迎新网\\【新生专刊2026】校园卡使用攻略.md"
       ],
       "reason": "尚未核准账号唯一标识或归属范围"
     },
@@ -4160,65 +5058,6 @@
         "https://zcgs.seu.edu.cn/2026/0824/c35670a580187/page.htm"
       ],
       "reason": "尚未核准账号唯一标识或归属范围"
-    },
-    {
-      "candidateRef": "E13",
-      "name": "东大科技园",
-      "note": "国家大学科技园；微信号历史记录为 sue-sp | 科技园平台活动说明",
-      "evidence": [
-        "https://www.seuiec.com/fbrandActivity/situationDetails/45"
-      ],
-      "reason": "尚未核准账号唯一标识或归属范围"
-    },
-    {
-      "candidateRef": "A16",
-      "name": "东南大学平安校园",
-      "note": "保卫处官方通知",
-      "evidence": [
-        "https://bwc.seu.edu.cn/2023/1120/c24283a472653/pagem.htm"
-      ],
-      "identifier": null,
-      "id": "mp-a16",
-      "kind": "mp_account",
-      "config": {
-        "nickname": "东南大学平安校园"
-      },
-      "tier": "T2",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": false,
-      "interval_minutes": 1440,
-      "reason": "dajiala history_by_ghid code 107"
-    },
-    {
-      "candidateRef": "A24",
-      "name": "东南大学教育基金会",
-      "note": "基金会官网报道；历史官方材料",
-      "evidence": [
-        "https://seuef.seu.edu.cn/22221/list13.psp",
-        "https://yzb.seu.edu.cn/_upload/article/13/48/b5b19f424a068e5c170701343357/ef364847-4e11-4dbc-b281-72948e0098b6.pdf"
-      ],
-      "identifier": "seu_seuef",
-      "id": "mp-a24",
-      "kind": "mp_account",
-      "config": {
-        "wxid": "seu_seuef",
-        "nickname": "东南大学教育基金会"
-      },
-      "tier": "T2",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": false,
-      "interval_minutes": 1440,
-      "reason": "dajiala history: invalid article list"
     },
     {
       "candidateRef": "C08",
@@ -4293,54 +5132,6 @@
       "reason": "dajiala history_by_ghid code 107"
     },
     {
-      "candidateRef": "D02",
-      "name": "东大伯藜学社",
-      "note": "学院官网直接要求关注该公众号",
-      "evidence": [
-        "https://automation.seu.edu.cn/2022/1018/c32617a423928/page.psp"
-      ],
-      "identifier": null,
-      "id": "mp-d02",
-      "kind": "mp_account",
-      "config": {
-        "nickname": "东大伯藜学社"
-      },
-      "tier": "T2",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": false,
-      "interval_minutes": 1440,
-      "reason": "dajiala history_by_ghid code 107"
-    },
-    {
-      "candidateRef": "D04",
-      "name": "SEU户外",
-      "note": "学校官网报道明确列为微信公众号",
-      "evidence": [
-        "https://news.seu.edu.cn/2024/0921/c5541a503657/page.htm"
-      ],
-      "identifier": null,
-      "id": "mp-d04",
-      "kind": "mp_account",
-      "config": {
-        "nickname": "SEU户外"
-      },
-      "tier": "T2",
-      "participation_mode": "editorial",
-      "tags": [
-        "公众号"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false,
-      "enabled": false,
-      "interval_minutes": 1440,
-      "reason": "dajiala history_by_ghid code 107"
-    },
-    {
       "candidateRef": "G02",
       "name": "低碳能源课题组",
       "note": "教师官方主页，多位教师共用，不重复计号",
@@ -4374,6 +5165,8 @@
     "东南大学人权研究院（gh_064f64890e5a，原信源 mp-seu-hr）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
     "东南大学蒙纳士大学联合研究生院（gh_afc51c0c90e1，原信源 mp-seu-monash）：2026-11-13 用户确认不要再接入，已从清单移除，不得以别名或其他 id 重新接入",
     "东南大学档案馆（gh_060f0ee9c3c3，原信源 mp-a18）：2026-11-26 用户确认移除不再关注，已从清单移除并停用生产信源，不得以别名或其他 id 重新接入",
-    "东南教师（gh_d073e2f083ea，原信源 mp-a19）：2026-11-26 用户确认移除不再关注，已从清单移除并停用生产信源，不得以别名或其他 id 重新接入"
+    "东南教师（gh_d073e2f083ea，原信源 mp-a19）：2026-11-26 用户确认移除不再关注，已从清单移除并停用生产信源，不得以别名或其他 id 重新接入",
+    "小猴偷米、社彩东南、东南SAST、东大小宝：2026-11-26 用户确认不接入（已过时/不适合/不存在），不得再接入",
+    "八大书院独立账号：2026-11-26 用户确认无独立公众号，不再按独立号查找接入"
   ]
 }
